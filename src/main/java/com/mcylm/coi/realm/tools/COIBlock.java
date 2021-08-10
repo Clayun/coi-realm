@@ -10,9 +10,9 @@ import org.bukkit.block.Block;
 @Data
 public class COIBlock {
 
-    private Double x;
-    private Double y;
-    private Double z;
+    private Integer x;
+    private Integer y;
+    private Integer z;
 
     private String blockData;
     private String material;

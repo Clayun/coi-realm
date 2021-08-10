@@ -5,3 +5,8 @@ port: 3306
 database: 'web'
 username: 'root'
 password: 'A123456789a'
+
+# 服务器模式
+# develop 服务器开发模式：可用于使用各种类型的工具
+# release 正式模式：生产环境
+server-mode: 'develop'

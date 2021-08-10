@@ -1,5 +1,5 @@
-name: ReplyPrize
-main: com.mcylm.realm.Entry
+name: COIRealm
+main: com.mcylm.coi.realm.Entry
 api-version: 1.17
 version: 1.0
 author: Mikesam

@@ -1,44 +1,70 @@
 package com.mcylm.coi.realm;
 
+import com.mcylm.coi.realm.listener.PlayerInteractListener;
+import com.mcylm.coi.realm.utils.LoggerUtils;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.plugin.PluginManager;
+
+import java.io.File;
 
 public class Entry extends ExtendedJavaPlugin {
 
+    //插件实例
     private static Entry instance;
 
+    //插件名称
     public static String PREFIX = "岛屿冲突领域";
 
-    public static String PLUGIN_FILE_PATH = "plugins/"+ Entry.getInstance().getName()+"/";
+    //本插件的文件目录
+    public static String PLUGIN_FILE_PATH;
 
-    public static Entry getInstance() {
-        return instance;
-    }
+    //服务器模式，在配置文件 Config 中有详细注释
+    public static String SERVER_MODE = "develop";
 
     @Override
     protected void enable() {
 
         instance = this;
 
+        LoggerUtils.log(Entry.getInstance().getName()+" 开始加载...");
+
+        PLUGIN_FILE_PATH = "plugins/"+ Entry.getInstance().getName()+"/";
+
+        if (!new File(PLUGIN_FILE_PATH).exists()) {
+            new File(PLUGIN_FILE_PATH).mkdir();
+            LoggerUtils.log("已成功创建基础配置文件夹");
+        }
+
+        SERVER_MODE = getConfig().getString("server-mode");
+        LoggerUtils.log("当前插件模式："+SERVER_MODE);
+
         saveDefaultConfig();
 
-        Block blockAt = Bukkit.getWorld("").getBlockAt(1, 1, 1);
+        PluginManager pluginManager = Bukkit.getPluginManager();
+        pluginManager.registerEvents(new PlayerInteractListener(), this);
 
-        final Block block = blockAt;
-        Material material = Material.getMaterial("diorite");
-
-        block.setType(material);
-        block.setBlockData(Bukkit.createBlockData("minecraft:diorite"));
-        block.getState().update(true);
+//        Block blockAt = Bukkit.getWorld("").getBlockAt(1, 1, 1);
+//
+//        final Block block = blockAt;
+//        Material material = Material.getMaterial("diorite");
+//
+//        block.setType(material);
+//        block.setBlockData(Bukkit.createBlockData("minecraft:diorite"));
+//        block.getState().update(true);
 
     }
 
     @Override
     protected void disable() {
 
+    }
+
+    public static Entry getInstance() {
+        return instance;
     }
 
 }

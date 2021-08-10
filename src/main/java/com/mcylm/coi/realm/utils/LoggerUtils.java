@@ -19,6 +19,14 @@ public class LoggerUtils {
         Entry.getInstance().getLogger().info("["+Entry.PREFIX+"]"+msg);
     }
 
+    public static void debug(String msg){
+        //todo 这块要换成枚举
+        if("develop".equals(Entry.SERVER_MODE)){
+            Entry.getInstance().getLogger().info("["+Entry.PREFIX+"]"+msg);
+        }
+
+    }
+
     public static void sendMessage(String msg, CommandSender player){
 
         if(player == null){
