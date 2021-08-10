@@ -19,7 +19,7 @@ public class COIBuilder {
     /**
      * 放建筑文件的文件夹
      */
-    private static String STRUCTURE_FOLDER_NAME = "structure";
+    private static String STRUCTURE_FOLDER_NAME = "structure/";
 
     /**
      * 创建一个建筑
@@ -50,7 +50,7 @@ public class COIBuilder {
 
         String jsonContent = gson.toJson(structure);
 
-        String filePath = "plugins/" + Entry.getInstance().getName() + "/" + STRUCTURE_FOLDER_NAME + "/" + structure.getFileName();
+        String filePath = Entry.PLUGIN_FILE_PATH + STRUCTURE_FOLDER_NAME + structure.getFileName();
 
         File file = new File(filePath);
 
