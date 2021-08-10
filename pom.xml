@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.mcylm</groupId>
+    <artifactId>coi-realm</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <repositories>
+        <repository>
+            <id>luck-repo</id>
+            <url>https://repo.lucko.me/</url>
+        </repository>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
+        </repository>
+
+        <repository>
+            <id>papermc</id>
+            <url>https://papermc.io/repo/repository/maven-public/</url>
+        </repository>
+
+    </repositories>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.47</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.20</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>1.17.1-R0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>me.lucko</groupId>
+            <artifactId>helper</artifactId>
+            <version>5.6.8</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>me.lucko</groupId>
+            <artifactId>helper-sql</artifactId>
+            <version>1.3.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.34</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>3.5.0</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>16</source>
+                    <target>16</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <!--这部分可有可无,加上的话则直接生成可运行jar包-->
+                    <!--<archive>-->
+                    <!--<manifest>-->
+                    <!--<mainClass>${exec.mainClass}</mainClass>-->
+                    <!--</manifest>-->
+                    <!--</archive>-->
+                    <descriptors>
+                        <descriptor>src/main/resources/assembly.xml</descriptor>
+                    </descriptors>
+                </configuration>
+            </plugin>
+
+            <!--            <plugin>-->
+            <!--            <groupId>org.mybatis.generator</groupId>-->
+            <!--            <artifactId>mybatis-generator-maven-plugin</artifactId>-->
+            <!--            <version>1.3.5</version>-->
+            <!--            <dependencies>-->
+            <!--            <dependency>-->
+            <!--            <groupId>mysql</groupId>-->
+            <!--            <artifactId>mysql-connector-java</artifactId>-->
+            <!--            <version>5.1.34</version>-->
+            <!--            </dependency>-->
+            <!--            </dependencies>-->
+            <!--            <executions>-->
+            <!--            <execution>-->
+            <!--            <id>Generate MyBatis Artifacts</id>-->
+            <!--            <phase>package</phase>-->
+            <!--            <goals>-->
+            <!--            <goal>generate</goal>-->
+            <!--            </goals>-->
+            <!--            </execution>-->
+            <!--            </executions>-->
+            <!--            <configuration>-->
+            <!--            &lt;!&ndash;允许移动生成的文件 &ndash;&gt;-->
+            <!--            <verbose>true</verbose>-->
+            <!--            &lt;!&ndash; 是否覆盖 &ndash;&gt;-->
+            <!--            <overwrite>true</overwrite>-->
+            <!--            &lt;!&ndash; 自动生成的配置 &ndash;&gt;-->
+            <!--            <configurationFile>-->
+            <!--            src/main/resources/mybatis-generator.xml</configurationFile>-->
+            <!--            </configuration>-->
+            <!--            </plugin>-->
+
+        </plugins>
+    </build>
+    <packaging>jar</packaging>
+
+</project>

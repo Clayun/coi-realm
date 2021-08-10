@@ -1,0 +1,7 @@
+
+#数据库链接相关信息
+address: 'localhost'
+port: 3306
+database: 'web'
+username: 'root'
+password: 'A123456789a'
