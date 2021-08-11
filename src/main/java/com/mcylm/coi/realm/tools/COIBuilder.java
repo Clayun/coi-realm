@@ -100,7 +100,7 @@ public class COIBuilder {
                         this.cancel();
                     }
 
-                    ++index;
+                    index = index + paster.getUnit();
                 }
 
             }
