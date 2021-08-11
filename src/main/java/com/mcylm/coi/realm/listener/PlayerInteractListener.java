@@ -63,7 +63,7 @@ public class PlayerInteractListener implements Listener {
         //判断是右手，同时避免触发两次
         if(Action.RIGHT_CLICK_BLOCK  == action && event.getHand().equals(EquipmentSlot.HAND)
                 //空手触发
-                && event.getPlayer().getEquipment().getItemInMainHand() == null){
+                && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.DIAMOND_PICKAXE){
 
             Block clickedBlock = event.getClickedBlock();
             Location location = clickedBlock.getLocation();

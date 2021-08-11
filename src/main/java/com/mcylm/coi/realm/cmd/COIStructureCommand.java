@@ -35,7 +35,7 @@ public class COIStructureCommand implements CommandExecutor {
                 String fileName = strings[1];
 
                 //调用粘贴板中的保存方法
-                PlayerClipboard.saveStructureFile(player,fileName);
+                return PlayerClipboard.saveStructureFile(player, fileName);
 
             }
 

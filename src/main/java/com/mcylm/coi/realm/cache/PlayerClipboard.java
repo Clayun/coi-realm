@@ -153,6 +153,7 @@ public class PlayerClipboard {
         boolean b = COIBuilder.saveStructureFile(structure);
 
         if(b){
+            LoggerUtils.sendMessage("文件已保存成功",player);
             return true;
         }
 
