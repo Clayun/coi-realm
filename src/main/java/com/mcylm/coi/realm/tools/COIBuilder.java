@@ -20,6 +20,8 @@ import org.checkerframework.checker.units.qual.C;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -57,6 +59,9 @@ public class COIBuilder {
             coiBlock.setY(coiBlock.getY() + basicLocation.getBlockY());
             coiBlock.setZ(coiBlock.getZ() + basicLocation.getBlockZ());
         }
+
+        //根据Y轴排序
+        Collections.sort(blocks, Comparator.comparingDouble(COIBlock::getY));
 
         new BukkitRunnable() {
 
