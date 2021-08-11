@@ -76,7 +76,7 @@ public class PlayerInteractListener implements Listener {
             COIPaster coiPaster = new COIPaster(1,10,player.getWorld().getName(),location,newTest,false);
 
             //更新世界方块
-            COIBuilder.pasteStructure(coiPaster);
+            COIBuilder.pasteStructure(coiPaster,player);
 
         }
 

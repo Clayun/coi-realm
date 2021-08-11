@@ -6,6 +6,7 @@ import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.utils.FileUtils;
 import com.mcylm.coi.realm.utils.JsonUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
+import com.mcylm.coi.realm.utils.TimeUtils;
 import lombok.extern.slf4j.Slf4j;
 import me.lucko.helper.Schedulers;
 import org.apache.commons.lang.StringUtils;
@@ -15,10 +16,12 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.units.qual.C;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -40,10 +43,18 @@ public class COIBuilder {
     public static String STRUCTURE_FILE_SUFFIX = "structure";
 
     /**
-     * 粘贴一个建筑
+     * 粘贴建筑方法，不处理玩家相关逻辑
      * @param paster
      */
     public static void pasteStructure(COIPaster paster){
+        pasteStructure(paster,null);
+    }
+
+    /**
+     * 粘贴一个建筑
+     * @param paster
+     */
+    public static void pasteStructure(COIPaster paster,Player player){
 
         COIStructure structure = paster.getStructure();
 
@@ -101,8 +112,13 @@ public class COIBuilder {
                                 block.setBlockData(Bukkit.createBlockData(coiBlock.getBlockData()));
                                 block.getState().update(true);
 
-                                //todo 设置建造特效
-                                //todo 设置玩家提示信息
+                                // 设置建造特效
+                                block.getWorld().playEffect(block.getLocation(),Effect.STEP_SOUND,1);
+                                // 设置玩家提示信息
+                                if(player != null){
+                                    LoggerUtils.sendActionbar(player,getBuildingProgress(structure.getName(),needBuildBlocks.size(),index,paster.getInterval(),paster.getUnit()));
+                                }
+
 
                             }
 
@@ -118,6 +134,35 @@ public class COIBuilder {
             }
         }.runTaskTimerAsynchronously(Entry.getInstance(),0,paster.getInterval());
 
+    }
+
+    /**
+     * 获取建造进度 Actionbar 内容
+     * @param buildingName 建筑名称
+     * @param totalBlocks 总方块数量
+     * @param index 进度游标
+     * @param interval 多长时间间隔一次，单位 tick
+     * @param unit 每次建造多少个方块
+     * @return
+     */
+    private static String getBuildingProgress(String buildingName,int totalBlocks,int index,Long interval,int unit){
+
+        // 进度百分数
+        float percent = ((totalBlocks - (float)((totalBlocks - index))) / totalBlocks) * 100;
+
+        // 建造速度
+        float v = (float)20/(float)interval*(float)unit;
+
+        // 剩余建造时间
+        float time = ((float)totalBlocks - (float)index) / v;
+
+        //保留两位小数
+        BigDecimal bd = new BigDecimal(time).setScale(0, BigDecimal.ROUND_HALF_UP);
+        BigDecimal percentbd = new BigDecimal(percent).setScale(2, BigDecimal.ROUND_HALF_UP);
+
+        String message = "&6"+buildingName+"&a 建造中 建造进度：&6"+percentbd+"% &a剩余时间：&6"+ TimeUtils.formatDateTime(bd.longValue());
+
+        return message;
     }
 
     /**
