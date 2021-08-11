@@ -3,6 +3,7 @@ package com.mcylm.coi.realm;
 import com.mcylm.coi.realm.cmd.COIStructureCommand;
 import com.mcylm.coi.realm.enums.COIServerMode;
 import com.mcylm.coi.realm.listener.PlayerInteractListener;
+import com.mcylm.coi.realm.tools.COIBuilder;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import org.bukkit.Bukkit;
@@ -15,22 +16,26 @@ import java.io.File;
 
 public class Entry extends ExtendedJavaPlugin {
 
-    //插件实例
+    // 插件实例
     private static Entry instance;
 
-    //插件名称
-    public static String PREFIX = "岛屿冲突领域";
+    // COIBuilder 实例，控制建筑自动建造
+    private static COIBuilder builder;
 
-    //本插件的文件目录
+    // 插件名称
+    public static String PREFIX = "岛屿冲突 Realm";
+
+    // 本插件的文件目录
     public static String PLUGIN_FILE_PATH;
 
-    //服务器模式，在配置文件 Config 中有详细注释
+    // 服务器模式，在配置文件 Config 中有详细注释
     public static String SERVER_MODE = "develop";
 
     @Override
     protected void enable() {
 
         instance = this;
+        builder = new COIBuilder();
 
         LoggerUtils.log(Entry.getInstance().getName()+" 开始加载...");
 
@@ -72,4 +77,7 @@ public class Entry extends ExtendedJavaPlugin {
         return instance;
     }
 
+    public static COIBuilder getBuilder() {
+        return builder;
+    }
 }

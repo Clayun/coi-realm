@@ -3,6 +3,7 @@ package com.mcylm.coi.realm.tools;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.mcylm.coi.realm.Entry;
+import com.mcylm.coi.realm.api.Builder;
 import com.mcylm.coi.realm.utils.FileUtils;
 import com.mcylm.coi.realm.utils.JsonUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
@@ -28,9 +29,9 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * COI建筑工具类
+ * COI建筑工具实现
  */
-public class COIBuilder {
+public class COIBuilder implements Builder {
 
     /**
      * 放建筑文件的文件夹
@@ -46,7 +47,7 @@ public class COIBuilder {
      * 粘贴建筑方法，不处理玩家相关逻辑
      * @param paster
      */
-    public static void pasteStructure(COIPaster paster){
+    public void pasteStructure(COIPaster paster){
         pasteStructure(paster,null);
     }
 
@@ -54,7 +55,7 @@ public class COIBuilder {
      * 粘贴一个建筑
      * @param paster
      */
-    public static void pasteStructure(COIPaster paster,Player player){
+    public void pasteStructure(COIPaster paster,Player player){
 
         COIStructure structure = paster.getStructure();
 
@@ -145,7 +146,7 @@ public class COIBuilder {
      * @param unit 每次建造多少个方块
      * @return
      */
-    private static String getBuildingProgress(String buildingName,int totalBlocks,int index,Long interval,int unit){
+    private String getBuildingProgress(String buildingName,int totalBlocks,int index,Long interval,int unit){
 
         // 进度百分数
         float percent = ((totalBlocks - (float)((totalBlocks - index))) / totalBlocks) * 100;
@@ -170,7 +171,7 @@ public class COIBuilder {
      * @param fileName
      * @return
      */
-    public static COIStructure getStructureByFile(String fileName){
+    public COIStructure getStructureByFile(String fileName){
 
         File file = new File(Entry.PLUGIN_FILE_PATH + STRUCTURE_FOLDER_NAME + fileName);
 
@@ -188,7 +189,7 @@ public class COIBuilder {
     /**
      * 创建生成一个建筑文件
      */
-    public static boolean saveStructureFile(COIStructure structure){
+    public boolean saveStructureFile(COIStructure structure){
 
         /**
          * 判断空值
@@ -234,7 +235,7 @@ public class COIBuilder {
      * @param point2
      * @return
      */
-    public static COIStructure getStructureByTwoLocations(Location point1,Location point2){
+    public COIStructure getStructureByTwoLocations(Location point1,Location point2){
 
         int length = Math.abs(point1.getBlockX() - point2.getBlockX())+1;
         int height = Math.abs(point1.getBlockY() - point2.getBlockY())+1;

@@ -1,5 +1,6 @@
 package com.mcylm.coi.realm.cache;
 
+import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.tools.COIBuilder;
 import com.mcylm.coi.realm.tools.COIStructure;
 import com.mcylm.coi.realm.utils.LoggerUtils;
@@ -106,7 +107,7 @@ public class PlayerClipboard {
         clipboardLocation.setSecondPoint(point);
 
         //计算出COI结构体
-        COIStructure structure = COIBuilder.getStructureByTwoLocations(clipboardLocation.getFirstPoint(), clipboardLocation.getSecondPoint());
+        COIStructure structure = Entry.getBuilder().getStructureByTwoLocations(clipboardLocation.getFirstPoint(), clipboardLocation.getSecondPoint());
         clipboardLocation.setStructure(structure);
 
         //将粘贴板的内容存入缓存
@@ -153,7 +154,7 @@ public class PlayerClipboard {
         structure.setFileName(fileName + "." + COIBuilder.STRUCTURE_FILE_SUFFIX);
         structure.setName(fileName);
 
-        boolean b = COIBuilder.saveStructureFile(structure);
+        boolean b = Entry.getBuilder().saveStructureFile(structure);
 
         if(b){
             LoggerUtils.sendMessage("文件已保存成功",player);

@@ -1,6 +1,7 @@
 package com.mcylm.coi.realm.listener;
 
 import com.mcylm.coi.realm.Entry;
+import com.mcylm.coi.realm.api.Builder;
 import com.mcylm.coi.realm.cache.PlayerClipboard;
 import com.mcylm.coi.realm.enums.COIServerMode;
 import com.mcylm.coi.realm.tools.COIBuilder;
@@ -72,13 +73,13 @@ public class PlayerInteractListener implements Listener {
             Player player = event.getPlayer();
 
             //测试使用
-            COIStructure newTest = COIBuilder.getStructureByFile("mofang.structure");
+            COIStructure newTest = Entry.getBuilder().getStructureByFile("mofang.structure");
 
             //创建一个粘贴工具
             COIPaster coiPaster = new COIPaster(2,5,player.getWorld().getName(),location,newTest,false);
 
             //更新世界方块
-            COIBuilder.pasteStructure(coiPaster,player);
+            Entry.getBuilder().pasteStructure(coiPaster,player);
 
         }
 
