@@ -86,13 +86,12 @@ public class COIBuilder {
                                 block.setBlockData(Bukkit.createBlockData(coiBlock.getBlockData()));
                                 block.getState().update(true);
 
-                                LoggerUtils.debug("建造中..."+coiBlock.getBlockData());
+                                //todo 设置建造特效
+                                //todo 设置玩家提示信息
+
                             }
 
                         }.runTask(Entry.getInstance());
-
-                        //todo 设置建造特效
-                        //todo 设置玩家提示信息
 
                     }else{
                         this.cancel();
