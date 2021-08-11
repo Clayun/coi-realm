@@ -96,7 +96,7 @@ public class COIBuilder {
                 for(int i = 0; i < paster.getUnit(); i ++){
 
                     // 如果方块游标还没达到总方块数量，就继续建造
-                    if(index < (needBuildBlocks.size() - 1)){
+                    if(index <= (needBuildBlocks.size() - 1)){
 
                         COIBlock coiBlock = needBuildBlocks.get(index);
 
@@ -118,18 +118,18 @@ public class COIBuilder {
                                 if(player != null){
                                     LoggerUtils.sendActionbar(player,getBuildingProgress(structure.getName(),needBuildBlocks.size(),index,paster.getInterval(),paster.getUnit()));
                                 }
-
-
                             }
 
                         }.runTask(Entry.getInstance());
 
+                        ++index;
+
                     }else{
                         this.cancel();
                     }
-
-                    index = index + paster.getUnit();
                 }
+
+
 
             }
         }.runTaskTimerAsynchronously(Entry.getInstance(),0,paster.getInterval());
