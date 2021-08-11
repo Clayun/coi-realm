@@ -48,20 +48,30 @@ public class COIBuilder {
         COIStructure structure = paster.getStructure();
 
         // 全部待建造的方块
-        List<COIBlock> blocks = structure.getBlocks();
+        List<COIBlock> allBlocks = structure.getBlocks();
 
         // 建筑基点
         Location basicLocation = paster.getLocation();
 
+        List<COIBlock> needBuildBlocks = new ArrayList<>();
+
         // 根据建筑基点设置每个方块的真实坐标
-        for(COIBlock coiBlock : blocks){
+        for(COIBlock coiBlock : allBlocks){
             coiBlock.setX(coiBlock.getX() + basicLocation.getBlockX());
             coiBlock.setY(coiBlock.getY() + basicLocation.getBlockY());
             coiBlock.setZ(coiBlock.getZ() + basicLocation.getBlockZ());
+
+            if("AIR".equals(coiBlock.getMaterial())
+                && !paster.isWithAir()){
+                //删除掉空气方块
+            }else
+                needBuildBlocks.add(coiBlock);
+
+
         }
 
         //根据Y轴排序
-        Collections.sort(blocks, Comparator.comparingDouble(COIBlock::getY));
+        Collections.sort(needBuildBlocks, Comparator.comparingDouble(COIBlock::getY));
 
         new BukkitRunnable() {
 
@@ -75,9 +85,9 @@ public class COIBuilder {
                 for(int i = 0; i < paster.getUnit(); i ++){
 
                     // 如果方块游标还没达到总方块数量，就继续建造
-                    if(index < (blocks.size() - 1)){
+                    if(index < (needBuildBlocks.size() - 1)){
 
-                        COIBlock coiBlock = blocks.get(index);
+                        COIBlock coiBlock = needBuildBlocks.get(index);
 
                         // 主线程同步更新世界方块
                         new BukkitRunnable(){
