@@ -69,10 +69,8 @@ public class COIBuilder {
                 // 每次建造几个方块
                 for(int i = 0; i < paster.getUnit(); i ++){
 
-                    blocks.get(index);
-
                     // 如果方块游标还没达到总方块数量，就继续建造
-                    if(index < blocks.size()){
+                    if(index < (blocks.size() - 1)){
 
                         COIBlock coiBlock = blocks.get(index);
 
