@@ -17,6 +17,11 @@ public enum COIServerMode {
         this.name = name;
     }
 
+    /**
+     * 通过 code 获取枚举
+     * @param code
+     * @return
+     */
     public static COIServerMode parseCode(String code) {
         for (COIServerMode value : COIServerMode.values()) {
             if (value.code.equals(code)) {

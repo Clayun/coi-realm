@@ -1,6 +1,7 @@
 package com.mcylm.coi.realm.utils;
 
 import com.mcylm.coi.realm.Entry;
+import com.mcylm.coi.realm.enums.COIServerMode;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.StringUtils;
@@ -20,8 +21,8 @@ public class LoggerUtils {
     }
 
     public static void debug(String msg){
-        //todo 这块要换成枚举
-        if("develop".equals(Entry.SERVER_MODE)){
+        //只有开发模式才输出的日志
+        if(COIServerMode.DEVELOP.getCode().equals(Entry.SERVER_MODE)){
             Entry.getInstance().getLogger().info("["+Entry.PREFIX+"]"+msg);
         }
 

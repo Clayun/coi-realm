@@ -1,6 +1,7 @@
 package com.mcylm.coi.realm;
 
 import com.mcylm.coi.realm.cmd.COIStructureCommand;
+import com.mcylm.coi.realm.enums.COIServerMode;
 import com.mcylm.coi.realm.listener.PlayerInteractListener;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
@@ -41,7 +42,15 @@ public class Entry extends ExtendedJavaPlugin {
         }
 
         SERVER_MODE = getConfig().getString("server-mode");
-        LoggerUtils.log("当前插件模式："+SERVER_MODE);
+
+        COIServerMode serverMode = COIServerMode.parseCode(SERVER_MODE);
+
+        if(serverMode == null){
+            LoggerUtils.log("服务器模式识别失败！");
+            this.getServer().shutdown();
+        }
+
+        LoggerUtils.log("当前插件模式："+serverMode.getName());
 
         saveDefaultConfig();
 

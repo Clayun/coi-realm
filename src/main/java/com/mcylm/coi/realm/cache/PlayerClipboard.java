@@ -32,9 +32,12 @@ public class PlayerClipboard {
         boolean b = setFirstPoint(player, point);
 
         if(!b){
-            setSecondPoint(player,point);
-            int totalBlocks = 0;
-            LoggerUtils.sendMessage("选取第二个点成功  (X="+point.getBlockX()+",Y="+point.getBlockY()+",Z="+point.getBlockZ()+") ，共计 "+ totalBlocks +"个方块",player);
+            boolean setSecondPoint = setSecondPoint(player, point);
+
+            if(setSecondPoint){
+                int totalBlocks = getCOIStructureByClipboard(player).getBlocks().size();
+                LoggerUtils.sendMessage("选取第二个点成功  (X="+point.getBlockX()+",Y="+point.getBlockY()+",Z="+point.getBlockZ()+") ，共计 "+ totalBlocks +" 个方块",player);
+            }
 
         } else
             LoggerUtils.sendMessage("选取第一个点成功  (X="+point.getBlockX()+",Y="+point.getBlockY()+",Z="+point.getBlockZ()+")",player);
