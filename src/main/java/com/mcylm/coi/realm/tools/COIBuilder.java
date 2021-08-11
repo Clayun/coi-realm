@@ -1,16 +1,21 @@
 package com.mcylm.coi.realm.tools;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.utils.FileUtils;
+import com.mcylm.coi.realm.utils.JsonUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import lombok.extern.slf4j.Slf4j;
+import me.lucko.helper.Schedulers;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.units.qual.C;
 
 import java.io.File;
@@ -28,11 +33,88 @@ public class COIBuilder {
     private static String STRUCTURE_FOLDER_NAME = "structure/";
 
     /**
-     * 创建一个建筑
-     * @param structure
+     * 文件后缀
      */
-    public static void pasteStructure(COIStructure structure){
+    public static String STRUCTURE_FILE_SUFFIX = "structure";
 
+    /**
+     * 粘贴一个建筑
+     * @param paster
+     */
+    public static void pasteStructure(COIPaster paster){
+
+        COIStructure structure = paster.getStructure();
+
+        //全部待建造的方块
+        List<COIBlock> blocks = structure.getBlocks();
+
+        //建筑基点
+        Location basicLocation = paster.getLocation();
+
+        //根据建筑基点设置每个方块的真实坐标
+        for(COIBlock coiBlock : blocks){
+            coiBlock.setX(coiBlock.getX() + basicLocation.getBlockX());
+            coiBlock.setY(coiBlock.getY() + basicLocation.getBlockY());
+            coiBlock.setZ(coiBlock.getZ() + basicLocation.getBlockZ());
+        }
+
+        new BukkitRunnable() {
+
+            //建造到第几个方块
+            int index = 0;
+
+            @Override
+            public void run() {
+
+                //每次建造几个方块
+                for(int i = 0; i < paster.getUnit(); i ++){
+                    blocks.get(index);
+
+                    //如果方块游标还没达到总方块数量，就继续建造
+                    if(index < blocks.size()){
+
+                        COIBlock coiBlock = blocks.get(index);
+
+                        //根据COI结构方块获取MC里面的方块
+                        Block block = Bukkit.getWorld(paster.getWorldName()).getBlockAt(coiBlock.getX(),coiBlock.getY(),coiBlock.getZ());
+                        Material material = Material.getMaterial(coiBlock.getMaterial());
+                        block.setType(material);
+                        block.setBlockData(Bukkit.createBlockData(coiBlock.getBlockData()));
+
+                        //主线程同步更新世界方块
+                        Schedulers.sync().run(() -> block.getState().update(true));
+
+                        //todo 设置建造特效
+                        //todo 设置玩家提示信息
+
+                    }
+
+                    ++index;
+                }
+
+            }
+        }.runTaskTimerAsynchronously(Entry.getInstance(),0,paster.getInterval());
+
+    }
+
+    /**
+     * 读取文件获取COI建筑结构体
+     * @param fileName
+     * @return
+     */
+    public static COIStructure getStructureByFile(String fileName){
+
+        File file = new File(Entry.PLUGIN_FILE_PATH + STRUCTURE_FOLDER_NAME + fileName);
+
+        if(!file.exists()){
+            return null;
+        }
+
+        String s = JsonUtils.readJsonFile(Entry.PLUGIN_FILE_PATH + STRUCTURE_FOLDER_NAME + fileName);
+
+        COIStructure coiStructure = JSONObject.parseObject(s, COIStructure.class);
+
+        return coiStructure;
     }
 
     /**
@@ -131,10 +213,6 @@ public class COIBuilder {
                     }
 
                     Block block = point1.getWorld().getBlockAt(blockX,blockY,blockZ);
-//                    Material material = Material.DIAMOND_BLOCK;
-//                    block.setType(material);
-//                    block.setBlockData(Bukkit.createBlockData("minecraft:diamond_block"));
-//                    block.getState().update(true);
 
                     COIBlock coiBlock = new COIBlock();
                     coiBlock.setX(coiX);
@@ -151,11 +229,12 @@ public class COIBuilder {
 
         if(!blocks.isEmpty()){
             coiStructure.setBlocks(blocks);
-            coiStructure.setFileName("newTest.structure");
+
             coiStructure.setLength(length);
             coiStructure.setHeight(height);
             coiStructure.setWidth(width);
-            coiStructure.setName("newTest");
+//            coiStructure.setName("newTest");
+//            coiStructure.setFileName("newTest.structure");
 
             return coiStructure;
         }

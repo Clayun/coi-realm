@@ -1,5 +1,6 @@
 package com.mcylm.coi.realm;
 
+import com.mcylm.coi.realm.cmd.COIStructureCommand;
 import com.mcylm.coi.realm.listener.PlayerInteractListener;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
@@ -44,17 +45,12 @@ public class Entry extends ExtendedJavaPlugin {
 
         saveDefaultConfig();
 
+        //注册监听器
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new PlayerInteractListener(), this);
 
-//        Block blockAt = Bukkit.getWorld("").getBlockAt(1, 1, 1);
-//
-//        final Block block = blockAt;
-//        Material material = Material.getMaterial("diorite");
-//
-//        block.setType(material);
-//        block.setBlockData(Bukkit.createBlockData("minecraft:diorite"));
-//        block.getState().update(true);
+        //注册命令类
+        getCommand("structure").setExecutor(new COIStructureCommand());
 
     }
 

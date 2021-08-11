@@ -16,6 +16,11 @@ public class PlayerClipboard {
 
     private static Map<String,ClipboardLocation> clipboard = new HashMap<>();
 
+    /**
+     * 自动选点
+     * @param player
+     * @param point
+     */
     public static void point(Player player,Location point){
 
         if(player == null
@@ -101,9 +106,57 @@ public class PlayerClipboard {
         COIStructure structure = COIBuilder.getStructureByTwoLocations(clipboardLocation.getFirstPoint(), clipboardLocation.getSecondPoint());
         clipboardLocation.setStructure(structure);
 
-        COIBuilder.saveStructureFile(structure);
+        //将粘贴板的内容存入缓存
+        clipboard.put(player.getName(),clipboardLocation);
 
         return true;
+    }
+
+    /**
+     * 获取缓存当中的COI结构体
+     * @param player
+     * @return
+     */
+    public static COIStructure getCOIStructureByClipboard(Player player){
+
+        ClipboardLocation clipboardLocation = clipboard.get(player.getName());
+
+        if(clipboardLocation == null){
+            LoggerUtils.sendMessage("粘贴板为空",player);
+
+            return null;
+        }
+
+        return clipboardLocation.getStructure();
+
+    }
+
+    /**
+     * 保存粘贴板到文件
+     * @param player
+     * @param fileName
+     * @return
+     */
+    public static boolean saveStructureFile(Player player,String fileName){
+
+        //获取粘贴板中的文件
+        COIStructure structure = getCOIStructureByClipboard(player);
+
+        if(structure == null){
+            return false;
+        }
+
+        //设置文件名称
+        structure.setFileName(fileName + "." + COIBuilder.STRUCTURE_FILE_SUFFIX);
+        structure.setName(fileName);
+
+        boolean b = COIBuilder.saveStructureFile(structure);
+
+        if(b){
+            return true;
+        }
+
+        return false;
     }
 
 

@@ -5,3 +5,7 @@ version: 1.0
 author: Mikesam
 website: https://www.clayun.com
 depend: [helper]
+commands:
+  structure:
+    description: save building structure
+    usage: /<command> save fileName
