@@ -87,6 +87,8 @@ public class COIBuilder {
                                 block.setType(material);
                                 block.setBlockData(Bukkit.createBlockData(coiBlock.getBlockData()));
                                 block.getState().update(true);
+
+                                LoggerUtils.debug("建造中..."+coiBlock.getBlockData());
                             }
 
                         }.runTask(Entry.getInstance());
