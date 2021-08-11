@@ -73,7 +73,7 @@ public class PlayerInteractListener implements Listener {
             COIStructure newTest = COIBuilder.getStructureByFile("newTest.structure");
 
             //创建一个粘贴工具
-            COIPaster coiPaster = new COIPaster(1,10,player.getWorld().getName(),location,newTest);
+            COIPaster coiPaster = new COIPaster(1,10,player.getWorld().getName(),location,newTest,false);
 
             //更新世界方块
             COIBuilder.pasteStructure(coiPaster);

@@ -25,5 +25,5 @@ public class COIPaster {
     private COIStructure structure;
 
     //是否建造空气方块
-    private boolean withAir = false;
+    private boolean withAir;
 }
