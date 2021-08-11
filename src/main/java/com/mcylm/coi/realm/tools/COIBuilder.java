@@ -87,6 +87,8 @@ public class COIBuilder {
                         //todo 设置建造特效
                         //todo 设置玩家提示信息
 
+                    }else{
+                        this.cancel();
                     }
 
                     ++index;
