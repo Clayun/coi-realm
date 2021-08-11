@@ -45,13 +45,13 @@ public class COIBuilder {
 
         COIStructure structure = paster.getStructure();
 
-        //全部待建造的方块
+        // 全部待建造的方块
         List<COIBlock> blocks = structure.getBlocks();
 
-        //建筑基点
+        // 建筑基点
         Location basicLocation = paster.getLocation();
 
-        //根据建筑基点设置每个方块的真实坐标
+        // 根据建筑基点设置每个方块的真实坐标
         for(COIBlock coiBlock : blocks){
             coiBlock.setX(coiBlock.getX() + basicLocation.getBlockX());
             coiBlock.setY(coiBlock.getY() + basicLocation.getBlockY());
@@ -60,29 +60,36 @@ public class COIBuilder {
 
         new BukkitRunnable() {
 
-            //建造到第几个方块
+            // 建造到第几个方块
             int index = 0;
 
             @Override
             public void run() {
 
-                //每次建造几个方块
+                // 每次建造几个方块
                 for(int i = 0; i < paster.getUnit(); i ++){
+
                     blocks.get(index);
 
-                    //如果方块游标还没达到总方块数量，就继续建造
+                    // 如果方块游标还没达到总方块数量，就继续建造
                     if(index < blocks.size()){
 
                         COIBlock coiBlock = blocks.get(index);
 
-                        //根据COI结构方块获取MC里面的方块
-                        Block block = Bukkit.getWorld(paster.getWorldName()).getBlockAt(coiBlock.getX(),coiBlock.getY(),coiBlock.getZ());
-                        Material material = Material.getMaterial(coiBlock.getMaterial());
-                        block.setType(material);
-                        block.setBlockData(Bukkit.createBlockData(coiBlock.getBlockData()));
+                        // 主线程同步更新世界方块
+                        new BukkitRunnable(){
 
-                        //主线程同步更新世界方块
-                        Schedulers.sync().run(() -> block.getState().update(true));
+                            @Override
+                            public void run() {
+                                // 根据COI结构方块获取MC里面的方块
+                                Block block = Bukkit.getWorld(paster.getWorldName()).getBlockAt(coiBlock.getX(),coiBlock.getY(),coiBlock.getZ());
+                                Material material = Material.getMaterial(coiBlock.getMaterial());
+                                block.setType(material);
+                                block.setBlockData(Bukkit.createBlockData(coiBlock.getBlockData()));
+                                block.getState().update(true);
+                            }
+
+                        }.runTask(Entry.getInstance());
 
                         //todo 设置建造特效
                         //todo 设置玩家提示信息
@@ -145,7 +152,7 @@ public class COIBuilder {
         File file = new File(filePath);
 
         if(!file.exists()){
-            //如果文件不存在，就创建
+            // 如果文件不存在，就创建
             FileUtils.createFileByPath(filePath);
         }else{
             LoggerUtils.log("建筑文件已存在，请更换名称后重新保存");
@@ -186,7 +193,7 @@ public class COIBuilder {
 
         List<COIBlock> blocks = new ArrayList<>();
 
-        //获取两点间的全部坐标点
+        // 获取两点间的全部坐标点
         for(int x = 0; x < length; x++){
             for(int y = 0; y < height; y++){
                 for(int z = 0; z < width; z++){
