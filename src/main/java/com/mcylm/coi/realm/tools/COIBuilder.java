@@ -11,11 +11,14 @@ import com.mcylm.coi.realm.utils.TimeUtils;
 import lombok.extern.slf4j.Slf4j;
 import me.lucko.helper.Schedulers;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
+import org.bukkit.block.data.Rotatable;
+import org.bukkit.block.data.type.Ladder;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -110,7 +113,11 @@ public class COIBuilder implements Builder {
                                 Block block = Bukkit.getWorld(paster.getWorldName()).getBlockAt(coiBlock.getX(),coiBlock.getY(),coiBlock.getZ());
                                 Material material = Material.getMaterial(coiBlock.getMaterial());
                                 block.setType(material);
-                                block.setBlockData(Bukkit.createBlockData(coiBlock.getBlockData()));
+
+                                BlockData blockData = Bukkit.createBlockData(coiBlock.getBlockData());
+                                block.setBlockData(blockData);
+
+                                block.getState().setBlockData(blockData);
                                 block.getState().update(true);
 
                                 // 设置建造特效
