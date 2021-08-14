@@ -1,15 +1,13 @@
 package com.mcylm.coi.realm.cache;
 
 import com.mcylm.coi.realm.Entry;
-import com.mcylm.coi.realm.tools.COIBuilder;
-import com.mcylm.coi.realm.tools.COIStructure;
+import com.mcylm.coi.realm.tools.building.COIBuilder;
+import com.mcylm.coi.realm.tools.building.COIStructure;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class PlayerClipboard {

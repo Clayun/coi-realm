@@ -1,6 +1,6 @@
 package com.mcylm.coi.realm.api;
 
-import com.mcylm.coi.realm.tools.COIPaster;
+import com.mcylm.coi.realm.tools.building.COIPaster;
 import org.bukkit.entity.Player;
 
 public interface Builder {

@@ -13,6 +13,7 @@
             <id>luck-repo</id>
             <url>https://repo.lucko.me/</url>
         </repository>
+
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
@@ -23,9 +24,23 @@
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
 
+        <repository>
+            <id>everything</id>
+            <url>http://repo.citizensnpcs.co/</url>
+        </repository>
+
     </repositories>
 
     <dependencies>
+
+        <dependency>
+            <groupId>net.citizensnpcs</groupId>
+            <artifactId>citizens-main</artifactId>
+            <version>Citizens-2.0.28-b2360</version>
+            <type>jar</type>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/Citizens-2.0.28-b2360.jar</systemPath>
+        </dependency>
 
         <dependency>
             <groupId>com.alibaba</groupId>

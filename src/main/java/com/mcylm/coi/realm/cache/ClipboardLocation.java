@@ -1,10 +1,8 @@
 package com.mcylm.coi.realm.cache;
 
-import com.mcylm.coi.realm.tools.COIStructure;
+import com.mcylm.coi.realm.tools.building.COIStructure;
 import lombok.Data;
 import org.bukkit.Location;
-
-import java.util.List;
 
 @Data
 public class ClipboardLocation {

@@ -1,12 +1,10 @@
 package com.mcylm.coi.realm.listener;
 
 import com.mcylm.coi.realm.Entry;
-import com.mcylm.coi.realm.api.Builder;
 import com.mcylm.coi.realm.cache.PlayerClipboard;
 import com.mcylm.coi.realm.enums.COIServerMode;
-import com.mcylm.coi.realm.tools.COIBuilder;
-import com.mcylm.coi.realm.tools.COIPaster;
-import com.mcylm.coi.realm.tools.COIStructure;
+import com.mcylm.coi.realm.tools.building.COIPaster;
+import com.mcylm.coi.realm.tools.building.COIStructure;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -16,8 +14,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
-
-import java.io.File;
 
 public class PlayerInteractListener implements Listener {
 
