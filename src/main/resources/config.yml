@@ -10,3 +10,7 @@ password: 'A123456789a'
 # develop 服务器开发模式：可用于使用各种类型的工具
 # release 正式模式：生产环境
 server-mode: 'develop'
+
+# NPC可食用的 Material Name
+foods:
+  - 'APPLE'

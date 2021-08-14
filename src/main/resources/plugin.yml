@@ -4,7 +4,7 @@ api-version: 1.17
 version: 1.0
 author: Mikesam
 website: https://www.clayun.com
-depend: [helper]
+depend: [helper,Citizens]
 commands:
   structure:
     description: save building structure

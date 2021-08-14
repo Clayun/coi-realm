@@ -2,6 +2,7 @@ package com.mcylm.coi.realm.utils;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIServerMode;
+import me.lucko.helper.text.Component;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.StringUtils;

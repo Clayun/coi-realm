@@ -10,6 +10,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Entry extends ExtendedJavaPlugin {
 
@@ -28,11 +30,15 @@ public class Entry extends ExtendedJavaPlugin {
     // 服务器模式，在配置文件 Config 中有详细注释
     public static String SERVER_MODE = "develop";
 
+    // NPC可食用的 Material Name
+    private static List<String> NPC_FOODS;
+
     @Override
     protected void enable() {
 
         instance = this;
         builder = new COIBuilder();
+        NPC_FOODS = new ArrayList<>();
 
         LoggerUtils.log(Entry.getInstance().getName()+" 开始加载...");
 
@@ -44,6 +50,7 @@ public class Entry extends ExtendedJavaPlugin {
         }
 
         SERVER_MODE = getConfig().getString("server-mode");
+        NPC_FOODS = getConfig().getStringList("foods");
 
         COIServerMode serverMode = COIServerMode.parseCode(SERVER_MODE);
 
@@ -76,5 +83,9 @@ public class Entry extends ExtendedJavaPlugin {
 
     public static COIBuilder getBuilder() {
         return builder;
+    }
+
+    public static List<String> getNpcFoods() {
+        return NPC_FOODS;
     }
 }
