@@ -127,6 +127,14 @@ public class COIFarmer extends COIHuman{
             return;
         }
 
+        // 检查是否需要回城存放东西
+        boolean b = needBackToSaveResources();
+
+        if(b){
+            backAndSaveResources();
+            return;
+        }
+
         List<Block> nearbyBlocks = getNearbyBlocks(5);
 
         for(Block block : nearbyBlocks){
