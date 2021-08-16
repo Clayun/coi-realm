@@ -1,5 +1,9 @@
 package com.mcylm.coi.realm.utils;
 
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -87,4 +91,21 @@ public class ItemUtils {
         i.addUnsafeEnchantment(e, level);
     }
 
+    /**
+     * 将物品添加到箱子里面
+     * @param location
+     * @param itemStack
+     */
+    public static void addItemIntoChest(Location location, ItemStack itemStack){
+
+        Block block = location.getBlock();
+
+        if(block.getType().equals(Material.CHEST)){
+            Chest chest = (Chest) block.getState();
+
+            chest.update();
+
+            chest.getInventory().addItem(itemStack);
+        }
+    }
 }

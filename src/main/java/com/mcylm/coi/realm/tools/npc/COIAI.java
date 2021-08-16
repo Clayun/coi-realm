@@ -23,11 +23,17 @@ public interface COIAI {
     // 说话
     void say(String message);
 
+    // 捡起地上的东西
+    void pickItems();
+
     // 吃东西
     void eatFood();
 
     // 自动穿衣服
     void wearClothes();
+
+    // 获取NPC附近的方块
+    List<Block> getNearbyBlocks(double radius);
 
     // 移动
     void move();
@@ -41,6 +47,6 @@ public interface COIAI {
     // 是否还或者
     boolean isAlive();
 
-    // NPC死亡方法
-    void dead();
+    // 获取NPC位置
+    Location getLocation();
 }

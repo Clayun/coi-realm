@@ -1,4 +1,4 @@
-package com.mcylm.coi.realm.api;
+package com.mcylm.coi.realm.tools.building;
 
 import com.mcylm.coi.realm.tools.building.COIPaster;
 import org.bukkit.entity.Player;

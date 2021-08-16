@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * AI属性
@@ -24,9 +25,6 @@ public class COINpc implements Serializable {
 
     // 等级
     private int level;
-
-    // 血量
-    private double health;
 
     // 皮肤相关参数
     private String skinTextures;
@@ -54,6 +52,9 @@ public class COINpc implements Serializable {
     // NPC的背包
     private List<ItemStack> inventory;
 
+    // NPC的食物袋
+    private List<ItemStack> foodBag;
+
     // 警戒范围
     private double alertRadius = 5;
 
@@ -67,8 +68,11 @@ public class COINpc implements Serializable {
     private String followPlayerName;
 
     // 是否死亡复活
-    private boolean canRespawn;
+    private boolean canRespawn = true;
 
     // 出生点
     private Location spawnLocation;
+
+    // 重生所需时间
+    private Integer respawnDelay = 30;
 }
