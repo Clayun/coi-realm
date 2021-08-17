@@ -38,9 +38,6 @@ public class COIFarmer extends COIHuman{
     // 造成卡住的方块
     private List<Location> blackBlockList;
 
-    // 是否正在挖掘中
-    private boolean isBreaking = false;
-
     // 缓存手里的物品
     private ItemStack itemInHand;
 
@@ -275,11 +272,11 @@ public class COIFarmer extends COIHuman{
                                             @Override
                                             public void run() {
                                                 //拆除完成
-                                                isBreaking = false;
+
                                             }
                                         }
                                 );
-                                isBreaking = true;
+
                                 BlockBreaker breaker = getNpc().getBlockBreaker(wheat, blockBreakerConfiguration);
                                 if (breaker.shouldExecute()) {
                                     TaskRunnable run = new TaskRunnable(breaker);
