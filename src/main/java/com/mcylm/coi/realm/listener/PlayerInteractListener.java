@@ -5,10 +5,7 @@ import com.mcylm.coi.realm.cache.PlayerClipboard;
 import com.mcylm.coi.realm.enums.COIServerMode;
 import com.mcylm.coi.realm.tools.building.COIPaster;
 import com.mcylm.coi.realm.tools.building.COIStructure;
-import com.mcylm.coi.realm.tools.npc.COIFarmer;
-import com.mcylm.coi.realm.tools.npc.COINpc;
-import com.mcylm.coi.realm.tools.npc.COIWorker;
-import com.mcylm.coi.realm.tools.npc.COIWorkerCreator;
+import com.mcylm.coi.realm.tools.npc.*;
 import me.lucko.helper.Helper;
 import me.lucko.helper.Schedulers;
 import org.bukkit.Location;
@@ -168,7 +165,7 @@ public class PlayerInteractListener implements Listener {
 
     }
 
-    @EventHandler
+//    @EventHandler
     public void onFarmerSpawn(PlayerInteractEvent event){
 
         Action action = event.getAction();
@@ -242,6 +239,76 @@ public class PlayerInteractListener implements Listener {
 //                    worker.move();
 //                }
 //            }.runTaskTimer(Entry.getInstance(),0,20l);
+        }
+
+    }
+
+    public static int SOLDIER_COUNT = 0;
+
+    @EventHandler
+    public void onSoldierSpawn(PlayerInteractEvent event){
+
+        Action action = event.getAction();
+
+        //判断是右手，同时避免触发两次
+        if(Action.RIGHT_CLICK_BLOCK  == action && event.getHand().equals(EquipmentSlot.HAND)
+                //空手触发
+                && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.DIAMOND_HOE){
+
+            SOLDIER_COUNT ++;
+
+            Block clickedBlock = event.getClickedBlock();
+
+            Location clone = clickedBlock.getLocation().clone();
+            clone.setY(clone.getY()+1);
+            Location location = clone;
+
+            //背包内的物品
+            List<ItemStack> inventory = new ArrayList<>();
+            ItemStack pickaxe = new ItemStack(Material.IRON_SWORD);
+            inventory.add(pickaxe);
+
+            Set<String> breakBlockMaterials = new HashSet<>();
+//            breakBlockMaterials.add("WHEAT");
+
+            Set<String> pickItemMaterials = new HashSet<>();
+            pickItemMaterials.add("APPLE");
+            pickItemMaterials.add("BREAD");
+//            pickItemMaterials.add("WHEAT");
+
+            COISoldierCreator coiNpc = new COISoldierCreator(SOLDIER_COUNT);
+            coiNpc.setInventory(inventory);
+            coiNpc.setAggressive(true);
+            coiNpc.setAlertRadius(5);
+            coiNpc.setBreakBlockMaterials(breakBlockMaterials);
+            coiNpc.setName("战士");
+            coiNpc.setLevel(1);
+            coiNpc.setPickItemMaterials(pickItemMaterials);
+            coiNpc.setSkinName("solider");
+            coiNpc.setSkinSignature("LwMy/g2xAdhfHErWkk6pMM7SnIa2ERQW5X64w1q+/eEW3aamwP/1//nBdUqlWDZb/bQ0zhsl" +
+                    "/JmnnJ118ePKzS6p7Gs1Hbk70EVEkuGA2f5VUK4F868944GHGxZAhbSC766IMSGuUCiusRfxuXHsF8k0LqKWZbO+" +
+                    "enG46hS+V/T81F7HvDm+rOOxpbwCByghLHcAwiKNQTDWzQD+tIkaUI8hHP2MF4RMzih4rMmD1AteAa3vKjNE5cKyk" +
+                    "bRsRfwL6p6LQzOCCSB5aJe8eLOErCBVN7E0xBHVIpNm3CoEVf4IG/rvZf/pgx8g39gsD6E4Gdqw5OrgVSCj63nQrapF" +
+                    "WXTNqvEz6PdLd6hiagqPtIzujvHaVKVoJFC34X+0SGG6N9APnFx4ATW0HSmKuGsgVhvA03w6x0uyHCchbcG6lVRDEiWsNx" +
+                    "Wf11BFsOchFCqRyZK5hVLoSP3SWyBXTCNAHVhHzhVxl1EpGSpEZtB9kLWcl9XrLc3ykT16gy9p0WYH38HtwILVTmm88gXhh" +
+                    "vTRl+hG+WDdZbk2VyUAmVyD0g9semGkn1v00in8SdjtMi+ATV2Ej0RTPgJJ/m/qwpWLQJF5ru/mWaXAq5UTqaCKFauEWNa" +
+                    "6+Tr4AqNAOtrtQVgspk/N9tWDUdKuxY7FuU9GFrbBB7aTrRSQka7WQzeaKtA=");
+            coiNpc.setSkinTextures("eyJ0aW1lc3RhbXAiOjE1NzY1MDk3M" +
+                    "Dc0MTcsInByb2ZpbGVJZCI6ImZkNjBmMzZmNTg2MTRmMTJiM2NkNDdjMmQ4NTUyOTlhI" +
+                    "iwicHJvZmlsZU5hbWUiOiJSZWFkIiwic2lnbmF0dXJlUmVxdWlyZWQiOnRydWUsInRleHR1cmVzI" +
+                    "jp7IlNLSU4iOnsidXJsIjoiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS83NDFlZ" +
+                    "WQ5OTU5MGRkMGRlZjE0MjhiODJhMmE4OTA3OTczN2Q3ZjVhZDA4MTQ5MTVlZmY1ZDdmNjgyNTk2OWYzIn19fQ");
+
+            coiNpc.setSpawnLocation(location);
+            coiNpc.setFollowPlayerName(event.getPlayer().getName());
+
+            COISoldier soldier = new COISoldier(coiNpc);
+
+            soldier.spawn(location);
+
+            // 同步开启AI算法
+            Schedulers.sync().runRepeating(() -> soldier.move(),0,20L);
+
         }
 
     }
