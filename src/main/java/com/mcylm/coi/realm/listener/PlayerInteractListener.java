@@ -9,6 +9,8 @@ import com.mcylm.coi.realm.tools.npc.COIFarmer;
 import com.mcylm.coi.realm.tools.npc.COINpc;
 import com.mcylm.coi.realm.tools.npc.COIWorker;
 import com.mcylm.coi.realm.tools.npc.COIWorkerCreator;
+import me.lucko.helper.Helper;
+import me.lucko.helper.Schedulers;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -231,12 +233,15 @@ public class PlayerInteractListener implements Listener {
 
             worker.spawn(location);
 
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    worker.move();
-                }
-            }.runTaskTimer(Entry.getInstance(),0,20l);
+            // 同步开启AI算法
+            Schedulers.sync().runRepeating(() -> worker.move(),0,20L);
+
+//            new BukkitRunnable() {
+//                @Override
+//                public void run() {
+//                    worker.move();
+//                }
+//            }.runTaskTimer(Entry.getInstance(),0,20l);
         }
 
     }
