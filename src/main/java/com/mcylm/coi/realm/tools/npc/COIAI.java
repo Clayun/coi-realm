@@ -1,8 +1,9 @@
 package com.mcylm.coi.realm.tools.npc;
 
-import net.citizensnpcs.api.npc.NPC;
+import com.mcylm.coi.realm.tools.npc.impl.COIHuman;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 
 import java.util.List;
 
@@ -34,6 +35,9 @@ public interface COIAI {
 
     // 获取NPC附近的方块
     List<Block> getNearbyBlocks(double radius);
+
+    // 获取NPC附近的生物
+    List<Entity> getNearByEntities(double radius);
 
     // 移动
     void move();

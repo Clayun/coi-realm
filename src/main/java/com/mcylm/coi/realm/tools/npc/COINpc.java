@@ -7,6 +7,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -75,4 +76,40 @@ public class COINpc implements Serializable {
 
     // 重生所需时间
     private Integer respawnDelay = 30;
+
+    // 服装类型
+    public static List<Material> CLOTHES = new ArrayList<>(){{
+        // 头盔
+        add(Material.CHAINMAIL_HELMET);
+        add(Material.DIAMOND_HELMET);
+        add(Material.GOLDEN_HELMET);
+        add(Material.IRON_HELMET);
+        add(Material.LEATHER_HELMET);
+        add(Material.NETHERITE_HELMET);
+        add(Material.TURTLE_HELMET);
+
+        // 胸甲
+        add(Material.CHAINMAIL_CHESTPLATE);
+        add(Material.DIAMOND_CHESTPLATE);
+        add(Material.GOLDEN_CHESTPLATE);
+        add(Material.IRON_CHESTPLATE);
+        add(Material.LEATHER_CHESTPLATE);
+        add(Material.NETHERITE_CHESTPLATE);
+
+        // 裤子
+        add(Material.LEATHER_LEGGINGS);
+        add(Material.CHAINMAIL_LEGGINGS);
+        add(Material.DIAMOND_LEGGINGS);
+        add(Material.GOLDEN_LEGGINGS);
+        add(Material.IRON_LEGGINGS);
+        add(Material.NETHERITE_LEGGINGS);
+
+        // 鞋子
+        add(Material.CHAINMAIL_BOOTS);
+        add(Material.DIAMOND_BOOTS);
+        add(Material.GOLDEN_BOOTS);
+        add(Material.IRON_BOOTS);
+        add(Material.LEATHER_BOOTS);
+        add(Material.NETHERITE_BOOTS);
+    }};
 }

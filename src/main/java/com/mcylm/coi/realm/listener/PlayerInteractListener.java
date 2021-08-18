@@ -6,12 +6,16 @@ import com.mcylm.coi.realm.enums.COIServerMode;
 import com.mcylm.coi.realm.tools.building.COIPaster;
 import com.mcylm.coi.realm.tools.building.COIStructure;
 import com.mcylm.coi.realm.tools.npc.*;
-import me.lucko.helper.Helper;
+import com.mcylm.coi.realm.tools.npc.impl.COIFarmer;
+import com.mcylm.coi.realm.tools.npc.impl.COIHuman;
+import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
+import com.mcylm.coi.realm.tools.npc.impl.COIWorker;
+import com.mcylm.coi.realm.utils.FormationUtils;
 import me.lucko.helper.Schedulers;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,12 +24,12 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.checkerframework.checker.units.qual.C;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class PlayerInteractListener implements Listener {
 
@@ -263,6 +267,21 @@ public class PlayerInteractListener implements Listener {
             clone.setY(clone.getY()+1);
             Location location = clone;
 
+            // 同步开启AI算法
+            createArmy(16,event.getPlayer(),location);
+
+        }
+
+    }
+
+    private void createArmy(int num,Player player,Location location){
+
+        List<COIHuman> coiHumen = new ArrayList<>();
+
+        for(int i = 0;i < num;i++){
+
+            int count = i+1;
+
             //背包内的物品
             List<ItemStack> inventory = new ArrayList<>();
             ItemStack pickaxe = new ItemStack(Material.IRON_SWORD);
@@ -276,12 +295,27 @@ public class PlayerInteractListener implements Listener {
             pickItemMaterials.add("BREAD");
 //            pickItemMaterials.add("WHEAT");
 
-            COISoldierCreator coiNpc = new COISoldierCreator(SOLDIER_COUNT);
+            List<Material> clothes = COINpc.CLOTHES;
+
+            for(Material clothesType : clothes){
+                pickItemMaterials.add(clothesType.name());
+            }
+
+            Set<EntityType> enemyEntities = new HashSet<>();
+            enemyEntities.add(EntityType.ZOMBIE);
+            enemyEntities.add(EntityType.CREEPER);
+            enemyEntities.add(EntityType.SKELETON);
+            enemyEntities.add(EntityType.SPIDER);
+            enemyEntities.add(EntityType.SLIME);
+
+            COISoldierCreator coiNpc = new COISoldierCreator(count, FormationUtils.customFormat());
             coiNpc.setInventory(inventory);
             coiNpc.setAggressive(true);
             coiNpc.setAlertRadius(5);
             coiNpc.setBreakBlockMaterials(breakBlockMaterials);
-            coiNpc.setName("战士");
+            coiNpc.setEnemyEntities(enemyEntities);
+
+            coiNpc.setName("战士"+count);
             coiNpc.setLevel(1);
             coiNpc.setPickItemMaterials(pickItemMaterials);
             coiNpc.setSkinName("solider");
@@ -300,16 +334,20 @@ public class PlayerInteractListener implements Listener {
                     "WQ5OTU5MGRkMGRlZjE0MjhiODJhMmE4OTA3OTczN2Q3ZjVhZDA4MTQ5MTVlZmY1ZDdmNjgyNTk2OWYzIn19fQ");
 
             coiNpc.setSpawnLocation(location);
-            coiNpc.setFollowPlayerName(event.getPlayer().getName());
+            coiNpc.setFollowPlayerName(player.getName());
 
             COISoldier soldier = new COISoldier(coiNpc);
 
             soldier.spawn(location);
 
-            // 同步开启AI算法
-            Schedulers.sync().runRepeating(() -> soldier.move(),0,20L);
-
+            coiHumen.add(soldier);
         }
 
+        COIRunner coiRunner = new COIRunner(coiHumen);
+
+        // 启动军队
+        coiRunner.run();
+
     }
+
 }

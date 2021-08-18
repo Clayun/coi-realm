@@ -1,9 +1,10 @@
-package com.mcylm.coi.realm.tools.npc;
+package com.mcylm.coi.realm.tools.npc.impl;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.runnable.TaskRunnable;
+import com.mcylm.coi.realm.tools.npc.COINpc;
+import com.mcylm.coi.realm.tools.npc.COIWorkerCreator;
 import com.mcylm.coi.realm.utils.ItemUtils;
-import com.mcylm.coi.realm.utils.LoggerUtils;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
@@ -12,7 +13,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.Ageable;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
@@ -20,7 +20,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * 农夫
@@ -164,6 +163,9 @@ public class COIFarmer extends COIHuman{
                             }
                         }
 
+                        // 挥动手作为动作动画
+                        ((LivingEntity)getNpc().getEntity()).swingMainHand();
+
                         Material material = Material.FARMLAND;
                         block.setType(material);
 
@@ -296,6 +298,9 @@ public class COIFarmer extends COIHuman{
                                     itemInHand = entity.getEquipment().getItemInMainHand();
                                 }
 
+                                // 挥动手作为动作动画
+                                ((LivingEntity)getNpc().getEntity()).swingMainHand();
+
                                 entity.getEquipment().setItemInMainHand(new ItemStack(Material.BONE_MEAL));
 
                                 ageable.setAge(ageable.getAge()+1);
@@ -317,7 +322,8 @@ public class COIFarmer extends COIHuman{
                         // 同时距离小于3，就种植小麦
                         if(getNpc().getEntity().getLocation().distance(wheat.getLocation()) <= 2){
 
-
+                            // 挥动手作为动作动画
+                            ((LivingEntity)getNpc().getEntity()).swingMainHand();
 
                             Material material = Material.WHEAT;
                             wheat.setType(material);

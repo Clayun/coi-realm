@@ -1,29 +1,26 @@
-package com.mcylm.coi.realm.tools.npc;
+package com.mcylm.coi.realm.tools.npc.impl;
 
 import com.mcylm.coi.realm.Entry;
-import com.mcylm.coi.realm.tools.building.COIBlock;
+import com.mcylm.coi.realm.tools.npc.COIAI;
+import com.mcylm.coi.realm.tools.npc.COINpc;
 import com.mcylm.coi.realm.utils.LoggerUtils;
-import me.lucko.helper.Schedulers;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.goals.TargetNearbyEntityGoal;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.attribute.Attributable;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * 所有AI的父类，每个
+ * 所有AI的父类
+ * 通用AI，拥有基本生存能力，能捡东西，吃东西
  */
-public class COIHuman implements COIAI{
+public class COIHuman implements COIAI {
 
     // CitizensNPC 实例
     private NPC npc;
@@ -35,6 +32,8 @@ public class COIHuman implements COIAI{
     private boolean isSpawn = false;
     // Citizens 实例是否已创建
     private boolean isCreated = false;
+    // 默认饥饿度
+    private static final int DEFAULT_HUNGER = 20;
     // 饥饿度计算值间隔
     private static final int HUNGER_DELAY = 20;
     // 饥饿度计数值
@@ -110,6 +109,7 @@ public class COIHuman implements COIAI{
             }else{
                 // 重生
                 despawn();
+                setHunger(DEFAULT_HUNGER);
                 spawn(coiNpc.getSpawnLocation());
             }
 
@@ -304,6 +304,7 @@ public class COIHuman implements COIAI{
                     || itemStack.getType() == Material.TURTLE_HELMET
             ){
                 entity.getEquipment().setHelmet(itemStack);
+                entity.getEquipment().setHelmet(itemStack);
                 iterator.remove();
             }
 
@@ -315,6 +316,7 @@ public class COIHuman implements COIAI{
                     || itemStack.getType() == Material.LEATHER_CHESTPLATE
                     || itemStack.getType() == Material.NETHERITE_CHESTPLATE
             ){
+                entity.getEquipment().setChestplate(itemStack);
                 entity.getEquipment().setChestplate(itemStack);
                 iterator.remove();
 
@@ -329,6 +331,7 @@ public class COIHuman implements COIAI{
                     || itemStack.getType() == Material.NETHERITE_LEGGINGS
             ){
                 entity.getEquipment().setLeggings(itemStack);
+                entity.getEquipment().setLeggings(itemStack);
                 iterator.remove();
 
             }
@@ -341,6 +344,7 @@ public class COIHuman implements COIAI{
                     || itemStack.getType() == Material.LEATHER_BOOTS
                     || itemStack.getType() == Material.NETHERITE_BOOTS
             ){
+                entity.getEquipment().setBoots(itemStack);
                 entity.getEquipment().setBoots(itemStack);
                 iterator.remove();
 
@@ -620,7 +624,7 @@ public class COIHuman implements COIAI{
     private void initNpcAttributes(COINpc npcCreator){
 
         // 饥饿值默认20
-        hunger = 20;
+        hunger = DEFAULT_HUNGER;
 
         // 如果背包未初始化
         if(npcCreator.getInventory() == null){
@@ -689,6 +693,35 @@ public class COIHuman implements COIAI{
         Collections.reverse(list);
 
         return list;
+    }
+
+    @Override
+    public List<Entity> getNearByEntities(double radius) {
+
+        if(!isAlive()){
+            return new ArrayList<>();
+        }
+
+        List<Entity> result = new ArrayList<>();
+
+        List<Entity> nearbyEntities = npc.getEntity().getNearbyEntities(radius, 2, radius);
+
+        if(!nearbyEntities.isEmpty()){
+            for(Entity entity : nearbyEntities){
+                if(entity != null){
+                    if (entity.getType().equals(EntityType.PLAYER)) {
+                        // 实体是玩家
+                        result.add(entity);
+                    }else if(entity instanceof LivingEntity){
+                        // 普通生物
+                        result.add(entity);
+                    }
+                }
+
+            }
+        }
+
+        return result;
     }
 
     public NPC getNpc() {

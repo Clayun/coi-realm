@@ -1,27 +1,22 @@
-package com.mcylm.coi.realm.tools.npc;
+package com.mcylm.coi.realm.tools.npc.impl;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.runnable.TaskRunnable;
-import com.mcylm.coi.realm.tools.building.COIBlock;
+import com.mcylm.coi.realm.tools.npc.COIWorkerCreator;
 import com.mcylm.coi.realm.utils.ItemUtils;
-import com.mcylm.coi.realm.utils.LoggerUtils;
-import me.lucko.helper.Helper;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * 工人
