@@ -340,6 +340,45 @@ public class COIFarmer extends COIHuman{
                         }
 
                     }
+                }else if (block.getType().equals(Material.DIRT)){
+                    // 如果耕地变成了泥土
+                    // 泥土上方必须是空气才可以
+                    Location clone = block.getLocation().clone();
+                    clone.setY(clone.getY()+1);
+                    if(clone.getBlock().getType().equals(Material.AIR)){
+                        // 如果找到泥土了，就去把他变成耕地
+                        if(getNpc().getEntity().getLocation().distance(block.getLocation()) <= 3){
+
+                            LivingEntity entity = (LivingEntity) getNpc().getEntity();
+
+                            if(entity.getEquipment().getItemInMainHand().getType().equals(Material.BONE_MEAL)){
+                                if(itemInHand != null){
+                                    entity.getEquipment().setItemInMainHand(itemInHand);
+                                }
+                            }
+
+                            // 挥动手作为动作动画
+                            ((LivingEntity)getNpc().getEntity()).swingMainHand();
+
+                            Material material = Material.FARMLAND;
+                            block.setType(material);
+
+                            BlockState state = block.getState();
+                            state.update(true);
+
+                            block.getWorld().playEffect(block.getLocation(), Effect.STEP_SOUND,1);
+
+                            farmlands.add(block);
+
+                            // 每次只弄一个
+                            break;
+                        }else{
+                            // 距离不够，就跑过去
+                            getNpc().faceLocation(block.getLocation());
+                            findPath(block.getLocation());
+                            blackBlockList.add(block.getLocation());
+                        }
+                    }
                 }
 
 
@@ -419,6 +458,10 @@ public class COIFarmer extends COIHuman{
         }
     }
 
+    /**
+     * 将物品添加到自己的专属背包
+     * @param item
+     */
     private void addItemToInventory(ItemStack item){
         if(item != null){
             List<ItemStack> backpack = getFarmerInventory();
