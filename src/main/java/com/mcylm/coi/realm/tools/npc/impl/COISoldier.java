@@ -3,6 +3,7 @@ package com.mcylm.coi.realm.tools.npc.impl;
 import com.mcylm.coi.realm.tools.npc.COISoldierCreator;
 import com.mcylm.coi.realm.utils.FormationUtils;
 import net.citizensnpcs.api.ai.tree.Behavior;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -122,6 +123,11 @@ public class COISoldier extends COIHuman{
     private void formation(){
 
         if(fighting){
+            return;
+        }
+
+        // 如果没有跟随的玩家，就原地待命
+        if(StringUtils.isBlank(getCoiNpc().getFollowPlayerName())){
             return;
         }
 
