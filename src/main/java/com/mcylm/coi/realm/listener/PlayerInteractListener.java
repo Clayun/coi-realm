@@ -247,8 +247,6 @@ public class PlayerInteractListener implements Listener {
 
     }
 
-    public static int SOLDIER_COUNT = 0;
-
     @EventHandler
     public void onSoldierSpawn(PlayerInteractEvent event){
 
@@ -258,8 +256,6 @@ public class PlayerInteractListener implements Listener {
         if(Action.RIGHT_CLICK_BLOCK  == action && event.getHand().equals(EquipmentSlot.HAND)
                 //空手触发
                 && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.DIAMOND_HOE){
-
-            SOLDIER_COUNT ++;
 
             Block clickedBlock = event.getClickedBlock();
 
