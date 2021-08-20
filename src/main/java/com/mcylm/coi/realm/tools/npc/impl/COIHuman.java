@@ -1,8 +1,8 @@
 package com.mcylm.coi.realm.tools.npc.impl;
 
 import com.mcylm.coi.realm.Entry;
-import com.mcylm.coi.realm.tools.npc.COIAI;
-import com.mcylm.coi.realm.tools.npc.COINpc;
+import com.mcylm.coi.realm.tools.npc.AI;
+import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.goals.TargetNearbyEntityGoal;
@@ -20,7 +20,7 @@ import java.util.*;
  * 所有AI的父类
  * 通用AI，拥有基本生存能力，能捡东西，吃东西
  */
-public class COIHuman implements COIAI {
+public class COIHuman implements AI {
 
     // CitizensNPC 实例
     private NPC npc;

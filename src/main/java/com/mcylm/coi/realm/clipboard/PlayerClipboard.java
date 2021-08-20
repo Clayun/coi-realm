@@ -1,8 +1,8 @@
-package com.mcylm.coi.realm.cache;
+package com.mcylm.coi.realm.clipboard;
 
 import com.mcylm.coi.realm.Entry;
-import com.mcylm.coi.realm.tools.building.COIBuilder;
-import com.mcylm.coi.realm.tools.building.COIStructure;
+import com.mcylm.coi.realm.tools.building.impl.COIBuilder;
+import com.mcylm.coi.realm.model.COIStructure;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

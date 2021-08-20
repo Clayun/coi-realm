@@ -3,7 +3,7 @@ package com.mcylm.coi.realm;
 import com.mcylm.coi.realm.cmd.COIStructureCommand;
 import com.mcylm.coi.realm.enums.COIServerMode;
 import com.mcylm.coi.realm.listener.PlayerInteractListener;
-import com.mcylm.coi.realm.tools.building.COIBuilder;
+import com.mcylm.coi.realm.tools.building.impl.COIBuilder;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import org.bukkit.Bukkit;

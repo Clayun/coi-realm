@@ -1,5 +1,6 @@
-package com.mcylm.coi.realm.tools.building;
+package com.mcylm.coi.realm.model;
 
+import com.mcylm.coi.realm.model.COIBlock;
 import lombok.Data;
 
 import java.util.List;

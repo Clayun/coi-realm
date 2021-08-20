@@ -1,4 +1,4 @@
-package com.mcylm.coi.realm.tools.building;
+package com.mcylm.coi.realm.model;
 
 import lombok.Data;
 import org.bukkit.Location;

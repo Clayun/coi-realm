@@ -97,7 +97,8 @@ public class COISoldier extends COIHuman{
      * @param entity
      */
     private void attack(Entity entity){
-        if(getNpc().getEntity().getLocation().distance(entity.getLocation()) <= 2){
+        
+        if(getNpc().getEntity().getLocation().distance(entity.getLocation()) <= 3){
 
             // 挥动手
             ((LivingEntity)getNpc().getEntity()).swingMainHand();

@@ -2,8 +2,8 @@ package com.mcylm.coi.realm.tools.npc.impl;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.runnable.TaskRunnable;
-import com.mcylm.coi.realm.tools.npc.COINpc;
-import com.mcylm.coi.realm.tools.npc.COIWorkerCreator;
+import com.mcylm.coi.realm.model.COINpc;
+import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import org.bukkit.Bukkit;
@@ -12,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.Chest;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -104,7 +105,7 @@ public class COIFarmer extends COIHuman{
             }
         }
 
-        COIWorkerCreator coiNpc = (COIWorkerCreator) getCoiNpc();
+        COIMinerCreator coiNpc = (COIMinerCreator) getCoiNpc();
 
         if(count >= coiNpc.getResourceLimitToBack()){
             // 满足回城条件，回去
@@ -201,12 +202,27 @@ public class COIFarmer extends COIHuman{
             return;
         }
 
-        COIWorkerCreator coiNpc = (COIWorkerCreator) getCoiNpc();
+        COIMinerCreator coiNpc = (COIMinerCreator) getCoiNpc();
 
-        findPath(coiNpc.getChestLocation());
+        List<Location> chestsLocation = coiNpc.getChestsLocation();
+
+        if(chestsLocation.isEmpty()){
+            // 原地待命
+            return;
+        }
+
+        // 没有满的箱子
+        Location notFullChestLocation = getEmptyChestByLocations(chestsLocation);
+
+        if(notFullChestLocation == null){
+            // 原地待命
+            return;
+        }
+
+        findPath(notFullChestLocation);
 
         if(getLocation() != null){
-            if(getLocation().distance(coiNpc.getChestLocation()) < 3){
+            if(getLocation().distance(notFullChestLocation) < 3){
                 List<ItemStack> inventory = getCoiNpc().getInventory();
                 getCoiNpc().setInventory(new ArrayList<>());
 
@@ -215,13 +231,36 @@ public class COIFarmer extends COIHuman{
 
                         // 把面包丢进箱子里
                         if(itemStack.getType().equals(Material.BREAD)){
-                            ItemUtils.addItemIntoChest(coiNpc.getChestLocation(),itemStack);
+                            ItemUtils.addItemIntoChest(notFullChestLocation,itemStack);
                         }
 
                     }
                 }
             }
         }
+    }
+
+    /**
+     * 找一个相对比较空的箱子装东西
+     * @param chestsLocation
+     * @return
+     */
+    private Location getEmptyChestByLocations(List<Location> chestsLocation){
+        for(Location location : chestsLocation){
+            Block block = location.getBlock();
+            if(block.getType().equals(Material.CHEST)){
+                Chest chest = (Chest) block.getState();
+
+                int i = chest.getInventory().firstEmpty();
+
+                if(i != -1){
+                    // 没有满
+                    return location;
+                }
+            }
+        }
+
+        return null;
     }
 
     /**

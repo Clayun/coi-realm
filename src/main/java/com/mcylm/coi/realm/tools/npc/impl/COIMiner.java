@@ -2,7 +2,7 @@ package com.mcylm.coi.realm.tools.npc.impl;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.runnable.TaskRunnable;
-import com.mcylm.coi.realm.tools.npc.COIWorkerCreator;
+import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import org.bukkit.Bukkit;
@@ -19,11 +19,11 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import java.util.*;
 
 /**
- * 工人
+ * 矿工
  * 相较于普通AI增加了拆方块的功能，可以在此基础上细分工种
- * 工人会寻找矿物，挖到之后会回来放到箱子里，循环反复
+ * 矿工会寻找矿物，挖到之后会捡回来放到箱子里，循环反复
  */
-public class COIWorker extends COIHuman{
+public class COIMiner extends COIHuman{
 
     // 是否正在挖掘中
     private boolean isBreaking = false;
@@ -31,7 +31,7 @@ public class COIWorker extends COIHuman{
     // 待拆除的方块
     private List<Block> targetBlocks;
 
-    public COIWorker(COIWorkerCreator npcCreator) {
+    public COIMiner(COIMinerCreator npcCreator) {
         super(npcCreator);
         // 初始化NPC待拆方块
         this.targetBlocks = new ArrayList<>();
@@ -43,7 +43,7 @@ public class COIWorker extends COIHuman{
      * @param respawn 是否重新生成，重新生成会清空背包
      * @return
      */
-    public COIHuman update(COIWorkerCreator coiNpc,boolean respawn) {
+    public COIHuman update(COIMinerCreator coiNpc, boolean respawn) {
 
         COIHuman update = super.update(coiNpc, respawn);
 
@@ -211,7 +211,7 @@ public class COIWorker extends COIHuman{
             }
         }
 
-        COIWorkerCreator coiNpc = (COIWorkerCreator) getCoiNpc();
+        COIMinerCreator coiNpc = (COIMinerCreator) getCoiNpc();
 
         if(count >= coiNpc.getResourceLimitToBack()){
             // 满足回城条件，回去
@@ -226,12 +226,27 @@ public class COIWorker extends COIHuman{
      */
     private void backAndSaveResources(){
 
-        COIWorkerCreator coiNpc = (COIWorkerCreator) getCoiNpc();
+        COIMinerCreator coiNpc = (COIMinerCreator) getCoiNpc();
 
-        findPath(coiNpc.getChestLocation());
+        List<Location> chestsLocation = coiNpc.getChestsLocation();
+
+        if(chestsLocation.isEmpty()){
+            // 原地待命
+            return;
+        }
+
+        // 没有满的箱子
+        Location notFullChestLocation = getEmptyChestByLocations(chestsLocation);
+
+        if(notFullChestLocation == null){
+            // 原地待命
+            return;
+        }
+
+        findPath(notFullChestLocation);
 
         if(getLocation() != null){
-            if(getLocation().distance(coiNpc.getChestLocation()) < 3){
+            if(getLocation().distance(notFullChestLocation) < 3){
                 List<ItemStack> inventory = getCoiNpc().getInventory();
                 getCoiNpc().setInventory(new ArrayList<>());
 
@@ -246,7 +261,7 @@ public class COIWorker extends COIHuman{
 
                             // 不是食物的就丢进箱子里
                             if(!itemStack.getType().equals(material)){
-                                ItemUtils.addItemIntoChest(coiNpc.getChestLocation(),itemStack);
+                                ItemUtils.addItemIntoChest(notFullChestLocation,itemStack);
                             }
                         }
 
@@ -254,6 +269,29 @@ public class COIWorker extends COIHuman{
                 }
             }
         }
+    }
+
+    /**
+     * 找一个相对比较空的箱子装东西
+     * @param chestsLocation
+     * @return
+     */
+    private Location getEmptyChestByLocations(List<Location> chestsLocation){
+        for(Location location : chestsLocation){
+            Block block = location.getBlock();
+            if(block.getType().equals(Material.CHEST)){
+                Chest chest = (Chest) block.getState();
+
+                int i = chest.getInventory().firstEmpty();
+
+                if(i != -1){
+                    // 没有满
+                    return location;
+                }
+            }
+        }
+
+        return null;
     }
 
     /**

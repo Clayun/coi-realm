@@ -1,8 +1,13 @@
-package com.mcylm.coi.realm.tools.building;
+package com.mcylm.coi.realm.tools.building.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.mcylm.coi.realm.Entry;
+import com.mcylm.coi.realm.model.COIBlock;
+import com.mcylm.coi.realm.model.COINpc;
+import com.mcylm.coi.realm.model.COIPaster;
+import com.mcylm.coi.realm.model.COIStructure;
+import com.mcylm.coi.realm.tools.building.Builder;
 import com.mcylm.coi.realm.utils.FileUtils;
 import com.mcylm.coi.realm.utils.JsonUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
@@ -72,9 +77,10 @@ public class COIBuilder implements Builder {
                 //删除掉空气方块
             }else
                 needBuildBlocks.add(coiBlock);
-
-
         }
+
+        // NPC出生点方块名称
+        String spawnerBlockTypeName = Entry.getInstance().getConfig().getString("game.npc.spawner-material");
 
         //根据Y轴排序
         Collections.sort(needBuildBlocks, Comparator.comparingDouble(COIBlock::getY));
@@ -83,6 +89,9 @@ public class COIBuilder implements Builder {
 
             // 建造到第几个方块
             int index = 0;
+
+            // NPC出生方块
+            private Location spawnLocation = null;
 
             @Override
             public void run() {
@@ -106,6 +115,15 @@ public class COIBuilder implements Builder {
                                 Material material = Material.getMaterial(coiBlock.getMaterial());
                                 block.setType(material);
 
+                                if(block.getType().equals(Material.getMaterial(spawnerBlockTypeName))){
+                                    // 如果匹配出生点方块
+                                    Location cloneLocation = block.getLocation().clone();
+                                    cloneLocation.setY(cloneLocation.getY() + 1);
+                                    spawnLocation = cloneLocation;
+
+                                    player.teleport(spawnLocation);
+                                }
+
                                 BlockData blockData = Bukkit.createBlockData(coiBlock.getBlockData());
 
                                 BlockState state = block.getState();
@@ -128,6 +146,19 @@ public class COIBuilder implements Builder {
                         if(player != null){
                             LoggerUtils.sendActionbar(player,getBuildingProgress(structure.getName(),needBuildBlocks.size(),index,paster.getInterval(),paster.getUnit()));
                         }
+
+                        // 建造完成，设置NPC投入生产
+                        if(paster.getNpcCreator() != null
+                            && spawnLocation != null){
+
+                            // 赋值出生点
+                            paster.getNpcCreator().setSpawnLocation(spawnLocation);;
+
+                        }
+
+                        // 通知外部建造完成
+                        paster.setComplete(true);
+
                         this.cancel();
                     }
                 }

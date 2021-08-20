@@ -1,16 +1,19 @@
 package com.mcylm.coi.realm.listener;
 
 import com.mcylm.coi.realm.Entry;
-import com.mcylm.coi.realm.cache.PlayerClipboard;
+import com.mcylm.coi.realm.clipboard.PlayerClipboard;
 import com.mcylm.coi.realm.enums.COIServerMode;
-import com.mcylm.coi.realm.tools.building.COIPaster;
-import com.mcylm.coi.realm.tools.building.COIStructure;
+import com.mcylm.coi.realm.model.COINpc;
+import com.mcylm.coi.realm.model.COIPaster;
+import com.mcylm.coi.realm.model.COIStructure;
+import com.mcylm.coi.realm.tools.building.impl.COIStope;
 import com.mcylm.coi.realm.tools.npc.*;
 import com.mcylm.coi.realm.tools.npc.impl.COIFarmer;
 import com.mcylm.coi.realm.tools.npc.impl.COIHuman;
 import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
-import com.mcylm.coi.realm.tools.npc.impl.COIWorker;
+import com.mcylm.coi.realm.tools.npc.impl.COIMiner;
 import com.mcylm.coi.realm.utils.FormationUtils;
+import com.mcylm.coi.realm.utils.LoggerUtils;
 import me.lucko.helper.Schedulers;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -24,7 +27,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.checkerframework.checker.units.qual.C;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -88,10 +90,38 @@ public class PlayerInteractListener implements Listener {
             COIStructure newTest = Entry.getBuilder().getStructureByFile("mofang.structure");
 
             //创建一个粘贴工具
-            COIPaster coiPaster = new COIPaster(2,5,player.getWorld().getName(),location,newTest,false);
+            COIPaster coiPaster = new COIPaster(false,2,5,player.getWorld().getName(),location,newTest,false,null);
 
             //更新世界方块
             Entry.getBuilder().pasteStructure(coiPaster,player);
+
+        }
+
+    }
+
+    /**
+     * 粘贴建筑并设置NPC
+     * @param event
+     */
+    @EventHandler
+    public void onBuilding(PlayerInteractEvent event){
+
+        Action action = event.getAction();
+
+        //判断是右手，同时避免触发两次
+        if(Action.RIGHT_CLICK_BLOCK  == action && event.getHand().equals(EquipmentSlot.HAND)
+                //空手触发
+                && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.DIAMOND_PICKAXE){
+
+            Block clickedBlock = event.getClickedBlock();
+            Location location = clickedBlock.getLocation();
+
+            LoggerUtils.debug("点击："+location.getWorld().getName()+" "+location.getX()+","+location.getY()+","+location.getZ());
+
+            Player player = event.getPlayer();
+
+            COIStope coiStope = new COIStope();
+            coiStope.build(location,player);
 
         }
 
@@ -128,7 +158,10 @@ public class PlayerInteractListener implements Listener {
 
             Location chestLocation = new Location(event.getPlayer().getWorld(), 293.506d, 72.875d, 30.637d);
 
-            COIWorkerCreator coiNpc = new COIWorkerCreator(chestLocation);
+            List<Location> locations = new ArrayList<>();
+            locations.add(chestLocation);
+
+            COIMinerCreator coiNpc = new COIMinerCreator(locations);
             coiNpc.setInventory(inventory);
             coiNpc.setAggressive(false);
             coiNpc.setAlertRadius(5);
@@ -155,7 +188,7 @@ public class PlayerInteractListener implements Listener {
 
 
 
-            COIWorker worker = new COIWorker(coiNpc);
+            COIMiner worker = new COIMiner(coiNpc);
 
             worker.spawn(location);
 
@@ -202,8 +235,9 @@ public class PlayerInteractListener implements Listener {
             pickItemMaterials.add("WHEAT");
 
             Location chestLocation = new Location(event.getPlayer().getWorld(), 293.506d, 72.875d, 30.637d);
-
-            COIWorkerCreator coiNpc = new COIWorkerCreator(chestLocation);
+            List<Location> locations = new ArrayList<>();
+            locations.add(chestLocation);
+            COIMinerCreator coiNpc = new COIMinerCreator(locations);
             coiNpc.setInventory(inventory);
             coiNpc.setAggressive(false);
             coiNpc.setAlertRadius(5);
@@ -247,7 +281,7 @@ public class PlayerInteractListener implements Listener {
 
     }
 
-    @EventHandler
+//    @EventHandler
     public void onSoldierSpawn(PlayerInteractEvent event){
 
         Action action = event.getAction();

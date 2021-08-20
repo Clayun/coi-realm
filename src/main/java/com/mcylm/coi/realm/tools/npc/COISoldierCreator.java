@@ -1,14 +1,12 @@
 package com.mcylm.coi.realm.tools.npc;
 
+import com.mcylm.coi.realm.model.COINpc;
 import lombok.Data;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class COISoldierCreator extends COINpc{
+public class COISoldierCreator extends COINpc {
 
     // NPC所在阵型编号
     private int npcNumber;

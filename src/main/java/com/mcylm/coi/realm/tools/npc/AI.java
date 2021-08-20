@@ -1,5 +1,6 @@
 package com.mcylm.coi.realm.tools.npc;
 
+import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.tools.npc.impl.COIHuman;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -10,7 +11,7 @@ import java.util.List;
 /**
  * AI的接口层，AI的基础能力
  */
-public interface COIAI {
+public interface AI {
 
     // 创建NPC
     COIHuman create(COINpc coiNpc);

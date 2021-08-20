@@ -1,6 +1,6 @@
-package com.mcylm.coi.realm.cache;
+package com.mcylm.coi.realm.clipboard;
 
-import com.mcylm.coi.realm.tools.building.COIStructure;
+import com.mcylm.coi.realm.model.COIStructure;
 import lombok.Data;
 import org.bukkit.Location;
 

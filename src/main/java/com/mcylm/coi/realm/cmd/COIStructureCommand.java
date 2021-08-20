@@ -1,6 +1,6 @@
 package com.mcylm.coi.realm.cmd;
 
-import com.mcylm.coi.realm.cache.PlayerClipboard;
+import com.mcylm.coi.realm.clipboard.PlayerClipboard;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

@@ -1,5 +1,5 @@
 
-#数据库链接相关信息
+# 数据库链接相关信息
 address: 'localhost'
 port: 3306
 database: 'web'
@@ -11,6 +11,25 @@ password: 'A123456789a'
 # release 正式模式：生产环境
 server-mode: 'develop'
 
+# 游戏相关的配置参数
+game:
+  # NPC相关的配置
+  npc:
+    # NPC的出生点方块类型
+    spawner-material: 'BEACON'
+
 # NPC可食用的 Material Name
 foods:
   - 'APPLE'
+
+# 矿工相关配置信息
+miner:
+  # 矿工会捡起的物品名称
+  picks:
+    - 'IRON_ORE'
+    - 'APPLE'
+    - 'BREAD'
+
+  # 矿工会挖掘的物品名称
+  breaks:
+    - 'IRON_ORE'
