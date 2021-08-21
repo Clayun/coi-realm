@@ -531,7 +531,12 @@ public class COIHuman implements AI {
 
         // 更新NPC的名称
         updateName();
+
         npc.spawn(location);
+
+        // 恢复血量和饱食度
+        initEntityStatus();
+
         npc.setProtected(false);
         this.isSpawn = true;
     }
@@ -623,8 +628,8 @@ public class COIHuman implements AI {
      */
     private void initNpcAttributes(COINpc npcCreator){
 
-        // 饥饿值默认20
-        hunger = DEFAULT_HUNGER;
+        // 恢复血量和饱食度
+        initEntityStatus();
 
         // 如果背包未初始化
         if(npcCreator.getInventory() == null){
@@ -652,6 +657,21 @@ public class COIHuman implements AI {
             TargetNearbyEntityGoal targetNearbyEntityGoal = TargetNearbyEntityGoal.builder(npc)
                     .targets(targets).aggressive(npcCreator.isAggressive()).radius(npcCreator.getAlertRadius()).build();
             this.npc.getDefaultGoalController().addGoal(targetNearbyEntityGoal,1);
+        }
+    }
+
+    /**
+     * 初始化生物状态
+     */
+    private void initEntityStatus(){
+        // 饥饿值默认20
+        setHunger(DEFAULT_HUNGER);
+
+        if(isAlive()){
+            // 满血
+            LivingEntity entity = (LivingEntity) npc.getEntity();
+
+            entity.setHealth(MAX_HEALTH);
         }
     }
 

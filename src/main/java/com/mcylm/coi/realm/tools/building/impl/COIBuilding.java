@@ -1,6 +1,7 @@
 package com.mcylm.coi.realm.tools.building.impl;
 
 import com.mcylm.coi.realm.Entry;
+import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.model.COIBlock;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.model.COIPaster;
@@ -34,6 +35,9 @@ public class COIBuilding implements Serializable {
 
     // 在GUI里显示的物品
     private Material itemType = Material.BEACON;
+
+    // 建筑类型
+    private COIBuildingType type;
 
     // 建筑名称
     private String name = "未知建筑";
@@ -171,10 +175,17 @@ public class COIBuilding implements Serializable {
 
         List<Location> chestsLocations = new ArrayList<>();
         for(COIBlock block : blocks){
-            if(block.getMaterial().equals(Material.CHEST)){
-                Location location = new Location(Bukkit.getWorld(getWorld()),block.getX(),block.getY(),block.getZ());
-                chestsLocations.add(location);
+
+            Material material = Material.getMaterial(block.getMaterial());
+
+            if(material != null){
+                if(material.equals(Material.CHEST)){
+                    Location location = new Location(Bukkit.getWorld(getWorld()),block.getX(),block.getY(),block.getZ());
+                    chestsLocations.add(location);
+                }
             }
+
+
         }
 
         return chestsLocations;

@@ -1,12 +1,15 @@
 package com.mcylm.coi.realm.utils;
 
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,9 +106,21 @@ public class ItemUtils {
         if(block.getType().equals(Material.CHEST)){
             Chest chest = (Chest) block.getState();
 
+            chest.getSnapshotInventory().addItem(itemStack);
+            chest.getBlockInventory().addItem(itemStack);
+
             chest.update();
 
-            chest.getInventory().addItem(itemStack);
+        }else{
+            LoggerUtils.debug("这是个"+block.getType().name());
         }
+    }
+
+    public static void createColorLaser(Player player){
+        ItemStack helm = new ItemStack(Material.LEATHER_HELMET, 1);
+        LeatherArmorMeta meta = (LeatherArmorMeta)helm.getItemMeta();
+        meta.setColor(Color.RED);
+        helm.setItemMeta(meta);
+        player.getInventory().addItem(helm);
     }
 }

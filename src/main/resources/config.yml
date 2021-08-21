@@ -8,7 +8,7 @@ password: 'A123456789a'
 
 # 服务器模式
 # develop 服务器开发模式：可用于使用各种类型的工具
-# release 正式模式：生产环境
+# release 正式模式：生产环境，不会显示debug信息
 server-mode: 'develop'
 
 # 游戏相关的配置参数
@@ -17,19 +17,28 @@ game:
   npc:
     # NPC的出生点方块类型
     spawner-material: 'BEACON'
+  # 建筑相关的配置
+  building:
+    # 建筑材料，建议和矿工挖掘捡起的某样物资一致
+    material: 'EMERALD'
+  # 每个小组最少玩家数量
+  min-group-players: 1
+  # 每个小组最大玩家数量
+  max-group-players: 5
 
 # NPC可食用的 Material Name
 foods:
   - 'APPLE'
+  - 'BREAD'
 
 # 矿工相关配置信息
 miner:
   # 矿工会捡起的物品名称
   picks:
-    - 'IRON_ORE'
+    - 'EMERALD'
     - 'APPLE'
     - 'BREAD'
 
   # 矿工会挖掘的物品名称
   breaks:
-    - 'IRON_ORE'
+    - 'EMERALD_ORE'

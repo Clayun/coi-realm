@@ -120,8 +120,6 @@ public class COIBuilder implements Builder {
                                     Location cloneLocation = block.getLocation().clone();
                                     cloneLocation.setY(cloneLocation.getY() + 1);
                                     spawnLocation = cloneLocation;
-
-                                    player.teleport(spawnLocation);
                                 }
 
                                 BlockData blockData = Bukkit.createBlockData(coiBlock.getBlockData());

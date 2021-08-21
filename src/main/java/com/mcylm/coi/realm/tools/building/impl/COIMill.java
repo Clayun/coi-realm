@@ -3,9 +3,9 @@ package com.mcylm.coi.realm.tools.building.impl;
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
+import com.mcylm.coi.realm.tools.npc.impl.COIFarmer;
 import com.mcylm.coi.realm.tools.npc.impl.COIMiner;
 import com.mcylm.coi.realm.utils.LoggerUtils;
-import lombok.Data;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -18,15 +18,14 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * 采矿场
- * 用于收集矿物资源的
+ * 磨坊
+ *
  */
-@Data
-public class COIStope extends COIBuilding{
+public class COIMill extends COIBuilding{
 
-    public COIStope() {
-        // 设置建筑类型为矿场
-        setType(COIBuildingType.STOPE);
+    public COIMill() {
+        // 设置建筑类型为磨坊
+        setType(COIBuildingType.MILL);
         // 矿场的图标设置为金稿子
         setItemType(Material.GOLDEN_PICKAXE);
         // 矿场的名称
@@ -42,7 +41,7 @@ public class COIStope extends COIBuilding{
         // 每5tick建造一次
         setInterval(5);
         // 初始化NPC创建器
-        setNpcCreator(initMinerCreator());
+        setNpcCreator(initFarmerCreator());
 
         //初始化完成，可建造
         setAvailable(true);
@@ -59,7 +58,7 @@ public class COIStope extends COIBuilding{
                 // 是否已设置NPC出生
                 boolean spawned = false;
 
-                COIMiner worker = null;
+                COIFarmer farmer = null;
 
                 @Override
                 public void run() {
@@ -67,16 +66,17 @@ public class COIStope extends COIBuilding{
                     // 如果建筑建造完成，NPC就初始化
                     if(isComplete() && !spawned){
                         COIMinerCreator npcCreator = (COIMinerCreator) getNpcCreator();
-                        // 设置箱子
+                        // 设置食物收集箱子
                         npcCreator.setChestsLocation(getChestsLocation());
-                        worker = new COIMiner(npcCreator);
-                        worker.spawn(getNpcCreator().getSpawnLocation());
+                        // TODO 为小队的其他NPC共享食物箱子
+                        farmer = new COIFarmer(npcCreator);
+                        farmer.spawn(getNpcCreator().getSpawnLocation());
                         spawned = true;
                     }
 
                     // NPC已经创建，就开始行动
                     if(spawned){
-                        worker.move();
+                        farmer.move();
                     }
                 }
             }.runTaskTimer(Entry.getInstance(),0,20l);
@@ -85,36 +85,35 @@ public class COIStope extends COIBuilding{
     }
 
     /**
-     * 构造一个矿工NPC创建器
+     * 构造一个农民NPC创建器
      * @return
      */
-    private COIMinerCreator initMinerCreator(){
+    private COIMinerCreator initFarmerCreator(){
 
         // 背包内的物品
         List<ItemStack> inventory = new ArrayList<>();
-        // 钻石镐
-        ItemStack pickaxe = new ItemStack(Material.DIAMOND_PICKAXE);
+        // 石锄
+        ItemStack pickaxe = new ItemStack(Material.STONE_HOE);
         inventory.add(pickaxe);
 
-        // 从配置文件读取矿工要挖掘的方块名称
-        List<String> breaks = Entry.getInstance().getConfig().getStringList("miner.breaks");
+        // 收割小麦
         Set<String> breakBlockMaterials = new HashSet<>();
-        breakBlockMaterials.addAll(breaks);
+        breakBlockMaterials.add("WHEAT");
 
-        // 从配置文件读取矿工要挖掘的方块名称
-        List<String> picks = Entry.getInstance().getConfig().getStringList("miner.picks");
         Set<String> pickItemMaterials = new HashSet<>();
-        pickItemMaterials.addAll(picks);
+        pickItemMaterials.add("APPLE");
+        pickItemMaterials.add("BREAD");
+        pickItemMaterials.add("WHEAT");
 
         COIMinerCreator npcCreator = new COIMinerCreator(getChestsLocation());
         npcCreator.setInventory(inventory);
         npcCreator.setAggressive(false);
         npcCreator.setAlertRadius(5);
         npcCreator.setBreakBlockMaterials(breakBlockMaterials);
-        npcCreator.setName("矿工");
+        npcCreator.setName("农民");
         npcCreator.setLevel(1);
         npcCreator.setPickItemMaterials(pickItemMaterials);
-        npcCreator.setSkinName("Miner");
+        npcCreator.setSkinName("Farmer");
         npcCreator.setSkinSignature("LwMy/g2xAdhfHErWkk6pMM7SnIa2ERQW5X64w1q+/eEW3aamwP/1//nBdUqlWDZb/bQ0zhsl" +
                 "/JmnnJ118ePKzS6p7Gs1Hbk70EVEkuGA2f5VUK4F868944GHGxZAhbSC766IMSGuUCiusRfxuXHsF8k0LqKWZbO+" +
                 "enG46hS+V/T81F7HvDm+rOOxpbwCByghLHcAwiKNQTDWzQD+tIkaUI8hHP2MF4RMzih4rMmD1AteAa3vKjNE5cKyk" +
@@ -136,7 +135,8 @@ public class COIStope extends COIBuilding{
      * 初始化设置矿场的建筑等级对照表
      */
     private void initStructure(){
-        getBuildingLevelStructure().put(1,"kuangchang1.structure");
-        getBuildingLevelStructure().put(2,"kuangchang2.structure");
+        getBuildingLevelStructure().put(1,"mofang1.structure");
+        getBuildingLevelStructure().put(2,"mofang2.structure");
     }
+
 }

@@ -6,6 +6,7 @@ import com.mcylm.coi.realm.enums.COIServerMode;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.model.COIPaster;
 import com.mcylm.coi.realm.model.COIStructure;
+import com.mcylm.coi.realm.tools.building.impl.COIMill;
 import com.mcylm.coi.realm.tools.building.impl.COIStope;
 import com.mcylm.coi.realm.tools.npc.*;
 import com.mcylm.coi.realm.tools.npc.impl.COIFarmer;
@@ -13,6 +14,7 @@ import com.mcylm.coi.realm.tools.npc.impl.COIHuman;
 import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
 import com.mcylm.coi.realm.tools.npc.impl.COIMiner;
 import com.mcylm.coi.realm.utils.FormationUtils;
+import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import me.lucko.helper.Schedulers;
 import org.bukkit.Location;
@@ -120,8 +122,8 @@ public class PlayerInteractListener implements Listener {
 
             Player player = event.getPlayer();
 
-            COIStope coiStope = new COIStope();
-            coiStope.build(location,player);
+            COIMill building = new COIMill();
+            building.build(location,player);
 
         }
 

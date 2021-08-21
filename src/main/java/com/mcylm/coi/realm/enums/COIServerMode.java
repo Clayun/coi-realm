@@ -1,8 +1,11 @@
 package com.mcylm.coi.realm.enums;
 
+import lombok.Getter;
+
 /**
  * 服务器状态枚举
  */
+@Getter
 public enum COIServerMode {
 
     DEVELOP("develop","开发维护"),
@@ -29,21 +32,5 @@ public enum COIServerMode {
             }
         }
         return null;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 }

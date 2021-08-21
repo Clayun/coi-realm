@@ -5,6 +5,7 @@ import com.mcylm.coi.realm.runnable.TaskRunnable;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.utils.ItemUtils;
+import com.mcylm.coi.realm.utils.LoggerUtils;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
@@ -35,9 +36,6 @@ public class COIFarmer extends COIHuman{
     // 独立背包
     private List<ItemStack> farmerInventory;
 
-    // 造成卡住的方块
-    private List<Location> blackBlockList;
-
     // 缓存手里的物品
     private ItemStack itemInHand;
 
@@ -45,7 +43,6 @@ public class COIFarmer extends COIHuman{
         super(npcCreator);
         farmlands = new ArrayList<>();
         farmerInventory = new ArrayList<>();
-        blackBlockList = new ArrayList<>();
     }
 
     /**
@@ -132,7 +129,7 @@ public class COIFarmer extends COIHuman{
             return;
         }
 
-        List<Block> nearbyBlocks = getNearbyBlocks(5);
+        List<Block> nearbyBlocks = getNearbyBlocks(10);
 
         for(Block block : nearbyBlocks){
 
@@ -143,16 +140,13 @@ public class COIFarmer extends COIHuman{
 
             if(block.getType().equals(Material.DIRT)){
 
-                // 如果黑名单里面有这个位置，就跳过他，下次再处理
-                if(blackBlockList.contains(block.getLocation())){
-//                    blackBlockList.remove(block.getLocation());
-                    continue;
-                }
-
-                //泥土上方必须是空气才可以
+                //泥土上方必须是空气或者草才可以
                 Location clone = block.getLocation().clone();
                 clone.setY(clone.getY()+1);
-                if(clone.getBlock().getType().equals(Material.AIR)){
+                if(clone.getBlock().getType().equals(Material.AIR)
+                    || clone.getBlock().getType().equals(Material.GRASS)
+                    || clone.getBlock().getType().equals(Material.TALL_GRASS)
+                ){
                     // 如果找到泥土了，就去把他变成耕地
                     if(getNpc().getEntity().getLocation().distance(block.getLocation()) <= 3){
 
@@ -183,7 +177,6 @@ public class COIFarmer extends COIHuman{
                         // 距离不够，就跑过去
                         getNpc().faceLocation(block.getLocation());
                         findPath(block.getLocation());
-                        blackBlockList.add(block.getLocation());
                     }
                 }
 
@@ -415,7 +408,6 @@ public class COIFarmer extends COIHuman{
                             // 距离不够，就跑过去
                             getNpc().faceLocation(block.getLocation());
                             findPath(block.getLocation());
-                            blackBlockList.add(block.getLocation());
                         }
                     }
                 }

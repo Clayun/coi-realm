@@ -4,6 +4,7 @@ import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.runnable.TaskRunnable;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.utils.ItemUtils;
+import com.mcylm.coi.realm.utils.LoggerUtils;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -67,7 +68,7 @@ public class COIMiner extends COIHuman{
         Set<String> blocks =  getCoiNpc().getBreakBlockMaterials();
 
         // 需要拆除的方块目标结果集
-        List<Block> blocksNearByNpc = getNearbyBlocks(3);
+        List<Block> blocksNearByNpc = getNearbyBlocks(5);
 
         if(blocks != null){
             for(String blockName : blocks){
