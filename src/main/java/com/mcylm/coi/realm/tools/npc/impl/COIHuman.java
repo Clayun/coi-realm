@@ -257,7 +257,6 @@ public class COIHuman implements AI {
                 // 距离少于20格，就过去
                 if(location.distance(getNpc().getEntity().getLocation()) <= 20){
                     findPath(location);
-                    LoggerUtils.debug("前往磨坊中....");
                 }
 
                 // 距离小于等于3，拿物品
