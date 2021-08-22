@@ -34,7 +34,7 @@ public class COIGame {
         this.teams = new ArrayList<>();
         this.status = COIGameStatus.WAITING;
         // 初始化小队
-        TeamUtils.initTeams();
+        setTeams(TeamUtils.initTeams());
     }
 
 

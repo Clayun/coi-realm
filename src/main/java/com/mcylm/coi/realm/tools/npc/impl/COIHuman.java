@@ -585,7 +585,9 @@ public class COIHuman implements AI {
         if(coiNpc.isCanRespawn()){
             if(!isRespawning){
                 isRespawning = true;
-                LoggerUtils.debug("NPC开始倒计时复活");
+                LoggerUtils.debug("NPC死亡了");
+                // 死亡掉落全部物资
+                dropAllItems();
             }
 
             if(isRespawning){
@@ -601,6 +603,27 @@ public class COIHuman implements AI {
             }
         }
 
+    }
+
+    /**
+     * NPC死亡触发物品全部掉落
+     */
+    public void dropAllItems(){
+        List<ItemStack> foodBag = getCoiNpc().getFoodBag();
+        Iterator<ItemStack> foods = foodBag.iterator();
+
+        while(foods.hasNext()){
+            ItemStack food = foods.next();
+            npc.getEntity().getWorld().dropItem(npc.getEntity().getLocation(),food);
+        }
+
+        List<ItemStack> inventory = getCoiNpc().getInventory();
+        Iterator<ItemStack> items = inventory.iterator();
+
+        while (items.hasNext()){
+            ItemStack next = items.next();
+            npc.getEntity().getWorld().dropItem(npc.getEntity().getLocation(),next);
+        }
     }
 
     /**

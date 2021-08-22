@@ -32,6 +32,9 @@ public class Entry extends ExtendedJavaPlugin {
     // 服务器模式，在配置文件 Config 中有详细注释
     public static String SERVER_MODE = "develop";
 
+    // 每个小队最大人数限制
+    public static Integer MAX_GROUP_PLAYERS = 1;
+
     // NPC可食用的 Material Name
     private static List<String> NPC_FOODS;
 
@@ -55,6 +58,7 @@ public class Entry extends ExtendedJavaPlugin {
         }
 
         SERVER_MODE = getConfig().getString("server-mode");
+        MAX_GROUP_PLAYERS = getConfig().getInt("game.max-group-players");
         NPC_FOODS = getConfig().getStringList("foods");
 
         COIServerMode serverMode = COIServerMode.parseCode(SERVER_MODE);

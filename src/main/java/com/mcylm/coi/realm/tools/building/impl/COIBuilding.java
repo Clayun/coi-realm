@@ -8,13 +8,16 @@ import com.mcylm.coi.realm.model.COIPaster;
 import com.mcylm.coi.realm.model.COIStructure;
 import com.mcylm.coi.realm.tools.npc.impl.COIMiner;
 import com.mcylm.coi.realm.utils.LoggerUtils;
+import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Data;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -33,14 +36,11 @@ public class COIBuilding implements Serializable {
     // 是否建造完成
     private boolean complete = false;
 
-    // 在GUI里显示的物品
-    private Material itemType = Material.BEACON;
-
     // 建筑类型
     private COIBuildingType type;
 
-    // 建筑名称
-    private String name = "未知建筑";
+    // 所需消耗的材料
+    private int consume = 0;
 
     // 建筑的全部方块（剩余血量）
     private List<COIBlock> remainingBlocks;
@@ -67,15 +67,6 @@ public class COIBuilding implements Serializable {
     // key为等级，value是建筑结构文件名称
     private HashMap<Integer, String> buildingLevelStructure = new HashMap<>();
 
-    // 建筑介绍
-    private String introduce = "无";
-
-    // 每次建筑几个方块
-    private int unit = 1;
-
-    // 几tick建造一次
-    private long interval = 20L;
-
     // 建筑生成的NPC创建器，不生成NPC就设置NULL
     private COINpc npcCreator;
 
@@ -85,6 +76,14 @@ public class COIBuilding implements Serializable {
     public void build(Location location, Player player){
 
         if(!isAvailable()){
+            return;
+        }
+
+        // 扣除玩家背包里的资源
+        boolean b = deductionResources(player);
+
+        if(!b){
+            LoggerUtils.sendMessage("背包里的资源不够，请去收集资源",player);
             return;
         }
 
@@ -107,11 +106,11 @@ public class COIBuilding implements Serializable {
         setChestsLocation(chestsLocation);
 
         // 设置名称
-        structure.setName(getName());
+        structure.setName(getType().getName());
         // 构造一个建造器
-        COIPaster coiPaster = new COIPaster(false,getUnit(),getInterval()
+        COIPaster coiPaster = new COIPaster(false,getType().getUnit(),getType().getInterval()
                 ,location.getWorld().getName(),location
-                ,structure,false
+                ,structure,false, TeamUtils.getTeamByPlayer(player).getType().getBlockColor()
                 ,getNpcCreator());
 
         // 开始建造
@@ -189,6 +188,104 @@ public class COIBuilding implements Serializable {
         }
 
         return chestsLocations;
+    }
+
+    /**
+     * 根据建筑所需资源，扣除玩家背包的物品
+     * @param player
+     * @return
+     */
+    public boolean deductionResources(Player player){
+
+        int playerHadResource = getPlayerHadResource(player);
+
+        // 如果玩家手里的资源数量足够
+        if(playerHadResource >= getConsume()){
+
+            // 扣减物品
+            ItemStack[] contents =
+                    player.getInventory().getContents();
+
+            // 剩余所需扣减资源数量
+            int deductionCount = getConsume();
+
+            String materialName = Entry.getInstance().getConfig().getString("game.building.material");
+
+            // 资源类型
+            Material material = Material.getMaterial(materialName);
+
+            for(ItemStack itemStack : contents){
+
+                if(itemStack == null){
+                    continue;
+                }
+
+                // 是资源物品才扣减
+                if(itemStack.getType().equals(material)){
+                    // 如果当前物品的堆叠数量大于所需资源，就只扣减数量
+                    if(itemStack.getAmount() > deductionCount){
+                        itemStack.setAmount(itemStack.getAmount() - deductionCount);
+                        return true;
+                    }
+
+                    // 如果当前物品的堆叠数量等于所需资源，就删物品
+                    if(itemStack.getAmount() == deductionCount){
+                        player.getInventory().removeItem(itemStack);
+                        player.updateInventory();
+                        return true;
+                    }
+
+                    // 如果物品的堆叠数量小于所需资源，就删物品，同时计数
+                    if(itemStack.getAmount() < deductionCount){
+                        // 减去当前物品的库存
+                        deductionCount = deductionCount - itemStack.getAmount();
+                        player.getInventory().removeItem(itemStack);
+                        player.updateInventory();
+                    }
+                }
+
+
+
+            }
+
+        }else
+            return false;
+
+        return false;
+    }
+
+    /**
+     * 获取玩家背包里的资源
+     * @return
+     */
+    public int getPlayerHadResource(Player player){
+
+        @NonNull ItemStack[] contents =
+                player.getInventory().getContents();
+
+        String materialName = Entry.getInstance().getConfig().getString("game.building.material");
+
+        Material material = Material.getMaterial(materialName);
+
+        if(material == null){
+            return 0;
+        }
+
+        int num = 0;
+
+        for(ItemStack itemStack : contents){
+
+            if(itemStack == null){
+                continue;
+            }
+
+            if(itemStack.getType().equals(material)){
+                num = num + itemStack.getAmount();
+            }
+        }
+
+        return num;
+
     }
 
 }

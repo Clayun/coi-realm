@@ -21,8 +21,6 @@ game:
   building:
     # 建筑材料，建议和矿工挖掘捡起的某样物资一致
     material: 'EMERALD'
-  # 每个小组最少玩家数量
-  min-group-players: 1
   # 每个小组最大玩家数量
   max-group-players: 5
 

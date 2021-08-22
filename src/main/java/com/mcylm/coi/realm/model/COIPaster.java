@@ -4,6 +4,7 @@ import com.mcylm.coi.realm.tools.npc.impl.COIHuman;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.bukkit.Location;
+import org.bukkit.Material;
 
 
 @Data
@@ -30,6 +31,9 @@ public class COIPaster {
 
     // 是否建造空气方块
     private boolean withAir;
+
+    // 小队的特殊颜色方块替换
+    private Material blockColor;
 
     // 建筑物生成的NPC创建工具
     private COINpc npcCreator;

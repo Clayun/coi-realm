@@ -1,5 +1,7 @@
 package com.mcylm.coi.realm.tools.team.impl;
 
+import com.mcylm.coi.realm.Entry;
+import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COITeamType;
 import com.mcylm.coi.realm.tools.building.impl.COIBuilding;
 import com.mcylm.coi.realm.tools.team.Team;
@@ -8,6 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -44,8 +47,68 @@ public class COITeam implements Team {
     @Override
     public boolean join(Player player) {
 
+        if(getPlayers().size() >= 5){
+            // 加入失败，队伍满了
+            return false;
+        }
 
+        List<COITeam> teams = Entry.getGame().getTeams();
 
-        return false;
+        Iterator<COITeam> iterator = teams.iterator();
+
+        // 加入队伍之前，先退出其他队伍
+        while(iterator.hasNext()){
+            COITeam coiTeam = iterator.next();
+            if(coiTeam.getPlayers().contains(player.getName())){
+                coiTeam.getPlayers().remove(player.getName());
+                break;
+            }
+        }
+
+        // 加入队伍
+        getPlayers().add(player.getName());
+
+        return true;
+    }
+
+    /**
+     * 查询指定类型的建筑
+     * @param type
+     * @return
+     */
+    @Override
+    public List<COIBuilding> getBuildingByType(COIBuildingType type) {
+
+        List<COIBuilding> finishedBuildings = getFinishedBuildings();
+
+        List<COIBuilding> results = new ArrayList<>();
+
+        if(finishedBuildings == null
+            || finishedBuildings.isEmpty()){
+            return new ArrayList<>();
+        }
+
+        for(COIBuilding coiBuilding : finishedBuildings){
+            if(coiBuilding.getType().equals(type)){
+                results.add(coiBuilding);
+            }
+        }
+
+        return results;
+    }
+
+    /**
+     * 获取GUI显示的内容
+     * @return
+     */
+    public List<String> getPlayerListName(){
+
+        List<String> format = new ArrayList<>();
+
+        for(String player : getPlayers()){
+            format.add("        &6"+player);
+        }
+
+        return format;
     }
 }

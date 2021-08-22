@@ -27,23 +27,16 @@ public class COIStope extends COIBuilding{
     public COIStope() {
         // 设置建筑类型为矿场
         setType(COIBuildingType.STOPE);
-        // 矿场的图标设置为金稿子
-        setItemType(Material.GOLDEN_PICKAXE);
-        // 矿场的名称
-        setName("矿场");
         // 默认等级为1
         setLevel(1);
         // 最高等级为2级
         setMaxLevel(2);
         // 设置等级对应的建筑文件
         initStructure();
-        // 每秒建造5个方块
-        setUnit(5);
-        // 每5tick建造一次
-        setInterval(5);
         // 初始化NPC创建器
         setNpcCreator(initMinerCreator());
-
+        // 矿场设置所需消耗的材料
+        setConsume(64);
         //初始化完成，可建造
         setAvailable(true);
     }

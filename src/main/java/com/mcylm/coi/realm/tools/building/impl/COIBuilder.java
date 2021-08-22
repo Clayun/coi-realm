@@ -113,6 +113,17 @@ public class COIBuilder implements Builder {
                                 Block block = Bukkit.getWorld(paster.getWorldName()).getBlockAt(coiBlock.getX(),coiBlock.getY(),coiBlock.getZ());
 
                                 Material material = Material.getMaterial(coiBlock.getMaterial());
+
+                                BlockData blockData = Bukkit.createBlockData(coiBlock.getBlockData());
+
+                                if(paster.getBlockColor() != null){
+                                    if(isTerracotta(material)){
+                                        material = paster.getBlockColor();
+                                        LoggerUtils.debug("匹配到陶瓷："+material.name());
+                                        blockData = Bukkit.createBlockData(material);
+                                    }
+                                }
+
                                 block.setType(material);
 
                                 if(block.getType().equals(Material.getMaterial(spawnerBlockTypeName))){
@@ -122,7 +133,6 @@ public class COIBuilder implements Builder {
                                     spawnLocation = cloneLocation;
                                 }
 
-                                BlockData blockData = Bukkit.createBlockData(coiBlock.getBlockData());
 
                                 BlockState state = block.getState();
                                 state.setBlockData(blockData);
@@ -344,6 +354,30 @@ public class COIBuilder implements Builder {
         }
 
         return null;
+    }
+
+    private boolean isTerracotta(Material blockType){
+        if(blockType.equals(Material.RED_TERRACOTTA)
+            || blockType.equals(Material.YELLOW_TERRACOTTA)
+            || blockType.equals(Material.GREEN_TERRACOTTA)
+            || blockType.equals(Material.BLUE_TERRACOTTA)
+            || blockType.equals(Material.BLACK_TERRACOTTA)
+            || blockType.equals(Material.PURPLE_TERRACOTTA)
+            || blockType.equals(Material.WHITE_TERRACOTTA)
+            || blockType.equals(Material.ORANGE_TERRACOTTA)
+            || blockType.equals(Material.MAGENTA_TERRACOTTA)
+            || blockType.equals(Material.LIGHT_BLUE_TERRACOTTA)
+            || blockType.equals(Material.LIME_TERRACOTTA)
+            || blockType.equals(Material.PINK_TERRACOTTA)
+            || blockType.equals(Material.GRAY_TERRACOTTA)
+            || blockType.equals(Material.LIGHT_GRAY_TERRACOTTA)
+            || blockType.equals(Material.CYAN_TERRACOTTA)
+            || blockType.equals(Material.BROWN_TERRACOTTA)
+        ){
+            return true;
+        }
+
+        return false;
     }
 
 }

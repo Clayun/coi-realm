@@ -3,6 +3,8 @@ package com.mcylm.coi.realm.listener;
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.clipboard.PlayerClipboard;
 import com.mcylm.coi.realm.enums.COIServerMode;
+import com.mcylm.coi.realm.gui.BuilderGUI;
+import com.mcylm.coi.realm.gui.ChooseTeamGUI;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.model.COIPaster;
 import com.mcylm.coi.realm.model.COIStructure;
@@ -93,7 +95,7 @@ public class PlayerInteractListener implements Listener {
             COIStructure newTest = Entry.getBuilder().getStructureByFile("mofang.structure");
 
             //创建一个粘贴工具
-            COIPaster coiPaster = new COIPaster(false,2,5,player.getWorld().getName(),location,newTest,false,null);
+            COIPaster coiPaster = new COIPaster(false,2,5,player.getWorld().getName(),location,newTest,false,null,null);
 
             //更新世界方块
             Entry.getBuilder().pasteStructure(coiPaster,player);
@@ -126,7 +128,11 @@ public class PlayerInteractListener implements Listener {
 //            COIMill building = new COIMill();
 //            building.build(location,player);
 
-            TeamUtils.openTeamChooseGUI(player);
+            BuilderGUI builderGUI = new BuilderGUI(player,location);
+
+            builderGUI.redraw();
+
+            builderGUI.open();
 
         }
 
