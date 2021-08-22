@@ -16,6 +16,7 @@ import com.mcylm.coi.realm.tools.npc.impl.COIMiner;
 import com.mcylm.coi.realm.utils.FormationUtils;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
+import com.mcylm.coi.realm.utils.TeamUtils;
 import me.lucko.helper.Schedulers;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -122,8 +123,10 @@ public class PlayerInteractListener implements Listener {
 
             Player player = event.getPlayer();
 
-            COIMill building = new COIMill();
-            building.build(location,player);
+//            COIMill building = new COIMill();
+//            building.build(location,player);
+
+            TeamUtils.openTeamChooseGUI(player);
 
         }
 

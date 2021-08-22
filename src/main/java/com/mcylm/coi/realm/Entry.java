@@ -2,9 +2,11 @@ package com.mcylm.coi.realm;
 
 import com.mcylm.coi.realm.cmd.COIStructureCommand;
 import com.mcylm.coi.realm.enums.COIServerMode;
+import com.mcylm.coi.realm.game.COIGame;
 import com.mcylm.coi.realm.listener.PlayerInteractListener;
 import com.mcylm.coi.realm.tools.building.impl.COIBuilder;
 import com.mcylm.coi.realm.utils.LoggerUtils;
+import lombok.Getter;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
@@ -32,6 +34,9 @@ public class Entry extends ExtendedJavaPlugin {
 
     // NPC可食用的 Material Name
     private static List<String> NPC_FOODS;
+
+    // 主游戏进程管理
+    private static COIGame game;
 
     @Override
     protected void enable() {
@@ -63,12 +68,20 @@ public class Entry extends ExtendedJavaPlugin {
 
         saveDefaultConfig();
 
-        //注册监听器
+        // 注册监听器
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new PlayerInteractListener(), this);
 
-        //注册命令类
-        getCommand("structure").setExecutor(new COIStructureCommand());
+        // 开发测试环境注册
+        if(serverMode.equals(COIServerMode.DEVELOP)){
+            //注册建筑结构相关的命令
+            getCommand("structure").setExecutor(new COIStructureCommand());
+        }
+
+        // 一切准备就绪，创建主游戏进程
+        game = new COIGame();
+
+        // TODO 开始游戏
 
     }
 
@@ -87,5 +100,9 @@ public class Entry extends ExtendedJavaPlugin {
 
     public static List<String> getNpcFoods() {
         return NPC_FOODS;
+    }
+
+    public static COIGame getGame() {
+        return game;
     }
 }

@@ -1,11 +1,13 @@
 package com.mcylm.coi.realm.enums;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
  * 服务器状态枚举
  */
 @Getter
+@AllArgsConstructor
 public enum COIServerMode {
 
     DEVELOP("develop","开发维护"),
@@ -14,11 +16,6 @@ public enum COIServerMode {
 
     private String code;
     private String name;
-
-    COIServerMode(String code, String name) {
-        this.code = code;
-        this.name = name;
-    }
 
     /**
      * 通过 code 获取枚举

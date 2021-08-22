@@ -3,8 +3,16 @@ package com.mcylm.coi.realm.game;
 import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COITeamType;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
+import com.mcylm.coi.realm.utils.ItemUtils;
+import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Data;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,24 +33,13 @@ public class COIGame {
     public COIGame() {
         this.teams = new ArrayList<>();
         this.status = COIGameStatus.WAITING;
+        // 初始化小队
+        TeamUtils.initTeams();
     }
 
-    /**
-     * 打开选择队伍GUI
-     * @param player
-     */
-    public void openTeamChooseGUI(Player player){
-        // 默认初始化6个小队，等待倒计时结束会把有人的
-        COITeam black = new COITeam(COITeamType.BLACK);
-        COITeam red = new COITeam(COITeamType.RED);
-        COITeam purple = new COITeam(COITeamType.PURPLE);
-        COITeam green = new COITeam(COITeamType.GREEN);
-        COITeam yellow = new COITeam(COITeamType.YELLOW);
-        COITeam blue = new COITeam(COITeamType.BLUE);
 
 
 
-    }
 
 
 }

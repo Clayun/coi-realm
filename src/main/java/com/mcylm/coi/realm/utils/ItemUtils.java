@@ -1,5 +1,9 @@
 package com.mcylm.coi.realm.utils;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -24,9 +28,9 @@ public class ItemUtils {
         this.is = is;
     }
 
-    public ItemUtils rename(String s) {
+    public ItemUtils rename(String s,TextColor textColor) {
         ItemMeta im = is.getItemMeta();
-        im.setDisplayName(s);
+        im.displayName(Component.text(s, textColor));
         is.setItemMeta(im);
         return this;
     }
