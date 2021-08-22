@@ -79,6 +79,8 @@ public class BuilderGUI extends Gui {
                             // 点击时触发下面的方法
                             // TODO 封装建造方法
                             building.build(location,getPlayer());
+                            // 将建筑存入小队
+                            TeamUtils.getTeamByPlayer(getPlayer()).getFinishedBuildings().add(building);
                             close();
                         }));
             }

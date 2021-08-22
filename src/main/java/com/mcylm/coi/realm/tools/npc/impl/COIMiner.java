@@ -102,7 +102,7 @@ public class COIMiner extends COIHuman{
      */
     public void findAndBreakBlock(){
 
-        if(!isAlive()){
+        if(!isAlive() || isHungry()){
             return;
         }
 

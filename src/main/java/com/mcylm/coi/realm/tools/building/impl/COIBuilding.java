@@ -107,6 +107,10 @@ public class COIBuilding implements Serializable {
 
         // 设置名称
         structure.setName(getType().getName());
+
+        // 设置NPC所属小队
+        getNpcCreator().setTeam(TeamUtils.getTeamByPlayer(player));
+
         // 构造一个建造器
         COIPaster coiPaster = new COIPaster(false,getType().getUnit(),getType().getInterval()
                 ,location.getWorld().getName(),location

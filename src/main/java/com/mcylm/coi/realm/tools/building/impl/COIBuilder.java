@@ -119,7 +119,6 @@ public class COIBuilder implements Builder {
                                 if(paster.getBlockColor() != null){
                                     if(isTerracotta(material)){
                                         material = paster.getBlockColor();
-                                        LoggerUtils.debug("匹配到陶瓷："+material.name());
                                         blockData = Bukkit.createBlockData(material);
                                     }
                                 }

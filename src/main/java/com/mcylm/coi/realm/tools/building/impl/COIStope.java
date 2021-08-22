@@ -2,6 +2,7 @@ package com.mcylm.coi.realm.tools.building.impl;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIBuildingType;
+import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.tools.npc.impl.COIMiner;
 import com.mcylm.coi.realm.utils.LoggerUtils;
@@ -98,6 +99,13 @@ public class COIStope extends COIBuilding{
         List<String> picks = Entry.getInstance().getConfig().getStringList("miner.picks");
         Set<String> pickItemMaterials = new HashSet<>();
         pickItemMaterials.addAll(picks);
+
+        // 衣服默认捡起
+        List<Material> clothes = COINpc.CLOTHES;
+
+        for(Material clothesType : clothes){
+            pickItemMaterials.add(clothesType.name());
+        }
 
         COIMinerCreator npcCreator = new COIMinerCreator(getChestsLocation());
         npcCreator.setInventory(inventory);

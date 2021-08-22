@@ -1,16 +1,17 @@
 package com.mcylm.coi.realm.tools.npc.impl;
 
 import com.mcylm.coi.realm.Entry;
+import com.mcylm.coi.realm.model.COIBlock;
 import com.mcylm.coi.realm.tools.npc.AI;
 import com.mcylm.coi.realm.model.COINpc;
+import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.goals.TargetNearbyEntityGoal;
 import net.citizensnpcs.api.npc.NPC;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 
@@ -32,6 +33,8 @@ public class COIHuman implements AI {
     private boolean isSpawn = false;
     // Citizens 实例是否已创建
     private boolean isCreated = false;
+    // 是否已经非常饥饿，无法工作
+    private boolean isHungry = false;
     // 默认饥饿度
     private static final int DEFAULT_HUNGER = 20;
     // 饥饿度计算值间隔
@@ -170,6 +173,7 @@ public class COIHuman implements AI {
         LivingEntity entity = (LivingEntity) npc.getEntity();
 
         if(getHunger() >= 20){
+            isHungry = false;
             return;
         }
 
@@ -208,25 +212,65 @@ public class COIHuman implements AI {
                 }
 
             }
+        }else{
+            // 如果食物背包里是空的，同时饱食度低于10，就去磨坊拿吃的
+
+            if(getHunger() <= 10){
+                isHungry = true;
+            }
+
+
         }
 
     }
 
     /**
-     * 生物本能
-     * 内部方法，检查饥饿度小于一定值
-     * 生物要开启兽性模式，为了生存而战，寻找一切可以吃的食物
-     * 砍杀生物获取吃的
+     * 去磨坊寻找食物
      */
-    private void checkHunger(){
+    private void findFood(){
 
-        LivingEntity entity = (LivingEntity) npc.getEntity();
-
-        if(getHunger() <= 5){
+        if(!isHungry()){
             return;
         }
 
-        //todo 猎杀生物
+        List<Location> foodChests = getCoiNpc().getTeam().getFoodChests();
+
+        if(foodChests == null
+                || foodChests.isEmpty()){
+            LoggerUtils.debug("食物箱子不存在");
+            return;
+        }
+
+        for(Location location : foodChests){
+
+            Material material = location.getBlock().getType();
+
+            if(material.equals(Material.CHEST)){
+
+                Chest block = (Chest) location.getBlock().getState();
+
+                // 不为空
+                if(block.getInventory().isEmpty()){
+                    continue;
+                }
+
+                // 距离少于20格，就过去
+                if(location.distance(getNpc().getEntity().getLocation()) <= 20){
+                    findPath(location);
+                    LoggerUtils.debug("前往磨坊中....");
+                }
+
+                // 距离小于等于3，拿物品
+                if(location.distance(getNpc().getEntity().getLocation()) <= 3){
+                    // 一次性拿20个
+                    LoggerUtils.debug("到达了附近");
+                }
+                return;
+
+            }
+
+
+        }
     }
 
     /**
@@ -303,9 +347,17 @@ public class COIHuman implements AI {
                     || itemStack.getType() == Material.NETHERITE_HELMET
                     || itemStack.getType() == Material.TURTLE_HELMET
             ){
+                if(itemStack.getType().equals(Material.LEATHER_HELMET)){
+                    // 皮革的，就换成小队颜色
+                    if(getCoiNpc().getTeam().getType().getLeatherColor() != null){
+                        ItemUtils.changeColorForLeather(itemStack,getCoiNpc().getTeam().getType().getLeatherColor());
+                    }
+                }
                 entity.getEquipment().setHelmet(itemStack);
                 entity.getEquipment().setHelmet(itemStack);
                 iterator.remove();
+                LoggerUtils.debug("NPC穿上了头盔");
+                continue;
             }
 
             //胸甲
@@ -316,10 +368,18 @@ public class COIHuman implements AI {
                     || itemStack.getType() == Material.LEATHER_CHESTPLATE
                     || itemStack.getType() == Material.NETHERITE_CHESTPLATE
             ){
+
+                if(itemStack.getType().equals(Material.LEATHER_CHESTPLATE)){
+                    // 皮革的，就换成小队颜色
+                    if(getCoiNpc().getTeam().getType().getLeatherColor() != null){
+                        ItemUtils.changeColorForLeather(itemStack,getCoiNpc().getTeam().getType().getLeatherColor());
+                    }
+                }
                 entity.getEquipment().setChestplate(itemStack);
                 entity.getEquipment().setChestplate(itemStack);
                 iterator.remove();
-
+                LoggerUtils.debug("NPC穿上了胸甲");
+                continue;
             }
 
             //裤子
@@ -330,10 +390,18 @@ public class COIHuman implements AI {
                     || itemStack.getType() == Material.IRON_LEGGINGS
                     || itemStack.getType() == Material.NETHERITE_LEGGINGS
             ){
+
+                if(itemStack.getType().equals(Material.LEATHER_LEGGINGS)){
+                    // 皮革的，就换成小队颜色
+                    if(getCoiNpc().getTeam().getType().getLeatherColor() != null){
+                        ItemUtils.changeColorForLeather(itemStack,getCoiNpc().getTeam().getType().getLeatherColor());
+                    }
+                }
                 entity.getEquipment().setLeggings(itemStack);
                 entity.getEquipment().setLeggings(itemStack);
                 iterator.remove();
-
+                LoggerUtils.debug("NPC穿上了裤子");
+                continue;
             }
 
             //靴子
@@ -344,10 +412,19 @@ public class COIHuman implements AI {
                     || itemStack.getType() == Material.LEATHER_BOOTS
                     || itemStack.getType() == Material.NETHERITE_BOOTS
             ){
+
+                if(itemStack.getType().equals(Material.LEATHER_BOOTS)){
+                    // 皮革的，就换成小队颜色
+                    if(getCoiNpc().getTeam().getType().getLeatherColor() != null){
+                        ItemUtils.changeColorForLeather(itemStack,getCoiNpc().getTeam().getType().getLeatherColor());
+                    }
+                }
+
                 entity.getEquipment().setBoots(itemStack);
                 entity.getEquipment().setBoots(itemStack);
                 iterator.remove();
-
+                LoggerUtils.debug("NPC穿上了鞋");
+                continue;
             }
 
             //武器或工具
@@ -383,6 +460,8 @@ public class COIHuman implements AI {
                 if(entity.getEquipment().getItemInMainHand().getType().equals(Material.AIR)){
                     entity.getEquipment().setItemInMainHand(itemStack);
                     iterator.remove();
+                    LoggerUtils.debug("NPC装备了武器或工具");
+                    continue;
                 }
             }
         }
@@ -506,15 +585,17 @@ public class COIHuman implements AI {
 
     @Override
     public void move() {
-        //优先穿衣服
+        // 优先穿衣服
         wearClothes();
-        //捡起附近需要的物品 使用同步进程去做
+        // 捡起附近需要的物品 使用同步进程去做
         pickItems();
-        //吃饱了回血
+        // 吃饱了回血
         fullStomach();
-        //没吃饱就去吃
+        // 没吃饱就去吃
         eatFood();
-        //检查死没死
+        // 寻找食物
+        findFood();
+        // 检查死没死
         dead();
     }
 
@@ -801,5 +882,9 @@ public class COIHuman implements AI {
      */
     private double getMaxHealth(){
         return MAX_HEALTH;
+    }
+
+    public boolean isHungry() {
+        return isHungry;
     }
 }

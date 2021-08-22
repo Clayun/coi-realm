@@ -120,11 +120,9 @@ public class ItemUtils {
         }
     }
 
-    public static void createColorLaser(Player player){
-        ItemStack helm = new ItemStack(Material.LEATHER_HELMET, 1);
-        LeatherArmorMeta meta = (LeatherArmorMeta)helm.getItemMeta();
-        meta.setColor(Color.RED);
-        helm.setItemMeta(meta);
-        player.getInventory().addItem(helm);
+    public static void changeColorForLeather(ItemStack item,Color color){
+        LeatherArmorMeta meta = (LeatherArmorMeta)item.getItemMeta();
+        meta.setColor(color);
+        item.setItemMeta(meta);
     }
 }

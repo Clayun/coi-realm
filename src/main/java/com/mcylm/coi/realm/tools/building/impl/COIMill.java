@@ -2,10 +2,12 @@ package com.mcylm.coi.realm.tools.building.impl;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIBuildingType;
+import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.tools.npc.impl.COIFarmer;
 import com.mcylm.coi.realm.tools.npc.impl.COIMiner;
 import com.mcylm.coi.realm.utils.LoggerUtils;
+import com.mcylm.coi.realm.utils.TeamUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -61,9 +63,10 @@ public class COIMill extends COIBuilding{
                         COIMinerCreator npcCreator = (COIMinerCreator) getNpcCreator();
                         // 设置食物收集箱子
                         npcCreator.setChestsLocation(getChestsLocation());
-                        // TODO 为小队的其他NPC共享食物箱子
                         farmer = new COIFarmer(npcCreator);
                         farmer.spawn(getNpcCreator().getSpawnLocation());
+                        // 为小队的其他NPC共享食物箱子
+                        TeamUtils.getTeamByPlayer(player).getFoodChests().addAll(getChestsLocation());
                         spawned = true;
                     }
 
@@ -93,6 +96,7 @@ public class COIMill extends COIBuilding{
         Set<String> breakBlockMaterials = new HashSet<>();
         breakBlockMaterials.add("WHEAT");
 
+        // 捡起的东西
         Set<String> pickItemMaterials = new HashSet<>();
         pickItemMaterials.add("APPLE");
         pickItemMaterials.add("BREAD");

@@ -1,6 +1,8 @@
 package com.mcylm.coi.realm.model;
 
+import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import lombok.Data;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -26,6 +28,9 @@ public class COINpc implements Serializable {
 
     // 等级
     private int level;
+
+    // 所属小队
+    private COITeam team;
 
     // 皮肤相关参数
     private String skinTextures;

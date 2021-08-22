@@ -296,6 +296,9 @@ public class COIFarmer extends COIHuman{
                             if(getNpc().getEntity().getLocation().distance(wheat.getLocation()) <= 2){
                                 LivingEntity entity = (LivingEntity) getNpc().getEntity();
 
+                                // 面朝方块
+                                getNpc().faceLocation(wheat.getLocation());
+
                                 entity.getEquipment().setItemInMainHand(itemInHand);
 
                                 BlockBreaker.BlockBreakerConfiguration blockBreakerConfiguration = new BlockBreaker.BlockBreakerConfiguration();
@@ -330,6 +333,9 @@ public class COIFarmer extends COIHuman{
                                     itemInHand = entity.getEquipment().getItemInMainHand();
                                 }
 
+                                // 面朝方块
+                                getNpc().faceLocation(wheat.getLocation());
+
                                 // 挥动手作为动作动画
                                 ((LivingEntity)getNpc().getEntity()).swingMainHand();
 
@@ -353,6 +359,9 @@ public class COIFarmer extends COIHuman{
                         // 如果耕地的上方是空气
                         // 同时距离小于3，就种植小麦
                         if(getNpc().getEntity().getLocation().distance(wheat.getLocation()) <= 2){
+
+                            // 面朝方块
+                            getNpc().faceLocation(wheat.getLocation());
 
                             // 挥动手作为动作动画
                             ((LivingEntity)getNpc().getEntity()).swingMainHand();
@@ -388,6 +397,9 @@ public class COIFarmer extends COIHuman{
                                     entity.getEquipment().setItemInMainHand(itemInHand);
                                 }
                             }
+
+                            // 面朝方块
+                            getNpc().faceLocation(block.getLocation());
 
                             // 挥动手作为动作动画
                             ((LivingEntity)getNpc().getEntity()).swingMainHand();
