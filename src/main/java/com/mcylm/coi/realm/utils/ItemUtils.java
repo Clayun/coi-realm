@@ -144,7 +144,7 @@ public class ItemUtils {
             Chest chest = (Chest) block.getState();
 
             // 如果箱子里包含物品材质，就尝试扣减
-            if(chest.getBlockInventory().contains(material)){
+            if(chest.getSnapshotInventory().contains(material)){
                 ListIterator<ItemStack> iterator = chest.getSnapshotInventory().iterator();
                 while(iterator.hasNext()){
 
@@ -170,7 +170,7 @@ public class ItemUtils {
                         if(amount == surplusNum){
                             // 如果物品数量等于剩余待扣减数量，就直接删除物品
                             surplusNum = 0;
-                            iterator.remove();
+                            chest.getSnapshotInventory().remove(next);
 
                             // 计数
                             count = count + surplusNum;
@@ -179,7 +179,7 @@ public class ItemUtils {
                         if(amount < surplusNum){
                             // 如果物品数量小于待扣减数量，同时删除物品
                             surplusNum = surplusNum - amount;
-                            iterator.remove();
+                            chest.getSnapshotInventory().remove(next);
 
                             // 计数
                             count = count + amount;
