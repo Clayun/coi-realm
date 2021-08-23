@@ -240,6 +240,10 @@ public class COIHuman implements AI {
      * 去磨坊寻找食物
      */
     private void findFood(){
+        
+        if(!isAlive()){
+            return;
+        }
 
         if(!isTooHungryToWork()){
             return;
@@ -644,7 +648,6 @@ public class COIHuman implements AI {
 
     @Override
     public void move() {
-
         // 记录位置
         saveLastLocation();
         // 优先穿衣服
