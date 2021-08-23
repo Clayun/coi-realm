@@ -276,6 +276,8 @@ public class COIHuman implements AI {
         // 最近的食物箱子
         if(nearestLocation != null){
 
+            LoggerUtils.debug("最近的一个有食物的箱子位置在："+nearestLocation.getX()+","+nearestLocation.getZ());
+
             // 如果距离大于3，就走过去
             if(distance > 3){
                 findPath(nearestLocation);
@@ -292,9 +294,7 @@ public class COIHuman implements AI {
 
                     // 将扣减的数量添加到背包里
                     for(int count = 0; count < i; count++){
-                        ItemStack itemStack = new ItemStack(Material.BREAD);
-                        itemStack.setAmount(1);
-                        addItemToFoodBag(itemStack);
+                        addItemToFoodBag(new ItemStack(Material.BREAD));
                     }
 
                 }
@@ -630,7 +630,7 @@ public class COIHuman implements AI {
                 say("我的背包满了，这些东西装不下了");
                 npc.getEntity().getWorld().dropItem(npc.getEntity().getLocation(),item);
             }else{
-                getCoiNpc().getInventory().add(item);
+                getCoiNpc().getFoodBag().add(item);
             }
 
         }
