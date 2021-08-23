@@ -6,6 +6,8 @@ import com.mcylm.coi.realm.tools.npc.AI;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
+import me.lucko.helper.Events;
+import me.lucko.helper.Helper;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.goals.TargetNearbyEntityGoal;
 import net.citizensnpcs.api.npc.NPC;
@@ -13,6 +15,8 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.*;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -746,18 +750,34 @@ public class COIHuman implements AI {
         List<ItemStack> foodBag = getCoiNpc().getFoodBag();
         Iterator<ItemStack> foods = foodBag.iterator();
 
-        while(foods.hasNext()){
-            ItemStack food = foods.next();
-            npc.getEntity().getWorld().dropItem(npc.getEntity().getLocation(),food);
-        }
-
         List<ItemStack> inventory = getCoiNpc().getInventory();
         Iterator<ItemStack> items = inventory.iterator();
 
-        while (items.hasNext()){
-            ItemStack next = items.next();
-            npc.getEntity().getWorld().dropItem(npc.getEntity().getLocation(),next);
-        }
+        // 监听实体死亡
+        Events.subscribe(EntityDeathEvent.class).handler(e -> {
+
+            if(e.getEntity() == getNpc().getEntity()){
+                Location location = e.getEntity().getLocation();
+
+                // 全部物品设置掉落
+                while(foods.hasNext()){
+                    ItemStack food = foods.next();
+                    npc.getEntity().getWorld().dropItem(npc.getEntity().getLocation(),food);
+                }
+
+                while (items.hasNext()){
+                    ItemStack next = items.next();
+                    npc.getEntity().getWorld().dropItem(npc.getEntity().getLocation(),next);
+                }
+            }
+        });
+
+        // 清空缓存
+        getCoiNpc().setFoodBag(new ArrayList<>());
+        getCoiNpc().setInventory(new ArrayList<>());
+
+
+
     }
 
     /**
