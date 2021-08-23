@@ -53,6 +53,8 @@ public class COIHuman implements AI {
     private int RESPAWN_DELAY_COUNT = 0;
     // 是否正在重生COUNT
     private boolean isRespawning = false;
+    // 最后一次的位置
+    private Location lastLocation = null;
 
     // 构造NPC
     public COIHuman(COINpc npcCreator) {
@@ -642,6 +644,9 @@ public class COIHuman implements AI {
 
     @Override
     public void move() {
+
+        // 记录位置
+        saveLastLocation();
         // 优先穿衣服
         wearClothes();
         // 捡起附近需要的物品 使用同步进程去做
@@ -725,7 +730,7 @@ public class COIHuman implements AI {
                 isRespawning = true;
                 LoggerUtils.debug("NPC死亡了");
                 // 死亡掉落全部物资
-                dropAllItems();
+                dropAllItems(getLastLocation());
             }
 
             if(isRespawning){
@@ -746,37 +751,32 @@ public class COIHuman implements AI {
     /**
      * NPC死亡触发物品全部掉落
      */
-    public void dropAllItems(){
+    public void dropAllItems(Location location){
+
+        if(location == null){
+            return;
+        }
+
         List<ItemStack> foodBag = getCoiNpc().getFoodBag();
         Iterator<ItemStack> foods = foodBag.iterator();
 
         List<ItemStack> inventory = getCoiNpc().getInventory();
         Iterator<ItemStack> items = inventory.iterator();
 
-        // 监听实体死亡
-        Events.subscribe(EntityDeathEvent.class).handler(e -> {
+        // 全部物品设置掉落
+        while(foods.hasNext()){
+            ItemStack food = foods.next();
+            npc.getEntity().getWorld().dropItem(npc.getEntity().getLocation(),food);
+        }
 
-            if(e.getEntity() == getNpc().getEntity()){
-                Location location = e.getEntity().getLocation();
-
-                // 全部物品设置掉落
-                while(foods.hasNext()){
-                    ItemStack food = foods.next();
-                    npc.getEntity().getWorld().dropItem(npc.getEntity().getLocation(),food);
-                }
-
-                while (items.hasNext()){
-                    ItemStack next = items.next();
-                    npc.getEntity().getWorld().dropItem(npc.getEntity().getLocation(),next);
-                }
-            }
-        });
+        while (items.hasNext()){
+            ItemStack next = items.next();
+            npc.getEntity().getWorld().dropItem(npc.getEntity().getLocation(),next);
+        }
 
         // 清空缓存
         getCoiNpc().setFoodBag(new ArrayList<>());
         getCoiNpc().setInventory(new ArrayList<>());
-
-
 
     }
 
@@ -846,14 +846,6 @@ public class COIHuman implements AI {
         this.npc.data().set("player-skin-signature",npcCreator.getSkinSignature());
         this.npc.data().set("player-skin-use-latest-skin",false);
 
-        // 设置NPC的敌对生物
-        // 如果设置了主动攻击，则NPC会主动攻击敌对生物
-        Set<EntityType> targets = npcCreator.getEnemyEntities();
-        if(targets != null){
-            TargetNearbyEntityGoal targetNearbyEntityGoal = TargetNearbyEntityGoal.builder(npc)
-                    .targets(targets).aggressive(npcCreator.isAggressive()).radius(npcCreator.getAlertRadius()).build();
-            this.npc.getDefaultGoalController().addGoal(targetNearbyEntityGoal,1);
-        }
     }
 
     /**
@@ -990,5 +982,23 @@ public class COIHuman implements AI {
         }
 
         return false;
+    }
+
+    /**
+     * 最后一次保存的位置
+     * @return
+     */
+    public Location getLastLocation() {
+        return lastLocation;
+    }
+
+    public void saveLastLocation() {
+
+        if(!isAlive()){
+            return;
+        }
+
+        // 记录NPC所在位置
+        this.lastLocation = getNpc().getEntity().getLocation();
     }
 }

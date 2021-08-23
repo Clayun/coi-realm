@@ -20,6 +20,7 @@ import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import me.lucko.helper.Schedulers;
+import net.citizensnpcs.api.event.NPCDeathEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -291,6 +292,7 @@ public class PlayerInteractListener implements Listener {
         }
 
     }
+
 
 //    @EventHandler
     public void onSoldierSpawn(PlayerInteractEvent event){
