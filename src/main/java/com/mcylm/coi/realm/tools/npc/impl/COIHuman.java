@@ -174,8 +174,12 @@ public class COIHuman implements AI {
 
         LivingEntity entity = (LivingEntity) npc.getEntity();
 
-        if(getHunger() >= 20){
+        if(getHunger() >= 15){
+            // 如果饱食度大于等于15，就不再是饥饿状态
             isHungry = false;
+        }
+
+        if(getHunger() >= 20){
             return;
         }
 
@@ -938,6 +942,14 @@ public class COIHuman implements AI {
      * @return
      */
     public boolean isTooHungryToWork() {
-        return isHungry;
+
+        if(isHungry){
+            // 食物背包里的物品为空
+            if(getCoiNpc().getFoodBag().isEmpty()){
+                return true;
+            }
+        }
+
+        return false;
     }
 }
