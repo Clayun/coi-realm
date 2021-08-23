@@ -766,12 +766,12 @@ public class COIHuman implements AI {
         // 全部物品设置掉落
         while(foods.hasNext()){
             ItemStack food = foods.next();
-            npc.getEntity().getWorld().dropItem(npc.getEntity().getLocation(),food);
+            location.getWorld().dropItem(location,food);
         }
 
         while (items.hasNext()){
             ItemStack next = items.next();
-            npc.getEntity().getWorld().dropItem(npc.getEntity().getLocation(),next);
+            location.getWorld().dropItem(location,next);
         }
 
         // 清空缓存
