@@ -286,8 +286,6 @@ public class COIHuman implements AI {
         // 最近的食物箱子
         if(nearestLocation != null){
 
-            LoggerUtils.debug("最近的一个有食物的箱子位置在："+nearestLocation.getX()+","+nearestLocation.getZ());
-
             // 如果距离大于3，就走过去
             if(distance > 3){
                 findPath(nearestLocation);
