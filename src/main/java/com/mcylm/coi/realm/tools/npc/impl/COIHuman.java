@@ -783,7 +783,7 @@ public class COIHuman implements AI {
             hungerColor = "&c";
         }
 
-        // 名字组成 Lv.1 矿工 20.0
+        // 名字组成 Lv.1 名称 20.0
         return LoggerUtils.replaceColor(teamColor + "Lv."+coiNpc.getLevel()+" "+coiNpc.getName() + " "+hungerColor + getHunger());
     }
 

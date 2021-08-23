@@ -67,8 +67,8 @@ public class COIMiner extends COIHuman{
         // NPC的目标方块类型
         Set<String> blocks =  getCoiNpc().getBreakBlockMaterials();
 
-        // 需要拆除的方块目标结果集
-        List<Block> blocksNearByNpc = getNearbyBlocks(5);
+        // 检测周围需要 10 格半径范围内的全部方块
+        List<Block> blocksNearByNpc = getNearbyBlocks(10);
 
         if(blocks != null){
             for(String blockName : blocks){
@@ -78,6 +78,7 @@ public class COIMiner extends COIHuman{
                     Material material = Material.getMaterial(blockName);
                     if(material != null){
                         if(material == block.getBlockData().getMaterial()){
+                            // 加入到队列当中
                             locations.add(block);
                         }
                     }
