@@ -765,7 +765,26 @@ public class COIHuman implements AI {
      * @return
      */
     private String getName(){
-        return LoggerUtils.replaceColor("[LV."+coiNpc.getLevel()+"]"+coiNpc.getName() + " "+getHunger());
+
+        String teamColor = "";
+
+        // 名字改为小队颜色
+        if(getCoiNpc().getTeam() != null){
+            teamColor = getCoiNpc().getTeam().getType().getColor();
+        }
+
+        String hungerColor = "&a";
+
+        if(getHunger() >= 10){
+            hungerColor = "&a";
+        }else if(getHunger() >= 5){
+            hungerColor = "&6";
+        }else if(getHunger() < 5){
+            hungerColor = "&c";
+        }
+
+        // 名字组成 Lv.1 矿工 20.0
+        return LoggerUtils.replaceColor(teamColor + "Lv."+coiNpc.getLevel()+" "+coiNpc.getName() + " "+hungerColor + getHunger());
     }
 
     /**
