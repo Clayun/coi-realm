@@ -154,37 +154,41 @@ public class ItemUtils {
 
                     ItemStack next = iterator.next();
 
-                    if(next.getType().equals(material)){
-                        // 如果类型一致，就尝试扣减
-                        int amount = next.getAmount();
+                    if(next != null){
+                        if(next.getType().equals(material)){
+                            // 如果类型一致，就尝试扣减
+                            int amount = next.getAmount();
 
-                        if(amount > surplusNum){
-                            // 如果物品数量大于剩余待扣减数量，就直接扣减数量
-                            amount = amount - surplusNum;
-                            next.setAmount(amount);
+                            if(amount > surplusNum){
+                                // 如果物品数量大于剩余待扣减数量，就直接扣减数量
+                                amount = amount - surplusNum;
+                                next.setAmount(amount);
 
-                            // 计数
-                            count = count + surplusNum;
-                        }
+                                // 计数
+                                count = count + surplusNum;
+                            }
 
-                        if(amount == surplusNum){
-                            // 如果物品数量等于剩余待扣减数量，就直接删除物品
-                            surplusNum = 0;
-                            chest.getSnapshotInventory().remove(next);
+                            if(amount == surplusNum){
+                                // 如果物品数量等于剩余待扣减数量，就直接删除物品
+                                surplusNum = 0;
+                                chest.getSnapshotInventory().remove(next);
 
-                            // 计数
-                            count = count + surplusNum;
-                        }
+                                // 计数
+                                count = count + surplusNum;
+                            }
 
-                        if(amount < surplusNum){
-                            // 如果物品数量小于待扣减数量，同时删除物品
-                            surplusNum = surplusNum - amount;
-                            chest.getSnapshotInventory().remove(next);
+                            if(amount < surplusNum){
+                                // 如果物品数量小于待扣减数量，同时删除物品
+                                surplusNum = surplusNum - amount;
+                                chest.getSnapshotInventory().remove(next);
 
-                            // 计数
-                            count = count + amount;
+                                // 计数
+                                count = count + amount;
+                            }
                         }
                     }
+
+
 
                 }
             }
