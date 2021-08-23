@@ -102,7 +102,7 @@ public class COIMiner extends COIHuman{
      */
     public void findAndBreakBlock(){
 
-        if(!isAlive() || isHungry()){
+        if(!isAlive() || isTooHungryToWork()){
             return;
         }
 
@@ -293,29 +293,6 @@ public class COIMiner extends COIHuman{
         }
 
         return null;
-    }
-
-    /**
-     * 获取箱子当中的全部物品
-     * @param location
-     * @return
-     */
-    private List<ItemStack> getChest(Location location){
-
-        List<ItemStack> results = new ArrayList<>();
-
-        Block block = location.getBlock();
-
-        if(block.getType().equals(Material.CHEST)){
-            Chest chest = (Chest) block.getState();
-            Inventory blockInventory = chest.getBlockInventory();
-
-            @NonNull ItemStack[] contents = blockInventory.getContents();
-
-            results = new ArrayList<>(Arrays.asList(contents));
-        }
-
-        return results;
     }
 
 

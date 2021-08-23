@@ -13,7 +13,9 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.*;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.*;
 
@@ -229,7 +231,7 @@ public class COIHuman implements AI {
      */
     private void findFood(){
 
-        if(!isHungry()){
+        if(!isTooHungryToWork()){
             return;
         }
 
@@ -240,6 +242,9 @@ public class COIHuman implements AI {
             LoggerUtils.debug("食物箱子不存在");
             return;
         }
+
+        Location nearestLocation = null;
+        double distance = 99999d;
 
         for(Location location : foodChests){
 
@@ -253,23 +258,68 @@ public class COIHuman implements AI {
                 if(block.getInventory().isEmpty()){
                     continue;
                 }
+                double locationDistance = location.distance(getNpc().getEntity().getLocation());
 
-                // 距离少于20格，就过去
-                if(location.distance(getNpc().getEntity().getLocation()) <= 20){
-                    findPath(location);
+                // 冒泡排序
+                if(locationDistance <= distance){
+                    nearestLocation = location;
+                    distance = locationDistance;
                 }
-
-                // 距离小于等于3，拿物品
-                if(location.distance(getNpc().getEntity().getLocation()) <= 3){
-                    // 一次性拿20个
-                    LoggerUtils.debug("到达了附近");
-                }
-                return;
 
             }
-
-
         }
+
+        // 最近的食物箱子
+        if(nearestLocation != null){
+
+            // 如果距离大于3，就走过去
+            if(distance > 3){
+                findPath(nearestLocation);
+            }
+
+            // 距离小于等于3，拿物品
+            if(distance <= 3){
+                // 一次性拿20个
+
+                // 扣减箱子里的物品，扣20个，不足20个有多少拿多少
+                int i = ItemUtils.takeItemFromChest(nearestLocation, Material.BREAD, 20);
+
+                if(i > 0){
+
+                    // 将扣减的数量添加到背包里
+                    for(int count = 0; count < i; count++){
+                        ItemStack itemStack = new ItemStack(Material.BREAD);
+                        itemStack.setAmount(1);
+                        addItemToFoodBag(itemStack);
+                    }
+
+                }
+            }
+        }
+
+    }
+
+    /**
+     * 获取箱子当中的全部物品
+     * @param location
+     * @return
+     */
+    private List<ItemStack> getChest(Location location){
+
+        List<ItemStack> results = new ArrayList<>();
+
+        Block block = location.getBlock();
+
+        if(block.getType().equals(Material.CHEST)){
+            Chest chest = (Chest) block.getState();
+            Inventory blockInventory = chest.getBlockInventory();
+
+            @NonNull ItemStack[] contents = blockInventory.getContents();
+
+            results = new ArrayList<>(Arrays.asList(contents));
+        }
+
+        return results;
     }
 
     /**
@@ -883,7 +933,11 @@ public class COIHuman implements AI {
         return MAX_HEALTH;
     }
 
-    public boolean isHungry() {
+    /**
+     * 饿的不能继续工作了
+     * @return
+     */
+    public boolean isTooHungryToWork() {
         return isHungry;
     }
 }

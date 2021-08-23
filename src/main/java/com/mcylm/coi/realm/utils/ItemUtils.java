@@ -14,9 +14,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 public class ItemUtils {
 
@@ -118,6 +120,84 @@ public class ItemUtils {
         }else{
             LoggerUtils.debug("这是个"+block.getType().name());
         }
+    }
+
+
+    /**
+     * 从箱子里拿指定数量的物品
+     * @param location 箱子位置
+     * @param material 拿取的物品材质
+     * @param num 实际拿取的数量
+     * @return
+     */
+    public static int takeItemFromChest(Location location, Material material,int num){
+
+        Block block = location.getBlock();
+
+        // 剩余待扣减数量
+        int surplusNum = num;
+
+        // 已扣减数量
+        int count = 0;
+
+        if(block.getType().equals(Material.CHEST)){
+            Chest chest = (Chest) block.getState();
+
+            // 如果箱子里包含物品材质，就尝试扣减
+            if(chest.getBlockInventory().contains(material)){
+                ListIterator<ItemStack> iterator = chest.getSnapshotInventory().iterator();
+                while(iterator.hasNext()){
+
+                    if(surplusNum == 0){
+                        break;
+                    }
+
+                    ItemStack next = iterator.next();
+
+                    if(next.getType().equals(material)){
+                        // 如果类型一致，就尝试扣减
+                        int amount = next.getAmount();
+
+                        if(amount > surplusNum){
+                            // 如果物品数量大于剩余待扣减数量，就直接扣减数量
+                            amount = amount - surplusNum;
+                            next.setAmount(amount);
+
+                            // 计数
+                            count = count + surplusNum;
+                        }
+
+                        if(amount == surplusNum){
+                            // 如果物品数量等于剩余待扣减数量，就直接删除物品
+                            surplusNum = 0;
+                            iterator.remove();
+
+                            // 计数
+                            count = count + surplusNum;
+                        }
+
+                        if(amount < surplusNum){
+                            // 如果物品数量小于待扣减数量，同时删除物品
+                            surplusNum = surplusNum - amount;
+                            iterator.remove();
+
+                            // 计数
+                            count = count + amount;
+                        }
+                    }
+
+                }
+            }
+
+            chest.update();
+
+            return count;
+
+        }else{
+            LoggerUtils.debug("这是个"+block.getType().name());
+            return 0;
+        }
+
     }
 
     public static void changeColorForLeather(ItemStack item,Color color){
