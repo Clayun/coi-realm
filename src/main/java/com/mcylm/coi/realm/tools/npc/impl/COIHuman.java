@@ -9,6 +9,7 @@ import com.mcylm.coi.realm.utils.LoggerUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.Helper;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.ai.PathStrategy;
 import net.citizensnpcs.api.ai.goals.TargetNearbyEntityGoal;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.*;
@@ -19,6 +20,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.*;
@@ -152,6 +154,7 @@ public class COIHuman implements AI {
 
         npc.faceLocation(location);
         npc.getNavigator().setTarget(location);
+
     }
 
     /**
