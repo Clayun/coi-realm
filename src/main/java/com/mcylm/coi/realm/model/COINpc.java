@@ -55,7 +55,7 @@ public class COINpc implements Serializable {
     // 主动捡起的物品类型
     private Set<String> pickItemMaterials;
 
-    // NPC的背包
+    // NPC的素材收集背包
     private List<ItemStack> inventory;
 
     // NPC的食物袋

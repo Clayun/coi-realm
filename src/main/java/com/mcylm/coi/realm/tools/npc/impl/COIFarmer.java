@@ -67,8 +67,10 @@ public class COIFarmer extends COIHuman{
                         bread.setAmount(item.getAmount());
 
                         if(getHunger() <= 19){
+                            // 做好的面包优先供给自己
                             getCoiNpc().getFoodBag().add(bread);
                         }else{
+                            // 多余的部分放入素材收集背包
                             getCoiNpc().getInventory().add(bread);
                         }
                         iterator.remove();
@@ -129,12 +131,39 @@ public class COIFarmer extends COIHuman{
             return;
         }
 
+        // 最多有6块耕地
+        if(farmlands.size() >= 6){
+
+            Iterator<Block> iterator = getFarmlands().iterator();
+
+            while(iterator.hasNext()){
+                Block next = iterator.next();
+
+                if(next != null){
+
+                    // 如果不再是耕地，就移除出去
+                    if(!next.getType().equals(Material.FARMLAND)){
+                        iterator.remove();
+                    }
+                }
+
+            }
+
+            // 如果还是大于等于6，就不在耕地
+            if(getFarmlands().size() >= 6){
+                return;
+            }
+
+        }
+
         List<Block> nearbyBlocks = getNearbyBlocks(10);
 
         for(Block block : nearbyBlocks){
 
             if(block.getType().equals(Material.FARMLAND)){
-                farmlands.add(block);
+                if(!farmlands.contains(block)){
+                    farmlands.add(block);
+                }
                 continue;
             }
 

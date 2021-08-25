@@ -9,7 +9,7 @@ import java.util.List;
 public class COISoldierCreator extends COINpc {
 
     // NPC所在阵型编号
-    private int npcNumber;
+    private Integer npcNumber;
 
     // 阵型
     private List<List<Integer>> formats;
@@ -17,5 +17,9 @@ public class COISoldierCreator extends COINpc {
     public COISoldierCreator(int npcNumber, List<List<Integer>> formats) {
         this.npcNumber = npcNumber;
         this.formats = formats;
+    }
+
+    public COISoldierCreator(){
+
     }
 }

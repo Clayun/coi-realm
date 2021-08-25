@@ -2,6 +2,7 @@ package com.mcylm.coi.realm.tools.npc;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.tools.npc.impl.COIHuman;
+import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
@@ -32,7 +33,28 @@ public class COIRunner {
      */
     public void addNpc(COIHuman coiHuman){
         npcList.add(coiHuman);
+        if(getNpcList().size() == 1){
+            run();
+        }
     }
+
+    /**
+     * 设置阵型
+     * @param formation
+     */
+    public void updateFormation(List<List<Integer>> formation){
+
+        int i = 0;
+        for(COIHuman human : getNpcList()){
+            if(human instanceof COISoldier){
+                i++;
+                COISoldier soldier = (COISoldier) human;
+                soldier.setNumber(i);
+                soldier.updateFormats(formation);
+            }
+        }
+    }
+
 
     /**
      * 启动NPC

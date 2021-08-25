@@ -29,12 +29,17 @@ public class COISoldier extends COIHuman{
     private List<List<Integer>> formats;
 
     // NPC编排编号，可跟GUI联动
-    private int npcNumber;
+    private Integer npcNumber;
 
     public COISoldier(COISoldierCreator npcCreator) {
         super(npcCreator);
-        this.npcNumber = npcCreator.getNpcNumber();
-        this.formats = npcCreator.getFormats();
+
+        if(npcCreator.getNpcNumber() != null){
+            this.npcNumber = npcCreator.getNpcNumber();
+        }
+        if(npcCreator.getFormats() != null){
+            this.formats = npcCreator.getFormats();
+        }
     }
 
     /**
@@ -120,6 +125,7 @@ public class COISoldier extends COIHuman{
 
     /**
      * 自动计算NPC的位置，组成阵型
+     * 如果没有阵型，就主动跟随玩家
      */
     private void formation(){
 
@@ -135,16 +141,26 @@ public class COISoldier extends COIHuman{
         Player player = Bukkit.getPlayer(getCoiNpc().getFollowPlayerName());
 
         if(player != null && player.isOnline()){
-            List<Location> locations = FormationUtils.calculateFormation(player.getLocation(), formats);
 
-            if(locations.size() >= npcNumber){
-                int index = npcNumber - 1;
+            if(npcNumber == null
+                || formats == null){
+                // 如果没有初始化队形，就跟随玩家
+                findPath(player.getLocation());
 
-                // NPC编排所在位置
-                Location location = locations.get(index);
+            }else{
+                List<Location> locations = FormationUtils.calculateFormation(player.getLocation(), formats);
 
-                walk(location,player.getEyeLocation());
+                if(locations.size() >= npcNumber){
+                    int index = npcNumber - 1;
+
+                    // NPC编排所在位置
+                    Location location = locations.get(index);
+
+                    walk(location,player.getEyeLocation());
+                }
             }
+
+
         }
 
     }
@@ -181,6 +197,14 @@ public class COISoldier extends COIHuman{
      */
     public void updateFormats(List<List<Integer>> formats){
         this.formats = formats;
+    }
+
+    /**
+     * 更换NPC的编号
+     * @param number
+     */
+    public void setNumber(Integer number){
+        this.npcNumber = number;
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COITeamType;
 import com.mcylm.coi.realm.tools.building.impl.COIBuilding;
+import com.mcylm.coi.realm.tools.npc.COIRunner;
 import com.mcylm.coi.realm.tools.team.Team;
 import lombok.Data;
 import org.bukkit.Location;
@@ -31,11 +32,19 @@ public class COITeam implements Team {
     // 已经建造的建筑（允许有重复的）
     private List<COIBuilding> finishedBuildings;
 
+    // 小队共享的战斗队性
+    private List<List<Integer>> battleFormation;
+
+    // 小队军队运行器
+    private COIRunner armyRunner;
+
     public COITeam(COITeamType type) {
         this.type = type;
         this.players = new ArrayList<>();
         this.foodChests = new ArrayList<>();
         this.finishedBuildings = new ArrayList<>();
+        this.battleFormation = new ArrayList<>();
+        this.armyRunner = new COIRunner(new ArrayList<>());
     }
 
     /**

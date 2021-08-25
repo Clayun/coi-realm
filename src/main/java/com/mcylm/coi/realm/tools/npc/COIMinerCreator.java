@@ -15,10 +15,10 @@ public class COIMinerCreator extends COINpc {
         this.chestsLocation = chestsLocation;
     }
 
-    // 收集够这些资源就回去
+    // 收集够这些资源就回去，默认5个
     private Integer resourceLimitToBack = 5;
 
-    // 箱子位置
+    // 收集的物资存放箱子的位置，可以有多个
     private List<Location> chestsLocation;
 
 }

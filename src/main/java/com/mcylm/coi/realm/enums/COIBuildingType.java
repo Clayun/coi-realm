@@ -21,6 +21,11 @@ public enum  COIBuildingType {
             ,"矿场是资源收集类建筑，建造完成后会生成一个矿工" +
             "，矿工会全自动收集矿物，并存入矿场的箱子中，收集的资源可用于建造新的建筑，或者给战士制作装备"
             ,5,5L),
+
+    MILITARY_CAMP("MILITARY_CAMP","军营",Material.IRON_SWORD
+            ,"兵营是战斗类建筑，建造完成后会生成一个战士" +
+            "，战士会默认跟随建筑的建造者，当小队中有人手持“将军令”时，则所有战士都会主动跟随该玩家"
+            ,5,5L),
     ;
 
     private String code;
