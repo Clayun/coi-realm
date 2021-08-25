@@ -208,7 +208,9 @@ public class COIHuman implements AI {
                                 if(item.getAmount() >= 1){
                                     item.setAmount(item.getAmount() - 1);
                                     ItemStack cache = null;
-                                    if(entity.getEquipment().getItemInMainHand() != null){
+
+                                    // 如果手中不为空气
+                                    if(!entity.getEquipment().getItemInMainHand().getType().equals(Material.AIR)){
                                         cache = entity.getEquipment().getItemInMainHand();
                                     }
                                     entity.getEquipment().setItemInMainHand(item);
@@ -257,6 +259,8 @@ public class COIHuman implements AI {
         if(foodChests == null
                 || foodChests.isEmpty()){
             LoggerUtils.debug("食物箱子不存在");
+            // 食物箱子不存在，就直接返回出生点
+            findPath(getCoiNpc().getSpawnLocation());
             return;
         }
 

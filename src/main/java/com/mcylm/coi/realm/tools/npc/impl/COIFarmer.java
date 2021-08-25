@@ -270,7 +270,7 @@ public class COIFarmer extends COIHuman{
         boolean b = needBackToSaveResources();
 
         if(b){
-            backAndSaveResources();
+            // 需要回城，就中断执行下面的方法
             return;
         }
 
