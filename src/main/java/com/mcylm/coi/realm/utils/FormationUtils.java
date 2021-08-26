@@ -12,6 +12,9 @@ import java.util.List;
  */
 public class FormationUtils {
 
+    // 行数
+    public static int LINES = 6;
+
     // 每个NPC之间的间隔
     private static double NPC_SPACE = 1.5;
 
@@ -111,7 +114,7 @@ public class FormationUtils {
     }
 
     /**
-     * 测试16人阵营
+     * 16人阵营
      * @return
      */
     public static List<List<Integer>> customFormat(){
