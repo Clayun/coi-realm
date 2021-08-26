@@ -65,8 +65,11 @@ public class COICamp extends COIBuilding {
                         soldier = new COISoldier(npcCreator);
                         soldier.spawn(getNpcCreator().getSpawnLocation());
 
-                        //就将NPC放入小队军队运行器，关闭当前ticker
+                        // 就将NPC放入小队军队运行器，关闭当前ticker
                         TeamUtils.getTeamByPlayer(player).getArmyRunner().addNpc(soldier);
+
+                        // 关闭Ticker
+                        this.cancel();
                     }
                 }
             }.runTaskTimer(Entry.getInstance(),0,20l);
