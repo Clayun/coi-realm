@@ -23,6 +23,8 @@ game:
     material: 'EMERALD'
   # 每个小组最大玩家数量
   max-group-players: 5
+  # 矿物重生时间
+  mineral-restore-timer: 5
 
 # NPC可食用的 Material Name
 foods:

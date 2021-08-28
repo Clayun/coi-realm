@@ -1,6 +1,7 @@
 package com.mcylm.coi.realm.tools.npc.impl;
 
 import com.mcylm.coi.realm.Entry;
+import com.mcylm.coi.realm.model.COIBlock;
 import com.mcylm.coi.realm.runnable.TaskRunnable;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.utils.ItemUtils;
@@ -10,11 +11,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.*;
@@ -30,12 +34,12 @@ public class COIMiner extends COIHuman{
     private boolean isBreaking = false;
 
     // 待拆除的方块
-    private List<Block> targetBlocks;
+    private HashSet<Block> targetBlocks;
 
     public COIMiner(COIMinerCreator npcCreator) {
         super(npcCreator);
         // 初始化NPC待拆方块
-        this.targetBlocks = new ArrayList<>();
+        this.targetBlocks = new HashSet<>();
     }
 
     /**
@@ -50,7 +54,7 @@ public class COIMiner extends COIHuman{
 
         if(update != null && respawn){
             // 初始化NPC待拆方块
-            this.targetBlocks = new ArrayList<>();
+            this.targetBlocks = new HashSet<>();
         }
 
         return update;
@@ -62,13 +66,17 @@ public class COIMiner extends COIHuman{
      */
     private void addBlockTargets() {
 
+        LoggerUtils.debug("添加需要拆除的方块进入缓冲器");
+
         List<Block> locations = new ArrayList<>();
 
         // NPC的目标方块类型
         Set<String> blocks =  getCoiNpc().getBreakBlockMaterials();
 
-        // 检测周围需要 10 格半径范围内的全部方块
-        List<Block> blocksNearByNpc = getNearbyBlocks(10);
+        // 检测周围需要 7 格半径范围内的全部方块
+        List<Block> blocksNearByNpc = getNearbyBlocks(7);
+
+        int i = 0;
 
         if(blocks != null){
             for(String blockName : blocks){
@@ -80,6 +88,7 @@ public class COIMiner extends COIHuman{
                         if(material == block.getBlockData().getMaterial()){
                             // 加入到队列当中
                             locations.add(block);
+                            i++;
                         }
                     }
                 }
@@ -90,11 +99,7 @@ public class COIMiner extends COIHuman{
         // 添加到缓冲区
         this.targetBlocks.addAll(locations);
 
-        // 根据Y轴排序
-        Collections.sort(this.targetBlocks, Comparator.comparingDouble(Block::getY));
-
-        // 再次翻转，优先拆除高的方块，实现的效果是从高往低挖
-        Collections.reverse(this.targetBlocks);
+        LoggerUtils.debug("添加了："+i+"个方块");
 
     }
 
@@ -117,61 +122,127 @@ public class COIMiner extends COIHuman{
         }
 
         //优先拆方块
-        List<Block> targetBlocks = this.targetBlocks;
+        HashSet<Block> targetBlocks = this.targetBlocks;
 
         Block targetBlock = null;
 
         if(targetBlocks != null && targetBlocks.size() > 0){
 
-            Iterator<Block> iterator = targetBlocks.iterator();
-            while (iterator.hasNext()) {
-                targetBlock = iterator.next();
-                if(targetBlock != null){
+            LoggerUtils.debug("矿物还有："+targetBlocks.size());
 
-                    Location clone = targetBlock.getLocation().clone();
-                    clone.setY(clone.getY()+1);
+            targetBlock = getNearestBlock(getNpc().getEntity().getLocation());
 
-                    if(targetBlock.getWorld().getBlockAt(targetBlock.getLocation()).getType() == Material.AIR){
-                        iterator.remove();
-                    }else{
-                        if (getNpc().getEntity().getLocation().distance(targetBlock.getLocation()) <= 3) {
+            if(targetBlock != null){
+                if (getNpc().getEntity().getLocation().distance(targetBlock.getLocation()) <= 3) {
 
-                            if (!isBreaking) {
+                    LoggerUtils.debug("位置小于3");
 
-                                LivingEntity entity = (LivingEntity) getNpc().getEntity();
-                                BlockBreaker.BlockBreakerConfiguration blockBreakerConfiguration = new BlockBreaker.BlockBreakerConfiguration();
-                                blockBreakerConfiguration.radius(5);
-                                blockBreakerConfiguration.item(entity.getEquipment().getItemInMainHand());
-                                blockBreakerConfiguration.callback(
+                    LoggerUtils.debug("isBreaking "+isBreaking);
+
+                    if (!isBreaking) {
+
+                        COIBlock restoreBlock = new COIBlock();
+                        restoreBlock.setX(targetBlock.getX());
+                        restoreBlock.setY(targetBlock.getY());
+                        restoreBlock.setZ(targetBlock.getZ());
+                        restoreBlock.setMaterial(targetBlock.getType().name());
+                        restoreBlock.setBlockData(targetBlock.getBlockData().getAsString());
+                        restoreBlock.setWorld(targetBlock.getWorld().getName());
+
+                        LivingEntity entity = (LivingEntity) getNpc().getEntity();
+                        BlockBreaker.BlockBreakerConfiguration blockBreakerConfiguration = new BlockBreaker.BlockBreakerConfiguration();
+                        blockBreakerConfiguration.radius(5);
+                        blockBreakerConfiguration.item(entity.getEquipment().getItemInMainHand());
+                        blockBreakerConfiguration.callback(
+                                new BukkitRunnable() {
+                                    @Override
+                                    public void run() {
+
+                                        // 拆除完成
+                                        isBreaking = false;
+
+                                        LoggerUtils.debug("拆除完成了！"+isBreaking);
+
+                                        // 方块复活时间
+                                        int restoreTimer = Entry.getInstance().getConfig().getInt("game.mineral-restore-timer");
+
+                                        // 重生矿物方块
                                         new BukkitRunnable() {
                                             @Override
                                             public void run() {
-                                                //拆除完成
-                                                isBreaking = false;
+
+                                                Material material = Material.getMaterial(restoreBlock.getMaterial());
+
+                                                BlockData blockData = Bukkit.createBlockData(restoreBlock.getBlockData());
+
+                                                Block block = restoreBlock.getBlock();
+
+                                                block.setType(material);
+
+                                                BlockState state = block.getState();
+                                                state.setBlockData(blockData);
+                                                state.update(true);
+
+                                                this.cancel();
+
                                             }
-                                        }
-                                );
-                                isBreaking = true;
-                                BlockBreaker breaker = getNpc().getBlockBreaker(targetBlock, blockBreakerConfiguration);
-                                if (breaker.shouldExecute()) {
-                                    TaskRunnable run = new TaskRunnable(breaker);
-                                    run.setTaskId(Bukkit.getScheduler().scheduleSyncRepeatingTask(Entry.getInstance(), run, 0, 1));
+                                        }.runTaskLater(Entry.getInstance(),20 * restoreTimer);
+
+                                    }
                                 }
-                            }
-
-
-                        } else {
-
-                            getNpc().faceLocation(targetBlock.getLocation());
-                            findPath(targetBlock.getLocation());
-
+                        );
+                        BlockBreaker breaker = getNpc().getBlockBreaker(targetBlock, blockBreakerConfiguration);
+                        if (breaker.shouldExecute()) {
+                            LoggerUtils.debug("开始挖矿");
+                            isBreaking = true;
+                            TaskRunnable run = new TaskRunnable(breaker);
+                            run.setTaskId(Bukkit.getScheduler().scheduleSyncRepeatingTask(Entry.getInstance(), run, 0, 1));
                         }
+                    }else{
+                        LoggerUtils.debug("还在挖呢");
                     }
+
+                } else {
+
+                    findPath(targetBlock.getLocation());
+
+                    LoggerUtils.debug("寻路中");
                 }
             }
-        }else{
-            addBlockTargets();
+
+
         }
+
+        addBlockTargets();
+    }
+
+    /**
+     * 获取最近的矿物
+     * @param entityLocation
+     * @return
+     */
+    private Block getNearestBlock(Location entityLocation){
+
+        double distance = 99999999d;
+        Block targetBlock = null;
+
+        Iterator<Block> iterator = targetBlocks.iterator();
+        while (iterator.hasNext()) {
+            Block block = iterator.next();
+
+            if(block.getType() == Material.AIR){
+                iterator.remove();
+            }
+
+            if(block.getLocation().distance(entityLocation) < distance){
+                if(canStand(block.getLocation())){
+                    targetBlock = block;
+                    distance = block.getLocation().distance(entityLocation);
+                }
+            }
+        }
+
+        return targetBlock;
     }
 
     /**

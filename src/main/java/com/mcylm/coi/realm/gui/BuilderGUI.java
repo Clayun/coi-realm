@@ -54,7 +54,6 @@ public class BuilderGUI extends Gui {
             if(team == null){
                 LoggerUtils.sendMessage("你还未加入任何小队",getPlayer());
                 ChooseTeamGUI chooseTeamGUI = new ChooseTeamGUI(getPlayer());
-                chooseTeamGUI.redraw();
                 chooseTeamGUI.open();
                 return;
             }

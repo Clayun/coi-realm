@@ -1,6 +1,7 @@
 package com.mcylm.coi.realm.clipboard;
 
 import com.mcylm.coi.realm.Entry;
+import com.mcylm.coi.realm.model.ClipboardLocation;
 import com.mcylm.coi.realm.tools.building.impl.COIBuilder;
 import com.mcylm.coi.realm.model.COIStructure;
 import com.mcylm.coi.realm.utils.LoggerUtils;
@@ -12,7 +13,7 @@ import java.util.Map;
 
 public class PlayerClipboard {
 
-    private static Map<String,ClipboardLocation> clipboard = new HashMap<>();
+    private static Map<String, ClipboardLocation> clipboard = new HashMap<>();
 
     /**
      * 自动选点

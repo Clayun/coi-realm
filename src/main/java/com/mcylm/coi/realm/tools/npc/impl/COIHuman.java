@@ -152,9 +152,31 @@ public class COIHuman implements AI {
             return;
         }
 
-        npc.faceLocation(location);
-        npc.getNavigator().setTarget(location);
+        if(canStand(location)){
+            npc.faceLocation(location);
+            npc.getNavigator().setTarget(location);
+        }
 
+    }
+
+    /**
+     * 方块上方是否可以站立
+     * @param location
+     * @return
+     */
+    public boolean canStand(Location location){
+        Location clone1 = location.clone();
+        Location clone2 = location.clone();
+
+        clone1.setY(clone1.getY()+1);
+        clone2.setY(clone2.getY()+2);
+
+        if(clone1.getBlock().getType().equals(Material.AIR)
+                && clone2.getBlock().getType().equals(Material.AIR)){
+            return true;
+        }
+
+        return false;
     }
 
     /**

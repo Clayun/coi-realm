@@ -156,7 +156,7 @@ public class COIFarmer extends COIHuman{
 
         }
 
-        List<Block> nearbyBlocks = getNearbyBlocks(10);
+        List<Block> nearbyBlocks = getNearbyBlocks(7);
 
         for(Block block : nearbyBlocks){
 

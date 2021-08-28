@@ -1,4 +1,4 @@
-package com.mcylm.coi.realm.clipboard;
+package com.mcylm.coi.realm.model;
 
 import com.mcylm.coi.realm.model.COIStructure;
 import lombok.Data;
