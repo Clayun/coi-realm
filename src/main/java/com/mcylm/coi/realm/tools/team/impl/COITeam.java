@@ -21,21 +21,27 @@ import java.util.List;
 public class COITeam implements Team {
 
     // 小队类型
+    // Team type
     private COITeamType type;
 
     // 小队玩家列表（只记录名称）
+    // Players list (only name)
     private List<String> players;
 
     // 队内NPC共享食物箱子位置
+    // Team npc share food chest location
     private List<Location> foodChests;
 
     // 已经建造的建筑（允许有重复的）
+    // All built building(allow repeat buildings)
     private List<COIBuilding> finishedBuildings;
 
     // 小队共享的战斗队性
+    // Team formation
     private List<List<Integer>> battleFormation;
 
     // 小队军队运行器
+    // Team army task runner
     private COIRunner armyRunner;
 
     public COITeam(COITeamType type) {
@@ -50,6 +56,8 @@ public class COITeam implements Team {
     /**
      * 加入小队
      * 如果玩家已经加入了其他的小队，会退出其他小队
+     * Join a team
+     * If player is already been join other's team,it will be quit.
      * @param player
      * @return
      */
@@ -58,6 +66,7 @@ public class COITeam implements Team {
 
         if(getPlayers().size() >= 5){
             // 加入失败，队伍满了
+            // Join fail,the team is full.
             return false;
         }
 
@@ -66,6 +75,7 @@ public class COITeam implements Team {
         Iterator<COITeam> iterator = teams.iterator();
 
         // 加入队伍之前，先退出其他队伍
+        // You need quit your team before you join the new one.
         while(iterator.hasNext()){
             COITeam coiTeam = iterator.next();
             if(coiTeam.getPlayers().contains(player.getName())){
@@ -75,6 +85,7 @@ public class COITeam implements Team {
         }
 
         // 加入队伍
+        // Join team
         getPlayers().add(player.getName());
 
         return true;
@@ -82,6 +93,7 @@ public class COITeam implements Team {
 
     /**
      * 查询指定类型的建筑
+     * Search building type
      * @param type
      * @return
      */
@@ -108,6 +120,7 @@ public class COITeam implements Team {
 
     /**
      * 获取GUI显示的内容
+     * Get GUI view content for player name
      * @return
      */
     public List<String> getPlayerListName(){

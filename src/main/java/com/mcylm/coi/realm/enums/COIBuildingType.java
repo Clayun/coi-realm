@@ -28,14 +28,16 @@ public enum  COIBuildingType {
             ,5,5L),
     ;
 
+    // CODE
     private String code;
-    // 建筑名称
+    // 建筑名称 building name
     private String name;
     // GUI显示的材质
     private Material itemType;
     // 建筑介绍
     private String introduce;
     // 每次建筑几个方块
+    // blocks number per build
     private int unit;
     // 几tick建造一次
     private long interval;

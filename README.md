@@ -1,6 +1,6 @@
 # COI REALM INTRODUCE
 
-`Before you fork this repo,i hope you can read Chinese.
+`Before you fork this repo,I hope you can read Chinese.
 Then you can read the code notes.  `  
 
 This is a new branch for RTS Game.  
@@ -16,7 +16,7 @@ and let them attack the other's player.
 
 # AI INTRODUCE
 
-There are three AI in this game:  
+There are three AIs in this game:  
 1. Miner
 2. Farmer
 3. Soldier

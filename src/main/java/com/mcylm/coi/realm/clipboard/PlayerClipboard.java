@@ -11,12 +11,17 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 玩家建筑粘贴板类
+ * Player clipboard
+ */
 public class PlayerClipboard {
 
     private static Map<String, ClipboardLocation> clipboard = new HashMap<>();
 
     /**
      * 自动选点
+     * Auto choose point for building
      * @param player
      * @param point
      */
@@ -45,6 +50,7 @@ public class PlayerClipboard {
 
     /**
      * 设置第一个点
+     * set first point
      * @param player
      * @param point
      */
@@ -61,17 +67,20 @@ public class PlayerClipboard {
             LoggerUtils.debug("首次选点");
             return true;
         }else{
-           //已存在了
+            // 已存在了
+            // Already exist
             if(clipboardLocation.getFirstPoint() != null
                 && clipboardLocation.getSecondPoint() == null){
-                //如果第一个点存在，第二个点不存在
+                // 如果第一个点存在，第二个点不存在
+                // If first point exist,but second point doesn't exist
                 LoggerUtils.debug("如果第一个点存在，第二个点不存在");
                 return false;
             }
 
             if(clipboardLocation.getFirstPoint() != null
                 && clipboardLocation.getSecondPoint() != null){
-                //如果两个点都存在了，就重置第一个点
+                // 如果两个点都存在了，就重置第一个点
+                // If two points all exist,then reset first one
                 LoggerUtils.debug("如果两个点都存在了，就重置第一个点");
                 clipboardLocation.setFirstPoint(point);
                 clipboardLocation.setSecondPoint(null);
@@ -81,7 +90,8 @@ public class PlayerClipboard {
             }
         }
 
-        //如果上述情况都不符合，就重置
+        // 如果上述情况都不符合，就重置
+        // If not match,reset all
         clipboardLocation.setFirstPoint(point);
         clipboardLocation.setSecondPoint(null);
         clipboardLocation.setStructure(null);
@@ -92,6 +102,7 @@ public class PlayerClipboard {
 
     /**
      * 设置第二个点
+     * set second point
      * @param player
      * @param point
      */
@@ -104,11 +115,13 @@ public class PlayerClipboard {
         ClipboardLocation clipboardLocation = clipboard.get(player.getName());
         clipboardLocation.setSecondPoint(point);
 
-        //计算出COI结构体
+        // 计算出COI结构体
+        // compute COI structure by points
         COIStructure structure = Entry.getBuilder().getStructureByTwoLocations(clipboardLocation.getFirstPoint(), clipboardLocation.getSecondPoint());
         clipboardLocation.setStructure(structure);
 
-        //将粘贴板的内容存入缓存
+        // 将粘贴板的内容存入缓存
+        // copy all content into memory
         clipboard.put(player.getName(),clipboardLocation);
 
         return true;
@@ -116,6 +129,7 @@ public class PlayerClipboard {
 
     /**
      * 获取缓存当中的COI结构体
+     * get COI structure from memory
      * @param player
      * @return
      */
@@ -135,26 +149,31 @@ public class PlayerClipboard {
 
     /**
      * 保存粘贴板到文件
+     * save clipboard into file
      * @param player
      * @param fileName
      * @return
      */
     public static boolean saveStructureFile(Player player,String fileName){
 
-        //获取粘贴板中的文件
+        // 获取粘贴板中的文件
+        // get structure from clipboard
         COIStructure structure = getCOIStructureByClipboard(player);
 
         if(structure == null){
             return false;
         }
 
-        //设置文件名称
+        // 设置文件名称
+        // set file name
         structure.setFileName(fileName + "." + COIBuilder.STRUCTURE_FILE_SUFFIX);
         structure.setName(fileName);
 
         boolean b = Entry.getBuilder().saveStructureFile(structure);
 
         if(b){
+            // 保存成功
+            // save complete
             LoggerUtils.sendMessage("文件已保存成功",player);
             return true;
         }

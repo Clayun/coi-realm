@@ -25,6 +25,9 @@ import java.util.List;
 /**
  * 小队建筑中心GUI
  * 在这里选择要建造的建筑，并开始建造
+ * Team building GUI
+ * Player can choose building here,
+ * and pick a place to build.
  */
 public class BuilderGUI extends Gui {
 

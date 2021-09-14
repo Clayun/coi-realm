@@ -25,15 +25,18 @@ import java.util.List;
 public class COIGame {
 
     // 游戏状态
+    // game status
     private COIGameStatus status;
 
     // 一场游戏里的全部小队
+    // all teams in one Game
     private List<COITeam> teams;
 
     public COIGame() {
         this.teams = new ArrayList<>();
         this.status = COIGameStatus.WAITING;
         // 初始化小队
+        // init team
         setTeams(TeamUtils.initTeams());
     }
 
