@@ -11,15 +11,15 @@ then use the resources make weapons and armors for AI fighter,
 and let them attack the others player.
 
 # FEATURES
-1. make AI run. <font color=green >(complete)</font>
-2. make game cycle run.
+1. make AI run. (complete)
+2. make game cycle run. (doing)
 
 # AI INTRODUCE
 
 There are three AI in this game:  
-1.miner  
-2.farmer  
-3.fighter  
+1.Miner  
+2.Farmer  
+3.Fighter  
 
 All of this AI is depend on `CitizensAPI`.
 All dependents are in `libs` folder.
