@@ -1,7 +1,8 @@
 # COI REALM INTRODUCE
 
 `Before you fork this repo,i hope you can read CHINESE（中文）.
-Then you can read the code notes.  `
+Then you can read the code notes.  `  
+
 This is a new branch for RTS Game.  
 
 There are three AI in project.
