@@ -10,6 +10,12 @@ Player's object is destroy all of others player's base.
 then use the resources make weapons and armors for AI fighter,
 and let them attack the others player.
 
+# FEATURES
+1. make AI run. <font color=green >(complete)</font>
+2. make game cycle run.
+
+# AI INTRODUCE
+
 There are three AI in this game:  
 1.miner  
 2.farmer  
