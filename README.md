@@ -1,6 +1,6 @@
 # COI REALM INTRODUCE
 
-`Before you fork this repo,i hope you can read CHINESE（中文）.
+`Before you fork this repo,i hope you can read Chinese（中文）.
 Then you can read the code notes.  `  
 
 This is a new branch for RTS Game.  
@@ -14,7 +14,6 @@ There are three AI in this game:
 1.miner  
 2.farmer  
 3.fighter  
-
 
 All of this AI is depend on `CitizensAPI`.
 All dependents are in `libs` folder.
@@ -56,6 +55,8 @@ Hope u guys enjoy it.
 
 # VIDEO INTRODUCE
 
-You can have a video introduce here  
+You can have a video introduce for AI in here  
 
 https://youtu.be/Zz-B8ijCpZM
+
+More introductory videos are being recorded.
