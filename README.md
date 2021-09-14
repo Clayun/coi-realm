@@ -16,7 +16,7 @@ There are three AI in this game:
 3.fighter  
 
 
-This plugin is dependent by `CitizensAPI`.
+All of this AI is depend on `CitizensAPI`.
 All dependents are in `libs` folder.
 
 The first is `miner`.It's a basically AI.
