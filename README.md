@@ -5,7 +5,16 @@ Then you can read the code notes.  `
 
 This is a new branch for RTS Game.  
 
-There are three AI in project.
+Player's object is destroy all of others player's base.
+1 - 5 players in 1 team,player need build building and use AI to help them get resources,
+then use the resources make weapons and armors for AI fighter,
+and let them attack the others player.
+
+There are three AI in this game:  
+1.miner  
+2.farmer  
+3.fighter  
+
 
 This plugin is dependent by `CitizensAPI`.
 All dependents are in `libs` folder.
