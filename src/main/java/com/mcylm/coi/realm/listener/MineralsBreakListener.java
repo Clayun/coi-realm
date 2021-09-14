@@ -43,9 +43,6 @@ public class MineralsBreakListener implements Listener {
                     coiBlock.setMaterial(block.getType().name());
                     coiBlock.setBlockData(block.getBlockData().getAsString());
 
-                    Location location = block.getLocation();
-
-
                     // 重生矿物方块
                     new BukkitRunnable() {
                         @Override
