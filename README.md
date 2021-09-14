@@ -2,11 +2,9 @@
 
 `Before you fork this repo,i hope you can read CHINESE（中文）.
 Then you can read the code notes.  `
+This is a new branch for RTS Game.  
 
-This project's object is make a common AI in minecraft.
-Programmers can use this API to create AI very easily.  
-
-There are three Example AI in project.
+There are three AI in project.
 
 This plugin is dependent by `CitizensAPI`.
 All dependents are in `libs` folder.
