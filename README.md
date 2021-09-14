@@ -45,3 +45,9 @@ player can choose a place to build structure by auto.
 This part of code is same as WorldEdit Implement but also have some different.  
 
 Hope u guys enjoy it.
+
+# VIDEO INTRODUCE
+
+You can have a video introduce here  
+
+https://youtu.be/Zz-B8ijCpZM
