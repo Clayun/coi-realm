@@ -15,7 +15,7 @@ import org.bukkit.block.Block;
 @Setter
 @RequiredArgsConstructor
 @ToString
-public class COIBlock {
+public class COIBlock implements Cloneable {
 
     private Integer x;
     private Integer y;

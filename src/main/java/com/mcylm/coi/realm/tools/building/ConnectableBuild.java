@@ -22,7 +22,7 @@ public abstract class ConnectableBuild extends COIBuilding {
         setLocation(location);
         LoggerUtils.debug("self loc " + location);
 
-        for (COIBuilding building : LocationUtils.getNearbyBuildings(location, 20)) {
+        for (COIBuilding building : LocationUtils.getNearbyBuildings(location, getMaxLength())) {
             LoggerUtils.debug("find " + building.getLocation());
             if (building instanceof ConnectableBuild connectableBuild) {
 
@@ -49,6 +49,10 @@ public abstract class ConnectableBuild extends COIBuilding {
             }
         }
     }
+
+    public int getMaxLength() {
+        return 20;
+    };
 
     public void connect(Location start, Location end) {
         List<Location> locations = LocationUtils.line(start.clone(), end.clone(), getLineRate());

@@ -15,6 +15,7 @@ import com.mcylm.coi.realm.tools.npc.impl.COIFarmer;
 import com.mcylm.coi.realm.tools.npc.impl.COIHuman;
 import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
 import com.mcylm.coi.realm.tools.npc.impl.COIMiner;
+import com.mcylm.coi.realm.tools.selection.AreaSelector;
 import com.mcylm.coi.realm.utils.FormationUtils;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
@@ -30,6 +31,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -110,33 +112,46 @@ public class PlayerInteractListener implements Listener {
      * @param event
      */
     @EventHandler
-    public void onBuilding(PlayerInteractEvent event){
+    public void onBuilding(PlayerInteractEvent event) {
 
         Action action = event.getAction();
 
         //判断是右手，同时避免触发两次
-        if(Action.RIGHT_CLICK_BLOCK  == action && event.getHand().equals(EquipmentSlot.HAND)
+        if (Action.RIGHT_CLICK_BLOCK == action && event.getHand().equals(EquipmentSlot.HAND)
                 //空手触发
-                && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.DIAMOND_PICKAXE){
+                && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.DIAMOND_PICKAXE) {
 
             Block clickedBlock = event.getClickedBlock();
             Location location = clickedBlock.getLocation();
 
-            LoggerUtils.debug("点击："+location.getWorld().getName()+" "+location.getX()+","+location.getY()+","+location.getZ());
+            LoggerUtils.debug("点击：" + location.getWorld().getName() + " " + location.getX() + "," + location.getY() + "," + location.getZ());
 
             Player player = event.getPlayer();
 
 //            COIMill building = new COIMill();
 //            building.build(location,player);
 
-            BuilderGUI builderGUI = new BuilderGUI(player,location);
+            if (AreaSelector.areaSelectors.containsKey(player)) {
+                AreaSelector.areaSelectors.get(player).setSelectedLocation(location);
+            } else {
+                BuilderGUI builderGUI = new BuilderGUI(player, location);
 
-            builderGUI.redraw();
+                builderGUI.redraw();
 
-            builderGUI.open();
-
+                builderGUI.open();
+            }
         }
 
+    }
+
+    @EventHandler
+    public void onToggleItem(PlayerItemHeldEvent event) {
+        Player player = event.getPlayer();
+
+        if (AreaSelector.areaSelectors.containsKey(player)) {
+            AreaSelector.areaSelectors.get(player).stop(true);
+
+        }
     }
 
 //    @EventHandler

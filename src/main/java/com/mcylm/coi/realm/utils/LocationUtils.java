@@ -76,4 +76,5 @@ public class LocationUtils {
         ind = (ind + rotation) % 4;
         return BLOCK_FACES[ind];
     }
+
 }

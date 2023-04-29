@@ -47,7 +47,7 @@ public class COIWall extends ConnectableBuild {
     @Override
     public boolean connectConditionsCheck(ConnectableBuild to) {
 
-        return (getType() == COIBuildingType.WALL_NORMAL || getType() == COIBuildingType.DOOR_NORMAL) && super.connectConditionsCheck(to);
+        return (to.getType() == COIBuildingType.WALL_NORMAL || getType() == COIBuildingType.DOOR_NORMAL) && super.connectConditionsCheck(to);
     }
 
     @Override

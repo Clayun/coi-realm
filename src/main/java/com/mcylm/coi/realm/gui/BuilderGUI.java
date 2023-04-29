@@ -1,6 +1,7 @@
 package com.mcylm.coi.realm.gui;
 
 import com.mcylm.coi.realm.tools.building.COIBuilding;
+import com.mcylm.coi.realm.tools.selection.AreaSelector;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.BuildingUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
@@ -76,7 +77,12 @@ public class BuilderGUI extends Gui {
                             // TODO 封装建造方法
 
                             building.setTeam(team);
-                            building.build(location,getPlayer());
+                            // building.build(location,getPlayer());
+                            if (building.getStructureByLevel() != null) {
+                                new AreaSelector(getPlayer(), building, location);
+                            } else {
+                                building.build(location, getPlayer());
+                            }
                             // 将建筑存入小队
                             team.getFinishedBuildings().add(building);
                             close();

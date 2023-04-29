@@ -89,6 +89,7 @@ public class COIBuilding implements Serializable {
     // 建筑血量
     private AtomicInteger health = new AtomicInteger(getMaxHealth());
 
+
     /**
      * 首次建造建筑
      */
@@ -177,7 +178,7 @@ public class COIBuilding implements Serializable {
          * 通过等级获取建筑文件名称
          * @return
          */
-    private String getStructureByLevel(){
+        public String getStructureByLevel(){
         return getBuildingLevelStructure().get(getLevel());
     }
 
