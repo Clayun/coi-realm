@@ -26,8 +26,21 @@ public enum  COIBuildingType {
             ,"兵营是战斗类建筑，建造完成后会生成一个战士" +
             "，战士会默认跟随建筑的建造者，当小队中有人手持“将军令”时，则所有战士都会主动跟随该玩家"
             ,5,5L),
-    ;
 
+    WALL_NORMAL("WALL_NORMAL", "普通城墙", Material.BRICK_WALL,
+            """
+                   城墙是防卫类建筑，需要建造多个城墙点来保卫建筑
+                    """
+            ,5,5L),
+
+    DOOR_NORMAL("DOOR_NORMAL", "城门", Material.IRON_DOOR,
+            """
+                    城门是防卫类建筑，可以连接城墙;
+                   
+                    """
+
+            ,5,5L)
+    ;
     // CODE
     private String code;
     // 建筑名称 building name

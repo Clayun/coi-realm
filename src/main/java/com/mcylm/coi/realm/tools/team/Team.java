@@ -1,8 +1,7 @@
 package com.mcylm.coi.realm.tools.team;
 
 import com.mcylm.coi.realm.enums.COIBuildingType;
-import com.mcylm.coi.realm.tools.building.impl.COIBuilding;
-import com.mcylm.coi.realm.tools.team.impl.COITeam;
+import com.mcylm.coi.realm.tools.building.COIBuilding;
 import org.bukkit.entity.Player;
 
 import java.util.List;

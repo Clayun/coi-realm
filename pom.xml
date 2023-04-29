@@ -35,16 +35,10 @@
 
         <dependency>
             <groupId>net.citizensnpcs</groupId>
-            <artifactId>citizens</artifactId>
-            <version>2.0.28-SNAPSHOT</version>
+            <artifactId>citizens-main</artifactId>
+            <version>2.0.31-SNAPSHOT</version>
             <type>jar</type>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>1.2.47</version>
         </dependency>
 
         <dependency>
@@ -57,6 +51,7 @@
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
             <version>1.17.1-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>me.lucko</groupId>
@@ -81,6 +76,11 @@
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis</artifactId>
             <version>3.5.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.14.0</version>
         </dependency>
     </dependencies>
 
@@ -107,6 +107,32 @@
                     <descriptors>
                         <descriptor>src/main/resources/assembly.xml</descriptor>
                     </descriptors>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.4.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <relocations>
+                        <relocation>
+                            <pattern>com.fasterxml.jackson</pattern>
+                            <shadedPattern>com.mcylm.coi.realm.libs.jackson</shadedPattern>
+
+                        </relocation>
+                    </relocations>
                 </configuration>
             </plugin>
 

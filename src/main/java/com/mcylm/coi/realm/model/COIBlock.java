@@ -1,15 +1,20 @@
 package com.mcylm.coi.realm.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.block.Block;
 
 /**
  * 封装后的方块
  */
-@Data
+@Getter
+@Setter
+@RequiredArgsConstructor
+@ToString
 public class COIBlock {
 
     private Integer x;

@@ -1,7 +1,7 @@
 package com.mcylm.coi.realm.model;
 
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
-import lombok.Data;
+import lombok.*;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -17,7 +17,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * AI属性
  */
-@Data
+@Getter
+@Setter
+@RequiredArgsConstructor
+@ToString
 public class COINpc implements Serializable {
 
     // ID

@@ -2,11 +2,9 @@ package com.mcylm.coi.realm.tools.building.impl;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIBuildingType;
-import com.mcylm.coi.realm.model.COINpc;
+import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.tools.npc.impl.COIFarmer;
-import com.mcylm.coi.realm.tools.npc.impl.COIMiner;
-import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -23,7 +21,7 @@ import java.util.Set;
  * 磨坊
  *
  */
-public class COIMill extends COIBuilding{
+public class COIMill extends COIBuilding {
 
     public COIMill() {
         // 设置建筑类型为磨坊
@@ -128,12 +126,13 @@ public class COIMill extends COIBuilding{
         return npcCreator;
     }
 
-    /**
-     * 初始化设置矿场的建筑等级对照表
-     */
     private void initStructure(){
         getBuildingLevelStructure().put(1,"mofang1.structure");
         getBuildingLevelStructure().put(2,"mofang2.structure");
     }
 
+    @Override
+    public int getMaxHealth() {
+        return 100 + getLevel() * 50;
+    }
 }

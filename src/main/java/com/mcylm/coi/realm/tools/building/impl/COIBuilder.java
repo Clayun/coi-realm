@@ -1,19 +1,24 @@
 package com.mcylm.coi.realm.tools.building.impl;
 
-import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.model.COIBlock;
-import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.model.COIPaster;
 import com.mcylm.coi.realm.model.COIStructure;
 import com.mcylm.coi.realm.tools.building.Builder;
+import com.mcylm.coi.realm.tools.building.COIBuilding;
+import com.mcylm.coi.realm.tools.building.data.BuildData;
 import com.mcylm.coi.realm.utils.FileUtils;
 import com.mcylm.coi.realm.utils.JsonUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TimeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Effect;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
@@ -21,6 +26,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -83,7 +89,7 @@ public class COIBuilder implements Builder {
         String spawnerBlockTypeName = Entry.getInstance().getConfig().getString("game.npc.spawner-material");
 
         //根据Y轴排序
-        Collections.sort(needBuildBlocks, Comparator.comparingDouble(COIBlock::getY));
+        needBuildBlocks.sort(Comparator.comparingDouble(COIBlock::getY));
 
         new BukkitRunnable() {
 
@@ -122,6 +128,8 @@ public class COIBuilder implements Builder {
                                         blockData = Bukkit.createBlockData(material);
                                     }
                                 }
+
+                                paster.getHandler().handle(block, coiBlock);
 
                                 block.setType(material);
 
@@ -223,9 +231,13 @@ public class COIBuilder implements Builder {
             return null;
         }
 
-        String s = JsonUtils.readJsonFile(Entry.PLUGIN_FILE_PATH + STRUCTURE_FOLDER_NAME + fileName);
-
-        COIStructure coiStructure = JSONObject.parseObject(s, COIStructure.class);
+        ObjectMapper mapper = new ObjectMapper();
+        COIStructure coiStructure = null;
+        try {
+            coiStructure = mapper.readValue(new File(Entry.PLUGIN_FILE_PATH + STRUCTURE_FOLDER_NAME + fileName), COIStructure.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return coiStructure;
     }
@@ -259,8 +271,8 @@ public class COIBuilder implements Builder {
             // 如果文件不存在，就创建
             FileUtils.createFileByPath(filePath);
         }else{
-            LoggerUtils.log("建筑文件已存在，请更换名称后重新保存");
-            return false;
+            LoggerUtils.log("建筑文件已存在，已直接覆盖");
+            // return false;
         }
 
         boolean b = FileUtils.saveFile(jsonContent, filePath);
@@ -379,4 +391,11 @@ public class COIBuilder implements Builder {
         return false;
     }
 
+    public static void placeBlockForBuilding(Block block, COIBuilding building, Material material) {
+        building.getBlocks().add(block);
+        building.getOriginalBlockData().put(block.getLocation(), block.getBlockData().clone());
+        building.getOriginalBlocks().put(block.getLocation(), block.getType());
+        block.setType(material);
+        block.setMetadata("building", new BuildData(building));
+    }
 }

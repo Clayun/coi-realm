@@ -3,9 +3,8 @@ package com.mcylm.coi.realm.tools.building.impl;
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.model.COINpc;
-import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
+import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.npc.COISoldierCreator;
-import com.mcylm.coi.realm.tools.npc.impl.COIFarmer;
 import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import org.bukkit.Location;
@@ -14,7 +13,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -137,5 +135,10 @@ public class COICamp extends COIBuilding {
     private void initStructure(){
         getBuildingLevelStructure().put(1,"junying1.structure");
         getBuildingLevelStructure().put(2,"junying2.structure");
+    }
+
+    @Override
+    public int getMaxHealth() {
+        return 300 + getLevel() * 50;
     }
 }

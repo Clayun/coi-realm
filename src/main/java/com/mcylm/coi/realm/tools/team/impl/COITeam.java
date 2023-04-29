@@ -3,10 +3,12 @@ package com.mcylm.coi.realm.tools.team.impl;
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COITeamType;
-import com.mcylm.coi.realm.tools.building.impl.COIBuilding;
+import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.npc.COIRunner;
 import com.mcylm.coi.realm.tools.team.Team;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -17,7 +19,8 @@ import java.util.List;
 /**
  * 小队
  */
-@Data
+@Getter
+@Setter
 public class COITeam implements Team {
 
     // 小队类型

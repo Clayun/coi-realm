@@ -1,11 +1,15 @@
 package com.mcylm.coi.realm.tools.npc.impl;
 
+import com.mcylm.coi.realm.tools.building.COIBuilding;
+import com.mcylm.coi.realm.tools.building.impl.COIBuilder;
 import com.mcylm.coi.realm.tools.npc.COISoldierCreator;
 import com.mcylm.coi.realm.utils.FormationUtils;
+import com.mcylm.coi.realm.utils.LocationUtils;
 import net.citizensnpcs.api.ai.tree.Behavior;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -93,6 +97,10 @@ public class COISoldier extends COIHuman{
 
         }
 
+        List<Block> blocks = getNearbyBlocks(getCoiNpc().getAlertRadius());
+
+
+
         fighting = needFight;
 
     }
@@ -159,7 +167,6 @@ public class COISoldier extends COIHuman{
                     walk(location,player.getEyeLocation());
                 }
             }
-
 
         }
 

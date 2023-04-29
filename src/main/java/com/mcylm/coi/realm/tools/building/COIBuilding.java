@@ -1,4 +1,4 @@
-package com.mcylm.coi.realm.tools.building.impl;
+package com.mcylm.coi.realm.tools.building;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIBuildingType;
@@ -6,28 +6,34 @@ import com.mcylm.coi.realm.model.COIBlock;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.model.COIPaster;
 import com.mcylm.coi.realm.model.COIStructure;
+import com.mcylm.coi.realm.tools.building.data.BuildData;
 import com.mcylm.coi.realm.tools.npc.impl.COIMiner;
+import com.mcylm.coi.realm.tools.team.Team;
+import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 建筑物结构
  */
-@Data
+@Setter
+@Getter
 public class COIBuilding implements Serializable {
 
     // 是否可建造
@@ -42,8 +48,15 @@ public class COIBuilding implements Serializable {
     // 所需消耗的材料
     private int consume = 0;
 
-    // 建筑的全部方块（剩余血量）
+    // 建筑的全部方块
     private List<COIBlock> remainingBlocks;
+
+    // 地图中建筑的所有方块
+    private Set<Block> blocks = new HashSet<>();
+
+    // 建筑所替换的原方块数据
+    private Map<Location, BlockData> originalBlockData = new HashMap<>();
+    private Map<Location, Material> originalBlocks = new HashMap<>();
 
     // 放置物品的箱子位置
     private List<Location> chestsLocation;
@@ -70,6 +83,12 @@ public class COIBuilding implements Serializable {
     // 建筑生成的NPC创建器，不生成NPC就设置NULL
     private COINpc npcCreator;
 
+    // 建筑所属的队伍
+    private COITeam team;
+
+    // 建筑血量
+    private AtomicInteger health = new AtomicInteger(getMaxHealth());
+
     /**
      * 首次建造建筑
      */
@@ -93,6 +112,9 @@ public class COIBuilding implements Serializable {
 
         String structureName = getStructureByLevel();
 
+        if (structureName == null) {
+            return;
+        }
         // 实例化建筑结构
         COIStructure structure = Entry.getBuilder().getStructureByFile(structureName);
 
@@ -108,14 +130,23 @@ public class COIBuilding implements Serializable {
         // 设置名称
         structure.setName(getType().getName());
 
+        structure = prepareStructure(structure, player);
         // 设置NPC所属小队
-        getNpcCreator().setTeam(TeamUtils.getTeamByPlayer(player));
+        if (getNpcCreator() != null) {
+            getNpcCreator().setTeam(TeamUtils.getTeamByPlayer(player));
+        }
 
+        COIBuilding building = this;
         // 构造一个建造器
         COIPaster coiPaster = new COIPaster(false,getType().getUnit(),getType().getInterval()
-                ,location.getWorld().getName(),location
+                  ,location.getWorld().getName(),location
                 ,structure,false, TeamUtils.getTeamByPlayer(player).getType().getBlockColor()
-                ,getNpcCreator());
+                ,getNpcCreator(), ((block, blockToPlace) -> {
+                    blocks.add(block);
+                    block.setMetadata("building", new BuildData(building));
+                    originalBlockData.put(block.getLocation(), block.getBlockData().clone());
+                    originalBlocks.put(block.getLocation(), block.getType());
+        }));
 
         // 开始建造
         Entry.getBuilder().pasteStructure(coiPaster,player);
@@ -126,16 +157,26 @@ public class COIBuilding implements Serializable {
                 if(coiPaster.isComplete()){
                     // 监听建造状态
                     complete = coiPaster.isComplete();
+                    Bukkit.getScheduler().runTask(Entry.getInstance(), () -> {
+                        buildSuccess(location, player);
+                    });
                     this.cancel();
                 }
             }
         }.runTaskTimerAsynchronously(Entry.getInstance(),0L,20L);
     }
 
-    /**
-     * 通过等级获取建筑文件名称
-     * @return
-     */
+    public COIStructure prepareStructure(COIStructure structure, Player player) {
+        return structure;
+    }
+
+    public void buildSuccess(Location location, Player player) {}
+
+
+        /**
+         * 通过等级获取建筑文件名称
+         * @return
+         */
     private String getStructureByLevel(){
         return getBuildingLevelStructure().get(getLevel());
     }
@@ -291,5 +332,11 @@ public class COIBuilding implements Serializable {
         return num;
 
     }
+
+    public int getMaxHealth() {
+        return 100;
+    }
+
+
 
 }

@@ -97,6 +97,7 @@ public class PlayerClipboard {
         clipboardLocation.setStructure(null);
         clipboard.put(player.getName(),clipboardLocation);
 
+
         return true;
     }
 

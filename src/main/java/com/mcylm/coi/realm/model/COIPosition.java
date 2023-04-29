@@ -1,12 +1,12 @@
 package com.mcylm.coi.realm.model;
 
-import lombok.Data;
+import lombok.*;
 
 /**
  * 二维位置相对坐标系
  *
  */
-@Data
+@Getter @Setter @RequiredArgsConstructor @ToString
 public class COIPosition {
 
     // 第几行

@@ -1,8 +1,6 @@
 package com.mcylm.coi.realm.gui;
 
-import com.mcylm.coi.realm.Entry;
-import com.mcylm.coi.realm.enums.COIBuildingType;
-import com.mcylm.coi.realm.tools.building.impl.COIBuilding;
+import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.BuildingUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
@@ -12,12 +10,8 @@ import me.lucko.helper.menu.Gui;
 import me.lucko.helper.menu.scheme.MenuPopulator;
 import me.lucko.helper.menu.scheme.MenuScheme;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +31,7 @@ public class BuilderGUI extends Gui {
     // 物品排列方式
     private static final MenuScheme BUTTONS = new MenuScheme()
             .mask("000000000")
-            .mask("001010100")
+            .mask("011111000")
             .mask("000000000")
             ;
 
@@ -80,9 +74,11 @@ public class BuilderGUI extends Gui {
                         .build(() -> {
                             // 点击时触发下面的方法
                             // TODO 封装建造方法
+
+                            building.setTeam(team);
                             building.build(location,getPlayer());
                             // 将建筑存入小队
-                            TeamUtils.getTeamByPlayer(getPlayer()).getFinishedBuildings().add(building);
+                            team.getFinishedBuildings().add(building);
                             close();
                         }));
             }
