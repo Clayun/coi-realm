@@ -1,5 +1,7 @@
 package com.mcylm.coi.realm.model;
 
+import com.mcylm.coi.realm.tools.building.COIBuilding;
+import com.mcylm.coi.realm.tools.npc.AI;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import lombok.*;
 import org.bukkit.Color;
@@ -85,6 +87,12 @@ public class COINpc implements Serializable {
     // 重生所需时间
     private Integer respawnDelay = 30;
 
+    // NPC 所属的建筑
+    private COIBuilding building;
+
+    // NPC
+    private AI npc;
+
     // 服装类型
     public static List<Material> CLOTHES = new ArrayList<>(){{
         // 头盔
@@ -120,4 +128,8 @@ public class COINpc implements Serializable {
         add(Material.LEATHER_BOOTS);
         add(Material.NETHERITE_BOOTS);
     }};
+
+    public void remove() {
+        npc.remove();
+    }
 }

@@ -49,6 +49,9 @@ public interface AI {
     // 消除NPC
     void despawn();
 
+    // 彻底清除NPC
+    void remove();
+
     // 是否还或者
     boolean isAlive();
 

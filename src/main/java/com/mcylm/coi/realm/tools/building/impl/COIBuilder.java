@@ -129,9 +129,8 @@ public class COIBuilder implements Builder {
                                     }
                                 }
 
-                                paster.getHandler().handle(block, coiBlock);
+                                block.setType(paster.getHandler().handle(block, coiBlock, material));
 
-                                block.setType(material);
 
                                 if(block.getType().equals(Material.getMaterial(spawnerBlockTypeName))){
                                     // 如果匹配出生点方块

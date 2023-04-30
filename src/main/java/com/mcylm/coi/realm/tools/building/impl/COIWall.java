@@ -36,6 +36,7 @@ public class COIWall extends ConnectableBuild {
                 buildWall(location.clone().add(x,0,z), -5, 8);
             }
         }
+        createHologram(location.clone().add(0, 9,0));
         buildSuccess(location, player);
     }
 

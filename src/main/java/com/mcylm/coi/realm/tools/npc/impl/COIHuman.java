@@ -43,6 +43,8 @@ public class COIHuman implements AI {
     private boolean isCreated = false;
     // 是否已经非常饥饿，无法工作
     private boolean isHungry = false;
+    // 是否彻底清除
+    private boolean isRemoved = false;
     // 默认饥饿度
     private static final int DEFAULT_HUNGER = 20;
     // 饥饿度计算值间隔
@@ -60,6 +62,7 @@ public class COIHuman implements AI {
 
     // 构造NPC
     public COIHuman(COINpc npcCreator) {
+        npcCreator.setNpc(this);
         create(npcCreator);
     }
 
@@ -119,7 +122,7 @@ public class COIHuman implements AI {
                 // NPC重新生成
                 despawn();
                 spawn(entityLocation);
-            }else{
+            } else if (!isRemoved) {
                 // 重生
                 despawn();
                 setHunger(DEFAULT_HUNGER);
@@ -722,6 +725,12 @@ public class COIHuman implements AI {
         }
     }
 
+    @Override
+    public void remove() {
+        isRemoved = true;
+        despawn();
+    }
+
     /**
      * NPC是否还存活
      * @return
@@ -1031,4 +1040,5 @@ public class COIHuman implements AI {
         // 记录NPC所在位置
         this.lastLocation = getNpc().getEntity().getLocation();
     }
+
 }

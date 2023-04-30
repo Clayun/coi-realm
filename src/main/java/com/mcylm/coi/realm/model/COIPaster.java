@@ -54,6 +54,6 @@ public class COIPaster {
         this.withAir = withAir;
         this.blockColor = blockColor;
         this.npcCreator = npcCreator;
-        this.handler = ((block, blockToPlace) -> {});
+        this.handler = ((block, blockToPlace, type) -> Material.valueOf(blockToPlace.getMaterial()));
     }
 }

@@ -8,6 +8,8 @@ import com.mcylm.coi.realm.gui.ChooseTeamGUI;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.model.COIPaster;
 import com.mcylm.coi.realm.model.COIStructure;
+import com.mcylm.coi.realm.tools.building.COIBuilding;
+import com.mcylm.coi.realm.tools.building.data.BuildData;
 import com.mcylm.coi.realm.tools.building.impl.COIMill;
 import com.mcylm.coi.realm.tools.building.impl.COIStope;
 import com.mcylm.coi.realm.tools.npc.*;
@@ -35,6 +37,7 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -139,6 +142,13 @@ public class PlayerInteractListener implements Listener {
                 builderGUI.redraw();
 
                 builderGUI.open();
+            }
+        }
+
+        if (event.getClickedBlock() != null) {
+            @Nullable COIBuilding building = BuildData.getBuildingByBlock(event.getClickedBlock());
+            if (building != null) {
+                building.displayHealth(event.getPlayer());
             }
         }
 

@@ -1,4 +1,4 @@
-package com.mcylm.coi.realm.utils;
+package com.mcylm.coi.realm.utils.particle;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import org.bukkit.Location;

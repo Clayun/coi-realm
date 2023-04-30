@@ -7,23 +7,29 @@ import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.model.COIPaster;
 import com.mcylm.coi.realm.model.COIStructure;
 import com.mcylm.coi.realm.tools.building.data.BuildData;
-import com.mcylm.coi.realm.tools.npc.impl.COIMiner;
-import com.mcylm.coi.realm.tools.team.Team;
+import com.mcylm.coi.realm.tools.npc.AI;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
+import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings;
+import me.filoghost.holographicdisplays.api.hologram.line.TextHologramLine;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.block.Block;
+import org.bukkit.block.Container;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.*;
@@ -89,7 +95,9 @@ public class COIBuilding implements Serializable {
     // 建筑血量
     private AtomicInteger health = new AtomicInteger(getMaxHealth());
 
-
+    // 悬浮字相关
+    private @Nullable Hologram hologram;
+    private Map<Player, AtomicInteger> hologramVisitors = new HashMap<>();
     /**
      * 首次建造建筑
      */
@@ -142,11 +150,16 @@ public class COIBuilding implements Serializable {
         COIPaster coiPaster = new COIPaster(false,getType().getUnit(),getType().getInterval()
                   ,location.getWorld().getName(),location
                 ,structure,false, TeamUtils.getTeamByPlayer(player).getType().getBlockColor()
-                ,getNpcCreator(), ((block, blockToPlace) -> {
+                ,getNpcCreator(), ((block, blockToPlace, type) -> {
                     blocks.add(block);
                     block.setMetadata("building", new BuildData(building));
                     originalBlockData.put(block.getLocation(), block.getBlockData().clone());
                     originalBlocks.put(block.getLocation(), block.getType());
+                    if (type == getHologramReplaceMaterial()) {
+                        createHologram(block.getLocation());
+                        return Material.AIR;
+                    }
+                    return type;
         }));
 
         // 开始建造
@@ -165,6 +178,32 @@ public class COIBuilding implements Serializable {
                 }
             }
         }.runTaskTimerAsynchronously(Entry.getInstance(),0L,20L);
+    }
+
+    protected Hologram createHologram(Location l) {
+        Hologram hologram = HolographicDisplaysAPI.get(Entry.getInstance()).createHologram(l.add(0.5,0.5,0.5));
+
+        hologram.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
+        hologram.getLines().appendText(getHealthText(getMaxHealth(), getMaxHealth()));
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+
+                for (Map.Entry<Player, AtomicInteger> entry : hologramVisitors.entrySet()) {
+
+                    if (entry.getValue().decrementAndGet() <= 0) {
+                        hologram.getVisibilitySettings().setIndividualVisibility(entry.getKey(), VisibilitySettings.Visibility.HIDDEN);
+                    }
+                }
+            }
+        }.runTaskTimerAsynchronously(Entry.getInstance(), 20, 20);
+
+        this.hologram = hologram;
+        return hologram;
+    }
+
+    protected Material getHologramReplaceMaterial() {
+        return Material.COMMAND_BLOCK;
     }
 
     public COIStructure prepareStructure(COIStructure structure, Player player) {
@@ -338,6 +377,72 @@ public class COIBuilding implements Serializable {
         return 100;
     }
 
+    public void damage(Entity attacker, int damage, Block attackBlock) {
+        if (damage >= getHealth().get()) {
+            getHealth().set(0);
+            destroy();
+        } else {
+            getHealth().addAndGet(-damage);
+        }
+        for (Entity e : location.getNearbyEntities(20, 20, 20)) {
+            if (e instanceof Player p) {
+                displayHealth(p);
+            }
+        }
+        if (hologram != null) {
+            if (hologram.getLines().get(0) instanceof TextHologramLine line) {
+                line.setText(getHealthText(getMaxHealth(), getHealth().get()));
+            }
+        }
+    }
 
+    public void displayHealth(Player p) {
+        if (hologram == null) return;
+        hologram.getVisibilitySettings().setIndividualVisibility(p, VisibilitySettings.Visibility.VISIBLE);
+        if (hologramVisitors.containsKey(p)) {
+            hologramVisitors.get(p).set(5);
+        } else {
+            hologramVisitors.put(p, new AtomicInteger(5));
+        }
+    }
+
+    public void destroy() {
+        if (hologram != null) {
+            hologram.delete();
+        }
+        for (Block b : getBlocks()) {
+            b.removeMetadata("building", Entry.getInstance());
+            if (Math.random() > 0.8) {
+                b.getWorld().spawnParticle(Particle.SMOKE_LARGE, b.getLocation(), 2, 2);
+            }
+        }
+        Set<Map.Entry<Location, Material>> blocks = getOriginalBlocks().entrySet();
+        Set<Map.Entry<Location, BlockData>> blockData = getOriginalBlockData().entrySet();
+        for (Map.Entry<Location, Material> entry : blocks) {
+            Block block = entry.getKey().getBlock();
+            if (block.getState() instanceof Container container) {
+                for (ItemStack item : container.getInventory().getContents()) {
+                    if (item != null) block.getWorld().dropItemNaturally(block.getLocation(), item);
+                }
+            }
+            block.setType(entry.getValue());
+        }
+        for (Map.Entry<Location, BlockData> entry : blockData) {
+            entry.getKey().getBlock().setBlockData(entry.getValue());
+        }
+        complete = false;
+        team.getFinishedBuildings().remove(this);
+        if (npcCreator != null) npcCreator.remove();
+    }
+
+    private static String getHealthText(double max, double current) {
+        double percent = current / max;
+        int length = 15;
+        StringBuilder text = new StringBuilder("§a建筑血量");
+        int healthLength = Math.toIntExact(Math.round(length * percent));
+        text.append("§e|".repeat(Math.max(0, healthLength)));
+        text.append("§7|".repeat(Math.max(0, length - healthLength)));
+        return text.toString();
+    }
 
 }
