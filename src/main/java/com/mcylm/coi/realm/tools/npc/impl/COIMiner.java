@@ -13,13 +13,11 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
+import org.bukkit.block.Container;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.*;
 
@@ -87,7 +85,9 @@ public class COIMiner extends COIHuman{
                     if(material != null){
                         if(material == block.getBlockData().getMaterial()){
                             // 加入到队列当中
-                            locations.add(block);
+                            if (getNpc().getNavigator().canNavigateTo(block.getLocation())) {
+                                locations.add(block);
+                            }
                             i++;
                         }
                     }
@@ -109,6 +109,7 @@ public class COIMiner extends COIHuman{
     public void findAndBreakBlock(){
 
         if(!isAlive() || isTooHungryToWork()){
+            LoggerUtils.debug("累了");
             return;
         }
 
@@ -118,6 +119,7 @@ public class COIMiner extends COIHuman{
         if(b){
             //满足回城条件，回城存放资源
             backAndSaveResources();
+            LoggerUtils.debug("完事了");
             return;
         }
 
@@ -166,24 +168,28 @@ public class COIMiner extends COIHuman{
                                         // 方块复活时间
                                         int restoreTimer = Entry.getInstance().getConfig().getInt("game.mineral-restore-timer");
 
+
+
                                         // 重生矿物方块
                                         new BukkitRunnable() {
                                             @Override
                                             public void run() {
 
-                                                Material material = Material.getMaterial(restoreBlock.getMaterial());
+                                                if (getCoiNpc().getBuilding().isAlive()) {
 
-                                                BlockData blockData = Bukkit.createBlockData(restoreBlock.getBlockData());
+                                                    Material material = Material.getMaterial(restoreBlock.getMaterial());
 
-                                                Block block = restoreBlock.getBlock();
+                                                    BlockData blockData = Bukkit.createBlockData(restoreBlock.getBlockData());
 
-                                                block.setType(material);
+                                                    Block block = restoreBlock.getBlock();
 
-                                                BlockState state = block.getState();
-                                                state.setBlockData(blockData);
-                                                state.update(true);
+                                                    block.setType(material);
 
-                                                this.cancel();
+                                                    BlockState state = block.getState();
+                                                    state.setBlockData(blockData);
+                                                    state.update(true);
+
+                                                }
 
                                             }
                                         }.runTaskLater(Entry.getInstance(),20 * restoreTimer);
@@ -235,10 +241,10 @@ public class COIMiner extends COIHuman{
             }
 
             if(block.getLocation().distance(entityLocation) < distance){
-                if(canStand(block.getLocation())){
-                    targetBlock = block;
-                    distance = block.getLocation().distance(entityLocation);
-                }
+
+                targetBlock = block;
+                distance = block.getLocation().distance(entityLocation);
+
             }
         }
 
@@ -305,6 +311,7 @@ public class COIMiner extends COIHuman{
 
         if(chestsLocation.isEmpty()){
             // 原地待命
+            LoggerUtils.debug("no chest");
             return;
         }
 
@@ -313,6 +320,7 @@ public class COIMiner extends COIHuman{
 
         if(notFullChestLocation == null){
             // 原地待命
+            LoggerUtils.debug("full");
             return;
         }
 
@@ -334,7 +342,7 @@ public class COIMiner extends COIHuman{
 
                             // 不是食物的就丢进箱子里
                             if(!itemStack.getType().equals(material)){
-                                ItemUtils.addItemIntoChest(notFullChestLocation,itemStack);
+                                ItemUtils.addItemIntoContainer(notFullChestLocation,itemStack);
                             }
                         }
 
@@ -347,13 +355,12 @@ public class COIMiner extends COIHuman{
     /**
      * 找一个相对比较空的箱子装东西
      * @param chestsLocation
-     * @return
      */
     private Location getEmptyChestByLocations(List<Location> chestsLocation){
         for(Location location : chestsLocation){
             Block block = location.getBlock();
-            if(block.getType().equals(Material.CHEST)){
-                Chest chest = (Chest) block.getState();
+            if(ItemUtils.SUITABLE_CONTAINER_TYPES.contains(block.getType())){
+                Container chest = (Container) block.getState();
 
                 int i = chest.getInventory().firstEmpty();
 

@@ -9,3 +9,4 @@ commands:
   structure:
     description: save building structure
     usage: /<command> save fileName
+  cdebug:

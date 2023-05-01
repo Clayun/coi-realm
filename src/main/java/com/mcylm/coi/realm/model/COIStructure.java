@@ -61,6 +61,7 @@ public class COIStructure implements Cloneable {
             if (data instanceof Directional directional) {
                 directional.setFacing(LocationUtils.rotateBlockFace(directional.getFacing(), rv, false));
             }
+            block.setBlockData(data.getAsString());
         }
     }
 

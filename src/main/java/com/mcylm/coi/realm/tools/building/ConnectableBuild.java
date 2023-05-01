@@ -1,8 +1,11 @@
 package com.mcylm.coi.realm.tools.building;
 
+import com.mcylm.coi.realm.Entry;
+import com.mcylm.coi.realm.tools.data.BuildData;
 import com.mcylm.coi.realm.utils.LocationUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -18,6 +21,8 @@ public abstract class ConnectableBuild extends COIBuilding {
 
     @Override
     public void buildSuccess(Location location, Player player) {
+
+        if (!Bukkit.isPrimaryThread()) Entry.runSync(() -> buildSuccess(location, player));
 
         setLocation(location);
         LoggerUtils.debug("self loc " + location);
@@ -40,7 +45,7 @@ public abstract class ConnectableBuild extends COIBuilding {
                         continue;
                     }
 
-                    connect(points[0], points[1]);
+                    if (!connect(points[0], points[1])) return;
                     alreadyConnected.add(connectableBuild);
                     connectableBuild.getAlreadyConnected().add(this);
 
@@ -54,15 +59,28 @@ public abstract class ConnectableBuild extends COIBuilding {
         return 20;
     };
 
-    public void connect(Location start, Location end) {
-        List<Location> locations = LocationUtils.line(start.clone(), end.clone(), getLineRate());
+    public boolean connect(Location start, Location end) {
+        List<Location> locations = LocationUtils.line(start, end, getLineRate());
 
+        if (!connectLineCheck(locations)) {
+            return false;
+        }
         for (Location location : locations) {
             buildPoint(location, end.clone().subtract(start).toVector());
         }
+        return true;
     }
 
-    public boolean connectConditionsCheck(ConnectableBuild to) {
+    public boolean connectLineCheck(List<Location> line) {
+        for (Location point : line) {
+            if (BuildData.getBuildingByBlock(point.getBlock()) != null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+        public boolean connectConditionsCheck(ConnectableBuild to) {
 
         Vector vectorAB = to.getLocation().clone().subtract(getLocation()).toVector();
 

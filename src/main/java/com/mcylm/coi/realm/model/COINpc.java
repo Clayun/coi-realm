@@ -4,7 +4,6 @@ import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.npc.AI;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import lombok.*;
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -14,7 +13,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * AI属性
@@ -36,6 +34,9 @@ public class COINpc implements Serializable {
 
     // 所属小队
     private COITeam team;
+
+    // 所属建筑
+    private COIBuilding building;
 
     // 皮肤相关参数
     private String skinTextures;
@@ -87,9 +88,6 @@ public class COINpc implements Serializable {
     // 重生所需时间
     private Integer respawnDelay = 30;
 
-    // NPC 所属的建筑
-    private COIBuilding building;
-
     // NPC
     private AI npc;
 
@@ -130,6 +128,12 @@ public class COINpc implements Serializable {
     }};
 
     public void remove() {
+        setCanRespawn(false);
         npc.remove();
+
+    }
+
+    public void upgrade() {
+        level++;
     }
 }

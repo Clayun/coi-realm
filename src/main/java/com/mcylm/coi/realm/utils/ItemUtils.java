@@ -7,8 +7,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Barrel;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
+import org.bukkit.block.Container;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -16,13 +18,13 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 public class ItemUtils {
 
 //    Inspired by Bentipa
+
+    public static Set<Material> SUITABLE_CONTAINER_TYPES = EnumSet.of(Material.CHEST, Material.BARREL, Material.SHULKER_BOX);
 
     private ItemStack is;
 
@@ -105,17 +107,16 @@ public class ItemUtils {
      * @param location
      * @param itemStack
      */
-    public static void addItemIntoChest(Location location, ItemStack itemStack){
+    public static void addItemIntoContainer(Location location, ItemStack itemStack){
 
         Block block = location.getBlock();
 
-        if(block.getType().equals(Material.CHEST)){
-            Chest chest = (Chest) block.getState();
+        if(block.getState() instanceof Container container){
 
-            chest.getSnapshotInventory().addItem(itemStack);
-            chest.getBlockInventory().addItem(itemStack);
+            container.getSnapshotInventory().addItem(itemStack);
+            container.getInventory().addItem(itemStack);
 
-            chest.update();
+            container.update();
 
         }else{
             LoggerUtils.debug("这是个"+block.getType().name());

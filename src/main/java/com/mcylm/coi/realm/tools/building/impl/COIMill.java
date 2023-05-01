@@ -19,7 +19,6 @@ import java.util.Set;
 
 /**
  * 磨坊
- *
  */
 public class COIMill extends COIBuilding {
 
@@ -41,48 +40,43 @@ public class COIMill extends COIBuilding {
     }
 
     @Override
-    public void build(Location location, Player player){
-        super.build(location,player);
-
+    public void buildSuccess(Location location, Player player) {
         // 如果需要创建NPC，就启动线程
-        if(getNpcCreator() != null){
-            new BukkitRunnable() {
+        if (getNpcCreator() != null) {
 
-                // 是否已设置NPC出生
-                boolean spawned = false;
 
-                COIFarmer farmer = null;
+            // 如果建筑建造完成，NPC就初始化
+            if (isComplete()) {
+                COIMinerCreator npcCreator = (COIMinerCreator) getNpcCreator();
+                // 设置食物收集箱子
+                npcCreator.setChestsLocation(getChestsLocation());
+                COIFarmer farmer = new COIFarmer(npcCreator);
+                farmer.spawn(getNpcCreator().getSpawnLocation());
+                // 为小队的其他NPC共享食物箱子
+                TeamUtils.getTeamByPlayer(player).getFoodChests().addAll(getChestsLocation());
 
-                @Override
-                public void run() {
-
-                    // 如果建筑建造完成，NPC就初始化
-                    if(isComplete() && !spawned){
-                        COIMinerCreator npcCreator = (COIMinerCreator) getNpcCreator();
-                        // 设置食物收集箱子
-                        npcCreator.setChestsLocation(getChestsLocation());
-                        farmer = new COIFarmer(npcCreator);
-                        farmer.spawn(getNpcCreator().getSpawnLocation());
-                        // 为小队的其他NPC共享食物箱子
-                        TeamUtils.getTeamByPlayer(player).getFoodChests().addAll(getChestsLocation());
-                        spawned = true;
-                    }
-
-                    // NPC已经创建，就开始行动
-                    if(spawned){
-                        farmer.move();
-                    }
-                }
-            }.runTaskTimer(Entry.getInstance(),0,20l);
+            }
         }
+    }
+
+
+
+
+    @Override
+    public void upgradeBuildSuccess() {
+        super.upgradeBuildSuccess();
+        COIMinerCreator npcCreator = (COIMinerCreator) getNpcCreator();
+        // 设置食物收集箱子
+        npcCreator.setChestsLocation(getChestsLocation());
 
     }
 
     /**
      * 构造一个农民NPC创建器
+     *
      * @return
      */
-    private COIMinerCreator initFarmerCreator(){
+    private COIMinerCreator initFarmerCreator() {
 
         // 背包内的物品
         List<ItemStack> inventory = new ArrayList<>();
@@ -126,9 +120,9 @@ public class COIMill extends COIBuilding {
         return npcCreator;
     }
 
-    private void initStructure(){
-        getBuildingLevelStructure().put(1,"mofang1.structure");
-        getBuildingLevelStructure().put(2,"mofang2.structure");
+    private void initStructure() {
+        getBuildingLevelStructure().put(1, "mofang1.structure");
+        getBuildingLevelStructure().put(2, "mofang2.structure");
     }
 
     @Override

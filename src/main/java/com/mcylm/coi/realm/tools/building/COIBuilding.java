@@ -6,11 +6,13 @@ import com.mcylm.coi.realm.model.COIBlock;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.model.COIPaster;
 import com.mcylm.coi.realm.model.COIStructure;
-import com.mcylm.coi.realm.tools.building.data.BuildData;
-import com.mcylm.coi.realm.tools.npc.AI;
+import com.mcylm.coi.realm.tools.data.BuildData;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
+import com.mcylm.coi.realm.utils.ItemUtils;
+import com.mcylm.coi.realm.utils.LocationUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
+import com.mcylm.coi.realm.utils.rotation.Rotation;
 import lombok.Getter;
 import lombok.Setter;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
@@ -29,7 +31,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.*;
@@ -48,6 +50,9 @@ public class COIBuilding implements Serializable {
     // 是否建造完成
     private boolean complete = false;
 
+    // 是否"活"着
+    private boolean alive = true;
+
     // 建筑类型
     private COIBuildingType type;
 
@@ -65,7 +70,7 @@ public class COIBuilding implements Serializable {
     private Map<Location, Material> originalBlocks = new HashMap<>();
 
     // 放置物品的箱子位置
-    private List<Location> chestsLocation;
+    private List<Location> chestsLocation = new ArrayList<>();
 
     // 所在世界名称
     private String world;
@@ -96,27 +101,37 @@ public class COIBuilding implements Serializable {
     private AtomicInteger health = new AtomicInteger(getMaxHealth());
 
     // 悬浮字相关
-    private @Nullable Hologram hologram;
+    private Map<Player, Hologram> holograms = new HashMap<>();
     private Map<Player, AtomicInteger> hologramVisitors = new HashMap<>();
+
+    private static String getHealthBarText(double max, double current, int length) {
+        double percent = current / max;
+        StringBuilder text = new StringBuilder("§a建筑血量: ");
+        int healthLength = Math.toIntExact(Math.round(length * percent));
+        text.append("§e|".repeat(Math.max(0, healthLength)));
+        text.append("§7|".repeat(Math.max(0, length - healthLength)));
+        return text.toString();
+    }
+
     /**
      * 首次建造建筑
      */
-    public void build(Location location, Player player){
+    public void build(Location location, Player player) {
 
-        if(!isAvailable()){
+        if (!isAvailable()) {
             return;
         }
 
         // 扣除玩家背包里的资源
         boolean b = deductionResources(player);
 
-        if(!b){
-            LoggerUtils.sendMessage("背包里的资源不够，请去收集资源",player);
+        if (!b) {
+            LoggerUtils.sendMessage("背包里的资源不够，请去收集资源", player);
             return;
         }
 
         // 建筑开始就记录位置
-        setLocation(location);
+        setLocation(location.clone());
         setWorld(location.getWorld().getName());
 
         String structureName = getStructureByLevel();
@@ -127,19 +142,17 @@ public class COIBuilding implements Serializable {
         // 实例化建筑结构
         COIStructure structure = Entry.getBuilder().getStructureByFile(structureName);
 
+
+        // 设置名称
+        structure.setName(getType().getName());
+
+        structure = prepareStructure(structure, location.clone());
+
         // 预先计算建筑的方块位置，及总方块数量
         List<COIBlock> allBlocks = getAllBlocksByStructure(structure);
         setRemainingBlocks(allBlocks);
         setTotalBlocks(allBlocks.size());
 
-        // 设置箱子的位置
-        List<Location> chestsLocation = getChestsLocation(allBlocks);
-        setChestsLocation(chestsLocation);
-
-        // 设置名称
-        structure.setName(getType().getName());
-
-        structure = prepareStructure(structure, player);
         // 设置NPC所属小队
         if (getNpcCreator() != null) {
             getNpcCreator().setTeam(TeamUtils.getTeamByPlayer(player));
@@ -147,86 +160,142 @@ public class COIBuilding implements Serializable {
 
         COIBuilding building = this;
         // 构造一个建造器
-        COIPaster coiPaster = new COIPaster(false,getType().getUnit(),getType().getInterval()
-                  ,location.getWorld().getName(),location
-                ,structure,false, TeamUtils.getTeamByPlayer(player).getType().getBlockColor()
-                ,getNpcCreator(), ((block, blockToPlace, type) -> {
-                    blocks.add(block);
-                    block.setMetadata("building", new BuildData(building));
-                    originalBlockData.put(block.getLocation(), block.getBlockData().clone());
-                    originalBlocks.put(block.getLocation(), block.getType());
-                    if (type == getHologramReplaceMaterial()) {
-                        createHologram(block.getLocation());
-                        return Material.AIR;
-                    }
-                    return type;
+        COIPaster coiPaster = new COIPaster(false, getType().getUnit(), getType().getInterval()
+                , location.getWorld().getName(), location
+                , structure, false, TeamUtils.getTeamByPlayer(player).getType().getBlockColor()
+                , getNpcCreator(), ((block, blockToPlace, type) -> {
+            blocks.add(block);
+            block.setMetadata("building", new BuildData(building));
+            if (ItemUtils.SUITABLE_CONTAINER_TYPES.contains(type)) {
+                chestsLocation.add(block.getLocation());
+            }
+            originalBlockData.put(block.getLocation(), block.getBlockData().clone());
+            originalBlocks.put(block.getLocation(), block.getType());
+            return type;
         }));
 
         // 开始建造
-        Entry.getBuilder().pasteStructure(coiPaster,player);
+        Entry.getBuilder().pasteStructure(coiPaster, player);
 
         new BukkitRunnable() {
             @Override
             public void run() {
-                if(coiPaster.isComplete()){
+                if (coiPaster.isComplete()) {
                     // 监听建造状态
                     complete = coiPaster.isComplete();
                     Bukkit.getScheduler().runTask(Entry.getInstance(), () -> {
                         buildSuccess(location, player);
                     });
                     this.cancel();
+
                 }
             }
-        }.runTaskTimerAsynchronously(Entry.getInstance(),0L,20L);
+        }.runTaskTimerAsynchronously(Entry.getInstance(), 0L, 20L);
     }
 
-    protected Hologram createHologram(Location l) {
-        Hologram hologram = HolographicDisplaysAPI.get(Entry.getInstance()).createHologram(l.add(0.5,0.5,0.5));
+    public void buildSuccess(Location location, Player player) {
+    }
 
-        hologram.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
-        hologram.getLines().appendText(getHealthText(getMaxHealth(), getMaxHealth()));
+    public void upgradeBuild(Player player) {
+
+        for (Block b : getBlocks()) {
+            b.removeMetadata("building", Entry.getInstance());
+
+        }
+        Set<Map.Entry<Location, Material>> blocks = getOriginalBlocks().entrySet();
+        Set<Map.Entry<Location, BlockData>> blockData = getOriginalBlockData().entrySet();
+        for (Map.Entry<Location, Material> entry : blocks) {
+            Block block = entry.getKey().getBlock();
+            if (block.getState() instanceof Container container) {
+                for (ItemStack item : container.getInventory().getContents()) {
+                    if (item != null) block.getWorld().dropItemNaturally(block.getLocation(), item);
+                }
+            }
+            block.setType(entry.getValue());
+        }
+        for (Map.Entry<Location, BlockData> entry : blockData) {
+            entry.getKey().getBlock().setBlockData(entry.getValue());
+        }
+
+        originalBlocks.clear();
+        originalBlockData.clear();
+        remainingBlocks.clear();
+
+        String structureName = getStructureByLevel();
+
+        if (structureName == null) {
+            return;
+        }
+        // 实例化建筑结构
+        COIStructure structure = Entry.getBuilder().getStructureByFile(structureName);
+
+
+        // 设置名称
+        structure.setName(getType().getName());
+
+        structure = prepareStructure(structure, location.clone());
+
+        // 预先计算建筑的方块位置，及总方块数量
+        List<COIBlock> allBlocks = getAllBlocksByStructure(structure);
+        setRemainingBlocks(allBlocks);
+        setTotalBlocks(allBlocks.size());
+
+        COIBuilding building = this;
+        // 构造一个建造器
+        COIPaster coiPaster = new COIPaster(false, getType().getUnit(), getType().getInterval()
+                , location.getWorld().getName(), location
+                , structure, false, getTeam().getType().getBlockColor()
+                , npcCreator, ((block, blockToPlace, type) -> {
+            getBlocks().add(block);
+            block.setMetadata("building", new BuildData(building));
+            if (ItemUtils.SUITABLE_CONTAINER_TYPES.contains(type)) {
+                chestsLocation.add(block.getLocation());
+            }
+            originalBlockData.put(block.getLocation(), block.getBlockData().clone());
+            originalBlocks.put(block.getLocation(), block.getType());
+            return type;
+        }));
+
+        // 开始建造
+        Entry.getBuilder().pasteStructure(coiPaster, player);
+
         new BukkitRunnable() {
             @Override
             public void run() {
+                if (coiPaster.isComplete()) {
+                    // 监听建造状态
+                    complete = coiPaster.isComplete();
+                    Bukkit.getScheduler().runTask(Entry.getInstance(), () -> {
+                        upgradeBuildSuccess();
+                    });
+                    this.cancel();
 
-                for (Map.Entry<Player, AtomicInteger> entry : hologramVisitors.entrySet()) {
-
-                    if (entry.getValue().decrementAndGet() <= 0) {
-                        hologram.getVisibilitySettings().setIndividualVisibility(entry.getKey(), VisibilitySettings.Visibility.HIDDEN);
-                    }
                 }
             }
-        }.runTaskTimerAsynchronously(Entry.getInstance(), 20, 20);
+        }.runTaskTimerAsynchronously(Entry.getInstance(), 0, 20L);
 
-        this.hologram = hologram;
-        return hologram;
     }
 
-    protected Material getHologramReplaceMaterial() {
-        return Material.COMMAND_BLOCK;
+    public void upgradeBuildSuccess() {
+
     }
 
-    public COIStructure prepareStructure(COIStructure structure, Player player) {
-        return structure;
-    }
-
-    public void buildSuccess(Location location, Player player) {}
-
-
-        /**
-         * 通过等级获取建筑文件名称
-         * @return
-         */
-        public String getStructureByLevel(){
+    /**
+     * 通过等级获取建筑文件名称
+     *
+     * @return
+     */
+    public String getStructureByLevel() {
         return getBuildingLevelStructure().get(getLevel());
     }
 
     /**
      * 通过建筑结构文件获取所有方块
+     *
      * @param structure
      * @return
      */
-    public List<COIBlock> getAllBlocksByStructure(COIStructure structure){
+    public List<COIBlock> getAllBlocksByStructure(COIStructure structure) {
         // 全部待建造的方块
         List<COIBlock> allBlocks = structure.getBlocks();
 
@@ -236,7 +305,7 @@ public class COIBuilding implements Serializable {
         List<COIBlock> needBuildBlocks = new ArrayList<>();
 
         // 根据建筑基点设置每个方块的真实坐标
-        for(COIBlock coiBlock : allBlocks){
+        for (COIBlock coiBlock : allBlocks) {
 
             COIBlock newBlock = new COIBlock();
             newBlock.setX(coiBlock.getX() + basicLocation.getBlockX());
@@ -245,9 +314,9 @@ public class COIBuilding implements Serializable {
             newBlock.setBlockData(coiBlock.getBlockData());
             newBlock.setMaterial(coiBlock.getMaterial());
 
-            if("AIR".equals(newBlock.getMaterial())){
+            if ("AIR".equals(newBlock.getMaterial())) {
                 //删除掉空气方块
-            }else
+            } else
                 needBuildBlocks.add(newBlock);
         }
 
@@ -255,16 +324,16 @@ public class COIBuilding implements Serializable {
     }
 
     // 找到箱子的位置
-    private List<Location> getChestsLocation(List<COIBlock> blocks){
+    private List<Location> getChestsLocation(List<COIBlock> blocks) {
 
         List<Location> chestsLocations = new ArrayList<>();
-        for(COIBlock block : blocks){
+        for (COIBlock block : blocks) {
 
             Material material = Material.getMaterial(block.getMaterial());
 
-            if(material != null){
-                if(material.equals(Material.CHEST)){
-                    Location location = new Location(Bukkit.getWorld(getWorld()),block.getX(),block.getY(),block.getZ());
+            if (material != null) {
+                if (material.equals(Material.CHEST)) {
+                    Location location = new Location(Bukkit.getWorld(getWorld()), block.getX(), block.getY(), block.getZ());
                     chestsLocations.add(location);
                 }
             }
@@ -277,51 +346,53 @@ public class COIBuilding implements Serializable {
 
     /**
      * 根据建筑所需资源，扣除玩家背包的物品
+     *
      * @param player
      * @return
      */
-    public boolean deductionResources(Player player){
+    public boolean deductionResources(Player player) {
+        return deductionResources(player, getConsume());
 
+    }
+
+    public boolean deductionResources(Player player, int amount) {
         int playerHadResource = getPlayerHadResource(player);
 
         // 如果玩家手里的资源数量足够
-        if(playerHadResource >= getConsume()){
+        if (playerHadResource >= amount) {
 
             // 扣减物品
             ItemStack[] contents =
                     player.getInventory().getContents();
 
             // 剩余所需扣减资源数量
-            int deductionCount = getConsume();
-
-            String materialName = Entry.getInstance().getConfig().getString("game.building.material");
+            int deductionCount = amount;
 
             // 资源类型
-            Material material = Material.getMaterial(materialName);
+            Material material = getResourceType();
+            for (ItemStack itemStack : contents) {
 
-            for(ItemStack itemStack : contents){
-
-                if(itemStack == null){
+                if (itemStack == null) {
                     continue;
                 }
 
                 // 是资源物品才扣减
-                if(itemStack.getType().equals(material)){
+                if (itemStack.getType().equals(material)) {
                     // 如果当前物品的堆叠数量大于所需资源，就只扣减数量
-                    if(itemStack.getAmount() > deductionCount){
+                    if (itemStack.getAmount() > deductionCount) {
                         itemStack.setAmount(itemStack.getAmount() - deductionCount);
                         return true;
                     }
 
                     // 如果当前物品的堆叠数量等于所需资源，就删物品
-                    if(itemStack.getAmount() == deductionCount){
+                    if (itemStack.getAmount() == deductionCount) {
                         player.getInventory().removeItem(itemStack);
                         player.updateInventory();
                         return true;
                     }
 
                     // 如果物品的堆叠数量小于所需资源，就删物品，同时计数
-                    if(itemStack.getAmount() < deductionCount){
+                    if (itemStack.getAmount() < deductionCount) {
                         // 减去当前物品的库存
                         deductionCount = deductionCount - itemStack.getAmount();
                         player.getInventory().removeItem(itemStack);
@@ -330,10 +401,9 @@ public class COIBuilding implements Serializable {
                 }
 
 
-
             }
 
-        }else
+        } else
             return false;
 
         return false;
@@ -341,35 +411,40 @@ public class COIBuilding implements Serializable {
 
     /**
      * 获取玩家背包里的资源
+     *
      * @return
      */
-    public int getPlayerHadResource(Player player){
+    public int getPlayerHadResource(Player player) {
 
         @NonNull ItemStack[] contents =
                 player.getInventory().getContents();
 
-        String materialName = Entry.getInstance().getConfig().getString("game.building.material");
-
-        Material material = Material.getMaterial(materialName);
-
-        if(material == null){
+        Material material = getResourceType();
+        if (material == null) {
             return 0;
         }
 
         int num = 0;
 
-        for(ItemStack itemStack : contents){
+        for (ItemStack itemStack : contents) {
 
-            if(itemStack == null){
+            if (itemStack == null) {
                 continue;
             }
 
-            if(itemStack.getType().equals(material)){
+            if (itemStack.getType().equals(material)) {
                 num = num + itemStack.getAmount();
             }
         }
 
         return num;
+
+    }
+
+    public Material getResourceType() {
+        String materialName = Entry.getInstance().getConfig().getString("game.building.material");
+
+        return Material.getMaterial(materialName);
 
     }
 
@@ -380,7 +455,7 @@ public class COIBuilding implements Serializable {
     public void damage(Entity attacker, int damage, Block attackBlock) {
         if (damage >= getHealth().get()) {
             getHealth().set(0);
-            destroy();
+            destroy(true);
         } else {
             getHealth().addAndGet(-damage);
         }
@@ -389,31 +464,81 @@ public class COIBuilding implements Serializable {
                 displayHealth(p);
             }
         }
-        if (hologram != null) {
-            if (hologram.getLines().get(0) instanceof TextHologramLine line) {
-                line.setText(getHealthText(getMaxHealth(), getHealth().get()));
-            }
-        }
+    }
+
+    public COIStructure prepareStructure(COIStructure structure, Location loc) {
+        COIStructure structureClone = structure.clone();
+        loc.setYaw(loc.getYaw() + 90);
+        structureClone.rotate(Rotation.fromDegrees(Math.round(loc.getYaw() / 90) * 90));
+        return structureClone;
     }
 
     public void displayHealth(Player p) {
-        if (hologram == null) return;
-        hologram.getVisibilitySettings().setIndividualVisibility(p, VisibilitySettings.Visibility.VISIBLE);
         if (hologramVisitors.containsKey(p)) {
             hologramVisitors.get(p).set(5);
         } else {
             hologramVisitors.put(p, new AtomicInteger(5));
         }
+        if (!holograms.containsKey(p)) {
+            Hologram hologram = HolographicDisplaysAPI.get(Entry.getInstance()).createHologram(location);
+            hologram.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
+            hologram.getVisibilitySettings().setIndividualVisibility(p, VisibilitySettings.Visibility.VISIBLE);
+            hologram.getLines().appendText(String.format(LoggerUtils.replaceColor(team.getType().getColor() + "%s Lv. %s"), type.getName(), getLevel()));
+            @NotNull TextHologramLine line = hologram.getLines().appendText(getHealthBarText(getMaxHealth(), getHealth().get(), getHealthBarLength()));
+
+            holograms.put(p, hologram);
+            new BukkitRunnable() {
+                int tick = 0;
+
+                @Override
+                public void run() {
+                    if (!holograms.containsKey(p)) {
+                        Entry.runSync(hologram::delete);
+                        this.cancel();
+                    } else {
+                        if (tick++ == 20) {
+                            tick = 0;
+                            if (hologramVisitors.get(p).decrementAndGet() == 0) {
+                                holograms.remove(p);
+                                hologramVisitors.remove(p);
+                            }
+
+                        }
+                        int maxDistance = 10;
+                        List<Location> loc = LocationUtils.line(getHologramPoint(), p.getEyeLocation(), 1);
+                        int distance = loc.size();
+                        if (maxDistance < distance) {
+                            distance = maxDistance;
+                        }
+                        int finalDistance = distance;
+                        Entry.runSync(() -> {
+                            line.setText(getHealthBarText(getMaxHealth(), getHealth().get(), getHealthBarLength()));
+                            hologram.setPosition(loc.get(finalDistance - 1));
+                        });
+                    }
+                }
+            }.runTaskTimerAsynchronously(Entry.getInstance(), 1, 1);
+
+        }
     }
 
-    public void destroy() {
-        if (hologram != null) {
-            hologram.delete();
+    public int getUpgradeRequiredConsume() {
+        return consume + level * 80;
+    }
+
+    public int getDestroyReturn() {
+        return Math.toIntExact(Math.round(consume + (level - 1) * 80 * 0.8));
+    }
+
+    public void destroy(boolean effect) {
+        for (Hologram value : holograms.values()) {
+            value.delete();
         }
+        holograms.clear();
         for (Block b : getBlocks()) {
             b.removeMetadata("building", Entry.getInstance());
-            if (Math.random() > 0.8) {
-                b.getWorld().spawnParticle(Particle.SMOKE_LARGE, b.getLocation(), 2, 2);
+            if (Math.random() > 0.8 && effect) {
+                b.getWorld().spawnParticle(Particle.EXPLOSION_NORMAL, b.getLocation(), 1);
             }
         }
         Set<Map.Entry<Location, Material>> blocks = getOriginalBlocks().entrySet();
@@ -433,16 +558,26 @@ public class COIBuilding implements Serializable {
         complete = false;
         team.getFinishedBuildings().remove(this);
         if (npcCreator != null) npcCreator.remove();
+        setAlive(false);
+        team.getFoodChests().removeAll(getChestsLocation());
     }
 
-    private static String getHealthText(double max, double current) {
-        double percent = current / max;
-        int length = 15;
-        StringBuilder text = new StringBuilder("§a建筑血量");
-        int healthLength = Math.toIntExact(Math.round(length * percent));
-        text.append("§e|".repeat(Math.max(0, healthLength)));
-        text.append("§7|".repeat(Math.max(0, length - healthLength)));
-        return text.toString();
+    public Location getHologramPoint() {
+        return getLocation();
     }
 
+    protected int getHealthBarLength() {
+        return 20;
+    }
+
+    public void upgrade(Player player) {
+        if (level + 1 > maxLevel) {
+            return;
+        }
+        if (getPlayerHadResource(player) >= getUpgradeRequiredConsume()) {
+            deductionResources(player, getUpgradeRequiredConsume());
+            level++;
+            upgradeBuild(player);
+        }
+    }
 }

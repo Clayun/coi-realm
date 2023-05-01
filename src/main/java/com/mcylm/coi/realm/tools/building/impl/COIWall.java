@@ -3,20 +3,15 @@ package com.mcylm.coi.realm.tools.building.impl;
 import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.ConnectableBuild;
-import com.mcylm.coi.realm.tools.building.data.BuildData;
-import com.mcylm.coi.realm.utils.BuildingUtils;
-import com.mcylm.coi.realm.utils.LocationUtils;
-import com.mcylm.coi.realm.utils.LoggerUtils;
+import com.mcylm.coi.realm.tools.data.BuildData;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class COIWall extends ConnectableBuild {
 
@@ -36,7 +31,6 @@ public class COIWall extends ConnectableBuild {
                 buildWall(location.clone().add(x,0,z), -5, 8);
             }
         }
-        createHologram(location.clone().add(0, 9,0));
         buildSuccess(location, player);
     }
 
@@ -48,7 +42,21 @@ public class COIWall extends ConnectableBuild {
     @Override
     public boolean connectConditionsCheck(ConnectableBuild to) {
 
-        return (to.getType() == COIBuildingType.WALL_NORMAL || getType() == COIBuildingType.DOOR_NORMAL) && super.connectConditionsCheck(to);
+        return (to.getType() == COIBuildingType.WALL_NORMAL || to.getType() == COIBuildingType.DOOR_NORMAL) && super.connectConditionsCheck(to);
+    }
+
+    @Override
+    public boolean connectLineCheck(List<Location> line) {
+        for (Location point : line) {
+            @Nullable COIBuilding build = BuildData.getBuildingByBlock(point.getBlock());
+
+            if (build != null) {
+                if (build.getType() != COIBuildingType.WALL_NORMAL || build.getType() != COIBuildingType.DOOR_NORMAL) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     @Override

@@ -3,15 +3,14 @@ package com.mcylm.coi.realm.listener;
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.clipboard.PlayerClipboard;
 import com.mcylm.coi.realm.enums.COIServerMode;
+import com.mcylm.coi.realm.gui.BuildEditGUI;
 import com.mcylm.coi.realm.gui.BuilderGUI;
-import com.mcylm.coi.realm.gui.ChooseTeamGUI;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.model.COIPaster;
 import com.mcylm.coi.realm.model.COIStructure;
+import com.mcylm.coi.realm.runnable.COIRunner;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
-import com.mcylm.coi.realm.tools.building.data.BuildData;
-import com.mcylm.coi.realm.tools.building.impl.COIMill;
-import com.mcylm.coi.realm.tools.building.impl.COIStope;
+import com.mcylm.coi.realm.tools.data.BuildData;
 import com.mcylm.coi.realm.tools.npc.*;
 import com.mcylm.coi.realm.tools.npc.impl.COIFarmer;
 import com.mcylm.coi.realm.tools.npc.impl.COIHuman;
@@ -19,11 +18,8 @@ import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
 import com.mcylm.coi.realm.tools.npc.impl.COIMiner;
 import com.mcylm.coi.realm.tools.selection.AreaSelector;
 import com.mcylm.coi.realm.utils.FormationUtils;
-import com.mcylm.coi.realm.utils.ItemUtils;
-import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import me.lucko.helper.Schedulers;
-import net.citizensnpcs.api.event.NPCDeathEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -127,21 +123,28 @@ public class PlayerInteractListener implements Listener {
             Block clickedBlock = event.getClickedBlock();
             Location location = clickedBlock.getLocation();
 
-            LoggerUtils.debug("点击：" + location.getWorld().getName() + " " + location.getX() + "," + location.getY() + "," + location.getZ());
+            COIBuilding building = BuildData.getBuildingByBlock(clickedBlock);
+            if (building != null) {
 
-            Player player = event.getPlayer();
+                if (building.getTeam() == TeamUtils.getTeamByPlayer(event.getPlayer())) {
+                    new BuildEditGUI(event.getPlayer(), building).open();
+                }
+            } else {
+
+                Player player = event.getPlayer();
 
 //            COIMill building = new COIMill();
 //            building.build(location,player);
 
-            if (AreaSelector.areaSelectors.containsKey(player)) {
-                AreaSelector.areaSelectors.get(player).setSelectedLocation(location);
-            } else {
-                BuilderGUI builderGUI = new BuilderGUI(player, location);
+                if (AreaSelector.areaSelectors.containsKey(player)) {
+                    AreaSelector.areaSelectors.get(player).setSelectedLocation(location);
+                } else {
+                    BuilderGUI builderGUI = new BuilderGUI(player, location);
 
-                builderGUI.redraw();
+                    builderGUI.redraw();
 
-                builderGUI.open();
+                    builderGUI.open();
+                }
             }
         }
 
@@ -333,10 +336,9 @@ public class PlayerInteractListener implements Listener {
 
             Location clone = clickedBlock.getLocation().clone();
             clone.setY(clone.getY()+1);
-            Location location = clone;
 
             // 同步开启AI算法
-            createArmy(16,event.getPlayer(),location);
+            createArmy(16,event.getPlayer(), clone);
 
         }
 

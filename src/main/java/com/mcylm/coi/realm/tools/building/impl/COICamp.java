@@ -85,8 +85,10 @@ public class COICamp extends COIBuilding {
         List<ItemStack> inventory = new ArrayList<>();
 
         // 铁剑
-        ItemStack pickaxe = new ItemStack(Material.IRON_SWORD);
-        inventory.add(pickaxe);
+        ItemStack sword = new ItemStack(Material.IRON_SWORD);
+        inventory.add(sword);
+        ItemStack bow = new ItemStack(Material.BOW);
+        inventory.add(sword);
 
         // 不破坏方块
         Set<String> breakBlockMaterials = new HashSet<>();

@@ -43,51 +43,47 @@ public class COIStope extends COIBuilding {
     }
 
     @Override
-    public void build(Location location, Player player){
-        super.build(location,player);
+    public void buildSuccess(Location location, Player player) {
+
 
         // 如果需要创建NPC，就启动线程
-        if(getNpcCreator() != null){
-            new BukkitRunnable() {
+        if (getNpcCreator() != null) {
 
-                // 是否已设置NPC出生
-                boolean spawned = false;
+            // 如果建筑建造完成，NPC就初始化
+            if (isComplete()) {
+                COIMinerCreator npcCreator = (COIMinerCreator) getNpcCreator();
+                // 设置箱子
+                npcCreator.setChestsLocation(getChestsLocation());
+                COIMiner worker = new COIMiner(npcCreator);
+                worker.spawn(getNpcCreator().getSpawnLocation());
 
-                COIMiner worker = null;
 
-                @Override
-                public void run() {
+            }
 
-                    // 如果建筑建造完成，NPC就初始化
-                    if(isComplete() && !spawned){
-                        COIMinerCreator npcCreator = (COIMinerCreator) getNpcCreator();
-                        // 设置箱子
-                        npcCreator.setChestsLocation(getChestsLocation());
-                        worker = new COIMiner(npcCreator);
-                        worker.spawn(getNpcCreator().getSpawnLocation());
-                        spawned = true;
-                    }
 
-                    // NPC已经创建，就开始行动
-                    if(spawned){
-                        worker.move();
-                    }
-                }
-            }.runTaskTimer(Entry.getInstance(),0,20l);
         }
+
+    }
+
+    @Override
+    public void upgradeBuildSuccess() {
+        super.upgradeBuildSuccess();
+        COIMinerCreator npcCreator = (COIMinerCreator) getNpcCreator();
+        npcCreator.setChestsLocation(getChestsLocation());
 
     }
 
     /**
      * 构造一个矿工NPC创建器
+     *
      * @return
      */
-    private COIMinerCreator initMinerCreator(){
+    private COIMinerCreator initMinerCreator() {
 
         // 背包内的物品
         List<ItemStack> inventory = new ArrayList<>();
         // 钻石镐
-        ItemStack pickaxe = new ItemStack(Material.DIAMOND_PICKAXE);
+        ItemStack pickaxe = new ItemStack(Material.IRON_PICKAXE);
         inventory.add(pickaxe);
 
         // 从配置文件读取矿工要挖掘的方块名称
@@ -103,7 +99,7 @@ public class COIStope extends COIBuilding {
         // 衣服默认捡起
         List<Material> clothes = COINpc.CLOTHES;
 
-        for(Material clothesType : clothes){
+        for (Material clothesType : clothes) {
             pickItemMaterials.add(clothesType.name());
         }
 
@@ -136,9 +132,9 @@ public class COIStope extends COIBuilding {
     /**
      * 初始化设置矿场的建筑等级对照表
      */
-    private void initStructure(){
-        getBuildingLevelStructure().put(1,"kuangchang1.structure");
-        getBuildingLevelStructure().put(2,"kuangchang2.structure");
+    private void initStructure() {
+        getBuildingLevelStructure().put(1, "kuangchang1.structure");
+        getBuildingLevelStructure().put(2, "kuangchang2.structure");
     }
 
     @Override

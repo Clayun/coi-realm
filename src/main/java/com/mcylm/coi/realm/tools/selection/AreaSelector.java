@@ -6,7 +6,8 @@ import com.mcylm.coi.realm.model.COIBlock;
 import com.mcylm.coi.realm.model.COIStructure;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.FloatableBuild;
-import com.mcylm.coi.realm.tools.building.data.BuildData;
+import com.mcylm.coi.realm.tools.data.BuildData;
+import com.mcylm.coi.realm.utils.TeamUtils;
 import com.mcylm.coi.realm.utils.particle.ParticleRect;
 import com.mcylm.coi.realm.utils.region.Region;
 import lombok.Getter;
@@ -36,6 +37,7 @@ public class AreaSelector {
     private Location selectedLocation;
     private COIBuilding building;
     private boolean stop;
+    private float yaw;
 
     public AreaSelector(Player p, COIBuilding building, Location location) {
         this.player = p;
@@ -49,8 +51,11 @@ public class AreaSelector {
         if (structureName == null) {
             return;
         }
+        this.yaw = player.getLocation().getYaw();
+
+        location.setYaw(yaw);
         // 实例化建筑结构
-        COIStructure structure = building.prepareStructure(Entry.getBuilder().getStructureByFile(structureName), player);
+        COIStructure structure = building.prepareStructure(Entry.getBuilder().getStructureByFile(structureName), location.clone());
 
         new BukkitRunnable() {
             @Override
@@ -123,6 +128,20 @@ public class AreaSelector {
             }
         }
 
+        Region regionFloor = new Region(start.clone().subtract(0,0,0), end.clone().set(end.getX(), start.getY(), end.getZ()));
+        Set<Block> blocks = regionFloor.getBlocks();
+        float emptyCount = 0;
+        for (Block block : blocks) {
+            if (!block.isSolid()) {
+                emptyCount++;
+            }
+        }
+        if (!(building instanceof FloatableBuild)) {
+            if (emptyCount / blocks.size() >= 0.4) {
+                canPlace = false;
+            }
+        }
+
         String state = canPlace ? "§a可放置" : "§c不可放置";
 
         player.sendActionBar("§a潜行进行放置 右键选择新点 §c切换物品取消 §e当前状态: " + state);
@@ -189,7 +208,7 @@ public class AreaSelector {
         }
 
 
-        Region regionFloor = new Region(start.clone().subtract(0,1,0), end.set(end.getX(), start.getY() - 1, end.getY()));
+        Region regionFloor = new Region(start.clone().subtract(0,1,0), end.clone().set(end.getX(), start.getY() - 1, end.getZ()));
         Set<Block> blocks = regionFloor.getBlocks();
         float emptyCount = 0;
         for (Block block : blocks) {
@@ -204,7 +223,14 @@ public class AreaSelector {
         }
         if (canPlace) {
             stop(false);
+            selectedLocation.setYaw(yaw);
             building.build(selectedLocation, player);
+
+            List<COIBuilding> buildings = TeamUtils.getTeamByPlayer(player).getFinishedBuildings();
+            if (!buildings.contains(building)) {
+                buildings.add(building);
+            }
+
         }
     }
 

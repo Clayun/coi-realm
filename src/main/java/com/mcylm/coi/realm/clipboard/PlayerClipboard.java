@@ -4,6 +4,7 @@ import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.model.ClipboardLocation;
 import com.mcylm.coi.realm.tools.building.impl.COIBuilder;
 import com.mcylm.coi.realm.model.COIStructure;
+import com.mcylm.coi.realm.utils.BuildingUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -157,9 +158,11 @@ public class PlayerClipboard {
      */
     public static boolean saveStructureFile(Player player,String fileName){
 
+        ClipboardLocation clipboardLocation = clipboard.get(player.getName());
+
         // 获取粘贴板中的文件
         // get structure from clipboard
-        COIStructure structure = getCOIStructureByClipboard(player);
+        COIStructure structure = Entry.getBuilder().getStructureByTwoLocations(clipboardLocation.getFirstPoint(), clipboardLocation.getSecondPoint());
 
         if(structure == null){
             return false;

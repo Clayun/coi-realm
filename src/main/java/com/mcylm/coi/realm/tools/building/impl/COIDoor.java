@@ -45,14 +45,7 @@ public class COIDoor extends ConnectableBuild {
 
     }
 
-    @Override
-    public COIStructure prepareStructure(COIStructure structure, Player player) {
-        COIStructure structureClone = structure.clone();
-        Location loc = player.getLocation();
-        loc.setYaw(loc.getYaw() + 90);
-        structureClone.rotate(Rotation.fromDegrees(Math.round(loc.getYaw() / 90) * 90));
-        return structureClone;
-    }
+
 
     @Override
     public void buildSuccess(Location location, Player player) {

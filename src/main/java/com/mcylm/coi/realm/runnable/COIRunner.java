@@ -1,4 +1,4 @@
-package com.mcylm.coi.realm.tools.npc;
+package com.mcylm.coi.realm.runnable;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.tools.npc.impl.COIHuman;
@@ -81,16 +81,6 @@ public class COIRunner {
 
                 List<COIHuman> npcList = getNpcList();
 
-                if(!npcList.isEmpty()){
-                    for(COIHuman coiHuman : npcList){
-
-                        if(coiHuman.isAlive()){
-
-                            // 执行NPC移动方法
-                            coiHuman.move();
-                        }
-                    }
-                }
 
 
 

@@ -1,7 +1,7 @@
 package com.mcylm.coi.realm.utils;
 
 import com.mcylm.coi.realm.tools.building.COIBuilding;
-import com.mcylm.coi.realm.tools.building.data.BuildData;
+import com.mcylm.coi.realm.tools.data.BuildData;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -21,7 +21,9 @@ public class LocationUtils {
         }
         return -1;
     }
-    public static List<Location> line(Location locA, Location locB, double rate) {
+    public static List<Location> line(Location locAO, Location locBO, double rate) {
+        Location locA = locAO.clone();
+        Location locB = locBO.clone();
         rate = Math.abs(rate);
         Vector vectorAB = locB.clone().subtract(locA).toVector();
         double vectorLength = vectorAB.length();
@@ -62,6 +64,9 @@ public class LocationUtils {
         return list;
     }
     public static BlockFace rotateBlockFace(BlockFace face, int rotation, boolean mirror) {
+        if (face == BlockFace.DOWN || face == BlockFace.UP || face == BlockFace.SELF) {
+            return face;
+        }
         rotation %= 4;
         if (rotation < 0) {
             rotation += 4;

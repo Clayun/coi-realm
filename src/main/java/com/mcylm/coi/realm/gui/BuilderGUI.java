@@ -83,8 +83,7 @@ public class BuilderGUI extends Gui {
                             } else {
                                 building.build(location, getPlayer());
                             }
-                            // 将建筑存入小队
-                            team.getFinishedBuildings().add(building);
+
                             close();
                         }));
             }

@@ -1,6 +1,5 @@
 package com.mcylm.coi.realm.tools.building.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.mcylm.coi.realm.Entry;
@@ -9,9 +8,8 @@ import com.mcylm.coi.realm.model.COIPaster;
 import com.mcylm.coi.realm.model.COIStructure;
 import com.mcylm.coi.realm.tools.building.Builder;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
-import com.mcylm.coi.realm.tools.building.data.BuildData;
+import com.mcylm.coi.realm.tools.data.BuildData;
 import com.mcylm.coi.realm.utils.FileUtils;
-import com.mcylm.coi.realm.utils.JsonUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TimeUtils;
 import org.apache.commons.lang.StringUtils;
@@ -29,7 +27,6 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -357,8 +354,6 @@ public class COIBuilder implements Builder {
             coiStructure.setLength(length);
             coiStructure.setHeight(height);
             coiStructure.setWidth(width);
-//            coiStructure.setName("newTest");
-//            coiStructure.setFileName("newTest.structure");
 
             return coiStructure;
         }
@@ -367,27 +362,22 @@ public class COIBuilder implements Builder {
     }
 
     private boolean isTerracotta(Material blockType){
-        if(blockType.equals(Material.RED_TERRACOTTA)
-            || blockType.equals(Material.YELLOW_TERRACOTTA)
-            || blockType.equals(Material.GREEN_TERRACOTTA)
-            || blockType.equals(Material.BLUE_TERRACOTTA)
-            || blockType.equals(Material.BLACK_TERRACOTTA)
-            || blockType.equals(Material.PURPLE_TERRACOTTA)
-            || blockType.equals(Material.WHITE_TERRACOTTA)
-            || blockType.equals(Material.ORANGE_TERRACOTTA)
-            || blockType.equals(Material.MAGENTA_TERRACOTTA)
-            || blockType.equals(Material.LIGHT_BLUE_TERRACOTTA)
-            || blockType.equals(Material.LIME_TERRACOTTA)
-            || blockType.equals(Material.PINK_TERRACOTTA)
-            || blockType.equals(Material.GRAY_TERRACOTTA)
-            || blockType.equals(Material.LIGHT_GRAY_TERRACOTTA)
-            || blockType.equals(Material.CYAN_TERRACOTTA)
-            || blockType.equals(Material.BROWN_TERRACOTTA)
-        ){
-            return true;
-        }
-
-        return false;
+        return blockType.equals(Material.RED_TERRACOTTA)
+                || blockType.equals(Material.YELLOW_TERRACOTTA)
+                || blockType.equals(Material.GREEN_TERRACOTTA)
+                || blockType.equals(Material.BLUE_TERRACOTTA)
+                || blockType.equals(Material.BLACK_TERRACOTTA)
+                || blockType.equals(Material.PURPLE_TERRACOTTA)
+                || blockType.equals(Material.WHITE_TERRACOTTA)
+                || blockType.equals(Material.ORANGE_TERRACOTTA)
+                || blockType.equals(Material.MAGENTA_TERRACOTTA)
+                || blockType.equals(Material.LIGHT_BLUE_TERRACOTTA)
+                || blockType.equals(Material.LIME_TERRACOTTA)
+                || blockType.equals(Material.PINK_TERRACOTTA)
+                || blockType.equals(Material.GRAY_TERRACOTTA)
+                || blockType.equals(Material.LIGHT_GRAY_TERRACOTTA)
+                || blockType.equals(Material.CYAN_TERRACOTTA)
+                || blockType.equals(Material.BROWN_TERRACOTTA);
     }
 
     public static void placeBlockForBuilding(Block block, COIBuilding building, Material material) {

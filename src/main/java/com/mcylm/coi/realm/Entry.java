@@ -1,6 +1,7 @@
 package com.mcylm.coi.realm;
 
 import com.mcylm.coi.realm.cmd.COIStructureCommand;
+import com.mcylm.coi.realm.cmd.DebugCommand;
 import com.mcylm.coi.realm.enums.COIServerMode;
 import com.mcylm.coi.realm.game.COIGame;
 import com.mcylm.coi.realm.listener.MineralsBreakListener;
@@ -85,6 +86,7 @@ public class Entry extends ExtendedJavaPlugin {
         if(serverMode.equals(COIServerMode.DEVELOP)){
             //注册建筑结构相关的命令
             getCommand("structure").setExecutor(new COIStructureCommand());
+            getCommand("cdebug").setExecutor(new DebugCommand());
         }
 
         // 一切准备就绪，创建主游戏进程
@@ -97,6 +99,10 @@ public class Entry extends ExtendedJavaPlugin {
     @Override
     protected void disable() {
 
+    }
+
+    public static void runSync(Runnable runnable) {
+        Bukkit.getScheduler().runTask(instance, runnable);
     }
 
     public static Entry getInstance() {

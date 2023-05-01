@@ -1,25 +1,23 @@
 package com.mcylm.coi.realm.tools.npc.impl;
 
 import com.mcylm.coi.realm.Entry;
-import com.mcylm.coi.realm.model.COIBlock;
+import com.mcylm.coi.realm.tools.data.EntityData;
 import com.mcylm.coi.realm.tools.npc.AI;
 import com.mcylm.coi.realm.model.COINpc;
+import com.mcylm.coi.realm.runnable.NpcAITask;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
-import me.lucko.helper.Events;
-import me.lucko.helper.Helper;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.ai.PathStrategy;
-import net.citizensnpcs.api.ai.goals.TargetNearbyEntityGoal;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.block.Chest;
+import org.bukkit.block.Container;
 import org.bukkit.entity.*;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -157,7 +155,33 @@ public class COIHuman implements AI {
 
         if(canStand(location)){
             npc.faceLocation(location);
-            npc.getNavigator().setTarget(location);
+            Navigator navigator = npc.getNavigator();
+            navigator.getDefaultParameters()
+                    .stuckAction(null)
+                    .useNewPathfinder(false);
+
+            navigator.setTarget(location);
+
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    PathStrategy s = navigator.getPathStrategy();
+                    if (s != null) {
+
+                        Iterable<Vector> path = s.getPath();
+
+                        if (path != null) {
+                            path.forEach(vector -> {
+                                getLocation().getWorld().spawnParticle(Particle.FLAME, vector.toLocation(getLocation().getWorld()).add(0,1,0), 1);
+                            });
+                            this.cancel();
+                        }
+                    }
+
+
+                }
+            }.runTaskTimer(Entry.getInstance(), 1, 1);
+
         }
 
     }
@@ -206,6 +230,7 @@ public class COIHuman implements AI {
             return;
         }
 
+
         LivingEntity entity = (LivingEntity) npc.getEntity();
 
         if(getHunger() >= 15){
@@ -220,6 +245,7 @@ public class COIHuman implements AI {
         List<ItemStack> backpack = getCoiNpc().getFoodBag();
         // 在背包里找吃的
         if(!backpack.isEmpty()){
+            LoggerUtils.debug("试图吃东西");
             Iterator<ItemStack> iterator = backpack.iterator();
             while (iterator.hasNext()) {
                 ItemStack item = iterator.next();
@@ -296,9 +322,9 @@ public class COIHuman implements AI {
 
             Material material = location.getBlock().getType();
 
-            if(material.equals(Material.CHEST)){
+            if(ItemUtils.SUITABLE_CONTAINER_TYPES.contains(material)){
 
-                Chest block = (Chest) location.getBlock().getState();
+                Container block = (Container) location.getBlock().getState();
 
                 // 不为空
                 if(block.getInventory().isEmpty()){
@@ -315,9 +341,11 @@ public class COIHuman implements AI {
             }
         }
 
+
         // 最近的食物箱子
         if(nearestLocation != null){
 
+            LoggerUtils.debug("找到箱子");
             // 如果距离大于3，就走过去
             if(distance > 3){
                 findPath(nearestLocation);
@@ -354,9 +382,9 @@ public class COIHuman implements AI {
 
         Block block = location.getBlock();
 
-        if(block.getType().equals(Material.CHEST)){
-            Chest chest = (Chest) block.getState();
-            Inventory blockInventory = chest.getBlockInventory();
+        if(ItemUtils.SUITABLE_CONTAINER_TYPES.contains(block.getType())){
+            Container chest = (Container) block.getState();
+            Inventory blockInventory = chest.getInventory();
 
             @NonNull ItemStack[] contents = blockInventory.getContents();
 
@@ -663,6 +691,7 @@ public class COIHuman implements AI {
      * @param item
      */
     private void addItemToFoodBag(ItemStack item){
+        LoggerUtils.debug("装食物");
         if(item != null){
             List<ItemStack> backpack = getCoiNpc().getFoodBag();
             if(backpack.size() >= 45){
@@ -715,6 +744,7 @@ public class COIHuman implements AI {
 
         npc.setProtected(false);
         this.isSpawn = true;
+        NpcAITask.runTask(this);
     }
 
     @Override
@@ -757,7 +787,7 @@ public class COIHuman implements AI {
     /**
      * NPC死亡时调用本方法
      */
-    private void dead() {
+    public void dead() {
 
         // 判断是否还活着
         if(isAlive()){
@@ -861,17 +891,17 @@ public class COIHuman implements AI {
     /**
      * 初始化NPC的参数
      */
-    private void initNpcAttributes(COINpc npcCreator){
+    private void initNpcAttributes(COINpc npcCreator) {
 
         // 恢复血量和饱食度
         initEntityStatus();
 
         // 如果背包未初始化
-        if(npcCreator.getInventory() == null){
+        if (npcCreator.getInventory() == null) {
             npcCreator.setInventory(new ArrayList<>());
         }
 
-        if(npcCreator.getFoodBag() == null){
+        if (npcCreator.getFoodBag() == null) {
             npcCreator.setFoodBag(new ArrayList<>());
         }
 
@@ -879,12 +909,11 @@ public class COIHuman implements AI {
         this.npc.setAlwaysUseNameHologram(true);
 
         // 初始化NPC的皮肤
-        this.npc.data().set("player-skin-textures",npcCreator.getSkinTextures());
-        this.npc.data().set("cached-skin-uuid-name",npcCreator.getSkinName());
-        this.npc.data().set("player-skin-name",npcCreator.getSkinName());
-        this.npc.data().set("player-skin-signature",npcCreator.getSkinSignature());
-        this.npc.data().set("player-skin-use-latest-skin",false);
-
+        this.npc.data().set("player-skin-textures", npcCreator.getSkinTextures());
+        this.npc.data().set("cached-skin-uuid-name", npcCreator.getSkinName());
+        this.npc.data().set("player-skin-name", npcCreator.getSkinName());
+        this.npc.data().set("player-skin-signature", npcCreator.getSkinSignature());
+        this.npc.data().set("player-skin-use-latest-skin", false);
     }
 
     /**
@@ -897,6 +926,9 @@ public class COIHuman implements AI {
         if(isAlive()){
             // 满血
             LivingEntity entity = (LivingEntity) npc.getEntity();
+
+
+            entity.setMetadata("entityData", new EntityData(getCoiNpc()));
 
             entity.setHealth(MAX_HEALTH);
         }

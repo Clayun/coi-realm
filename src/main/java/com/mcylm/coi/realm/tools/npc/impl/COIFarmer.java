@@ -5,7 +5,6 @@ import com.mcylm.coi.realm.runnable.TaskRunnable;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.utils.ItemUtils;
-import com.mcylm.coi.realm.utils.LoggerUtils;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
@@ -13,7 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
-import org.bukkit.block.Chest;
+import org.bukkit.block.Container;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -38,6 +37,8 @@ public class COIFarmer extends COIHuman{
 
     // 缓存手里的物品
     private ItemStack itemInHand;
+
+    private int skipAction = 0;
 
     public COIFarmer(COINpc npcCreator) {
         super(npcCreator);
@@ -122,7 +123,6 @@ public class COIFarmer extends COIHuman{
         if(!isAlive()){
             return;
         }
-
         // 检查是否需要回城存放东西
         boolean b = needBackToSaveResources();
 
@@ -149,8 +149,7 @@ public class COIFarmer extends COIHuman{
 
             }
 
-            // 如果还是大于等于6，就不在耕地
-            if(getFarmlands().size() >= 6){
+            if(getFarmlands().size() >= 6 * getCoiNpc().getLevel()){
                 return;
             }
 
@@ -205,7 +204,7 @@ public class COIFarmer extends COIHuman{
                     }else{
                         // 距离不够，就跑过去
                         getNpc().faceLocation(block.getLocation());
-                        findPath(block.getLocation());
+                        findPathAndSkipAction(block.getLocation());
                     }
                 }
 
@@ -241,7 +240,7 @@ public class COIFarmer extends COIHuman{
             return;
         }
 
-        findPath(notFullChestLocation);
+        findPathAndSkipAction(notFullChestLocation);
 
         if(getLocation() != null){
             if(getLocation().distance(notFullChestLocation) < 3){
@@ -252,8 +251,8 @@ public class COIFarmer extends COIHuman{
                     if(itemStack != null && !itemStack.getType().equals(Material.AIR)){
 
                         // 把面包丢进箱子里
-                        if(itemStack.getType().equals(Material.BREAD)){
-                            ItemUtils.addItemIntoChest(notFullChestLocation,itemStack);
+                        if(itemStack.getType() == Material.BREAD){
+                            ItemUtils.addItemIntoContainer(notFullChestLocation,itemStack);
                         }
 
                     }
@@ -270,8 +269,8 @@ public class COIFarmer extends COIHuman{
     private Location getEmptyChestByLocations(List<Location> chestsLocation){
         for(Location location : chestsLocation){
             Block block = location.getBlock();
-            if(block.getType().equals(Material.CHEST)){
-                Chest chest = (Chest) block.getState();
+            if(ItemUtils.SUITABLE_CONTAINER_TYPES.contains(block.getType())){
+                Container chest = (Container) block.getState();
 
                 int i = chest.getInventory().firstEmpty();
 
@@ -351,7 +350,7 @@ public class COIFarmer extends COIHuman{
                             }else{
                                 // 距离不够，就跑过去
                                 getNpc().faceLocation(wheat.getLocation());
-                                findPath(wheat.getLocation());
+                                findPathAndSkipAction(wheat.getLocation());
                             }
                         }else{
                             // 催熟，每次长1
@@ -379,7 +378,7 @@ public class COIFarmer extends COIHuman{
                             }else{
                                 // 距离不够，就跑过去
                                 getNpc().faceLocation(wheat.getLocation());
-                                findPath(wheat.getLocation());
+                                findPathAndSkipAction(wheat.getLocation());
                             }
 
                         }
@@ -406,7 +405,7 @@ public class COIFarmer extends COIHuman{
                         }else{
                             // 距离不够，就跑过去
                             getNpc().faceLocation(wheat.getLocation());
-                            findPath(wheat.getLocation());
+                            findPathAndSkipAction(wheat.getLocation());
                         }
 
                     }
@@ -448,7 +447,7 @@ public class COIFarmer extends COIHuman{
                         }else{
                             // 距离不够，就跑过去
                             getNpc().faceLocation(block.getLocation());
-                            findPath(block.getLocation());
+                            findPathAndSkipAction(block.getLocation());
                         }
                     }
                 }
@@ -516,7 +515,7 @@ public class COIFarmer extends COIHuman{
                                             addItemToInventory(i.getItemStack());
                                             i.remove();
                                         }else{
-                                            findPath(i.getLocation());
+                                            findPathAndSkipAction(i.getLocation());
                                         }
                                     }
                                 }
@@ -555,11 +554,23 @@ public class COIFarmer extends COIHuman{
         // 用小麦制作面包
         makeWheatToBread();
 
+        if (skipAction > 0) {
+            skipAction--;
+            return;
+        }
+
         // 寻找泥土并把泥土变成耕地
         findDirtAndMakeItToFarmland();
 
         // 寻找耕地并种植、收割小麦
         plantAndHarvestWheat();
+    }
+
+
+    public void findPathAndSkipAction(Location location) {
+        findPath(location);
+        skipAction = Math.toIntExact(Math.round(location.distance(getLocation()) / 3));
+
     }
 
     public List<ItemStack> getFarmerInventory() {

@@ -1,4 +1,4 @@
-package com.mcylm.coi.realm.tools.building.data;
+package com.mcylm.coi.realm.tools.data;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
