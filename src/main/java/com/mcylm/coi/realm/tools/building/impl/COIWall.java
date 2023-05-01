@@ -4,6 +4,7 @@ import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.ConnectableBuild;
 import com.mcylm.coi.realm.tools.data.BuildData;
+import com.mcylm.coi.realm.utils.LoggerUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -47,11 +48,12 @@ public class COIWall extends ConnectableBuild {
 
     @Override
     public boolean connectLineCheck(List<Location> line) {
+
         for (Location point : line) {
             @Nullable COIBuilding build = BuildData.getBuildingByBlock(point.getBlock());
 
             if (build != null) {
-                if (build.getType() != COIBuildingType.WALL_NORMAL || build.getType() != COIBuildingType.DOOR_NORMAL) {
+                if (!(build.getType() == COIBuildingType.WALL_NORMAL || build.getType() == COIBuildingType.DOOR_NORMAL)) {
                     return false;
                 }
             }

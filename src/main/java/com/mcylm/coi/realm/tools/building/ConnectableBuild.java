@@ -22,8 +22,6 @@ public abstract class ConnectableBuild extends COIBuilding {
     @Override
     public void buildSuccess(Location location, Player player) {
 
-        if (!Bukkit.isPrimaryThread()) Entry.runSync(() -> buildSuccess(location, player));
-
         setLocation(location);
         LoggerUtils.debug("self loc " + location);
 
@@ -91,11 +89,8 @@ public abstract class ConnectableBuild extends COIBuilding {
             }
         }
 
-        if (to.getTeam() == getTeam()) {
-            return true;
+            return to.getTeam() == getTeam();
         }
-        return false;
-    }
 
     public abstract void buildPoint(Location point, Vector line);
 
@@ -117,6 +112,13 @@ public abstract class ConnectableBuild extends COIBuilding {
             }
         }
         return points;
+    }
+
+    @Override
+    public void destroy(boolean effect) {
+        super.destroy(effect);
+        getAlreadyConnected().forEach(connectableBuild -> connectableBuild.getAlreadyConnected().remove(this));
+        getAlreadyConnected().clear();
     }
 
     public abstract int getMaxConnectBuild();

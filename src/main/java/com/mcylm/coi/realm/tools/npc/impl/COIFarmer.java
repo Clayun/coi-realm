@@ -566,10 +566,14 @@ public class COIFarmer extends COIHuman{
         plantAndHarvestWheat();
     }
 
+    @Override
+    public int delayTick() {
+        return 10;
+    }
 
     public void findPathAndSkipAction(Location location) {
         findPath(location);
-        skipAction = Math.toIntExact(Math.round(location.distance(getLocation()) / 3));
+        skipAction = Math.toIntExact(Math.round(location.distance(getLocation()) / 1.8));
 
     }
 

@@ -64,9 +64,7 @@ public class LocationUtils {
         return list;
     }
     public static BlockFace rotateBlockFace(BlockFace face, int rotation, boolean mirror) {
-        if (face == BlockFace.DOWN || face == BlockFace.UP || face == BlockFace.SELF) {
-            return face;
-        }
+
         rotation %= 4;
         if (rotation < 0) {
             rotation += 4;

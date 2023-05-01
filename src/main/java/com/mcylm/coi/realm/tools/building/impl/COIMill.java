@@ -68,7 +68,15 @@ public class COIMill extends COIBuilding {
         COIMinerCreator npcCreator = (COIMinerCreator) getNpcCreator();
         // 设置食物收集箱子
         npcCreator.setChestsLocation(getChestsLocation());
+        getTeam().getFoodChests().addAll(getChestsLocation());
 
+    }
+
+    @Override
+    public void upgradeBuild(Player player) {
+        getTeam().getFoodChests().removeAll(getChestsLocation());
+
+        super.upgradeBuild(player);
     }
 
     /**

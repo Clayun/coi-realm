@@ -744,7 +744,6 @@ public class COIHuman implements AI {
 
         npc.setProtected(false);
         this.isSpawn = true;
-        NpcAITask.runTask(this);
     }
 
     @Override
@@ -927,6 +926,8 @@ public class COIHuman implements AI {
             // 满血
             LivingEntity entity = (LivingEntity) npc.getEntity();
 
+
+            NpcAITask.runTask(this);
 
             entity.setMetadata("entityData", new EntityData(getCoiNpc()));
 

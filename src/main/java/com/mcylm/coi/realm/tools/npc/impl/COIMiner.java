@@ -192,7 +192,7 @@ public class COIMiner extends COIHuman{
                                                 }
 
                                             }
-                                        }.runTaskLater(Entry.getInstance(),20 * restoreTimer);
+                                        }.runTaskLater(Entry.getInstance(), 20L * restoreTimer);
 
                                     }
                                 }

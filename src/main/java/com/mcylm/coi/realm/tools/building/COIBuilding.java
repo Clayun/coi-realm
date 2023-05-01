@@ -220,6 +220,7 @@ public class COIBuilding implements Serializable {
         originalBlocks.clear();
         originalBlockData.clear();
         remainingBlocks.clear();
+        chestsLocation.clear();
 
         String structureName = getStructureByLevel();
 
@@ -278,6 +279,7 @@ public class COIBuilding implements Serializable {
 
     public void upgradeBuildSuccess() {
 
+        getNpcCreator().upgrade();
     }
 
     /**

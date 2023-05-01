@@ -3,7 +3,9 @@ package com.mcylm.coi.realm.tools.building.impl;
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.model.COIStructure;
+import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.ConnectableBuild;
+import com.mcylm.coi.realm.tools.data.BuildData;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import com.mcylm.coi.realm.utils.rotation.Rotation;
 import lombok.Getter;
@@ -15,6 +17,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -119,6 +122,22 @@ public class COIDoor extends ConnectableBuild {
         this.open = false;
         doorBlocks.forEach(b -> b.setType(doorMaterial));
     }
+
+    @Override
+    public boolean connectLineCheck(List<Location> line) {
+
+        for (Location point : line) {
+            @Nullable COIBuilding build = BuildData.getBuildingByBlock(point.getBlock());
+
+            if (build != null) {
+                if (!(build.getType() == COIBuildingType.WALL_NORMAL || build == this)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 
     @Override
     public List<Location> getConnectPoints() {
