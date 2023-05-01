@@ -775,6 +775,11 @@ public class COIHuman implements AI {
     }
 
     @Override
+    public boolean isRemoved() {
+        return isRemoved;
+    }
+
+    @Override
     public Location getLocation() {
 
         if(isAlive()){

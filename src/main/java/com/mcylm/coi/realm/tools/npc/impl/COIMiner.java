@@ -143,18 +143,13 @@ public class COIMiner extends COIHuman{
 
                     if (!isBreaking) {
 
-                        COIBlock restoreBlock = new COIBlock();
-                        restoreBlock.setX(targetBlock.getX());
-                        restoreBlock.setY(targetBlock.getY());
-                        restoreBlock.setZ(targetBlock.getZ());
-                        restoreBlock.setMaterial(targetBlock.getType().name());
-                        restoreBlock.setBlockData(targetBlock.getBlockData().getAsString());
-                        restoreBlock.setWorld(targetBlock.getWorld().getName());
+                        Material restoreBlock = targetBlock.getType();
 
                         LivingEntity entity = (LivingEntity) getNpc().getEntity();
                         BlockBreaker.BlockBreakerConfiguration blockBreakerConfiguration = new BlockBreaker.BlockBreakerConfiguration();
                         blockBreakerConfiguration.radius(5);
                         blockBreakerConfiguration.item(entity.getEquipment().getItemInMainHand());
+                        Block finalTargetBlock = targetBlock;
                         blockBreakerConfiguration.callback(
                                 new BukkitRunnable() {
                                     @Override
@@ -174,20 +169,9 @@ public class COIMiner extends COIHuman{
                                         new BukkitRunnable() {
                                             @Override
                                             public void run() {
+                                                if (getCoiNpc().getBuilding().isAlive() || isAlive()) {
 
-                                                if (getCoiNpc().getBuilding().isAlive()) {
-
-                                                    Material material = Material.getMaterial(restoreBlock.getMaterial());
-
-                                                    BlockData blockData = Bukkit.createBlockData(restoreBlock.getBlockData());
-
-                                                    Block block = restoreBlock.getBlock();
-
-                                                    block.setType(material);
-
-                                                    BlockState state = block.getState();
-                                                    state.setBlockData(blockData);
-                                                    state.update(true);
+                                                    finalTargetBlock.setType(restoreBlock);
 
                                                 }
 

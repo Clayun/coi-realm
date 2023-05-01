@@ -7,6 +7,7 @@ import com.mcylm.coi.realm.game.COIGame;
 import com.mcylm.coi.realm.listener.MineralsBreakListener;
 import com.mcylm.coi.realm.listener.PlayerInteractListener;
 import com.mcylm.coi.realm.tools.building.impl.COIBuilder;
+import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import lombok.Getter;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
@@ -77,7 +78,7 @@ public class Entry extends ExtendedJavaPlugin {
         // 注册监听器
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new PlayerInteractListener(), this);
-
+        COISoldier.registerListener();
         if(serverMode.equals(COIServerMode.RELEASE)){
             pluginManager.registerEvents(new MineralsBreakListener(), this);
         }

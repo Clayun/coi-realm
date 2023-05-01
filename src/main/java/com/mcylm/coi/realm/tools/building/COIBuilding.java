@@ -156,6 +156,7 @@ public class COIBuilding implements Serializable {
         // 设置NPC所属小队
         if (getNpcCreator() != null) {
             getNpcCreator().setTeam(TeamUtils.getTeamByPlayer(player));
+            getNpcCreator().setBuilding(this);
         }
 
         COIBuilding building = this;

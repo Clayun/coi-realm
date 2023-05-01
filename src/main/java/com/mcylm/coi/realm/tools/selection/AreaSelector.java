@@ -127,17 +127,16 @@ public class AreaSelector {
                 canPlace = false;
             }
         }
-
-        Region regionFloor = new Region(start.clone().subtract(0,0,0), end.clone().set(end.getX(), start.getY(), end.getZ()));
+        Region regionFloor = new Region(start.clone(), end.clone().set(end.getX(), start.getY() - 1, end.getZ()));
         Set<Block> blocks = regionFloor.getBlocks();
-        float emptyCount = 0;
+        int emptyCount = 0;
         for (Block block : blocks) {
             if (!block.isSolid()) {
                 emptyCount++;
             }
         }
         if (!(building instanceof FloatableBuild)) {
-            if (emptyCount / blocks.size() >= 0.4) {
+            if ((float) emptyCount / blocks.size() >= 0.4) {
                 canPlace = false;
             }
         }
@@ -208,16 +207,16 @@ public class AreaSelector {
         }
 
 
-        Region regionFloor = new Region(start.clone().subtract(0,1,0), end.clone().set(end.getX(), start.getY() - 1, end.getZ()));
+        Region regionFloor = new Region(start.clone(), end.clone().set(end.getX(), start.getY() - 1, end.getZ()));
         Set<Block> blocks = regionFloor.getBlocks();
-        float emptyCount = 0;
+        int emptyCount = 0;
         for (Block block : blocks) {
             if (!block.isSolid()) {
                 emptyCount++;
             }
         }
         if (!(building instanceof FloatableBuild)) {
-            if (emptyCount / blocks.size() >= 0.4) {
+            if ((float) emptyCount / blocks.size() >= 0.4) {
                 canPlace = false;
             }
         }

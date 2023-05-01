@@ -23,9 +23,12 @@ public class NpcAITask {
                     this.cancel();
                     return;
                 }
-                if (ai.isAlive()) {
-                    ai.move();
+                if (ai.isRemoved()) {
+                    aiSet.remove(ai);
+                    return;
                 }
+                ai.move();
+
             }
         }.runTaskTimer(Entry.getInstance(), 0,ai.delayTick());
     }

@@ -55,6 +55,9 @@ public interface AI {
     // 是否还或者
     boolean isAlive();
 
+    // 是否被清除
+    boolean isRemoved();
+
     // 获取NPC位置
     Location getLocation();
 

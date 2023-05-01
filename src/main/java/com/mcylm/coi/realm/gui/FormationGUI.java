@@ -20,11 +20,7 @@ public class FormationGUI extends Gui {
     public FormationGUI(Player player) {
         super(player, FormationUtils.LINES, "&6选择你的布阵");
 
-        Events.subscribe(InventoryClickEvent.class).filter((e) -> {
-            return e.getInventory().getHolder() != null;
-        }).filter((e) -> {
-            return e.getInventory().getHolder().equals(getPlayer());
-        }).handler((e) -> {
+        Events.subscribe(InventoryClickEvent.class).filter((e) -> e.getInventory().getHolder() != null).filter((e) -> e.getInventory().getHolder().equals(getPlayer())).handler((e) -> {
             e.setCancelled(false);
         }).bindWith(this);
     }

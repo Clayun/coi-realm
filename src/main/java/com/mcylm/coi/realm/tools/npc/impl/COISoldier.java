@@ -7,8 +7,10 @@ import com.mcylm.coi.realm.tools.data.EntityData;
 import com.mcylm.coi.realm.tools.npc.COISoldierCreator;
 import com.mcylm.coi.realm.utils.FormationUtils;
 import com.mcylm.coi.realm.utils.LocationUtils;
+import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Getter;
 import lombok.Setter;
+import me.lucko.helper.Events;
 import net.citizensnpcs.api.ai.tree.Behavior;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -16,10 +18,8 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
@@ -37,6 +37,28 @@ import java.util.Set;
 @Setter
 public class COISoldier extends COIHuman {
 
+    public static void registerListener() {
+        Events.subscribe(EntityDamageByEntityEvent.class).handler(e -> {
+            @Nullable COINpc npc = EntityData.getNpcByEntity(e.getEntity());
+            Entity target = e.getDamager();
+            if (npc instanceof COISoldierCreator creator) {
+
+                if (e.getDamager() instanceof Projectile projectile) {
+                    if (projectile.getShooter() instanceof LivingEntity s) {
+                        target = s;
+                    }
+                }
+
+                if (target instanceof LivingEntity livingEntity) {
+                    if (livingEntity instanceof Player player && player.getGameMode() == GameMode.CREATIVE) {
+                        return;
+                    }
+                    ((COISoldier) creator.getNpc()).setTargetEntity(target);
+                }
+            }
+
+        });
+    }
     // 周围发现敌人，进入战斗模式
     private boolean fighting = false;
 
@@ -141,8 +163,6 @@ public class COISoldier extends COIHuman {
         fighting = needFight;
 
     }
-
-
     /**
      * 攻击实体
      */
