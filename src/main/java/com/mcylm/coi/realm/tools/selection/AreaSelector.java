@@ -22,15 +22,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
 @Setter
-public class AreaSelector {
-
-    public static Map<Player, AreaSelector> areaSelectors = new ConcurrentHashMap<>();
+public class AreaSelector implements Selector {
 
     private Player player;
     private boolean canPlace = false;
@@ -44,7 +40,7 @@ public class AreaSelector {
         this.selectedLocation = location;
         this.stop = false;
         this.building = building;
-        areaSelectors.put(p, this);
+        selectors.put(p, this);
 
         String structureName = building.getStructureByLevel();
 
@@ -233,10 +229,18 @@ public class AreaSelector {
         }
     }
 
+
+    @Override
+    public void selectLocation(Location loc) {
+        selectedLocation = loc;
+    }
+
+    @Override
     public void stop(boolean sendMsg) {
         setStop(true);
         if (sendMsg) player.sendActionBar("§c已取消");
 
-        areaSelectors.remove(player);
+        selectors.remove(player);
     }
+
 }

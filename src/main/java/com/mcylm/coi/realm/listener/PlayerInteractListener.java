@@ -16,7 +16,7 @@ import com.mcylm.coi.realm.tools.npc.impl.COIFarmer;
 import com.mcylm.coi.realm.tools.npc.impl.COIHuman;
 import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
 import com.mcylm.coi.realm.tools.npc.impl.COIMiner;
-import com.mcylm.coi.realm.tools.selection.AreaSelector;
+import com.mcylm.coi.realm.tools.selection.Selector;
 import com.mcylm.coi.realm.utils.FormationUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import me.lucko.helper.Schedulers;
@@ -136,8 +136,8 @@ public class PlayerInteractListener implements Listener {
 //            COIMill building = new COIMill();
 //            building.build(location,player);
 
-                if (AreaSelector.areaSelectors.containsKey(player)) {
-                    AreaSelector.areaSelectors.get(player).setSelectedLocation(location);
+                if (Selector.selectors.containsKey(player)) {
+                    Selector.selectors.get(player).selectLocation(location);
                 } else {
                     BuilderGUI builderGUI = new BuilderGUI(player, location);
 
@@ -161,8 +161,8 @@ public class PlayerInteractListener implements Listener {
     public void onToggleItem(PlayerItemHeldEvent event) {
         Player player = event.getPlayer();
 
-        if (AreaSelector.areaSelectors.containsKey(player)) {
-            AreaSelector.areaSelectors.get(player).stop(true);
+        if (Selector.selectors.containsKey(player)) {
+            Selector.selectors.get(player).stop(true);
 
         }
     }

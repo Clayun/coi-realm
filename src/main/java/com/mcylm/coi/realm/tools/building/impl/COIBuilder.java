@@ -26,9 +26,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 /**
  * COI建筑工具实现
@@ -39,6 +37,10 @@ public class COIBuilder implements Builder {
      * 放建筑文件的文件夹
      */
     private static String STRUCTURE_FOLDER_NAME = "structure/";
+
+
+    private static final Map<String, COIStructure> cacheMap = new HashMap<>();
+
 
     /**
      * 文件后缀
@@ -214,29 +216,39 @@ public class COIBuilder implements Builder {
         return message;
     }
 
-    /**
-     * 读取文件获取COI建筑结构体
-     * @param fileName
-     * @return
-     */
-    public COIStructure getStructureByFile(String fileName){
 
-        File file = new File(Entry.PLUGIN_FILE_PATH + STRUCTURE_FOLDER_NAME + fileName);
-
-        if(!file.exists()){
-            return null;
-        }
-
+    public COIStructure readStructureFromFile(File file) {
         ObjectMapper mapper = new ObjectMapper();
-        COIStructure coiStructure = null;
         try {
-            coiStructure = mapper.readValue(new File(Entry.PLUGIN_FILE_PATH + STRUCTURE_FOLDER_NAME + fileName), COIStructure.class);
+            return mapper.readValue(file, COIStructure.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        return coiStructure;
+        return null;
     }
+
+    public COIStructure getStructureByFile(String fileName) {
+
+        if (cacheMap.containsKey(fileName)) {
+            return cacheMap.get(fileName).clone();
+        }
+
+        File file = new File(Entry.PLUGIN_FILE_PATH + STRUCTURE_FOLDER_NAME + fileName);
+
+        if (!file.exists()) {
+            return null;
+        }
+
+        COIStructure coiStructure = readStructureFromFile(file);
+
+        if (coiStructure != null) {
+            cacheMap.put(fileName, coiStructure);
+        }
+
+        return coiStructure.clone();
+    }
+
+
 
     /**
      * 创建生成一个建筑文件
@@ -274,6 +286,7 @@ public class COIBuilder implements Builder {
         boolean b = FileUtils.saveFile(jsonContent, filePath);
 
         if(b){
+            cacheMap.put(structure.getFileName(), structure);
             LoggerUtils.log("建筑文件保存成功");
             return true;
         }

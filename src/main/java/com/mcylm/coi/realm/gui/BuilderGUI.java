@@ -1,7 +1,9 @@
 package com.mcylm.coi.realm.gui;
 
 import com.mcylm.coi.realm.tools.building.COIBuilding;
+import com.mcylm.coi.realm.tools.building.LineBuild;
 import com.mcylm.coi.realm.tools.selection.AreaSelector;
+import com.mcylm.coi.realm.tools.selection.LineSelector;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.BuildingUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
@@ -79,7 +81,11 @@ public class BuilderGUI extends Gui {
                             building.setTeam(team);
                             // building.build(location,getPlayer());
                             if (building.getStructureByLevel() != null) {
-                                new AreaSelector(getPlayer(), building, location);
+                                if (building instanceof LineBuild lineBuild) {
+                                    new LineSelector(getPlayer(), lineBuild, location);
+                                } else {
+                                    new AreaSelector(getPlayer(), building, location);
+                                }
                             } else {
                                 building.build(location, getPlayer());
                             }

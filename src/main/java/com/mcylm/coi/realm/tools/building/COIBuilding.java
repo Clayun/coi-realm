@@ -218,6 +218,7 @@ public class COIBuilding implements Serializable {
             entry.getKey().getBlock().setBlockData(entry.getValue());
         }
 
+        blocks.clear();
         originalBlocks.clear();
         originalBlockData.clear();
         remainingBlocks.clear();
@@ -470,10 +471,9 @@ public class COIBuilding implements Serializable {
     }
 
     public COIStructure prepareStructure(COIStructure structure, Location loc) {
-        COIStructure structureClone = structure.clone();
         loc.setYaw(loc.getYaw() + 90);
-        structureClone.rotate(Rotation.fromDegrees(Math.round(loc.getYaw() / 90) * 90));
-        return structureClone;
+        structure.rotate(Rotation.fromDegrees(Math.round(loc.getYaw() / 90) * 90));
+        return structure;
     }
 
     public void displayHealth(Player p) {
@@ -574,7 +574,7 @@ public class COIBuilding implements Serializable {
     }
 
     public void upgrade(Player player) {
-        if (level + 1 > maxLevel) {
+        if (level + 1 > maxLevel || !isComplete()) {
             return;
         }
         if (getPlayerHadResource(player) >= getUpgradeRequiredConsume()) {

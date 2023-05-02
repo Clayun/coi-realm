@@ -12,31 +12,39 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Rotatable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 建筑结构
  */
 @Getter @Setter @RequiredArgsConstructor @ToString
+
 public class COIStructure implements Cloneable {
 
-    //建筑名称
     private String name;
-
-    //建筑文件名称
     private String fileName;
-
-    //建筑长
     private Integer length;
-
-    //建筑宽
     private Integer width;
-
-    //建筑高
     private Integer height;
-
-    //建筑方块集合
     private List<COIBlock> blocks;
+
+    @Override
+    public COIStructure clone() {
+        try {
+            COIStructure cloned = (COIStructure) super.clone();
+            List<COIBlock> clonedBlocks = new ArrayList<>();
+
+            for (COIBlock block : this.blocks) {
+                clonedBlocks.add(block.clone()); // ?? COIBlock ????????? clone ??
+            }
+
+            cloned.blocks = clonedBlocks;
+            return cloned;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError("Cloning error: " + e.getMessage());
+        }
+    }
 
     public void rotate(Rotation rotation) {
 
@@ -65,13 +73,4 @@ public class COIStructure implements Cloneable {
         }
     }
 
-    @Override
-    public COIStructure clone() {
-        try {
-            return (COIStructure) super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 }

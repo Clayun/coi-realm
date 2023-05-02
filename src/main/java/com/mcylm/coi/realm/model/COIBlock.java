@@ -1,5 +1,6 @@
 package com.mcylm.coi.realm.model;
 
+import com.mcylm.coi.realm.tools.building.COIBuilding;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -7,6 +8,8 @@ import lombok.ToString;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
+
+import java.io.Serializable;
 
 /**
  * 封装后的方块
@@ -34,4 +37,13 @@ public class COIBlock implements Cloneable {
         return Bukkit.getWorld(world).getBlockAt(x, y, z);
     }
 
+    @Override
+    public COIBlock clone() {
+        try {
+            return (COIBlock) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

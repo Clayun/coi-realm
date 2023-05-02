@@ -2,10 +2,12 @@ package com.mcylm.coi.realm.tools.building.impl;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIBuildingType;
+import com.mcylm.coi.realm.model.COIBlock;
 import com.mcylm.coi.realm.model.COIStructure;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.ConnectableBuild;
 import com.mcylm.coi.realm.tools.data.BuildData;
+import com.mcylm.coi.realm.utils.BuildingUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import com.mcylm.coi.realm.utils.rotation.Rotation;
 import lombok.Getter;
@@ -26,13 +28,13 @@ import java.util.Set;
 
 @Setter
 @Getter
-public class COIDoor extends ConnectableBuild {
+public class COIDoor extends COIBuilding {
 
     private Set<Block> doorBlocks = new HashSet<>();
-    private List<Location> connectPoints = new ArrayList<>();
+    //private List<Location> connectPoints = new ArrayList<>();
     private boolean open;
     private Material doorMaterial;
-    private Material connectPointMaterial;
+    //private Material connectPointMaterial;
 
 
     public COIDoor() {
@@ -42,8 +44,8 @@ public class COIDoor extends ConnectableBuild {
         setMaxLevel(2);
         initStructure();
         setConsume(12);
-        setDoorMaterial(Material.IRON_BLOCK);
-        setConnectPointMaterial(Material.REDSTONE_BLOCK);
+        //setDoorMaterial(Material.IRON_BLOCK);
+        //setConnectPointMaterial(Material.REDSTONE_BLOCK);
         setAvailable(true);
 
     }
@@ -56,6 +58,10 @@ public class COIDoor extends ConnectableBuild {
         new BukkitRunnable() {
             @Override
             public void run() {
+                if (!isAlive()) {
+                    this.cancel();
+                    return;
+                }
 
                 boolean openDoor = false;
                 for (Player p : location.getWorld().getPlayers()) {
@@ -75,28 +81,8 @@ public class COIDoor extends ConnectableBuild {
             if (b.getType() == doorMaterial) {
                 doorBlocks.add(b);
             }
-            if (b.getType() == connectPointMaterial) {
-                connectPoints.add(b.getLocation());
-            }
         }
         super.buildSuccess(location, player);
-    }
-
-
-    @Override
-    public void buildPoint(Location point, Vector line) {
-        buildWall(point, -5, 6);
-    }
-
-    @Override
-    public boolean connectConditionsCheck(ConnectableBuild to) {
-
-        return (to.getType() == COIBuildingType.WALL_NORMAL) && super.connectConditionsCheck(to);
-    }
-
-    @Override
-    public int getMaxConnectBuild() {
-        return 4;
     }
 
     public void buildWall(Location location, int minY, int maxY) {
@@ -114,35 +100,19 @@ public class COIDoor extends ConnectableBuild {
     }
 
     public void open() {
+        if (!isAlive()) return;
         this.open = true;
         doorBlocks.forEach(b -> b.setType(Material.AIR));
     }
 
     public void close() {
+        if (!isAlive()) return;
         this.open = false;
         doorBlocks.forEach(b -> b.setType(doorMaterial));
     }
 
-    @Override
-    public boolean connectLineCheck(List<Location> line) {
-
-        for (Location point : line) {
-            @Nullable COIBuilding build = BuildData.getBuildingByBlock(point.getBlock());
-
-            if (build != null) {
-                if (!(build.getType() == COIBuildingType.WALL_NORMAL || build == this)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
 
 
-    @Override
-    public List<Location> getConnectPoints() {
-        return connectPoints.size() > 0 ? connectPoints : super.getConnectPoints();
-    }
 
     private void initStructure(){
         getBuildingLevelStructure().put(1,"door1.structure");
