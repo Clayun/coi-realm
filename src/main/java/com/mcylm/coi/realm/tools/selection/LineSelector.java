@@ -111,6 +111,7 @@ public class LineSelector implements Selector {
 
 
             if (player.isSneaking() && canPlace) {
+                stop(false);
                 Bukkit.getScheduler().runTask(Entry.getInstance(), () -> place(buildPoints));
             }
         } else {
@@ -135,27 +136,39 @@ public class LineSelector implements Selector {
         }
 
         if (canPlace) {
-            int i = 0;
-            List<Location> buildPoints = new ArrayList<>();
-            int extra = points.size() - (points.size() % building.getMaxLength());
-            for (Location point : points) {
-                i++;
-                buildPoints.add(point);
-                if ((i % building.getMaxLength() == 0 && i < extra)) {
+
+            new BukkitRunnable() {
+                int i = 0;
+                @Override
+                public void run() {
+
+                    List<Location> buildPoints = new ArrayList<>();
+                    int extra = points.size() - (points.size() % building.getMaxLength());
+                    for (Location point : points) {
+
+                        i++;
+                        buildPoints.add(point);
+                        if ((i % building.getMaxLength() == 0 && i < extra)) {
+
+                            LineBuild cloneBuilding = building.cloneBuild();
+                            cloneBuilding.setPoints(buildPoints);
+
+                            Entry.runSync(() -> cloneBuilding.build(null, player));
+                            buildPoints = new ArrayList<>();
+
+                            while (!cloneBuilding.isComplete()) { }
+                        }
+
+
+
+                    }
 
                     LineBuild cloneBuilding = building.cloneBuild();
                     cloneBuilding.setPoints(buildPoints);
-                    cloneBuilding.build(null, player);
-                    buildPoints = new ArrayList<>();
+                    Entry.runSync(() -> cloneBuilding.build(null, player));
+
                 }
-
-            }
-
-            LineBuild cloneBuilding = building.cloneBuild();
-            cloneBuilding.setPoints(buildPoints);
-            cloneBuilding.build(null, player);
-
-            stop(false);
+            }.runTaskAsynchronously(Entry.getInstance());
         }
     }
 
