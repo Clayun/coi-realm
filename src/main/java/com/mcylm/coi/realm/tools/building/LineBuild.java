@@ -37,7 +37,6 @@ public abstract class LineBuild extends COIBuilding {
         return 1;
     }
 
-
     public int getMaxLength() {
         return 8;
     }
@@ -81,10 +80,10 @@ public abstract class LineBuild extends COIBuilding {
         setTotalBlocks(allBlocks.size());
 
         // 设置NPC所属小队
-        if (getNpcCreator() != null) {
-            getNpcCreator().setTeam(TeamUtils.getTeamByPlayer(player));
-            getNpcCreator().setBuilding(this);
-        }
+        getNpcCreators().forEach(npcCreator -> {
+            npcCreator.setTeam(TeamUtils.getTeamByPlayer(player));
+            npcCreator.setBuilding(this);
+        });
 
         COIBuilding building = this;
 
@@ -97,15 +96,12 @@ public abstract class LineBuild extends COIBuilding {
         Set<COIPaster> pasters = new HashSet<>();
 
         COIStructure finalStructure = structure;
-        @NotNull BukkitTask task = new BukkitRunnable() {
+        BukkitTask task = new BukkitRunnable() {
 
             @Override
             public void run() {
 
-                if (!iterator.hasNext()) {
-                    this.cancel();
-                    return;
-                }
+
                 Location point = iterator.next();
 
                 LoggerUtils.debug("build");
@@ -113,7 +109,7 @@ public abstract class LineBuild extends COIBuilding {
                 COIPaster coiPaster = new COIPaster(false, getType().getUnit(), getType().getInterval()
                         , location.getWorld().getName(), point
                         , finalStructure.clone(), false, TeamUtils.getTeamByPlayer(player).getType().getBlockColor()
-                        , getNpcCreator(), ((block, blockToPlace, type) -> {
+                        , getNpcCreators(), ((block, blockToPlace, type) -> {
                     getBlocks().add(block);
                     block.setMetadata("building", new BuildData(building));
                     if (ItemUtils.SUITABLE_CONTAINER_TYPES.contains(type)) {
@@ -128,6 +124,9 @@ public abstract class LineBuild extends COIBuilding {
 
                 Entry.getBuilder().pasteStructure(coiPaster);
 
+                if (!iterator.hasNext()) {
+                    this.cancel();
+                }
 
             }
         }.runTaskTimer(Entry.getInstance(), 1, 2);
@@ -137,17 +136,20 @@ public abstract class LineBuild extends COIBuilding {
 
                 if (task.isCancelled()) {
                     setComplete(pasters.stream().allMatch(COIPaster::isComplete));
-                    Bukkit.getScheduler().runTask(Entry.getInstance(), () -> {
-                        buildSuccess(location, player);
-                    });
+
                     if (isComplete()) {
+
+                        LoggerUtils.debug("complete");
+                        Bukkit.getScheduler().runTask(Entry.getInstance(), () -> {
+                            buildSuccess(location, player);
+                        });
                         this.cancel();
                     }
                 }
 
 
             }
-        }.runTaskTimerAsynchronously(Entry.getInstance(), 0L, 20L);
+        }.runTaskTimerAsynchronously(Entry.getInstance(), 0L, 1L);
     }
 
 
@@ -205,34 +207,31 @@ public abstract class LineBuild extends COIBuilding {
         setRemainingBlocks(allBlocks);
         setTotalBlocks(allBlocks.size());
 
-
         COIBuilding building = this;
 
         processLine(points);
 
-        Iterator<Location> iterator = points.listIterator();
-
+        Iterator<Location> iterator = points.iterator();
+        LoggerUtils.debug(String.valueOf(points));
         // 开始建造
 
         Set<COIPaster> pasters = new HashSet<>();
 
         COIStructure finalStructure = structure;
-        @NotNull BukkitTask task = new BukkitRunnable() {
+        BukkitTask task = new BukkitRunnable() {
 
             @Override
             public void run() {
 
-                if (!iterator.hasNext()) {
-                    this.cancel();
-                    return;
-                }
+
                 Location point = iterator.next();
 
+                LoggerUtils.debug("build");
                 // 构造一个建造器
                 COIPaster coiPaster = new COIPaster(false, getType().getUnit(), getType().getInterval()
                         , location.getWorld().getName(), point
-                        , finalStructure, false, TeamUtils.getTeamByPlayer(player).getType().getBlockColor()
-                        , getNpcCreator(), ((block, blockToPlace, type) -> {
+                        , finalStructure.clone(), false, TeamUtils.getTeamByPlayer(player).getType().getBlockColor()
+                        , getNpcCreators(), ((block, blockToPlace, type) -> {
                     getBlocks().add(block);
                     block.setMetadata("building", new BuildData(building));
                     if (ItemUtils.SUITABLE_CONTAINER_TYPES.contains(type)) {
@@ -247,6 +246,9 @@ public abstract class LineBuild extends COIBuilding {
 
                 Entry.getBuilder().pasteStructure(coiPaster);
 
+                if (!iterator.hasNext()) {
+                    this.cancel();
+                }
 
             }
         }.runTaskTimer(Entry.getInstance(), 1, 2);
@@ -256,17 +258,20 @@ public abstract class LineBuild extends COIBuilding {
 
                 if (task.isCancelled()) {
                     setComplete(pasters.stream().allMatch(COIPaster::isComplete));
-                    Bukkit.getScheduler().runTask(Entry.getInstance(), () -> {
-                        buildSuccess(location, player);
-                    });
+
                     if (isComplete()) {
+
+                        LoggerUtils.debug("complete");
+                        Bukkit.getScheduler().runTask(Entry.getInstance(), () -> {
+                            buildSuccess(location, player);
+                        });
                         this.cancel();
                     }
                 }
 
 
             }
-        }.runTaskTimerAsynchronously(Entry.getInstance(), 0L, 20L);
+        }.runTaskTimerAsynchronously(Entry.getInstance(), 0L, 1L);
     }
 
     public abstract LineBuild cloneBuild();

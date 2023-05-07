@@ -34,7 +34,7 @@ public class COICamp extends COIBuilding {
         // 设置等级对应的建筑文件
         initStructure();
         // 初始化NPC创建器
-        setNpcCreator(initSoldierCreator());
+        setNpcCreators(List.of(initSoldierCreator(), initSoldierCreator(), initSoldierCreator()));
         // 军营设置所需消耗的材料
         setConsume(128);
         //初始化完成，可建造
@@ -45,8 +45,6 @@ public class COICamp extends COIBuilding {
     public void build(Location location, Player player){
         super.build(location,player);
 
-        // 如果需要创建NPC，就启动线程
-        if(getNpcCreator() != null){
             new BukkitRunnable() {
 
                 COISoldier soldier = null;
@@ -56,22 +54,22 @@ public class COICamp extends COIBuilding {
 
                     // 如果建筑建造完成，NPC就初始化
                     if(isComplete()){
-                        COISoldierCreator npcCreator = (COISoldierCreator) getNpcCreator();
-                        // 设置NPC跟随创造建筑的玩家
-                        npcCreator.setFollowPlayerName(player.getName());
-                        // 初始化
-                        soldier = new COISoldier(npcCreator);
-                        soldier.spawn(getNpcCreator().getSpawnLocation());
+                        for (COINpc creator : getNpcCreators()) {
+                            COISoldierCreator npcCreator = (COISoldierCreator) creator;
 
-                        // 就将NPC放入小队军队运行器，关闭当前ticker
-                        TeamUtils.getTeamByPlayer(player).getArmyRunner().addNpc(soldier);
+                            // 设置NPC跟随创造建筑的玩家
+                            npcCreator.setFollowPlayerName(player.getName());
+                            // 初始化
+                            soldier = new COISoldier(npcCreator);
+                            soldier.spawn(creator.getSpawnLocation());
 
-                        // 关闭Ticker
-                        this.cancel();
+                            // 关闭Ticker
+                            this.cancel();
+                        }
                     }
                 }
             }.runTaskTimer(Entry.getInstance(),0,20l);
-        }
+
 
     }
 

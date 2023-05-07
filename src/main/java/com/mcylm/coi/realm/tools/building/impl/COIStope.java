@@ -35,7 +35,7 @@ public class COIStope extends COIBuilding {
         // 设置等级对应的建筑文件
         initStructure();
         // 初始化NPC创建器
-        setNpcCreator(initMinerCreator());
+        setNpcCreators(List.of(initMinerCreator()));
         // 矿场设置所需消耗的材料
         setConsume(64);
         //初始化完成，可建造
@@ -46,31 +46,31 @@ public class COIStope extends COIBuilding {
     public void buildSuccess(Location location, Player player) {
 
 
-        // 如果需要创建NPC，就启动线程
-        if (getNpcCreator() != null) {
-
+        for (COINpc creator : getNpcCreators()) {
             // 如果建筑建造完成，NPC就初始化
             if (isComplete()) {
-                COIMinerCreator npcCreator = (COIMinerCreator) getNpcCreator();
+                COIMinerCreator npcCreator = (COIMinerCreator) creator;
                 // 设置箱子
                 npcCreator.setChestsLocation(getChestsLocation());
                 COIMiner worker = new COIMiner(npcCreator);
-                worker.spawn(getNpcCreator().getSpawnLocation());
+                worker.spawn(creator.getSpawnLocation());
 
 
             }
-
-
         }
+
+
 
     }
 
     @Override
     public void upgradeBuildSuccess() {
         super.upgradeBuildSuccess();
-        COIMinerCreator npcCreator = (COIMinerCreator) getNpcCreator();
-        npcCreator.setChestsLocation(getChestsLocation());
+        for (COINpc creator : getNpcCreators()) {
 
+            COIMinerCreator npcCreator = (COIMinerCreator) creator;
+            npcCreator.setChestsLocation(getChestsLocation());
+        }
     }
 
     /**

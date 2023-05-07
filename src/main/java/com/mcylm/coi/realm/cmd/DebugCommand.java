@@ -1,12 +1,7 @@
 package com.mcylm.coi.realm.cmd;
 
-import com.mcylm.coi.realm.Entry;
-import com.mcylm.coi.realm.gui.BuilderGUI;
 import com.mcylm.coi.realm.gui.ChooseTeamGUI;
-import com.mcylm.coi.realm.gui.FormationGUI;
-import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.LoggerUtils;
-import com.mcylm.coi.realm.utils.TeamUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -25,10 +20,6 @@ public class DebugCommand implements CommandExecutor {
         Player player = ((Player) commandSender);
         if (args[0].equalsIgnoreCase("team")) {
             new ChooseTeamGUI(player).open();
-        }
-
-        if (args[0].equalsIgnoreCase("army")) {
-            new FormationGUI(player).open();
         }
 
         return true;

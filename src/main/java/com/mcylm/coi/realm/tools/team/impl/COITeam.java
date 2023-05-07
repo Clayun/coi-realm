@@ -4,7 +4,6 @@ import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COITeamType;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
-import com.mcylm.coi.realm.runnable.COIRunner;
 import com.mcylm.coi.realm.tools.team.Team;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,17 +41,12 @@ public class COITeam implements Team {
     // Team formation
     private List<List<Integer>> battleFormation;
 
-    // 小队军队运行器
-    // Team army task runner
-    private COIRunner armyRunner;
-
     public COITeam(COITeamType type) {
         this.type = type;
         this.players = new ArrayList<>();
         this.foodChests = new ArrayList<>();
         this.finishedBuildings = new ArrayList<>();
         this.battleFormation = new ArrayList<>();
-        this.armyRunner = new COIRunner(new ArrayList<>());
     }
 
     /**

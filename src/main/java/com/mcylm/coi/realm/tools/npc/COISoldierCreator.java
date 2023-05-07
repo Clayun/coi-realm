@@ -19,6 +19,11 @@ public class COISoldierCreator extends COINpc {
         this.formats = formats;
     }
 
+    @Override
+    public double getAlertRadius() {
+        return 20;
+    }
+
     public COISoldierCreator(){
 
     }

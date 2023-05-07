@@ -1,8 +1,16 @@
 package com.mcylm.coi.realm.tools.npc.impl;
 
+import com.mcylm.coi.realm.Entry;
+import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.model.COINpc;
+import com.mcylm.coi.realm.tools.attack.DamageableAI;
+import com.mcylm.coi.realm.tools.attack.target.Target;
+import com.mcylm.coi.realm.tools.attack.target.TargetType;
+import com.mcylm.coi.realm.tools.attack.target.impl.BuildingTarget;
+import com.mcylm.coi.realm.tools.attack.target.impl.EntityTarget;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.impl.COIBuilder;
+import com.mcylm.coi.realm.tools.data.BuildData;
 import com.mcylm.coi.realm.tools.data.EntityData;
 import com.mcylm.coi.realm.tools.npc.COISoldierCreator;
 import com.mcylm.coi.realm.utils.FormationUtils;
@@ -13,19 +21,15 @@ import lombok.Setter;
 import me.lucko.helper.Events;
 import net.citizensnpcs.api.ai.tree.Behavior;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * 战士
@@ -35,7 +39,10 @@ import java.util.Set;
  */
 @Getter
 @Setter
-public class COISoldier extends COIHuman {
+public class COISoldier extends COIHuman implements DamageableAI {
+
+    private CompletableFuture<BuildingTarget> targetFuture = null;
+
 
     public static void registerListener() {
         Events.subscribe(EntityDamageByEntityEvent.class).handler(e -> {
@@ -53,7 +60,7 @@ public class COISoldier extends COIHuman {
                     if (livingEntity instanceof Player player && player.getGameMode() == GameMode.CREATIVE) {
                         return;
                     }
-                    ((COISoldier) creator.getNpc()).setTargetEntity(target);
+                    ((COISoldier) creator.getNpc()).setTarget(new EntityTarget(livingEntity));
                 }
             }
 
@@ -62,27 +69,11 @@ public class COISoldier extends COIHuman {
     // 周围发现敌人，进入战斗模式
     private boolean fighting = false;
 
-    // NPC所属阵型编排
-    private List<List<Integer>> formats;
-
-    // NPC编排编号，可跟GUI联动
-    private Integer npcNumber;
-
-    private Entity targetEntity;
-
-    private COIBuilding targetBuilding;
-
-    private COIBuilding targetWall;
+    private Target target;
 
     public COISoldier(COISoldierCreator npcCreator) {
         super(npcCreator);
 
-        if (npcCreator.getNpcNumber() != null) {
-            this.npcNumber = npcCreator.getNpcNumber();
-        }
-        if (npcCreator.getFormats() != null) {
-            this.formats = npcCreator.getFormats();
-        }
     }
 
     /**
@@ -111,8 +102,8 @@ public class COISoldier extends COIHuman {
                         // 找到敌对玩家，进入战斗状态
                         needFight = true;
                         // 发动攻击
-                        if (targetEntity == null && targetBuilding == null) {
-                            setTargetEntity(player);
+                        if (target == null) {
+                            setTarget(new EntityTarget(player));
                             // attack(player);
                         }
                         break;
@@ -126,15 +117,14 @@ public class COISoldier extends COIHuman {
 
                 needFight = true;
                 // 发动攻击
-                if (targetEntity == null && targetBuilding == null) {
-                    setTargetEntity(entity);
+                if (target == null) {
+                    setTarget(new EntityTarget((LivingEntity) entity));
                     // attack(player);
                 }
                 break;
 
 
             }
-
 
             if (getCoiNpc().getEnemyEntities() != null
                     && !getCoiNpc().getEnemyEntities().isEmpty()) {
@@ -145,20 +135,31 @@ public class COISoldier extends COIHuman {
                     // 发动攻击
                     // 如果NPC设置了主动攻击，就开始战斗
                     if (getCoiNpc().isAggressive()) {
-                        if (targetEntity == null && targetBuilding == null) {
-                            setTargetEntity(entity);
+                        if (target == null) {
+                            setTarget(new EntityTarget((LivingEntity) entity));
                             // attack(entity);
                         }
                     }
                     break;
                 }
             }
+            if (target == null && (targetFuture == null || targetFuture.isDone())) {
+                targetFuture = CompletableFuture.supplyAsync(() -> {
+                    for (Block b : LocationUtils.selectionRadiusByDistance(getLocation().getBlock(), (int) getCoiNpc().getAlertRadius(), (int) getCoiNpc().getAlertRadius())) {
+                        COIBuilding building = BuildData.getBuildingByBlock(b);
+                        if (building != null && building.getTeam() != getCoiNpc().getTeam() && building.getType() != COIBuildingType.WALL_NORMAL) {
+                            return new BuildingTarget(building);
+                        }
+                    }
+                    return null;
+                });
+                targetFuture.thenAccept(result -> {
+                    target = result;
+                });
+            }
 
 
         }
-
-        List<Block> blocks = getNearbyBlocks(getCoiNpc().getAlertRadius());
-
 
         fighting = needFight;
 
@@ -166,75 +167,46 @@ public class COISoldier extends COIHuman {
     /**
      * 攻击实体
      */
-    private void meleeAttackEntityTarget() {
-        Entity entity = targetEntity;
-        if (entity == null) return;
-        if (getNpc().getEntity().getLocation().distance(entity.getLocation()) <= 3) {
+    private void meleeAttackTarget() {
+        if (target == null) return;
+
+        // 对生物体直接产生伤害
+        Random rand = new Random();
+
+        // 在攻击伤害范围内，随机产生伤害
+        double damage = rand.nextInt((int) ((getCoiNpc().getMaxDamage() + 1) - getCoiNpc().getMinDamage())) + getCoiNpc().getMinDamage();
+
+
+        if (getNpc().getEntity().getLocation().distance(target.getTargetLocation()) <= 3 && target.getType() == TargetType.ENTITY) {
 
             // 挥动手
             ((LivingEntity) getNpc().getEntity()).swingMainHand();
 
-            // 对生物体直接产生伤害
-            Random rand = new Random();
 
-            // 在攻击伤害范围内，随机产生伤害
-            double damage = rand.nextInt((int) ((getCoiNpc().getMaxDamage() + 1) - getCoiNpc().getMinDamage())) + getCoiNpc().getMinDamage();
-            ((LivingEntity) entity).damage(damage, getNpc().getEntity());
+            damage(target, damage, target.getTargetLocation());
 
-        } else {
-
-            // 追击对方
-            findPath(entity.getLocation());
-        }
-    }
-
-    private void meleeAttackBuildingTarget() {
-
-    }
-
-
-    /**
-     * 自动计算NPC的位置，组成阵型
-     * 如果没有阵型，就主动跟随玩家
-     */
-    private void formation() {
-
-        if (fighting) {
-            return;
         }
 
-        // 如果没有跟随的玩家，就原地待命
-        if (StringUtils.isBlank(getCoiNpc().getFollowPlayerName())) {
-            return;
-        }
 
-        Player player = Bukkit.getPlayer(getCoiNpc().getFollowPlayerName());
+        for (Block b : LocationUtils.selectionRadiusByDistance(getLocation().getBlock(), 3, 3)) {
+            COIBuilding building = BuildData.getBuildingByBlock(b);
+            if (building != null && building.getTeam() != getCoiNpc().getTeam()) {
+                ((LivingEntity) getNpc().getEntity()).swingMainHand();
+                building.damage(getNpc().getEntity(), (int) damage, b);
+                b.getWorld().playEffect(b.getLocation(), Effect.STEP_SOUND,1);
 
-        if (player != null && player.isOnline()) {
-
-            if (npcNumber == null
-                    || formats == null) {
-                if (targetEntity == null && targetBuilding == null && targetWall == null) {
-
-                    // 如果没有初始化队形，就跟随玩家
-                    findPath(player.getLocation());
-                }
-            } else {
-                List<Location> locations = FormationUtils.calculateFormation(player.getLocation(), formats);
-
-                if (locations.size() >= npcNumber) {
-                    int index = npcNumber - 1;
-
-                    // NPC编排所在位置
-                    Location location = locations.get(index);
-
-                    walk(location, player.getEyeLocation());
-                }
+                break;
             }
-
         }
 
+
+
+
+        findPath(target.getTargetLocation());
+
     }
+
+
 
     /**
      * 行军寻路
@@ -264,40 +236,19 @@ public class COISoldier extends COIHuman {
         getCoiNpc().setFollowPlayerName(newFollowPlayer);
     }
 
-    /**
-     * 更换阵型
-     *
-     * @param formats
-     */
-    public void updateFormats(List<List<Integer>> formats) {
-        this.formats = formats;
-    }
 
-    /**
-     * 更换NPC的编号
-     *
-     * @param number
-     */
-    public void setNumber(Integer number) {
-        this.npcNumber = number;
-    }
 
     @Override
     public void move() {
         super.move();
-        // 布阵
-        formation();
+
 
         //警戒周围
         alert();
 
-        meleeAttackEntityTarget();
+        meleeAttackTarget();
 
-        if (targetEntity != null && (targetEntity.isDead() || targetEntity.getLocation().distance(getLocation()) > getCoiNpc().getAlertRadius() * 2));
-
-            targetEntity = null;
-        if (targetBuilding != null && !targetBuilding.isAlive()) targetBuilding = null;
-
+        if (target != null && target.isDead()) target = null;
     }
 
     @Override
@@ -306,7 +257,22 @@ public class COISoldier extends COIHuman {
         if (isAlive()) {
             return;
         }
-        targetEntity = null;
-        targetBuilding = null;
+        target = null;
+    }
+
+    @Override
+    public void onTarget(Target target) {
+        this.target = target;
+    }
+
+    @Override
+    public void damage(Target target, double damage, Location attackLocation) {
+        if (target.getType() == TargetType.ENTITY) {
+            EntityTarget entityTarget = (EntityTarget) target;
+            entityTarget.getEntity().damage(damage, getNpc().getEntity());
+        } else if (target.getType() == TargetType.BUILDING) {
+            BuildingTarget buildingTarget = (BuildingTarget) target;
+            buildingTarget.getBuilding().damage(getNpc().getEntity(), (int) damage, attackLocation.getBlock());
+        }
     }
 }

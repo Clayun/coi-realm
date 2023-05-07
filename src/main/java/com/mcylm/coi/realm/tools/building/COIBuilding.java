@@ -35,6 +35,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -66,8 +67,8 @@ public class COIBuilding implements Serializable {
     private Set<Block> blocks = new HashSet<>();
 
     // 建筑所替换的原方块数据
-    private Map<Location, BlockData> originalBlockData = new HashMap<>();
-    private Map<Location, Material> originalBlocks = new HashMap<>();
+    private Map<Location, BlockData> originalBlockData = new ConcurrentHashMap<>();
+    private Map<Location, Material> originalBlocks = new ConcurrentHashMap<>();
 
     // 放置物品的箱子位置
     private List<Location> chestsLocation = new ArrayList<>();
@@ -92,7 +93,7 @@ public class COIBuilding implements Serializable {
     private HashMap<Integer, String> buildingLevelStructure = new HashMap<>();
 
     // 建筑生成的NPC创建器，不生成NPC就设置NULL
-    private COINpc npcCreator;
+    private List<COINpc> npcCreators = new ArrayList<>();
 
     // 建筑所属的队伍
     private COITeam team;
@@ -154,17 +155,17 @@ public class COIBuilding implements Serializable {
         setTotalBlocks(allBlocks.size());
 
         // 设置NPC所属小队
-        if (getNpcCreator() != null) {
-            getNpcCreator().setTeam(TeamUtils.getTeamByPlayer(player));
-            getNpcCreator().setBuilding(this);
-        }
+        getNpcCreators().forEach(npcCreator -> {
+            npcCreator.setTeam(TeamUtils.getTeamByPlayer(player));
+            npcCreator.setBuilding(this);
+        });
 
         COIBuilding building = this;
         // 构造一个建造器
         COIPaster coiPaster = new COIPaster(false, getType().getUnit(), getType().getInterval()
                 , location.getWorld().getName(), location
                 , structure, false, TeamUtils.getTeamByPlayer(player).getType().getBlockColor()
-                , getNpcCreator(), ((block, blockToPlace, type) -> {
+                , getNpcCreators(), ((block, blockToPlace, type) -> {
             blocks.add(block);
             block.setMetadata("building", new BuildData(building));
             if (ItemUtils.SUITABLE_CONTAINER_TYPES.contains(type)) {
@@ -248,7 +249,7 @@ public class COIBuilding implements Serializable {
         COIPaster coiPaster = new COIPaster(false, getType().getUnit(), getType().getInterval()
                 , location.getWorld().getName(), location
                 , structure, false, getTeam().getType().getBlockColor()
-                , npcCreator, ((block, blockToPlace, type) -> {
+                , npcCreators, ((block, blockToPlace, type) -> {
             getBlocks().add(block);
             block.setMetadata("building", new BuildData(building));
             if (ItemUtils.SUITABLE_CONTAINER_TYPES.contains(type)) {
@@ -281,7 +282,7 @@ public class COIBuilding implements Serializable {
 
     public void upgradeBuildSuccess() {
 
-        getNpcCreator().upgrade();
+        getNpcCreators().forEach(COINpc::upgrade);
     }
 
     /**
@@ -463,7 +464,7 @@ public class COIBuilding implements Serializable {
         } else {
             getHealth().addAndGet(-damage);
         }
-        for (Entity e : location.getNearbyEntities(20, 20, 20)) {
+        for (Entity e : location.getNearbyEntities(30, 20, 20)) {
             if (e instanceof Player p) {
                 displayHealth(p);
             }
@@ -507,16 +508,18 @@ public class COIBuilding implements Serializable {
                             }
 
                         }
-                        int maxDistance = 10;
+                        int maxDistance = 12;
                         List<Location> loc = LocationUtils.line(getHologramPoint(), p.getEyeLocation(), 1);
                         int distance = loc.size();
                         if (maxDistance < distance) {
                             distance = maxDistance;
                         }
-                        int finalDistance = distance;
+                        int finalDistance = loc.size() >= 3 ? distance - 3 : loc.size() ;
+
                         Entry.runSync(() -> {
+                            if (hologram.isDeleted()) return;
                             line.setText(getHealthBarText(getMaxHealth(), getHealth().get(), getHealthBarLength()));
-                            hologram.setPosition(loc.get(finalDistance - 1));
+                            hologram.setPosition(loc.get(finalDistance).add(0,0.5,0));
                         });
                     }
                 }
@@ -538,12 +541,7 @@ public class COIBuilding implements Serializable {
             value.delete();
         }
         holograms.clear();
-        for (Block b : getBlocks()) {
-            b.removeMetadata("building", Entry.getInstance());
-            if (Math.random() > 0.8 && effect) {
-                b.getWorld().spawnParticle(Particle.EXPLOSION_NORMAL, b.getLocation(), 1);
-            }
-        }
+
         Set<Map.Entry<Location, Material>> blocks = getOriginalBlocks().entrySet();
         Set<Map.Entry<Location, BlockData>> blockData = getOriginalBlockData().entrySet();
         for (Map.Entry<Location, Material> entry : blocks) {
@@ -555,12 +553,18 @@ public class COIBuilding implements Serializable {
             }
             block.setType(entry.getValue());
         }
+        for (Block b : getBlocks()) {
+            b.removeMetadata("building", Entry.getInstance());
+            if (Math.random() > 0.8 && effect) {
+                b.getWorld().spawnParticle(Particle.EXPLOSION_NORMAL, b.getLocation(), 1);
+            }
+        }
         for (Map.Entry<Location, BlockData> entry : blockData) {
             entry.getKey().getBlock().setBlockData(entry.getValue());
         }
         complete = false;
         team.getFinishedBuildings().remove(this);
-        if (npcCreator != null) npcCreator.remove();
+        npcCreators.forEach(COINpc::remove);
         setAlive(false);
         team.getFoodChests().removeAll(getChestsLocation());
     }

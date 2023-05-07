@@ -8,7 +8,6 @@ import com.mcylm.coi.realm.gui.BuilderGUI;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.model.COIPaster;
 import com.mcylm.coi.realm.model.COIStructure;
-import com.mcylm.coi.realm.runnable.COIRunner;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.data.BuildData;
 import com.mcylm.coi.realm.tools.npc.*;
@@ -412,11 +411,6 @@ public class PlayerInteractListener implements Listener {
 
             coiHumen.add(soldier);
         }
-
-        COIRunner coiRunner = new COIRunner(coiHumen);
-
-        // 启动军队
-        coiRunner.run();
 
     }
 

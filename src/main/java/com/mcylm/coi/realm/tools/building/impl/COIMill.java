@@ -2,6 +2,7 @@ package com.mcylm.coi.realm.tools.building.impl;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIBuildingType;
+import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.tools.npc.impl.COIFarmer;
@@ -32,7 +33,7 @@ public class COIMill extends COIBuilding {
         // 设置等级对应的建筑文件
         initStructure();
         // 初始化NPC创建器
-        setNpcCreator(initFarmerCreator());
+        setNpcCreators(List.of(initFarmerCreator()));
         // 磨坊设置所需消耗的材料
         setConsume(32);
         //初始化完成，可建造
@@ -41,17 +42,16 @@ public class COIMill extends COIBuilding {
 
     @Override
     public void buildSuccess(Location location, Player player) {
-        // 如果需要创建NPC，就启动线程
-        if (getNpcCreator() != null) {
 
+        // 如果建筑建造完成，NPC就初始化
+        for (COINpc creator : getNpcCreators()) {
 
-            // 如果建筑建造完成，NPC就初始化
             if (isComplete()) {
-                COIMinerCreator npcCreator = (COIMinerCreator) getNpcCreator();
+                COIMinerCreator npcCreator = (COIMinerCreator) creator;
                 // 设置食物收集箱子
                 npcCreator.setChestsLocation(getChestsLocation());
                 COIFarmer farmer = new COIFarmer(npcCreator);
-                farmer.spawn(getNpcCreator().getSpawnLocation());
+                farmer.spawn(creator.getSpawnLocation());
                 // 为小队的其他NPC共享食物箱子
                 TeamUtils.getTeamByPlayer(player).getFoodChests().addAll(getChestsLocation());
 
@@ -65,11 +65,12 @@ public class COIMill extends COIBuilding {
     @Override
     public void upgradeBuildSuccess() {
         super.upgradeBuildSuccess();
-        COIMinerCreator npcCreator = (COIMinerCreator) getNpcCreator();
-        // 设置食物收集箱子
-        npcCreator.setChestsLocation(getChestsLocation());
-        getTeam().getFoodChests().addAll(getChestsLocation());
-
+        for (COINpc creator : getNpcCreators()) {
+            COIMinerCreator npcCreator = (COIMinerCreator) creator;
+            // 设置食物收集箱子
+            npcCreator.setChestsLocation(getChestsLocation());
+            getTeam().getFoodChests().addAll(getChestsLocation());
+        }
     }
 
     @Override

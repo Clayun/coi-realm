@@ -1,10 +1,12 @@
 package com.mcylm.coi.realm.tools.building.impl;
 
 import com.mcylm.coi.realm.enums.COIBuildingType;
+import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.LineBuild;
 import com.mcylm.coi.realm.tools.data.BuildData;
 import com.mcylm.coi.realm.utils.BuildingUtils;
 import org.bukkit.block.Block;
+import org.jetbrains.annotations.Nullable;
 
 public class COIWall extends LineBuild {
 
@@ -26,7 +28,15 @@ public class COIWall extends LineBuild {
 
     @Override
     public boolean pointCheck(Block block) {
-        return BuildData.getBuildingByBlock(block) == null;
+        @Nullable COIBuilding building = BuildData.getBuildingByBlock(block);
+
+        if (building == null) {
+            return true;
+        }
+        if (building.getType() == COIBuildingType.WALL_NORMAL) {
+            return true;
+        }
+        return false;
     }
 
     private void initStructure(){

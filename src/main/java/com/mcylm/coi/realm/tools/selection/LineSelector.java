@@ -5,6 +5,7 @@ import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.model.COIStructure;
 import com.mcylm.coi.realm.tools.building.LineBuild;
 import com.mcylm.coi.realm.utils.LocationUtils;
+import com.mcylm.coi.realm.utils.LoggerUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -17,7 +18,12 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Setter
 @Getter
@@ -78,24 +84,32 @@ public class LineSelector implements Selector {
             }
             int length = building.getMaxLength();
 
-            List<Location> buildPoints = new ArrayList<>();
-            for (Location point : line) {
+            List<Block> blocks = new ArrayList<>();
+            Iterator<Location> iterator = line.iterator();
+            while (iterator.hasNext()) {
+                Location point = iterator.next();
                 Block block = point.getWorld().getHighestBlockAt(point);
-                buildPoints.add(point);
-                Location loc = point.clone();
-                for (int i = block.getY() ;i > 0 ;i--) {
-                    Block block1 = loc.subtract(0,1,0).getBlock();
+                if (blocks.contains(block)) {
+                    iterator.remove();
+                    continue;
+                }
+                blocks.add(block);
+                for (int i = 0 ; i < block.getY() ;i++) {
+                    Block block1 = point.getWorld().getBlockAt(point.getBlockX(), i, point.getBlockZ());
                     if (!building.pointCheck(block1)) {
                         canPlace = false;
                     }
                 }
             }
 
+            List<Location> buildPoints = new ArrayList<>();
+
             int i = 0;
             for (Location point : line) {
                 i++;
                 Block block = point.getWorld().getHighestBlockAt(point);
 
+                buildPoints.add(block.getLocation());
                 ParticleBuilder builder = new ParticleBuilder(Particle.REDSTONE);
                 builder.color(canPlace ? Color.LIME : Color.RED);
                 if (i % length == 0) {
@@ -135,42 +149,38 @@ public class LineSelector implements Selector {
             }
         }
 
-        if (canPlace) {
+        List<Location> buildPoints = new ArrayList<>();
+        AtomicInteger wallCount = new AtomicInteger(0);
+        int maxLength = building.getMaxLength();
 
-            new BukkitRunnable() {
-                int i = 0;
-                @Override
-                public void run() {
-
-                    List<Location> buildPoints = new ArrayList<>();
-                    int extra = points.size() - (points.size() % building.getMaxLength());
-                    for (Location point : points) {
-
-                        i++;
+        CompletableFuture.allOf(IntStream.range(0, points.size())
+                .boxed()
+                .collect(Collectors.groupingBy(index -> index / maxLength))
+                .values()
+                .stream()
+                .map(subList -> CompletableFuture.runAsync(() -> {
+                    subList.forEach(index -> {
+                        Location point = points.get(index);
                         buildPoints.add(point);
-                        if ((i % building.getMaxLength() == 0 && i < extra)) {
-
+                        int wallIndex = wallCount.incrementAndGet();
+                        if (wallIndex % maxLength == 0) {
+                            LoggerUtils.debug("wall:" + wallIndex);
                             LineBuild cloneBuilding = building.cloneBuild();
-                            cloneBuilding.setPoints(buildPoints);
-
-                            Entry.runSync(() -> cloneBuilding.build(null, player));
-                            buildPoints = new ArrayList<>();
-
-                            while (!cloneBuilding.isComplete()) { }
+                            cloneBuilding.setPoints(List.copyOf(buildPoints));
+                            cloneBuilding.build(null, player);
+                            buildPoints.clear();
                         }
+                    });
+                })).toArray(CompletableFuture[]::new)).join();
 
-
-
-                    }
-
-                    LineBuild cloneBuilding = building.cloneBuild();
-                    cloneBuilding.setPoints(buildPoints);
-                    Entry.runSync(() -> cloneBuilding.build(null, player));
-
-                }
-            }.runTaskAsynchronously(Entry.getInstance());
+        if (!buildPoints.isEmpty()) {
+            LineBuild cloneBuilding = building.cloneBuild();
+            cloneBuilding.setPoints(buildPoints);
+            cloneBuilding.build(null, player);
         }
+
     }
+
 
 
     @Override

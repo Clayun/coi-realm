@@ -29,7 +29,7 @@ public class LocationUtils {
         double vectorLength = vectorAB.length();
         vectorAB.normalize();
         List<Location> points = new ArrayList<>();
-        for (double i = 0; i < vectorLength; i += rate) {
+        for (double i = 0; i <= vectorLength; i += rate) {
             Vector vector = vectorAB.clone().multiply(i);
             locA.add(vector);
             points.add(locA.clone());
@@ -53,7 +53,23 @@ public class LocationUtils {
         }
         return blocks;
     }
-    public static List<COIBuilding>getNearbyBuildings(Location location, int radius) {
+
+    public static List<Block> selectionRadiusByDistance(Block firstlyBrokeCentralBlock, int horizontalRadius, int verticalHeight) {
+        List<Block> blocks = new ArrayList<>();
+        Location blockLocation = firstlyBrokeCentralBlock.getLocation();
+        for(int x = blockLocation.getBlockX() - horizontalRadius;  x <= blockLocation.getBlockX() + horizontalRadius; x++) {
+            for(int y = blockLocation.getBlockY() - verticalHeight; y <= blockLocation.getBlockY() + verticalHeight; y++) {
+                for(int z = blockLocation.getBlockZ() - horizontalRadius; z <= blockLocation.getBlockZ() + horizontalRadius; z++) {
+                    Block block = firstlyBrokeCentralBlock.getWorld().getBlockAt(x, y, z);
+                    if (block.getType() != Material.AIR) blocks.add(block);
+                }
+            }
+        }
+        blocks.sort(Comparator.comparingDouble(b -> firstlyBrokeCentralBlock.getLocation().distance(b.getLocation())));
+        return blocks;
+    }
+
+    public static List<COIBuilding> getNearbyBuildings(Location location, int radius) {
         List<COIBuilding> list = new ArrayList<>();
         for (Block block : selectionRadius(location.getBlock(), radius, radius)) {
             COIBuilding building = BuildData.getBuildingByBlock(block);

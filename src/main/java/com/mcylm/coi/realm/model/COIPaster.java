@@ -7,6 +7,7 @@ import lombok.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 
 
@@ -39,12 +40,12 @@ public class COIPaster {
     private Material blockColor;
 
     // 建筑物生成的NPC创建工具
-    private COINpc npcCreator;
+    private List<COINpc> npcCreators;
 
     // 替换方块时触发
     private BlockPlaceHandler handler;
 
-    public COIPaster(boolean complete, int unit, long interval, String worldName, Location location, COIStructure structure, boolean withAir, Material blockColor, COINpc npcCreator) {
+    public COIPaster(boolean complete, int unit, long interval, String worldName, Location location, COIStructure structure, boolean withAir, Material blockColor, List<COINpc> npcCreators) {
         this.complete = complete;
         this.unit = unit;
         this.interval = interval;
@@ -53,7 +54,7 @@ public class COIPaster {
         this.structure = structure;
         this.withAir = withAir;
         this.blockColor = blockColor;
-        this.npcCreator = npcCreator;
+        this.npcCreators = npcCreators;
         this.handler = ((block, blockToPlace, type) -> Material.valueOf(blockToPlace.getMaterial()));
     }
 }
