@@ -1,48 +1,50 @@
 package com.mcylm.coi.realm.tools.npc.impl;
 
-import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.model.COINpc;
-import com.mcylm.coi.realm.tools.attack.DamageableAI;
+import com.mcylm.coi.realm.player.COIPlayer;
+import com.mcylm.coi.realm.runnable.AttackGoalTask;
+import com.mcylm.coi.realm.tools.attack.AttackGoal;
+import com.mcylm.coi.realm.tools.attack.Commandable;
+import com.mcylm.coi.realm.tools.attack.impl.PatrolGoal;
 import com.mcylm.coi.realm.tools.attack.target.Target;
 import com.mcylm.coi.realm.tools.attack.target.TargetType;
 import com.mcylm.coi.realm.tools.attack.target.impl.BuildingTarget;
 import com.mcylm.coi.realm.tools.attack.target.impl.EntityTarget;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
-import com.mcylm.coi.realm.tools.building.impl.COIBuilder;
 import com.mcylm.coi.realm.tools.data.BuildData;
 import com.mcylm.coi.realm.tools.data.EntityData;
 import com.mcylm.coi.realm.tools.npc.COISoldierCreator;
-import com.mcylm.coi.realm.utils.FormationUtils;
 import com.mcylm.coi.realm.utils.LocationUtils;
-import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Getter;
 import lombok.Setter;
 import me.lucko.helper.Events;
-import net.citizensnpcs.api.ai.tree.Behavior;
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.*;
+import org.bukkit.Effect;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 
 /**
  * 战士
- * 拥有多人自动编排能力，自发的组成阵容
  * 会对敌对阵营的建筑进行破坏，并主动攻击敌对阵营玩家
  * 主动跟随阵营内拥有将军令的玩家
  */
 @Getter
-@Setter
-public class COISoldier extends COIHuman implements DamageableAI {
+public class COISoldier extends COIHuman implements Commandable {
 
     private CompletableFuture<BuildingTarget> targetFuture = null;
 
+    @Setter
+    private COIPlayer commander;
+
+    private AttackGoal goal = new PatrolGoal(this);
 
     public static void registerListener() {
         Events.subscribe(EntityDamageByEntityEvent.class).handler(e -> {
@@ -60,7 +62,8 @@ public class COISoldier extends COIHuman implements DamageableAI {
                     if (livingEntity instanceof Player player && player.getGameMode() == GameMode.CREATIVE) {
                         return;
                     }
-                    ((COISoldier) creator.getNpc()).setTarget(new EntityTarget(livingEntity));
+                    ((COISoldier) creator.getNpc()).setTarget(new EntityTarget(livingEntity, 8));
+
                 }
             }
 
@@ -82,86 +85,6 @@ public class COISoldier extends COIHuman implements DamageableAI {
     private void alert() {
 
 
-        List<Entity> nearByEntities = getNearByEntities(getCoiNpc().getAlertRadius());
-
-        if (nearByEntities.isEmpty()) {
-            return;
-        }
-
-        // 是否需要开启战斗模式
-        boolean needFight = false;
-
-        for (Entity entity : nearByEntities) {
-
-            if (getCoiNpc().getEnemyPlayers() != null
-                    && !getCoiNpc().getEnemyPlayers().isEmpty()) {
-                if (entity.getType().equals(EntityType.PLAYER)) {
-                    Player player = (Player) entity;
-
-                    if (getCoiNpc().getEnemyPlayers().contains(player.getName()) && player.getGameMode() != GameMode.CREATIVE) {
-                        // 找到敌对玩家，进入战斗状态
-                        needFight = true;
-                        // 发动攻击
-                        if (target == null) {
-                            setTarget(new EntityTarget(player));
-                            // attack(player);
-                        }
-                        break;
-                    }
-
-                }
-            }
-
-            @Nullable COINpc data = EntityData.getNpcByEntity(entity);
-            if (data != null && data.getTeam() != getCoiNpc().getTeam()) {
-
-                needFight = true;
-                // 发动攻击
-                if (target == null) {
-                    setTarget(new EntityTarget((LivingEntity) entity));
-                    // attack(player);
-                }
-                break;
-
-
-            }
-
-            if (getCoiNpc().getEnemyEntities() != null
-                    && !getCoiNpc().getEnemyEntities().isEmpty()) {
-
-                if (getCoiNpc().getEnemyEntities().contains(entity.getType())) {
-                    // 找到敌对生物，进入战斗状态
-                    needFight = true;
-                    // 发动攻击
-                    // 如果NPC设置了主动攻击，就开始战斗
-                    if (getCoiNpc().isAggressive()) {
-                        if (target == null) {
-                            setTarget(new EntityTarget((LivingEntity) entity));
-                            // attack(entity);
-                        }
-                    }
-                    break;
-                }
-            }
-            if (target == null && (targetFuture == null || targetFuture.isDone())) {
-                targetFuture = CompletableFuture.supplyAsync(() -> {
-                    for (Block b : LocationUtils.selectionRadiusByDistance(getLocation().getBlock(), (int) getCoiNpc().getAlertRadius(), (int) getCoiNpc().getAlertRadius())) {
-                        COIBuilding building = BuildData.getBuildingByBlock(b);
-                        if (building != null && building.getTeam() != getCoiNpc().getTeam() && building.getType() != COIBuildingType.WALL_NORMAL) {
-                            return new BuildingTarget(building);
-                        }
-                    }
-                    return null;
-                });
-                targetFuture.thenAccept(result -> {
-                    target = result;
-                });
-            }
-
-
-        }
-
-        fighting = needFight;
 
     }
     /**
@@ -244,8 +167,6 @@ public class COISoldier extends COIHuman implements DamageableAI {
 
 
         //警戒周围
-        alert();
-
         meleeAttackTarget();
 
         if (target != null && target.isDead()) target = null;
@@ -261,7 +182,98 @@ public class COISoldier extends COIHuman implements DamageableAI {
     }
 
     @Override
-    public void onTarget(Target target) {
+    public void lookForEnemy(int radius) {
+
+        if (radius == -1) {
+            radius = (int) getCoiNpc().getAlertRadius();
+        }
+
+        List<Entity> nearByEntities = getNearByEntities(radius);
+
+        if (nearByEntities.isEmpty()) {
+            return;
+        }
+
+        // 是否需要开启战斗模式
+        boolean needFight = false;
+
+        for (Entity entity : nearByEntities) {
+
+            if (getCoiNpc().getEnemyPlayers() != null
+                    && !getCoiNpc().getEnemyPlayers().isEmpty()) {
+                if (entity.getType().equals(EntityType.PLAYER)) {
+                    Player player = (Player) entity;
+
+                    if (getCoiNpc().getEnemyPlayers().contains(player.getName()) && player.getGameMode() != GameMode.CREATIVE) {
+                        // 找到敌对玩家，进入战斗状态
+                        needFight = true;
+                        // 发动攻击
+                        if (target == null) {
+                            setTarget(new EntityTarget(player, 6));
+                            // attack(player);
+                        }
+                        break;
+                    }
+
+                }
+            }
+
+            @Nullable COINpc data = EntityData.getNpcByEntity(entity);
+            if (data != null && data.getTeam() != getCoiNpc().getTeam()) {
+
+                needFight = true;
+                // 发动攻击
+                if (target == null) {
+                    setTarget(new EntityTarget((LivingEntity) entity, 6));
+                    // attack(player);
+                    break;
+                }
+
+            }
+
+            if (getCoiNpc().getEnemyEntities() != null
+                    && !getCoiNpc().getEnemyEntities().isEmpty()) {
+
+                if (getCoiNpc().getEnemyEntities().contains(entity.getType())) {
+                    // 找到敌对生物，进入战斗状态
+                    needFight = true;
+                    // 发动攻击
+                    // 如果NPC设置了主动攻击，就开始战斗
+                    if (getCoiNpc().isAggressive()) {
+                        if (target == null) {
+                            setTarget(new EntityTarget((LivingEntity) entity));
+                            // attack(entity);
+                            break;
+                        }
+                    }
+
+                }
+            }
+            if (target == null && (targetFuture == null || targetFuture.isDone())) {
+                int finalRadius = radius;
+                targetFuture = CompletableFuture.supplyAsync(() -> {
+                    for (Block b : LocationUtils.selectionRadiusByDistance(getLocation().getBlock(), finalRadius, finalRadius)) {
+                        COIBuilding building = BuildData.getBuildingByBlock(b);
+                        if (building != null && building.getTeam() != getCoiNpc().getTeam() && building.getType() != COIBuildingType.WALL_NORMAL) {
+                            return new BuildingTarget(building, building.getNearestBlock(getLocation()).getLocation());
+                        }
+                    }
+                    return null;
+                });
+                targetFuture.thenAccept(result -> {
+                    target = result;
+                });
+            }
+
+
+        }
+
+        fighting = needFight;
+    }
+
+    @Override
+    public void setTargetDirectly(Target target) {
+
         this.target = target;
     }
 
@@ -274,5 +286,21 @@ public class COISoldier extends COIHuman implements DamageableAI {
             BuildingTarget buildingTarget = (BuildingTarget) target;
             buildingTarget.getBuilding().damage(getNpc().getEntity(), (int) damage, attackLocation.getBlock());
         }
+    }
+
+
+    @Override
+    public void setGoal(AttackGoal goal) {
+        if (this.goal != null) {
+            AttackGoalTask.getGoalSet().remove(this.goal);
+            this.goal.stop();
+        }
+        this.goal = goal;
+        AttackGoalTask.getGoalSet().add(goal);
+    }
+
+    @Override
+    public AttackGoal getGoal() {
+        return goal;
     }
 }

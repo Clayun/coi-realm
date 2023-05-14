@@ -1,9 +1,20 @@
 package com.mcylm.coi.realm.tools.attack;
 
-import org.bukkit.entity.Damageable;
+import com.destroystokyo.paper.entity.ai.GoalType;
+import com.mcylm.coi.realm.enums.AttackGoalType;
 
-import java.util.ArrayList;
+public interface AttackGoal {
 
-public class AttackGoal {
+    void start();
 
+    void tick();
+
+    void asyncTick();
+
+    void stop();
+
+    Commandable getExecutor();
+    boolean isStop();
+
+    AttackGoalType getType();
 }

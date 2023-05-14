@@ -1,14 +1,27 @@
 package com.mcylm.coi.realm.tools.attack.target;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
-public interface Target {
+@NoArgsConstructor
+public abstract class Target {
 
-    TargetType getType();
+    @Getter
+    @Setter
+    private int targetLevel;
 
-    @NotNull Location getTargetLocation();
+    public Target(int p) {
+        this.targetLevel = p;
+    }
 
-    boolean isDead();
+    public abstract TargetType getType();
+
+    public abstract Location getTargetLocation();
+
+    public abstract boolean isDead();
 }

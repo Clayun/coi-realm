@@ -989,15 +989,12 @@ public class COIHuman implements AI {
 
         List<Entity> result = new ArrayList<>();
 
-        List<Entity> nearbyEntities = npc.getEntity().getNearbyEntities(radius, 2, radius);
+        List<Entity> nearbyEntities = npc.getEntity().getNearbyEntities(radius, radius, radius);
 
         if(!nearbyEntities.isEmpty()){
             for(Entity entity : nearbyEntities){
                 if(entity != null){
-                    if (entity.getType().equals(EntityType.PLAYER)) {
-                        // 实体是玩家
-                        result.add(entity);
-                    }else if(entity instanceof LivingEntity){
+                    if(entity instanceof LivingEntity){
                         // 普通生物
                         result.add(entity);
                     }
@@ -1006,6 +1003,7 @@ public class COIHuman implements AI {
             }
         }
 
+        result.sort(Comparator.comparingDouble(b -> getLocation().distance(b.getLocation())));
         return result;
     }
 

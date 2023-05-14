@@ -587,4 +587,10 @@ public class COIBuilding implements Serializable {
             upgradeBuild(player);
         }
     }
+
+    public Block getNearestBlock(Location location) {
+        List<Block> blocks = new ArrayList<>(this.blocks);
+        blocks.sort(Comparator.comparingDouble(b -> location.distance(b.getLocation())));
+        return blocks.get(0);
+    }
 }

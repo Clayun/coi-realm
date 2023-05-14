@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
@@ -14,10 +15,11 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 @Setter
 @AllArgsConstructor
-public class BuildingTarget implements Target {
+
+public class BuildingTarget extends Target {
 
     private COIBuilding building;
-
+    private Location location;
     @Override
     public TargetType getType() {
         return TargetType.BUILDING;
@@ -25,7 +27,7 @@ public class BuildingTarget implements Target {
 
     @Override
     public @NotNull Location getTargetLocation() {
-        return building.getHologramPoint();
+        return location;
     }
 
     @Override

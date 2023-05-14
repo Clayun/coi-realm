@@ -2,6 +2,8 @@ package com.mcylm.coi.realm.game;
 
 import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COITeamType;
+import com.mcylm.coi.realm.player.COIPlayer;
+import com.mcylm.coi.realm.runnable.AttackGoalTask;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
@@ -15,7 +17,9 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 游戏流程控制
@@ -38,9 +42,10 @@ public class COIGame {
         // 初始化小队
         // init team
         setTeams(TeamUtils.initTeams());
+        AttackGoalTask.runTask();
     }
 
-
+    private Map<Player, COIPlayer> coiPlayers = new HashMap<>();
 
 
 

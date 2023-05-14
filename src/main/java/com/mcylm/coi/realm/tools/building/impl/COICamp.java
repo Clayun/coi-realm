@@ -3,6 +3,7 @@ package com.mcylm.coi.realm.tools.building.impl;
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.model.COINpc;
+import com.mcylm.coi.realm.tools.attack.impl.PatrolGoal;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.npc.COISoldierCreator;
 import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
@@ -62,7 +63,8 @@ public class COICamp extends COIBuilding {
                             // 初始化
                             soldier = new COISoldier(npcCreator);
                             soldier.spawn(creator.getSpawnLocation());
-
+                            soldier.setGoal(new PatrolGoal(soldier));
+                            soldier.getGoal().start();
                             // 关闭Ticker
                             this.cancel();
                         }

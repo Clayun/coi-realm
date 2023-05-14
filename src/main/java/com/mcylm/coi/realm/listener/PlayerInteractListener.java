@@ -353,8 +353,6 @@ public class PlayerInteractListener implements Listener {
 
             //背包内的物品
             List<ItemStack> inventory = new ArrayList<>();
-            ItemStack pickaxe = new ItemStack(Material.IRON_SWORD);
-            inventory.add(pickaxe);
 
             Set<String> breakBlockMaterials = new HashSet<>();
 //            breakBlockMaterials.add("WHEAT");
