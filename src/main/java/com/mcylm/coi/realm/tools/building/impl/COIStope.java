@@ -7,6 +7,7 @@ import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.tools.npc.impl.COIMiner;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -22,12 +23,12 @@ import java.util.Set;
  * 采矿场
  * 用于收集矿物资源的
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class COIStope extends COIBuilding {
 
     public COIStope() {
         // 设置建筑类型为矿场
-        setType(COIBuildingType.STOPE);
         // 默认等级为1
         setLevel(1);
         // 最高等级为2级

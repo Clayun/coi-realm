@@ -4,7 +4,6 @@ import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.model.ClipboardLocation;
 import com.mcylm.coi.realm.tools.building.impl.COIBuilder;
 import com.mcylm.coi.realm.model.COIStructure;
-import com.mcylm.coi.realm.utils.BuildingUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

@@ -26,8 +26,6 @@ import java.util.Set;
 public class COICamp extends COIBuilding {
 
     public COICamp() {
-        // 设置建筑类型为军营
-        setType(COIBuildingType.MILITARY_CAMP);
         // 默认等级为1
         setLevel(1);
         // 最高等级为2级
@@ -84,11 +82,6 @@ public class COICamp extends COIBuilding {
         // 背包内的物品
         List<ItemStack> inventory = new ArrayList<>();
 
-        // 铁剑
-        ItemStack sword = new ItemStack(Material.IRON_SWORD);
-        inventory.add(sword);
-        ItemStack bow = new ItemStack(Material.BOW);
-        inventory.add(sword);
 
         // 不破坏方块
         Set<String> breakBlockMaterials = new HashSet<>();

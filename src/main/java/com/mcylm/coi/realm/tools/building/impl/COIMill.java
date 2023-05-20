@@ -24,8 +24,6 @@ import java.util.Set;
 public class COIMill extends COIBuilding {
 
     public COIMill() {
-        // 设置建筑类型为磨坊
-        setType(COIBuildingType.MILL);
         // 默认等级为1
         setLevel(1);
         // 最高等级为2级

@@ -33,10 +33,6 @@ public abstract class LineBuild extends COIBuilding {
     private List<Location> points = new ArrayList<>();
 
 
-    public double getRate() {
-        return 1;
-    }
-
     public int getMaxLength() {
         return 8;
     }
@@ -115,8 +111,8 @@ public abstract class LineBuild extends COIBuilding {
                     if (ItemUtils.SUITABLE_CONTAINER_TYPES.contains(type)) {
                         getChestsLocation().add(block.getLocation());
                     }
-                    getOriginalBlockData().put(block.getLocation(), block.getBlockData().clone());
-                    getOriginalBlocks().put(block.getLocation(), block.getType());
+                    getOriginalBlockData().putIfAbsent(block.getLocation(), block.getBlockData().clone());
+                    getOriginalBlocks().putIfAbsent(block.getLocation(), block.getType());
                     return type;
                 }));
 

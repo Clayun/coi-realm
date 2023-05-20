@@ -1,14 +1,8 @@
 package com.mcylm.coi.realm.gui;
 
 import com.mcylm.coi.realm.tools.building.COIBuilding;
-import com.mcylm.coi.realm.tools.selection.AreaSelector;
-import com.mcylm.coi.realm.tools.team.impl.COITeam;
-import com.mcylm.coi.realm.utils.BuildingUtils;
-import com.mcylm.coi.realm.utils.LoggerUtils;
-import com.mcylm.coi.realm.utils.TeamUtils;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
-import me.lucko.helper.menu.Item;
 import me.lucko.helper.menu.scheme.MenuPopulator;
 import me.lucko.helper.menu.scheme.MenuScheme;
 import org.bukkit.Material;

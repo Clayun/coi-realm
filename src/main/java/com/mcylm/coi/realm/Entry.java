@@ -2,16 +2,20 @@ package com.mcylm.coi.realm;
 
 import com.mcylm.coi.realm.cmd.COIStructureCommand;
 import com.mcylm.coi.realm.cmd.DebugCommand;
+import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COIServerMode;
 import com.mcylm.coi.realm.game.COIGame;
 import com.mcylm.coi.realm.listener.MineralsBreakListener;
 import com.mcylm.coi.realm.listener.PlayerInteractListener;
-import com.mcylm.coi.realm.tools.building.impl.COIBuilder;
+import com.mcylm.coi.realm.managers.COIBuildingManager;
+import com.mcylm.coi.realm.tools.building.impl.*;
 import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import lombok.Getter;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import org.bukkit.Bukkit;
+import org.bukkit.block.data.type.Door;
+import org.bukkit.block.data.type.Wall;
 import org.bukkit.plugin.PluginManager;
 
 import java.io.File;
@@ -19,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Entry extends ExtendedJavaPlugin {
-
     // 插件实例
     private static Entry instance;
 
@@ -43,6 +46,9 @@ public class Entry extends ExtendedJavaPlugin {
 
     // 主游戏进程管理
     private static COIGame game;
+
+    @Getter
+    private COIBuildingManager buildingManager = new COIBuildingManager();
 
     @Override
     protected void enable() {
@@ -90,6 +96,7 @@ public class Entry extends ExtendedJavaPlugin {
             getCommand("cdebug").setExecutor(new DebugCommand());
         }
 
+        registerDefaultBuildings();
         // 一切准备就绪，创建主游戏进程
         game = new COIGame();
 
@@ -100,6 +107,14 @@ public class Entry extends ExtendedJavaPlugin {
     @Override
     protected void disable() {
 
+    }
+
+    private void registerDefaultBuildings() {
+        buildingManager.registerBuilding(COIBuildingType.STOPE, COIStope.class);
+        buildingManager.registerBuilding(COIBuildingType.MILL, COIMill.class);
+        buildingManager.registerBuilding(COIBuildingType.MILITARY_CAMP, COICamp.class);
+        buildingManager.registerBuilding(COIBuildingType.WALL_NORMAL, COIWall.class);
+        buildingManager.registerBuilding(COIBuildingType.DOOR_NORMAL, COIDoor.class);
     }
 
     public static void runSync(Runnable runnable) {

@@ -1,23 +1,28 @@
 package com.mcylm.coi.realm.gui;
 
+import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.LineBuild;
 import com.mcylm.coi.realm.tools.selection.AreaSelector;
 import com.mcylm.coi.realm.tools.selection.LineSelector;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
-import com.mcylm.coi.realm.utils.BuildingUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
+import me.lucko.helper.menu.Item;
+import me.lucko.helper.menu.paginated.PaginatedGui;
+import me.lucko.helper.menu.paginated.PaginatedGuiBuilder;
 import me.lucko.helper.menu.scheme.MenuPopulator;
 import me.lucko.helper.menu.scheme.MenuScheme;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * 小队建筑中心GUI
@@ -26,50 +31,45 @@ import java.util.List;
  * Player can choose building here,
  * and pick a place to build.
  */
-public class BuilderGUI extends Gui {
+public class BuilderGUI {
 
     // 建造的位置
     private Location location;
 
-    // 物品排列方式
-    private static final MenuScheme BUTTONS = new MenuScheme()
-            .mask("000000000")
-            .mask("011111000")
-            .mask("000000000")
-            ;
 
-    public BuilderGUI(Player player, Location location) {
-        super(player, 3, "&b&l选择你要的建筑");
-        this.location = location;
-    }
+    public BuilderGUI(Player p, Location loc) {
 
-    @Override
-    public void redraw() {
+        this.location = loc;
 
-        // 初始化
-        if (isFirstDraw()) {
+        COITeam team = TeamUtils.getTeamByPlayer(p);
 
-            COITeam team = TeamUtils.getTeamByPlayer(getPlayer());
+        if (team == null) {
+            LoggerUtils.sendMessage("你还未加入任何小队", p);
+            ChooseTeamGUI chooseTeamGUI = new ChooseTeamGUI(p);
+            chooseTeamGUI.open();
+            return;
+        }
 
-            if(team == null){
-                LoggerUtils.sendMessage("你还未加入任何小队",getPlayer());
-                ChooseTeamGUI chooseTeamGUI = new ChooseTeamGUI(getPlayer());
-                chooseTeamGUI.open();
-                return;
-            }
+        PaginatedGuiBuilder builder = PaginatedGuiBuilder.create();
 
-            // 放置按钮
-            MenuPopulator populator = BUTTONS.newPopulator(this);
+        builder.title("&b&l选择你要的建筑");
+        builder.lines(4);
+        builder.previousPageSlot(27);
+        builder.nextPageSlot(35);
+        builder.nextPageItem((pageInfo) -> ItemStackBuilder.of(Material.ARROW).name("&a下一页").build());
+        builder.previousPageItem((pageInfo) -> ItemStackBuilder.of(Material.ARROW).name("&a上一页").build());
 
-            for (COIBuilding building : BuildingUtils.getBuildingsTemplate()) {
+        builder.build(p, paginatedGui -> {
+            List<Item> items = new ArrayList<>();
+            for (COIBuilding building : Entry.getInstance().getBuildingManager().getAllBuildingTemplates()) {
 
-                populator.accept(ItemStackBuilder.of(building.getType().getItemType())
+                items.add(ItemStackBuilder.of(building.getType().getItemType())
                         .name(building.getType().getName())
                         .amount(getBuildingNum(team.getBuildingByType(building.getType())))
                         .lore("")
-                        .lore("&f> &a已造数量： &c"+team.getBuildingByType(building.getType()).size())
-                        .lore("&f> &a所需耗材： &c"+building.getConsume())
-                        .lore("&f> &a拥有材料： &c"+building.getPlayerHadResource(getPlayer()))
+                        .lore("&f> &a已造数量： &c" + team.getBuildingByType(building.getType()).size())
+                        .lore("&f> &a所需耗材： &c" + building.getConsume())
+                        .lore("&f> &a拥有材料： &c" + building.getPlayerHadResource(p))
                         .lore("&f> &a介绍：")
                         .lore(autoLineFeed(building.getType().getIntroduce()))
                         .lore("")
@@ -82,46 +82,49 @@ public class BuilderGUI extends Gui {
                             // building.build(location,getPlayer());
                             if (building.getStructureByLevel() != null) {
                                 if (building instanceof LineBuild lineBuild) {
-                                    new LineSelector(getPlayer(), lineBuild, location);
+                                    new LineSelector(p, lineBuild, location);
                                 } else {
-                                    new AreaSelector(getPlayer(), building, location);
+                                    new AreaSelector(p, building, location);
                                 }
                             } else {
-                                building.build(location, getPlayer());
+                                building.build(location, p);
                             }
 
-                            close();
+                            paginatedGui.close();
                         }));
             }
+            return items;
+        });
 
 
 
-        }
 
     }
 
     /**
      * 获取建筑类型建造的数量
+     *
      * @return
      */
-    private int getBuildingNum(List<COIBuilding> buildings){
+    private int getBuildingNum(List<COIBuilding> buildings) {
 
         // 如果没有，就默认1
-        if(buildings == null
-            || buildings.size() == 0){
+        if (buildings == null
+                || buildings.size() == 0) {
             return 1;
-        }else
+        } else
             return buildings.size();
     }
 
     /**
      * 介绍自动换行
+     *
      * @param introduce
      * @return
      */
-    private List<String> autoLineFeed(String introduce){
+    private List<String> autoLineFeed(String introduce) {
 
-        if(StringUtils.isBlank(introduce)){
+        if (StringUtils.isBlank(introduce)) {
             return new ArrayList<>();
         }
 
@@ -142,7 +145,7 @@ public class BuilderGUI extends Gui {
         for (int index = 0; index < size; index++) {
             String childStr = substring(inputString, index * length,
                     (index + 1) * length);
-            list.add("  &6"+childStr);
+            list.add("  &6" + childStr);
         }
         return list;
     }

@@ -4,7 +4,6 @@ import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.LineBuild;
 import com.mcylm.coi.realm.tools.data.BuildData;
-import com.mcylm.coi.realm.utils.BuildingUtils;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,7 +11,6 @@ public class COIWall extends LineBuild {
 
     public COIWall() {
         initStructure();
-        setType(COIBuildingType.WALL_NORMAL);
         setLevel(1);
         setMaxLevel(1);
         setConsume(16);

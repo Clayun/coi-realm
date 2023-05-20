@@ -2,14 +2,8 @@ package com.mcylm.coi.realm.tools.building.impl;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIBuildingType;
-import com.mcylm.coi.realm.model.COIBlock;
-import com.mcylm.coi.realm.model.COIStructure;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
-import com.mcylm.coi.realm.tools.building.ConnectableBuild;
-import com.mcylm.coi.realm.tools.data.BuildData;
-import com.mcylm.coi.realm.utils.BuildingUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
-import com.mcylm.coi.realm.utils.rotation.Rotation;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -18,12 +12,8 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Setter
@@ -39,7 +29,6 @@ public class COIDoor extends COIBuilding {
 
     public COIDoor() {
 
-        setType(COIBuildingType.DOOR_NORMAL);
         setLevel(1);
         setMaxLevel(2);
         initStructure();
