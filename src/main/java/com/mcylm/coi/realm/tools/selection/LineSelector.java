@@ -5,7 +5,6 @@ import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.model.COIStructure;
 import com.mcylm.coi.realm.tools.building.LineBuild;
 import com.mcylm.coi.realm.utils.LocationUtils;
-import com.mcylm.coi.realm.utils.LoggerUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -20,10 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Setter
 @Getter
@@ -43,7 +38,7 @@ public class LineSelector implements Selector {
         this.player = p;
         this.building = building;
         this.start = location;
-        location.add(0.5,0,0.5);
+        location.add(0.5, 0, 0.5);
 
         selectors.put(p, this);
         String structureName = building.getStructureByLevel();
@@ -74,9 +69,9 @@ public class LineSelector implements Selector {
     public void select(COIStructure structure) {
 
         canPlace = true;
-        new ParticleBuilder(Particle.REDSTONE).color(Color.YELLOW).location(start.clone().add(0,2,0)).receivers(player).spawn();
+        new ParticleBuilder(Particle.REDSTONE).color(Color.YELLOW).location(start.clone().add(0, 2, 0)).receivers(player).spawn();
         if (end != null) {
-            new ParticleBuilder(Particle.REDSTONE).color(Color.YELLOW).location(end.clone().add(0,2,0)).receivers(player).spawn();
+            new ParticleBuilder(Particle.REDSTONE).color(Color.YELLOW).location(end.clone().add(0, 2, 0)).receivers(player).spawn();
 
             List<Location> line = LocationUtils.line(start, end, 1);
             if (line.size() < 2) {
@@ -94,7 +89,7 @@ public class LineSelector implements Selector {
                     continue;
                 }
                 blocks.add(block);
-                for (int i = 0 ; i < block.getY() ;i++) {
+                for (int i = 0; i < block.getY(); i++) {
                     Block block1 = point.getWorld().getBlockAt(point.getBlockX(), i, point.getBlockZ());
                     if (!building.pointCheck(block1)) {
                         canPlace = false;
@@ -141,46 +136,56 @@ public class LineSelector implements Selector {
             Block block = point.getWorld().getHighestBlockAt(point);
 
             Location loc = point.clone();
-            for (int i = block.getY() ;i > 0 ;i--) {
-                Block block1 = loc.subtract(0,1,0).getBlock();
+            for (int i = block.getY(); i > 0; i--) {
+                Block block1 = loc.subtract(0, 1, 0).getBlock();
                 if (!building.pointCheck(block1)) {
                     canPlace = false;
                 }
             }
         }
 
-        List<Location> buildPoints = new ArrayList<>();
-        AtomicInteger wallCount = new AtomicInteger(0);
-        int maxLength = building.getMaxLength();
+        if (canPlace) {
 
-        CompletableFuture.allOf(IntStream.range(0, points.size())
-                .boxed()
-                .collect(Collectors.groupingBy(index -> index / maxLength))
-                .values()
-                .stream()
-                .map(subList -> CompletableFuture.runAsync(() -> {
-                    subList.forEach(index -> {
-                        Location point = points.get(index);
-                        buildPoints.add(point);
-                        int wallIndex = wallCount.incrementAndGet();
-                        if (wallIndex % maxLength == 0) {
-                            LoggerUtils.debug("wall:" + wallIndex);
-                            LineBuild cloneBuilding = building.cloneBuild();
-                            cloneBuilding.setPoints(List.copyOf(buildPoints));
-                            cloneBuilding.build(null, player);
+
+            Iterator<Location> iterator = points.listIterator();
+
+            List<Location> buildPoints = new ArrayList<>();
+            new BukkitRunnable() {
+
+                int i = 0;
+
+                LineBuild lastCloneBuilding;
+                int extra = points.size() - (points.size() % building.getMaxLength());
+
+                @Override
+                public void run() {
+
+                    if (!iterator.hasNext()) {
+                        this.cancel();
+                        return;
+                    }
+
+                    if (lastCloneBuilding == null || lastCloneBuilding.isComplete()) {
+                        Location point = iterator.next();
+
+                        i++;
+
+                        buildPoints.add(point.clone());
+                        if ((i % building.getMaxLength() == 0) || (i == points.size())) {
+
+                            lastCloneBuilding = building.cloneBuild();
+                            lastCloneBuilding.setPoints(List.copyOf(buildPoints));
+
+                            Entry.runSync(() -> lastCloneBuilding.build(null, player));
                             buildPoints.clear();
                         }
-                    });
-                })).toArray(CompletableFuture[]::new)).join();
+                    }
+                }
+            }.runTaskTimerAsynchronously(Entry.getInstance(), 0, 1);
 
-        if (!buildPoints.isEmpty()) {
-            LineBuild cloneBuilding = building.cloneBuild();
-            cloneBuilding.setPoints(buildPoints);
-            cloneBuilding.build(null, player);
         }
 
     }
-
 
 
     @Override
@@ -199,7 +204,7 @@ public class LineSelector implements Selector {
     @Override
     public void selectLocation(Location loc) {
 
-        loc.add(0.5,0,0.5);
+        loc.add(0.5, 0, 0.5);
 
         end = loc;
 

@@ -6,10 +6,8 @@ import com.mcylm.coi.realm.model.COIPaster;
 import com.mcylm.coi.realm.model.COIStructure;
 import com.mcylm.coi.realm.tools.data.BuildData;
 import com.mcylm.coi.realm.utils.ItemUtils;
-import com.mcylm.coi.realm.utils.LocationUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
-import com.mysql.jdbc.log.Log;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -22,7 +20,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -73,7 +70,7 @@ public abstract class LineBuild extends COIBuilding {
         // 预先计算建筑的方块位置，及总方块数量
         List<COIBlock> allBlocks = getAllBlocksByStructure(structure);
         setRemainingBlocks(allBlocks);
-        setTotalBlocks(allBlocks.size());
+        setTotalBlocks(allBlocks.size() * points.size());
 
         // 设置NPC所属小队
         getNpcCreators().forEach(npcCreator -> {

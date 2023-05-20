@@ -12,10 +12,11 @@ import com.mcylm.coi.realm.tools.building.impl.*;
 import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import lombok.Getter;
+import me.lucko.helper.Events;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import org.bukkit.Bukkit;
-import org.bukkit.block.data.type.Door;
-import org.bukkit.block.data.type.Wall;
+import org.bukkit.entity.EntityType;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.plugin.PluginManager;
 
 import java.io.File;
@@ -81,13 +82,7 @@ public class Entry extends ExtendedJavaPlugin {
 
         saveDefaultConfig();
 
-        // 注册监听器
-        PluginManager pluginManager = Bukkit.getPluginManager();
-        pluginManager.registerEvents(new PlayerInteractListener(), this);
-        COISoldier.registerListener();
-        if(serverMode.equals(COIServerMode.RELEASE)){
-            pluginManager.registerEvents(new MineralsBreakListener(), this);
-        }
+
 
         // 开发测试环境注册
         if(serverMode.equals(COIServerMode.DEVELOP)){
@@ -96,6 +91,7 @@ public class Entry extends ExtendedJavaPlugin {
             getCommand("cdebug").setExecutor(new DebugCommand());
         }
 
+        registerEventListeners();
         registerDefaultBuildings();
         // 一切准备就绪，创建主游戏进程
         game = new COIGame();
@@ -109,6 +105,23 @@ public class Entry extends ExtendedJavaPlugin {
 
     }
 
+    private void registerEventListeners() {
+        // 注册监听器
+        PluginManager pluginManager = Bukkit.getPluginManager();
+        pluginManager.registerEvents(new PlayerInteractListener(), this);
+        COISoldier.registerListener();
+        if(COIServerMode.parseCode(SERVER_MODE).equals(COIServerMode.RELEASE)){
+            pluginManager.registerEvents(new MineralsBreakListener(), this);
+        }
+        Events.subscribe(EntityChangeBlockEvent.class)
+                .handler(e -> {
+                    if (e.getEntity().getType() == EntityType.FALLING_BLOCK && e.getEntity().hasMetadata("break_falling_block")) {
+                        e.setCancelled(true);
+                        e.getEntity().removeMetadata("break_falling_block", getInstance());
+                        e.getEntity().remove();
+                    }
+                });
+    }
     private void registerDefaultBuildings() {
         buildingManager.registerBuilding(COIBuildingType.STOPE, COIStope.class);
         buildingManager.registerBuilding(COIBuildingType.MILL, COIMill.class);

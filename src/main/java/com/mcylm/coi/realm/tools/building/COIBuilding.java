@@ -27,8 +27,10 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
@@ -544,6 +546,16 @@ public class COIBuilding implements Serializable {
 
         Set<Map.Entry<Location, Material>> blocks = getOriginalBlocks().entrySet();
         Set<Map.Entry<Location, BlockData>> blockData = getOriginalBlockData().entrySet();
+        for (Block b : getBlocks()) {
+            b.removeMetadata("building", Entry.getInstance());
+            if (Math.random() > 0.8 && effect) {
+                b.getWorld().spawnParticle(Particle.EXPLOSION_NORMAL, b.getLocation(), 1);
+            }
+            FallingBlock fallingBlock = b.getWorld().spawnFallingBlock(b.getLocation().add(0.5, 0.5, 0.5), b.getBlockData());
+            fallingBlock.setDropItem(false);
+            fallingBlock.setHurtEntities(false);
+            fallingBlock.setMetadata("break_falling_block", new FixedMetadataValue(Entry.getInstance(), "fake_block"));
+        }
         for (Map.Entry<Location, Material> entry : blocks) {
             Block block = entry.getKey().getBlock();
             if (block.getState() instanceof Container container) {
@@ -553,12 +565,7 @@ public class COIBuilding implements Serializable {
             }
             block.setType(entry.getValue());
         }
-        for (Block b : getBlocks()) {
-            b.removeMetadata("building", Entry.getInstance());
-            if (Math.random() > 0.8 && effect) {
-                b.getWorld().spawnParticle(Particle.EXPLOSION_NORMAL, b.getLocation(), 1);
-            }
-        }
+
         for (Map.Entry<Location, BlockData> entry : blockData) {
             entry.getKey().getBlock().setBlockData(entry.getValue());
         }

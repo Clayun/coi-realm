@@ -20,6 +20,7 @@ public class COIWall extends LineBuild {
     @Override
     public LineBuild cloneBuild() {
         COIWall wall = new COIWall();
+        wall.setType(getType());
         wall.setTeam(getTeam());
         return wall;
     }

@@ -10,11 +10,12 @@ import com.mcylm.coi.realm.model.COIPaster;
 import com.mcylm.coi.realm.model.COIStructure;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.data.BuildData;
-import com.mcylm.coi.realm.tools.npc.*;
+import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
+import com.mcylm.coi.realm.tools.npc.COISoldierCreator;
 import com.mcylm.coi.realm.tools.npc.impl.COIFarmer;
 import com.mcylm.coi.realm.tools.npc.impl.COIHuman;
-import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
 import com.mcylm.coi.realm.tools.npc.impl.COIMiner;
+import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
 import com.mcylm.coi.realm.tools.selection.Selector;
 import com.mcylm.coi.realm.utils.FormationUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
@@ -138,11 +139,7 @@ public class PlayerInteractListener implements Listener {
                 if (Selector.selectors.containsKey(player)) {
                     Selector.selectors.get(player).selectLocation(location);
                 } else {
-                    BuilderGUI builderGUI = new BuilderGUI(player, location);
-
-                    builderGUI.redraw();
-
-                    builderGUI.open();
+                    new BuilderGUI(player, location);
                 }
             }
         }

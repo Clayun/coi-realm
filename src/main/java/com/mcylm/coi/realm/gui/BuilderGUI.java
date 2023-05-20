@@ -9,12 +9,8 @@ import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import me.lucko.helper.item.ItemStackBuilder;
-import me.lucko.helper.menu.Gui;
 import me.lucko.helper.menu.Item;
-import me.lucko.helper.menu.paginated.PaginatedGui;
 import me.lucko.helper.menu.paginated.PaginatedGuiBuilder;
-import me.lucko.helper.menu.scheme.MenuPopulator;
-import me.lucko.helper.menu.scheme.MenuScheme;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -22,7 +18,6 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * 小队建筑中心GUI
@@ -53,9 +48,8 @@ public class BuilderGUI {
         PaginatedGuiBuilder builder = PaginatedGuiBuilder.create();
 
         builder.title("&b&l选择你要的建筑");
-        builder.lines(4);
-        builder.previousPageSlot(27);
-        builder.nextPageSlot(35);
+        builder.previousPageSlot(44);
+        builder.nextPageSlot(53);
         builder.nextPageItem((pageInfo) -> ItemStackBuilder.of(Material.ARROW).name("&a下一页").build());
         builder.previousPageItem((pageInfo) -> ItemStackBuilder.of(Material.ARROW).name("&a上一页").build());
 
@@ -94,7 +88,7 @@ public class BuilderGUI {
                         }));
             }
             return items;
-        });
+        }).open();
 
 
 
