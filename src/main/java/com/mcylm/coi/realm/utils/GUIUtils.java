@@ -1,6 +1,7 @@
 package com.mcylm.coi.realm.utils;
 
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -19,6 +20,11 @@ public class GUIUtils {
         this.plugin = plugin;
     }
 
+
+    public static Inventory createNpcInventory(int line) {
+        Inventory inventory = Bukkit.createInventory(null, line * 9, "NPC");
+        return inventory;
+    }
     public Inventory createGUI(HashMap<Integer, ItemStack> slots,
                                String invName) {
 

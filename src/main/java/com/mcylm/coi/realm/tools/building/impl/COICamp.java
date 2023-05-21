@@ -1,20 +1,19 @@
 package com.mcylm.coi.realm.tools.building.impl;
 
 import com.mcylm.coi.realm.Entry;
-import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.tools.attack.impl.PatrolGoal;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.npc.COISoldierCreator;
 import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
-import com.mcylm.coi.realm.utils.TeamUtils;
+import com.mcylm.coi.realm.utils.GUIUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -80,8 +79,8 @@ public class COICamp extends COIBuilding {
     private COISoldierCreator initSoldierCreator(){
 
         // 背包内的物品
-        List<ItemStack> inventory = new ArrayList<>();
-
+        Inventory inventory = GUIUtils.createNpcInventory(3);
+        inventory.addItem(new ItemStack(Material.IRON_SWORD));
 
         // 不破坏方块
         Set<String> breakBlockMaterials = new HashSet<>();

@@ -3,11 +3,14 @@ package com.mcylm.coi.realm.model;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.npc.AI;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Inventory;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -62,10 +65,13 @@ public class COINpc implements Serializable {
     private Set<String> pickItemMaterials;
 
     // NPC的素材收集背包
-    private List<ItemStack> inventory;
+    private Inventory inventory;
 
+    /*
     // NPC的食物袋
     private List<ItemStack> foodBag;
+
+     */
 
     // 警戒范围
     private double alertRadius = 5;

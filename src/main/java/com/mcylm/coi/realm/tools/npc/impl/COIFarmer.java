@@ -1,9 +1,10 @@
 package com.mcylm.coi.realm.tools.npc.impl;
 
 import com.mcylm.coi.realm.Entry;
-import com.mcylm.coi.realm.runnable.TaskRunnable;
 import com.mcylm.coi.realm.model.COINpc;
+import com.mcylm.coi.realm.runnable.TaskRunnable;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
+import com.mcylm.coi.realm.utils.InventoryUtils;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import org.bukkit.Bukkit;
@@ -17,6 +18,7 @@ import org.bukkit.block.data.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -32,9 +34,6 @@ public class COIFarmer extends COIHuman{
     // 耕地
     private List<Block> farmlands;
 
-    // 独立背包
-    private List<ItemStack> farmerInventory;
-
     // 缓存手里的物品
     private ItemStack itemInHand;
 
@@ -43,8 +42,8 @@ public class COIFarmer extends COIHuman{
     public COIFarmer(COINpc npcCreator) {
         super(npcCreator);
         farmlands = new ArrayList<>();
-        farmerInventory = new ArrayList<>();
     }
+
 
     /**
      * 将背包里的小麦制作成面包
@@ -55,26 +54,15 @@ public class COIFarmer extends COIHuman{
             return;
         }
 
-        List<ItemStack> backpack = getFarmerInventory();
+        Inventory backpack = getFarmerInventory();
 
         if(!backpack.isEmpty()){
 
-            Iterator<ItemStack> iterator = getFarmerInventory().iterator();
-            while (iterator.hasNext()) {
-                ItemStack item = iterator.next();
+            for (ItemStack item : getFarmerInventory()) {
                 if (item != null) {
-                    if(item.getType().equals(Material.WHEAT)){
-                        ItemStack bread = new ItemStack(Material.BREAD);
-                        bread.setAmount(item.getAmount());
+                    if (item.getAmount() >= 5 && item.getType().equals(Material.WHEAT)) {
+                        item.setType(Material.BREAD);
 
-                        if(getHunger() <= 19){
-                            // 做好的面包优先供给自己
-                            getCoiNpc().getFoodBag().add(bread);
-                        }else{
-                            // 多余的部分放入素材收集背包
-                            getCoiNpc().getInventory().add(bread);
-                        }
-                        iterator.remove();
                     }
                 }
             }
@@ -91,7 +79,7 @@ public class COIFarmer extends COIHuman{
      */
     private boolean needBackToSaveResources(){
 
-        List<ItemStack> inventory = getCoiNpc().getInventory();
+        Inventory inventory = getCoiNpc().getInventory();
 
         if(inventory.isEmpty()){
             return false;
@@ -100,7 +88,7 @@ public class COIFarmer extends COIHuman{
         int count = 0;
 
         for(ItemStack i : inventory){
-            if(i.getType().equals(Material.BREAD)){
+            if(i != null && i.getType().equals(Material.BREAD)){
                 count = i.getAmount() + count;
             }
         }
@@ -244,15 +232,18 @@ public class COIFarmer extends COIHuman{
 
         if(getLocation() != null){
             if(getLocation().distance(notFullChestLocation) < 3){
-                List<ItemStack> inventory = getCoiNpc().getInventory();
-                getCoiNpc().setInventory(new ArrayList<>());
 
-                for(ItemStack itemStack : inventory){
-                    if(itemStack != null && !itemStack.getType().equals(Material.AIR)){
+                for(ItemStack itemStack : getFarmerInventory()){
+                    if(itemStack != null){
 
                         // 把面包丢进箱子里
                         if(itemStack.getType() == Material.BREAD){
-                            ItemUtils.addItemIntoContainer(notFullChestLocation,itemStack);
+                            Map<Integer, ItemStack> extra = ItemUtils.addItemIntoContainer(notFullChestLocation, itemStack);
+                            if (extra.isEmpty()) {
+                                getFarmerInventory().remove(itemStack);
+                            } else {
+                                extra.values().forEach(i -> itemStack.setAmount(i.getAmount()));
+                            }
                         }
 
                     }
@@ -485,10 +476,6 @@ public class COIFarmer extends COIHuman{
             return;
         }
 
-        if(getFarmerInventory().size() >= 45){
-            return;
-        }
-
         List<Entity> nearbyEntities = getNpc().getEntity().getNearbyEntities(10, 2, 10);
 
         if(!nearbyEntities.isEmpty()){
@@ -510,12 +497,15 @@ public class COIFarmer extends COIHuman{
                                 if(material != null){
                                     if(i.getItemStack().getType() == material) {
 
-                                        if(i.getLocation().distance(getNpc().getEntity().getLocation()) < 3){
+                                        if (InventoryUtils.canInventoryHoldItem(getCoiNpc().getInventory(), i.getItemStack())) {
 
-                                            addItemToInventory(i.getItemStack());
-                                            i.remove();
-                                        }else{
-                                            findPathAndSkipAction(i.getLocation());
+                                            if (i.getLocation().distance(getNpc().getEntity().getLocation()) < 3) {
+
+                                                addItemToInventory(i.getItemStack());
+                                                i.remove();
+                                            } else {
+                                                findPathAndSkipAction(i.getLocation());
+                                            }
                                         }
                                     }
                                 }
@@ -529,23 +519,6 @@ public class COIFarmer extends COIHuman{
         }
     }
 
-    /**
-     * 将物品添加到自己的专属背包
-     * @param item
-     */
-    private void addItemToInventory(ItemStack item){
-        if(item != null){
-            List<ItemStack> backpack = getFarmerInventory();
-            if(backpack.size() >= 45){
-
-                say("我的背包满了，这些东西装不下了");
-                getNpc().getEntity().getWorld().dropItem(getNpc().getEntity().getLocation(),item);
-            }else{
-                getFarmerInventory().add(item);
-            }
-
-        }
-    }
 
     @Override
     public void move(){
@@ -577,8 +550,8 @@ public class COIFarmer extends COIHuman{
 
     }
 
-    public List<ItemStack> getFarmerInventory() {
-        return farmerInventory;
+    public Inventory getFarmerInventory() {
+        return getCoiNpc().getInventory();
     }
 
     public List<Block> getFarmlands() {

@@ -1,20 +1,19 @@
 package com.mcylm.coi.realm.tools.building.impl;
 
 import com.mcylm.coi.realm.Entry;
-import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.tools.npc.impl.COIMiner;
+import com.mcylm.coi.realm.utils.GUIUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -82,10 +81,7 @@ public class COIStope extends COIBuilding {
     private COIMinerCreator initMinerCreator() {
 
         // 背包内的物品
-        List<ItemStack> inventory = new ArrayList<>();
-        // 钻石镐
-        ItemStack pickaxe = new ItemStack(Material.IRON_PICKAXE);
-        inventory.add(pickaxe);
+        Inventory inventory = GUIUtils.createNpcInventory(3);
 
         // 从配置文件读取矿工要挖掘的方块名称
         List<String> breaks = Entry.getInstance().getConfig().getStringList("miner.breaks");
@@ -106,6 +102,8 @@ public class COIStope extends COIBuilding {
 
         COIMinerCreator npcCreator = new COIMinerCreator(getChestsLocation());
         npcCreator.setInventory(inventory);
+        inventory.addItem(new ItemStack(Material.IRON_PICKAXE));
+
         npcCreator.setAggressive(false);
         npcCreator.setAlertRadius(5);
         npcCreator.setBreakBlockMaterials(breakBlockMaterials);

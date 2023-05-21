@@ -1,7 +1,6 @@
 package com.mcylm.coi.realm.tools.npc.impl;
 
 import com.mcylm.coi.realm.Entry;
-import com.mcylm.coi.realm.model.COIBlock;
 import com.mcylm.coi.realm.runnable.TaskRunnable;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.utils.ItemUtils;
@@ -11,11 +10,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.Chest;
 import org.bukkit.block.Container;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -240,7 +237,7 @@ public class COIMiner extends COIHuman{
      * @return
      */
     private boolean needBackToSaveResources(){
-        List<ItemStack> inventory = getCoiNpc().getInventory();
+        Inventory inventory = getCoiNpc().getInventory();
 
         if(inventory.isEmpty()){
             return false;
@@ -250,28 +247,21 @@ public class COIMiner extends COIHuman{
 
         for(ItemStack i : inventory){
             Set<String> picks = getCoiNpc().getPickItemMaterials();
-            if(picks != null && picks.size() > 0){
+            if(picks != null && picks.size() > 0) {
 
-                for(String pickItemName : picks){
-                    Material material = Material.getMaterial(pickItemName);
-                    if(material != null){
-                        if(i.getType() == material) {
 
-                            for(String foodName : Entry.getNpcFoods()){
-                                Material food = Material.getMaterial(foodName);
+                if (i != null && picks.contains(i.getType().toString())) {
 
-                                if(i.getType() != food){
-                                    // 食物不计算在内
-                                    count = i.getAmount() + count;
-                                }
 
-                            }
+                    if (!Entry.getNpcFoods().contains(i.getType().toString())) {
+                        // 食物不计算在内
+                        count = i.getAmount() + count;
 
-                        }
                     }
 
                 }
             }
+
         }
 
         COIMinerCreator coiNpc = (COIMinerCreator) getCoiNpc();
@@ -312,23 +302,25 @@ public class COIMiner extends COIHuman{
 
         if(getLocation() != null){
             if(getLocation().distance(notFullChestLocation) < 3){
-                List<ItemStack> inventory = getCoiNpc().getInventory();
-                getCoiNpc().setInventory(new ArrayList<>());
 
-                for(ItemStack itemStack : inventory){
+                for(ItemStack itemStack : coiNpc.getInventory()){
                     if(itemStack != null && !itemStack.getType().equals(Material.AIR)){
 
                         List<String> npcFoods = Entry.getNpcFoods();
 
-                        for(String foodName : npcFoods){
-
-                            Material material = Material.getMaterial(foodName);
 
                             // 不是食物的就丢进箱子里
-                            if(!itemStack.getType().equals(material)){
-                                ItemUtils.addItemIntoContainer(notFullChestLocation,itemStack);
+                            if(!npcFoods.contains(itemStack.getType().toString())){
+
+                                Map<Integer, ItemStack> extra = ItemUtils.addItemIntoContainer(notFullChestLocation, itemStack);
+                                if (extra.isEmpty()) {
+                                    coiNpc.getInventory().remove(itemStack);
+                                } else {
+                                    extra.values().forEach(i -> itemStack.setAmount(i.getAmount()));
+                                }
+
                             }
-                        }
+
 
                     }
                 }

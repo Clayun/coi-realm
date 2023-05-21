@@ -1,22 +1,17 @@
 package com.mcylm.coi.realm.utils;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Barrel;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Container;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.*;
 
@@ -107,19 +102,21 @@ public class ItemUtils {
      * @param location
      * @param itemStack
      */
-    public static void addItemIntoContainer(Location location, ItemStack itemStack){
+    public static Map<Integer, ItemStack> addItemIntoContainer(Location location, ItemStack itemStack){
 
         Block block = location.getBlock();
 
-        if(block.getState() instanceof Container container){
+        if (block.getState() instanceof Container container){
 
             container.getSnapshotInventory().addItem(itemStack);
-            container.getInventory().addItem(itemStack);
+            HashMap<Integer, ItemStack> extraItems = container.getInventory().addItem(itemStack);
 
             container.update();
 
+            return extraItems;
         }else{
             LoggerUtils.debug("这是个"+block.getType().name());
+            return new HashMap<>();
         }
     }
 
@@ -146,21 +143,20 @@ public class ItemUtils {
 
             // 如果箱子里包含物品材质，就尝试扣减
             if(chest.getSnapshotInventory().contains(material)){
-                ListIterator<ItemStack> iterator = chest.getSnapshotInventory().iterator();
-                while(iterator.hasNext()){
+                for (ItemStack itemStack : chest.getSnapshotInventory()) {
 
-                    if(surplusNum == 0){
+                    if (surplusNum == 0) {
                         break;
                     }
 
-                    ItemStack next = iterator.next();
+                    ItemStack next = itemStack;
 
-                    if(next != null){
-                        if(next.getType().equals(material)){
+                    if (next != null) {
+                        if (next.getType().equals(material)) {
                             // 如果类型一致，就尝试扣减
                             int amount = next.getAmount();
 
-                            if(amount > surplusNum){
+                            if (amount > surplusNum) {
                                 // 如果物品数量大于剩余待扣减数量，就直接扣减数量
                                 amount = amount - surplusNum;
                                 next.setAmount(amount);
@@ -169,7 +165,7 @@ public class ItemUtils {
                                 count = count + surplusNum;
                             }
 
-                            if(amount == surplusNum){
+                            if (amount == surplusNum) {
                                 // 如果物品数量等于剩余待扣减数量，就直接删除物品
                                 surplusNum = 0;
                                 chest.getSnapshotInventory().remove(next);
@@ -178,7 +174,7 @@ public class ItemUtils {
                                 count = count + surplusNum;
                             }
 
-                            if(amount < surplusNum){
+                            if (amount < surplusNum) {
                                 // 如果物品数量小于待扣减数量，同时删除物品
                                 surplusNum = surplusNum - amount;
                                 chest.getSnapshotInventory().remove(next);
@@ -188,7 +184,6 @@ public class ItemUtils {
                             }
                         }
                     }
-
 
 
                 }

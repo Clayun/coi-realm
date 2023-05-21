@@ -8,16 +8,22 @@ import com.mcylm.coi.realm.game.COIGame;
 import com.mcylm.coi.realm.listener.MineralsBreakListener;
 import com.mcylm.coi.realm.listener.PlayerInteractListener;
 import com.mcylm.coi.realm.managers.COIBuildingManager;
+import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.tools.building.impl.*;
+import com.mcylm.coi.realm.tools.data.EntityData;
 import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
 import com.mcylm.coi.realm.utils.LoggerUtils;
+import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Getter;
 import me.lucko.helper.Events;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -119,6 +125,32 @@ public class Entry extends ExtendedJavaPlugin {
                         e.setCancelled(true);
                         e.getEntity().removeMetadata("break_falling_block", getInstance());
                         e.getEntity().remove();
+                    }
+                });
+
+        Events.subscribe(PlayerInteractAtEntityEvent.class)
+                .filter(e -> e.getPlayer().isSneaking())
+                .filter(e -> {
+                    COINpc npc = EntityData.getNpcByEntity(e.getRightClicked());
+                    if (npc != null) {
+                        return TeamUtils.getTeamByPlayer(e.getPlayer()) == npc.getTeam();
+                    }
+                    return false;
+                })
+                .handler(e -> {
+                    Inventory inv = EntityData.getNpcByEntity(e.getRightClicked()).getInventory();
+
+                    e.getPlayer().openInventory(inv);
+                    if (inv != null) {
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                if (e.getRightClicked().isDead() || e.getPlayer().getWorld() != e.getRightClicked().getWorld() || e.getPlayer().getLocation().distance(e.getRightClicked().getLocation()) > 6) {
+                                    this.cancel();
+                                    e.getPlayer().closeInventory();
+                                }
+                            }
+                        }.runTaskTimer(getInstance(), 2, 3);
                     }
                 });
     }

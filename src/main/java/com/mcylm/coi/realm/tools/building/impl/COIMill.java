@@ -1,19 +1,17 @@
 package com.mcylm.coi.realm.tools.building.impl;
 
-import com.mcylm.coi.realm.Entry;
-import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.tools.npc.impl.COIFarmer;
+import com.mcylm.coi.realm.utils.GUIUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -86,10 +84,8 @@ public class COIMill extends COIBuilding {
     private COIMinerCreator initFarmerCreator() {
 
         // 背包内的物品
-        List<ItemStack> inventory = new ArrayList<>();
-        // 石锄
-        ItemStack pickaxe = new ItemStack(Material.STONE_HOE);
-        inventory.add(pickaxe);
+        Inventory inventory = GUIUtils.createNpcInventory(3);
+        inventory.addItem(new ItemStack(Material.IRON_HOE));
 
         // 收割小麦
         Set<String> breakBlockMaterials = new HashSet<>();

@@ -1,24 +1,28 @@
 package com.mcylm.coi.realm.tools.npc.impl;
 
 import com.mcylm.coi.realm.Entry;
-import com.mcylm.coi.realm.tools.data.EntityData;
-import com.mcylm.coi.realm.tools.npc.AI;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.runnable.NpcAITask;
+import com.mcylm.coi.realm.tools.data.EntityData;
+import com.mcylm.coi.realm.tools.npc.AI;
+import com.mcylm.coi.realm.utils.GUIUtils;
+import com.mcylm.coi.realm.utils.InventoryUtils;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Navigator;
-import net.citizensnpcs.api.ai.PathStrategy;
 import net.citizensnpcs.api.npc.NPC;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.*;
@@ -109,9 +113,9 @@ public class COIHuman implements AI {
 
         if(respawn){
             // 清空背包
-            this.coiNpc.setInventory(new ArrayList<>());
+            this.coiNpc.setInventory(GUIUtils.createNpcInventory(3));
             // 清空食物袋
-            this.coiNpc.setFoodBag(new ArrayList<>());
+           //  this.coiNpc.setFoodBag(new ArrayList<>());
 
             // 如果NPC还存活
             if(isAlive()){
@@ -130,7 +134,7 @@ public class COIHuman implements AI {
         }else{
             // 还原背包
             this.coiNpc.setInventory(oldNpc.getInventory());
-            this.coiNpc.setFoodBag(oldNpc.getFoodBag());
+            // this.coiNpc.setFoodBag(oldNpc.getFoodBag());
         }
 
 
@@ -162,25 +166,6 @@ public class COIHuman implements AI {
 
             navigator.setTarget(location);
 
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    PathStrategy s = navigator.getPathStrategy();
-                    if (s != null) {
-
-                        Iterable<Vector> path = s.getPath();
-
-                        if (path != null) {
-                            path.forEach(vector -> {
-                                getLocation().getWorld().spawnParticle(Particle.FLAME, vector.toLocation(getLocation().getWorld()).add(0,1,0), 1);
-                            });
-                            this.cancel();
-                        }
-                    }
-
-
-                }
-            }.runTaskTimer(Entry.getInstance(), 1, 1);
 
         }
 
@@ -242,7 +227,7 @@ public class COIHuman implements AI {
             return;
         }
 
-        List<ItemStack> backpack = getCoiNpc().getFoodBag();
+        Inventory backpack = getCoiNpc().getInventory();
         // 在背包里找吃的
         if(!backpack.isEmpty()){
             LoggerUtils.debug("试图吃东西");
@@ -270,7 +255,7 @@ public class COIHuman implements AI {
                                     entity.getEquipment().setItemInMainHand(cache);
                                     return;
                                 }else{
-                                    iterator.remove();
+                                    item.setType(Material.AIR);
                                 }
                             }
                         }
@@ -452,7 +437,7 @@ public class COIHuman implements AI {
             return;
         }
 
-        List<ItemStack> backpack = getCoiNpc().getInventory();
+        Inventory backpack = getCoiNpc().getInventory();
         LivingEntity entity = (LivingEntity) npc.getEntity();
 
         Iterator<ItemStack> iterator = backpack.iterator();
@@ -460,6 +445,7 @@ public class COIHuman implements AI {
         while(iterator.hasNext()){
             ItemStack itemStack = iterator.next();
             //头盔
+            if (itemStack == null) continue;
             if(itemStack.getType() == Material.CHAINMAIL_HELMET
                     || itemStack.getType() == Material.DIAMOND_HELMET
                     || itemStack.getType() == Material.GOLDEN_HELMET
@@ -476,7 +462,7 @@ public class COIHuman implements AI {
                 }
                 entity.getEquipment().setHelmet(itemStack);
                 entity.getEquipment().setHelmet(itemStack);
-                iterator.remove();
+                backpack.remove(itemStack);
                 LoggerUtils.debug("NPC穿上了头盔");
                 continue;
             }
@@ -498,7 +484,7 @@ public class COIHuman implements AI {
                 }
                 entity.getEquipment().setChestplate(itemStack);
                 entity.getEquipment().setChestplate(itemStack);
-                iterator.remove();
+                backpack.remove(itemStack);
                 LoggerUtils.debug("NPC穿上了胸甲");
                 continue;
             }
@@ -520,7 +506,7 @@ public class COIHuman implements AI {
                 }
                 entity.getEquipment().setLeggings(itemStack);
                 entity.getEquipment().setLeggings(itemStack);
-                iterator.remove();
+                backpack.remove(itemStack);
                 LoggerUtils.debug("NPC穿上了裤子");
                 continue;
             }
@@ -543,7 +529,7 @@ public class COIHuman implements AI {
 
                 entity.getEquipment().setBoots(itemStack);
                 entity.getEquipment().setBoots(itemStack);
-                iterator.remove();
+                backpack.remove(itemStack);
                 LoggerUtils.debug("NPC穿上了鞋");
                 continue;
             }
@@ -580,9 +566,8 @@ public class COIHuman implements AI {
             ){
                 if(entity.getEquipment().getItemInMainHand().getType().equals(Material.AIR)){
                     entity.getEquipment().setItemInMainHand(itemStack);
-                    iterator.remove();
+                    backpack.remove(itemStack);
                     LoggerUtils.debug("NPC装备了武器或工具");
-                    continue;
                 }
             }
         }
@@ -604,17 +589,15 @@ public class COIHuman implements AI {
             return;
         }
 
-        if(getCoiNpc().getInventory().size() >= 45){
-            return;
-        }
+
 
         List<Entity> nearbyEntities = npc.getEntity().getNearbyEntities(10, 2, 10);
 
         if(!nearbyEntities.isEmpty()){
             for(Entity entity : nearbyEntities){
                 if(entity != null){
-                    if (entity instanceof Item) {
-                        Item i = (Item) entity;
+                    if (entity instanceof Item i) {
+
 
                         Set<String> picks = getCoiNpc().getPickItemMaterials();
                         if(picks != null && picks.size() > 0){
@@ -624,20 +607,22 @@ public class COIHuman implements AI {
                                 if(material != null){
                                     if(i.getItemStack().getType() == material) {
 
-                                        if(i.getLocation().distance(npc.getEntity().getLocation()) < 3){
+
+                                        if (InventoryUtils.canInventoryHoldItem(coiNpc.getInventory(), i.getItemStack())) {
+                                            if(i.getLocation().distance(npc.getEntity().getLocation()) < 3) {
                                             List<String> npcFoods = Entry.getNpcFoods();
 
-                                            if(npcFoods == null || npcFoods.isEmpty()){
+                                            if (npcFoods == null || npcFoods.isEmpty()) {
                                                 // 普通物品
                                                 addItemToInventory(i.getItemStack());
                                                 i.remove();
-                                            }else{
+                                            } else {
 
                                                 // 循环匹配食物
                                                 boolean isMatch = false;
-                                                for(String foodName : npcFoods){
+                                                for (String foodName : npcFoods) {
                                                     Material food = Material.getMaterial(foodName);
-                                                    if(food.equals(i.getItemStack().getType())){
+                                                    if (food.equals(i.getItemStack().getType())) {
                                                         addItemToFoodBag(i.getItemStack());
                                                         i.remove();
                                                         isMatch = true;
@@ -646,11 +631,12 @@ public class COIHuman implements AI {
                                                 }
 
                                                 // 未匹配到，就当普通物品存进去
-                                                if(!isMatch){
+                                                if (!isMatch) {
                                                     addItemToInventory(i.getItemStack());
                                                     i.remove();
                                                 }
                                             }
+                                        }
 
 
                                         }else{
@@ -672,15 +658,14 @@ public class COIHuman implements AI {
      * 将物品添加到背包里
      * @param item
      */
-    private void addItemToInventory(ItemStack item){
+    protected void addItemToInventory(ItemStack item){
         if(item != null){
-            List<ItemStack> backpack = getCoiNpc().getInventory();
-            if(backpack.size() >= 45){
+            Inventory backpack = getCoiNpc().getInventory();
+            if (!InventoryUtils.canInventoryHoldItem(backpack, item)){
 
-                say("我的背包满了，这些东西装不下了");
                 npc.getEntity().getWorld().dropItem(npc.getEntity().getLocation(),item);
             }else{
-                getCoiNpc().getInventory().add(item);
+                getCoiNpc().getInventory().addItem(item);
             }
 
         }
@@ -691,18 +676,7 @@ public class COIHuman implements AI {
      * @param item
      */
     private void addItemToFoodBag(ItemStack item){
-        LoggerUtils.debug("装食物");
-        if(item != null){
-            List<ItemStack> backpack = getCoiNpc().getFoodBag();
-            if(backpack.size() >= 45){
-
-                say("我的背包满了，这些东西装不下了");
-                npc.getEntity().getWorld().dropItem(npc.getEntity().getLocation(),item);
-            }else{
-                getCoiNpc().getFoodBag().add(item);
-            }
-
-        }
+        addItemToInventory(item);
     }
 
     @Override
@@ -830,26 +804,16 @@ public class COIHuman implements AI {
             return;
         }
 
-        List<ItemStack> foodBag = getCoiNpc().getFoodBag();
-        Iterator<ItemStack> foods = foodBag.iterator();
+        Inventory inventory = getCoiNpc().getInventory();
 
-        List<ItemStack> inventory = getCoiNpc().getInventory();
-        Iterator<ItemStack> items = inventory.iterator();
 
-        // 全部物品设置掉落
-        while(foods.hasNext()){
-            ItemStack food = foods.next();
-            location.getWorld().dropItem(location,food);
-        }
-
-        while (items.hasNext()){
-            ItemStack next = items.next();
-            location.getWorld().dropItem(location,next);
+        for (ItemStack next : inventory) {
+            if (next != null) location.getWorld().dropItem(location, next);
         }
 
         // 清空缓存
-        getCoiNpc().setFoodBag(new ArrayList<>());
-        getCoiNpc().setInventory(new ArrayList<>());
+        // getCoiNpc().setFoodBag(new ArrayList<>());
+        getCoiNpc().getInventory().clear();
 
     }
 
@@ -902,12 +866,9 @@ public class COIHuman implements AI {
 
         // 如果背包未初始化
         if (npcCreator.getInventory() == null) {
-            npcCreator.setInventory(new ArrayList<>());
+            npcCreator.setInventory(GUIUtils.createNpcInventory(3));
         }
 
-        if (npcCreator.getFoodBag() == null) {
-            npcCreator.setFoodBag(new ArrayList<>());
-        }
 
         // 设置NPC的名称使用 Hologram
         this.npc.setAlwaysUseNameHologram(true);
@@ -1051,9 +1012,9 @@ public class COIHuman implements AI {
 
         if(isHungry){
             // 食物背包里的物品为空
-            if(getCoiNpc().getFoodBag().isEmpty()){
-                return true;
-            }
+
+            return true;
+
         }
 
         return false;
