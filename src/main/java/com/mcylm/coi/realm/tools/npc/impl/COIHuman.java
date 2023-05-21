@@ -39,6 +39,8 @@ public class COIHuman implements AI {
     private COINpc coiNpc;
     // NPC饱食度
     private double hunger;
+
+    private int hungerTick = 0;
     // NPC是否已生成
     private boolean isSpawn = false;
     // Citizens 实例是否已创建
@@ -411,6 +413,7 @@ public class COIHuman implements AI {
             }
 
         }else{
+
             if(getHunger() > 0){
                 setHunger(getHunger() - 1);
                 HUNGER_DELAY_COUNT = 0;
@@ -688,7 +691,10 @@ public class COIHuman implements AI {
         // 捡起附近需要的物品 使用同步进程去做
         pickItems();
         // 吃饱了回血
-        fullStomach();
+        if (hungerTick++ > 7) {
+            fullStomach();
+            hungerTick = 0;
+        }
         // 没吃饱就去吃
         eatFood();
         // 寻找食物

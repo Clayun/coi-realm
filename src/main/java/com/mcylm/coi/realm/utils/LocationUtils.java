@@ -11,7 +11,7 @@ import org.bukkit.util.Vector;
 import java.util.*;
 
 public class LocationUtils {
-    private static final BlockFace[] BLOCK_FACES = {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
+    private static final BlockFace[] BLOCK_FACES = {BlockFace.NORTH, BlockFace.WEST, BlockFace.SOUTH, BlockFace.EAST};
 
     private static <T> int indexOf(T[] arr, T key) {
         for (int i = 0; i < arr.length; i++) {
