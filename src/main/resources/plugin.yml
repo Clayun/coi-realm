@@ -1,9 +1,9 @@
 name: COIRealm
 main: com.mcylm.coi.realm.Entry
-api-version: 1.17
+api-version: 1.18
 version: 1.0
 author: Mikesam
-website: https://www.clayun.com
+website: https://www.mcylm.com
 depend: [helper,Citizens]
 commands:
   structure:
