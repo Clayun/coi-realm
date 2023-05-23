@@ -60,8 +60,9 @@ public class COIFarmer extends COIHuman{
 
             for (ItemStack item : getFarmerInventory()) {
                 if (item != null) {
-                    if (item.getAmount() >= 5 && item.getType().equals(Material.WHEAT)) {
+                    if (item.getAmount() >= 1 && item.getType().equals(Material.WHEAT)) {
                         item.setType(Material.BREAD);
+                        item.setAmount(5);
 
                     }
                 }
