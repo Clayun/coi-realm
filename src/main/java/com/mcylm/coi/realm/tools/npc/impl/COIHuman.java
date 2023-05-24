@@ -230,7 +230,7 @@ public class COIHuman implements AI {
         Inventory backpack = getCoiNpc().getInventory();
         // 在背包里找吃的
         if(!backpack.isEmpty()){
-            LoggerUtils.debug("试图吃东西");
+//            LoggerUtils.debug("试图吃东西"); // 太频繁了，取消显示
             Iterator<ItemStack> iterator = backpack.iterator();
             while (iterator.hasNext()) {
                 ItemStack item = iterator.next();
@@ -732,6 +732,7 @@ public class COIHuman implements AI {
     public void remove() {
         isRemoved = true;
         despawn();
+        npc.destroy();
     }
 
     /**

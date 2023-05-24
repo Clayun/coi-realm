@@ -61,6 +61,7 @@ public interface AI {
     // 获取NPC位置
     Location getLocation();
 
+
     default int delayTick() {
         return 20;
     }

@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -135,6 +136,7 @@ public class COINpc implements Serializable {
 
     public void remove() {
         setCanRespawn(false);
+        npc.despawn();
         npc.remove();
 
     }

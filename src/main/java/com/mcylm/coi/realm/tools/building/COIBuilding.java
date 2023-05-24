@@ -572,6 +572,7 @@ public class COIBuilding implements Serializable {
         complete = false;
         team.getFinishedBuildings().remove(this);
         npcCreators.forEach(COINpc::remove);
+
         setAlive(false);
         team.getFoodChests().removeAll(getChestsLocation());
     }
