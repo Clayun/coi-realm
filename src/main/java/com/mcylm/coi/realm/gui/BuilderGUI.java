@@ -123,7 +123,8 @@ public class BuilderGUI {
         }
 
         int length = 10;
-        int size = introduce.length() / length;
+        // 修复丢文字BUG
+        int size = (int) Math.ceil(introduce.length() / (double)length);
         if (introduce.length() % length != 0) {
             size += 1;
         }
@@ -133,14 +134,22 @@ public class BuilderGUI {
 
     private static List<String> getStrList(String inputString, int length,
                                            int size) {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
 
+//        for (int index = 0; index < size; index++) {
+//            String childStr = substring(inputString, index * length,
+//                    (index + 1) * length);
+//            list.add("  &6" + childStr);
+//        }
 
-        for (int index = 0; index < size; index++) {
-            String childStr = substring(inputString, index * length,
-                    (index + 1) * length);
-            list.add("  &6" + childStr);
+        for (int i = 0; i < size; i++) {
+            if (i == size - 1) { // 处理最后一个子串
+                list.add("  &6" + inputString.substring(i * length));
+            } else {
+                list.add("  &6" + inputString.substring(i * length, (i + 1) * length));
+            }
         }
+
         return list;
     }
 

@@ -78,10 +78,10 @@ public class COINpc implements Serializable {
     private double alertRadius = 5;
 
     // 攻击伤害最小值
-    private double minDamage = 1;
+    private double minDamage = 2;
 
     // 攻击伤害最大值
-    private double maxDamage = 3;
+    private double maxDamage = 8;
 
     // 跟随的玩家
     private String followPlayerName;

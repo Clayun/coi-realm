@@ -350,8 +350,6 @@ public class COIMiner extends COIHuman{
         return null;
     }
 
-
-
     public void move() {
         super.move();
         //找可拆除的去拆

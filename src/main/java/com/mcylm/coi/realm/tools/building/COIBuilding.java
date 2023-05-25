@@ -198,6 +198,7 @@ public class COIBuilding implements Serializable {
     }
 
     public void buildSuccess(Location location, Player player) {
+        // 建筑成功可以放个烟花
     }
 
     public void upgradeBuild(Player player) {
@@ -285,6 +286,7 @@ public class COIBuilding implements Serializable {
     public void upgradeBuildSuccess() {
 
         getNpcCreators().forEach(COINpc::upgrade);
+        getHealth().set(getMaxHealth());
     }
 
     /**

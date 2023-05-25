@@ -62,7 +62,7 @@ public class COIFarmer extends COIHuman{
                 if (item != null) {
                     if (item.getAmount() >= 1 && item.getType().equals(Material.WHEAT)) {
                         item.setType(Material.BREAD);
-                        item.setAmount(5);
+                        item.setAmount(10);
 
                     }
                 }
