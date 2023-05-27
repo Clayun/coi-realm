@@ -694,7 +694,7 @@ public class COIHuman implements AI {
         // 捡起附近需要的物品 使用同步进程去做
         pickItems();
         // 吃饱了回血
-        if (hungerTick++ > 7) {
+        if (hungerTick++ > 5) {
             fullStomach();
             hungerTick = 0;
         }
