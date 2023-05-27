@@ -1,14 +1,10 @@
-# COI REALM INTRODUCE
+# COI REALM
 
-`Before you fork this repo,I hope you can read Chinese.
-Then you can read the code notes.  `  
+`Before forking this repo, I hope you can read Chinese so that you can understand the code notes. `  
 
 This is a new branch for RTS Game.  
 
-Player's object is destroy all others' player base.
-1 - 5 players in 1 team,player need build building and use AI to help them get resources,
-then use the resources make weapons and armors for AI fighter,
-and let them attack the other's player.
+The objective of a player is to destroy all other players' bases. There can be 1-5 players in a team, and each player needs to build buildings and use AI to gather resources. The resources are then used to create weapons and armor for the AI fighters, which are sent to attack the players
 
 # FEATURES
 1. make AI run. (complete)
@@ -24,40 +20,17 @@ There are three AIs in this game:
 All of this AI is depend on `CitizensAPI`.
 All dependents are in `libs` folder.
 
-The first is `miner`.It's a basic AI.
-He will find out that the mineral around himself and excavate it.
-When he is hungry,he will go to the farmer room and pick the food to eat.
-I know u will ask `'what if farmer room don't have any food,what will the miner do?'`
-Answer is he will go back to he's home,and wait.
-We can explain that he is on strike.
-I think it's very funny.   
+The first AI is called "Miner" and it is a basic AI. Its main function is to locate minerals in its surroundings and extract them. When it gets hungry, it will go to the farmer room and pick food to eat. However, if the farmer room is out of food, the Miner will go back to its home and wait. This can be explained as the Miner being on strike, which is a humorous addition to the game. 
 
-The second is `farmer`,this AI just like origin role in Minecraft.
-He will use hoe and make dirty to farmland,then he will put the wheat seed on it.
-Also he will use bone meal to make the seeds grow up.
-When the wheat ripened,he will pick it and make it to a bread,
-and when he is hungry,he will eat the bread from his backpack.
-If his backpack has more than 5 bread,he will put them into the farmer room's chest.
-Then miner or the others could find them and pick to eat.
-Yeah,he worked very hard,so i called him Proletarian working AI.  
+The second AI is called "Farmer" and it is similar to the original role in Minecraft. Its main task is to prepare the farmland using a hoe and sow wheat seeds. It also uses bone meal to speed up the growth of the seeds. Once the wheat ripens, the Farmer picks it and makes it into bread. Whenever he is hungry, he will eat the bread from his backpack. If he has more than 5 pieces of bread in his backpack, he will put them in the chest inside the Farmer's room so that the Miner or other AIs can find them and eat them. The Farmer works diligently, hence he is referred to as the "Proletarian Working AI".
 
-The final one is `Soldier`.
-This AI will fight with enemies and protect the other AI.
-Players can let the fighter follow them to attack another player.
-The Soldier also can destory the building,break block,kill player and entities.  
+The third and final AI is the "Soldier". Their main role is to protect other AI and fight against enemies. Players have the option to command the Soldier to follow them in battle against other players. Additionally, Soldiers are capable of destroying buildings, breaking blocks, as well as killing other players and entities.
 
-all of these AIs makes a simple resource cycle,
-the farmer make food,miner get minerals and eat foods,
-fighter use minerals to make armor and weapons to attack.
-It can be a very simple RTS game in MC,if u are programmer,
-u can use this API to create every kind of AI into u game.   
+All of these AIs create a simple resource cycle - the farmer produces food, the miner gathers minerals and also consumes food, and the fighter utilizes minerals to craft armor and weapons for attacking. With the use of this API, Minecraft can be transformed into a basic RTS game. If you are a programmer, you can incorporate all sorts of AI into your game.   
 
-Expect the AI,I realized that all the AIs need a home to respawn,
-so I implement an automatic building，
-player can choose a place to build structure by auto.
-This part of code is same as WorldEdit Implement but also have some different.  
+Apart from the AI, I discovered that each AI requires a home for respawn purposes. Therefore, I have implemented an automatic building feature where players can select a location to construct a structure automatically. This section of the code is similar to that of WorldEdit implementation, but it also contains some unique differences.
 
-Hope u guys enjoy it.
+Hope you guys enjoy it.
 
 # VIDEO INTRODUCE
 
