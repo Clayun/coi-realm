@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -77,10 +78,10 @@ public class COINpc implements Serializable {
     private double alertRadius = 5;
 
     // 攻击伤害最小值
-    private double minDamage = 1;
+    private double minDamage = 2;
 
     // 攻击伤害最大值
-    private double maxDamage = 3;
+    private double maxDamage = 8;
 
     // 跟随的玩家
     private String followPlayerName;
@@ -135,6 +136,7 @@ public class COINpc implements Serializable {
 
     public void remove() {
         setCanRespawn(false);
+        npc.despawn();
         npc.remove();
 
     }

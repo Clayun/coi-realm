@@ -58,6 +58,10 @@ public class COIHuman implements AI {
     private static final int HUNGER_DELAY = 20;
     // 饥饿度计数值
     private int HUNGER_DELAY_COUNT = 0;
+    // 因为饥饿，每秒掉血数量
+    private final double HUNGER_DAMAGE = 0.5d;
+    // 每次减少的饱食度
+    private final double HUNGER_COST = 0.5d;
     // 最大生命值
     private final int MAX_HEALTH = 20;
     // 重生计数值
@@ -245,8 +249,8 @@ public class COIHuman implements AI {
 
         Inventory backpack = getCoiNpc().getInventory();
         // 在背包里找吃的
-        if (!backpack.isEmpty()) {
-            LoggerUtils.debug("试图吃东西");
+        if(!backpack.isEmpty()){
+//            LoggerUtils.debug("试图吃东西"); // 太频繁了，取消显示
             Iterator<ItemStack> iterator = backpack.iterator();
             while (iterator.hasNext()) {
                 ItemStack item = iterator.next();
@@ -427,17 +431,21 @@ public class COIHuman implements AI {
                 HUNGER_DELAY_COUNT++;
             }
 
-        } else {
-
-            if (getHunger() > 0) {
-                setHunger(getHunger() - 1);
+        }else{
+            if(getHunger() > 0){
+                setHunger(getHunger() - HUNGER_COST);
                 HUNGER_DELAY_COUNT = 0;
             }
         }
 
-        if (getHunger() <= 0) {
-            if (entity.getHealth() > 1) {
-                entity.setHealth(entity.getHealth() - 1);
+        if(getHunger() <= 0){
+            if(entity.getHealth() >= 1){
+                // 自动造成伤害
+                entity.damage(HUNGER_DAMAGE);
+                if(!isAlive() && entity.getHealth() <= 0d){
+                    // 生命值归零，死亡，饿死的情况下，可以自动报废建筑
+                    LoggerUtils.debug("NPC 饿死了");
+                }
             }
         }
 
@@ -741,6 +749,7 @@ public class COIHuman implements AI {
     public void remove() {
         isRemoved = true;
         despawn();
+        npc.destroy();
     }
 
     /**

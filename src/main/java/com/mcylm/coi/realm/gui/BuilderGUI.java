@@ -17,6 +17,8 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -117,40 +119,24 @@ public class BuilderGUI {
      * @return
      */
     private List<String> autoLineFeed(String introduce) {
-
-        if (StringUtils.isBlank(introduce)) {
-            return new ArrayList<>();
+        if (introduce == null || introduce.isEmpty()) {
+            return Collections.emptyList();
         }
 
-        int length = 10;
-        int size = introduce.length() / length;
-        if (introduce.length() % length != 0) {
-            size += 1;
+        int maxLineLength = 10;
+        List<String> lines = new ArrayList<>();
+        int length = introduce.length();
+        int count = length / maxLineLength;
+        if (length % maxLineLength != 0) {
+            count++;
         }
-        return getStrList(introduce, length, size);
 
-    }
-
-    private static List<String> getStrList(String inputString, int length,
-                                           int size) {
-        List<String> list = new ArrayList<String>();
-
-
-        for (int index = 0; index < size; index++) {
-            String childStr = substring(inputString, index * length,
-                    (index + 1) * length);
-            list.add("  &6" + childStr);
+        for (int i = 0; i < count; i++) {
+            int start = i * maxLineLength;
+            int end = Math.min(start + maxLineLength, length);
+            lines.add("  &6" +introduce.substring(start, end));
         }
-        return list;
-    }
 
-    private static String substring(String str, int f, int t) {
-        if (f > str.length())
-            return null;
-        if (t > str.length()) {
-            return str.substring(f, str.length());
-        } else {
-            return str.substring(f, t);
-        }
+        return lines;
     }
 }

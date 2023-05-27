@@ -60,9 +60,9 @@ public class COIFarmer extends COIHuman{
 
             for (ItemStack item : getFarmerInventory()) {
                 if (item != null) {
-                    if (item.getAmount() >= 3 && item.getType().equals(Material.WHEAT)) {
+                    if (item.getAmount() >= 1 && item.getType().equals(Material.WHEAT)) {
                         getFarmerInventory().remove(item);
-                        getFarmerInventory().addItem(new ItemStack(Material.BREAD, item.getAmount() * 2));
+                        getFarmerInventory().addItem(new ItemStack(Material.BREAD, item.getAmount() * 4));
                     }
                 }
             }
