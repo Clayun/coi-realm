@@ -11,13 +11,11 @@ import com.mcylm.coi.realm.utils.TeamUtils;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Item;
 import me.lucko.helper.menu.paginated.PaginatedGuiBuilder;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -108,8 +106,13 @@ public class BuilderGUI {
         if (buildings == null
                 || buildings.size() == 0) {
             return 1;
-        } else
-            return buildings.size();
+        }
+        int maxStackSize = buildings.get(0).getType().getItemType().getMaxStackSize();
+
+        if (buildings.size() > maxStackSize) {
+            return maxStackSize;
+        }
+        return buildings.size();
     }
 
     /**

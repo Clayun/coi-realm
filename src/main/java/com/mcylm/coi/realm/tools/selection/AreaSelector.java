@@ -7,7 +7,6 @@ import com.mcylm.coi.realm.model.COIStructure;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.FloatableBuild;
 import com.mcylm.coi.realm.tools.data.BuildData;
-import com.mcylm.coi.realm.utils.TeamUtils;
 import com.mcylm.coi.realm.utils.particle.ParticleRect;
 import com.mcylm.coi.realm.utils.region.Region;
 import lombok.Getter;
@@ -220,11 +219,6 @@ public class AreaSelector implements Selector {
             stop(false);
             selectedLocation.setYaw(yaw);
             building.build(selectedLocation, player);
-
-            List<COIBuilding> buildings = TeamUtils.getTeamByPlayer(player).getFinishedBuildings();
-            if (!buildings.contains(building)) {
-                buildings.add(building);
-            }
 
         }
     }

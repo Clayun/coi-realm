@@ -203,6 +203,10 @@ public abstract class COIBuilding implements Serializable {
                 }
             }
         }.runTaskTimerAsynchronously(Entry.getInstance(), 0L, 20L);
+        List<COIBuilding> buildings = TeamUtils.getTeamByPlayer(player).getFinishedBuildings();
+        if (!buildings.contains(building)) {
+            buildings.add(building);
+        }
     }
 
     public void buildSuccess(Location location, Player player) {

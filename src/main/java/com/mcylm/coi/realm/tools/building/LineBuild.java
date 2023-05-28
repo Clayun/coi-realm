@@ -116,6 +116,7 @@ public abstract class LineBuild extends COIBuilding {
 
                 Entry.getBuilder().pasteStructure(coiPaster, building);
 
+                getTeam().getFinishedBuildings().add(building);
                 if (!iterator.hasNext()) {
                     this.cancel();
                 }
