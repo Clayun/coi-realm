@@ -122,13 +122,14 @@ public class COIBuilder implements Builder {
 
                         COIBlock coiBlock = needBuildCOIBlocks.get(index);
 
+                        Block block = needBuildBlocks.get(index);
+
                         // 主线程同步更新世界方块
                         new BukkitRunnable(){
 
                             @Override
                             public void run() {
                                 // 根据COI结构方块获取MC里面的方块
-                                Block block = needBuildBlocks.get(index);
                                 Material material = Material.getMaterial(coiBlock.getMaterial());
 
                                 BlockData blockData = Bukkit.createBlockData(coiBlock.getBlockData());
