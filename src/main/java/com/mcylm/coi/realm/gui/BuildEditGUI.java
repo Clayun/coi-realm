@@ -60,7 +60,7 @@ public class BuildEditGUI extends Gui {
 
             );
 
-            populator.accept(ItemStackBuilder.of(Material.BEACON)
+            populator.accept(building.getLevel() < building.getMaxLevel() ? ItemStackBuilder.of(Material.BEACON)
                     .name("&a升级建筑")
                     .lore("")
                     .lore("&f> &e当前等级： &c"+building.getLevel())
@@ -68,6 +68,7 @@ public class BuildEditGUI extends Gui {
                     .lore("&f> &a所需耗材： &c"+building.getUpgradeRequiredConsume())
                     .lore("&f> &a拥有材料： &c"+building.getPlayerHadResource(getPlayer()))
                     .lore("&f> &a&l点击进行升级")
+                    .amount(building.getLevel()) // 我相信不过超过64
                     .build(() -> {
                         // 点击时触发下面的方法
                         // TODO 封装建造方法
@@ -82,7 +83,9 @@ public class BuildEditGUI extends Gui {
                         building.upgrade(getPlayer());
 
                         close();
-                    }));
+                    }) : ItemStackBuilder.of(Material.RED_WOOL)
+                    .name("&c建筑已满级")
+                    .build(() -> {}));
 
 
 
