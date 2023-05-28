@@ -1,6 +1,7 @@
 package com.mcylm.coi.realm.gui;
 
 import com.mcylm.coi.realm.tools.building.COIBuilding;
+import com.mcylm.coi.realm.utils.LoggerUtils;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
 import me.lucko.helper.menu.scheme.MenuPopulator;
@@ -36,6 +37,14 @@ public class BuildEditGUI extends Gui {
                     .lore("")
                     .lore("&f> &a返还资源： &c"+ building.getDestroyReturn())
                     .build(() -> {
+                        if (!building.isComplete()) {
+                            LoggerUtils.sendMessage("&c建筑仍在建造中", getPlayer());
+                            return;
+                        }
+                        if (!building.isAlive()) {
+                            LoggerUtils.sendMessage("&c建筑已被拆毁", getPlayer());
+                            return;
+                        }
                         building.destroy(true);
                         int returnResource = building.getDestroyReturn();
                         int group = returnResource / 64;
@@ -62,7 +71,14 @@ public class BuildEditGUI extends Gui {
                     .build(() -> {
                         // 点击时触发下面的方法
                         // TODO 封装建造方法
-
+                        if (!building.isComplete()) {
+                            LoggerUtils.sendMessage("&c建筑仍在建造中", getPlayer());
+                            return;
+                        }
+                        if (!building.isAlive()) {
+                            LoggerUtils.sendMessage("&c建筑已被拆毁", getPlayer());
+                            return;
+                        }
                         building.upgrade(getPlayer());
 
                         close();
