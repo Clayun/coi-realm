@@ -6,6 +6,7 @@ import com.mcylm.coi.realm.model.COIBlock;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.model.COIPaster;
 import com.mcylm.coi.realm.model.COIStructure;
+import com.mcylm.coi.realm.tools.building.config.BuildingConfig;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.LocationUtils;
@@ -44,8 +45,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @Setter
 @Getter
-public class COIBuilding implements Serializable {
+public abstract class COIBuilding implements Serializable {
 
+    public void applyConfig() {
+        consume = config.getConsume();
+        maxLevel = config.getConsume();
+        setBuildingLevelStructure(config.getStructures());
+    }
     // 是否可建造
     private boolean available = false;
 
@@ -91,7 +97,7 @@ public class COIBuilding implements Serializable {
 
     // 建筑等级对照建筑结构表
     // key为等级，value是建筑结构文件名称
-    private HashMap<Integer, String> buildingLevelStructure = new HashMap<>();
+    private Map<Integer, String> buildingLevelStructure = new HashMap<>();
 
     // 建筑生成的NPC创建器，不生成NPC就设置NULL
     private List<COINpc> npcCreators = new ArrayList<>();
@@ -101,6 +107,9 @@ public class COIBuilding implements Serializable {
 
     // 建筑血量
     private AtomicInteger health = new AtomicInteger(getMaxHealth());
+
+    // 建筑配置
+    private BuildingConfig config;
 
     // 悬浮字相关
     private Map<Player, Hologram> holograms = new HashMap<>();
@@ -608,4 +617,6 @@ public class COIBuilding implements Serializable {
         blocks.sort(Comparator.comparingDouble(b -> location.distance(b.getLocation())));
         return blocks.get(0);
     }
+
+    public abstract BuildingConfig getDefaultConfig();
 }

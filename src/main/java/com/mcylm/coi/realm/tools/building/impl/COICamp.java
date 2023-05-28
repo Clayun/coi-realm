@@ -4,6 +4,7 @@ import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.tools.attack.impl.PatrolGoal;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
+import com.mcylm.coi.realm.tools.building.config.BuildingConfig;
 import com.mcylm.coi.realm.tools.npc.COISoldierCreator;
 import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
 import com.mcylm.coi.realm.utils.GUIUtils;
@@ -25,18 +26,22 @@ import java.util.Set;
 public class COICamp extends COIBuilding {
 
     public COICamp() {
+        initStructure();
         // 默认等级为1
         setLevel(1);
-        // 最高等级为2级
-        setMaxLevel(2);
-        // 设置等级对应的建筑文件
-        initStructure();
         // 初始化NPC创建器
         setNpcCreators(List.of(initSoldierCreator(), initSoldierCreator(), initSoldierCreator()));
-        // 军营设置所需消耗的材料
-        setConsume(128);
         //初始化完成，可建造
         setAvailable(true);
+    }
+
+    @Override
+    public BuildingConfig getDefaultConfig() {
+
+        return new BuildingConfig()
+                .setMaxLevel(2)
+                .setConsume(128)
+                .setStructures(getBuildingLevelStructure());
     }
 
     @Override

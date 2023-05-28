@@ -2,6 +2,7 @@ package com.mcylm.coi.realm.tools.building.impl;
 
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
+import com.mcylm.coi.realm.tools.building.config.BuildingConfig;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.tools.npc.impl.COIFarmer;
 import com.mcylm.coi.realm.utils.GUIUtils;
@@ -24,16 +25,20 @@ public class COIMill extends COIBuilding {
     public COIMill() {
         // 默认等级为1
         setLevel(1);
-        // 最高等级为2级
-        setMaxLevel(2);
-        // 设置等级对应的建筑文件
-        initStructure();
         // 初始化NPC创建器
         setNpcCreators(List.of(initFarmerCreator()));
-        // 磨坊设置所需消耗的材料
-        setConsume(32);
         //初始化完成，可建造
         setAvailable(true);
+        initStructure();
+    }
+
+    @Override
+    public BuildingConfig getDefaultConfig() {
+
+        return new BuildingConfig()
+                .setStructures(getBuildingLevelStructure())
+                .setMaxLevel(2)
+                .setConsume(100);
     }
 
     @Override

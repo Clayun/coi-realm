@@ -1,8 +1,8 @@
 package com.mcylm.coi.realm.tools.building.impl;
 
 import com.mcylm.coi.realm.Entry;
-import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
+import com.mcylm.coi.realm.tools.building.config.BuildingConfig;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,18 +28,20 @@ public class COIDoor extends COIBuilding {
 
 
     public COIDoor() {
-
         setLevel(1);
-        setMaxLevel(2);
-        initStructure();
-        setConsume(12);
         //setDoorMaterial(Material.IRON_BLOCK);
         //setConnectPointMaterial(Material.REDSTONE_BLOCK);
         setAvailable(true);
-
+        initStructure();
     }
 
-
+    @Override
+    public BuildingConfig getDefaultConfig() {
+        return new BuildingConfig()
+                .setConsume(32)
+                .setMaxLevel(2)
+                .setStructures(getBuildingLevelStructure());
+    }
 
     @Override
     public void buildSuccess(Location location, Player player) {

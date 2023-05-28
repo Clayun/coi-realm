@@ -1,5 +1,7 @@
 package com.mcylm.coi.realm;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mcylm.coi.realm.cmd.COIStructureCommand;
 import com.mcylm.coi.realm.cmd.DebugCommand;
 import com.mcylm.coi.realm.enums.COIBuildingType;
@@ -53,6 +55,9 @@ public class Entry extends ExtendedJavaPlugin {
 
     // 主游戏进程管理
     private static COIGame game;
+
+    // GSON
+    public static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     @Getter
     private COIBuildingManager buildingManager = new COIBuildingManager();

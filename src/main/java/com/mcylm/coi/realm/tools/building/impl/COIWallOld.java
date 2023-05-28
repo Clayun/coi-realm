@@ -3,8 +3,8 @@ package com.mcylm.coi.realm.tools.building.impl;
 import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.ConnectableBuild;
+import com.mcylm.coi.realm.tools.building.config.BuildingConfig;
 import com.mcylm.coi.realm.tools.data.BuildData;
-import com.mcylm.coi.realm.utils.LoggerUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -20,9 +20,12 @@ public class COIWallOld extends ConnectableBuild {
     public COIWallOld() {
         setType(COIBuildingType.WALL_NORMAL);
         setLevel(1);
-        setMaxLevel(2);
-        setConsume(12);
         setAvailable(true);
+    }
+
+    @Override
+    public BuildingConfig getDefaultConfig() {
+        return null;
     }
 
     @Override

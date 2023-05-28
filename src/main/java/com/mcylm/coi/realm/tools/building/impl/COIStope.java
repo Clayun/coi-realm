@@ -3,6 +3,7 @@ package com.mcylm.coi.realm.tools.building.impl;
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
+import com.mcylm.coi.realm.tools.building.config.BuildingConfig;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.tools.npc.impl.COIMiner;
 import com.mcylm.coi.realm.utils.GUIUtils;
@@ -27,19 +28,21 @@ import java.util.Set;
 public class COIStope extends COIBuilding {
 
     public COIStope() {
-        // 设置建筑类型为矿场
         // 默认等级为1
         setLevel(1);
-        // 最高等级为2级
-        setMaxLevel(2);
-        // 设置等级对应的建筑文件
-        initStructure();
         // 初始化NPC创建器
         setNpcCreators(List.of(initMinerCreator()));
-        // 矿场设置所需消耗的材料
-        setConsume(64);
         //初始化完成，可建造
         setAvailable(true);
+        initStructure();
+    }
+
+    @Override
+    public BuildingConfig getDefaultConfig() {
+        return new BuildingConfig()
+                .setMaxLevel(2)
+                .setConsume(64)
+                .setStructures(getBuildingLevelStructure());
     }
 
     @Override
