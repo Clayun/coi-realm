@@ -4,7 +4,6 @@ import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.model.COIBlock;
 import com.mcylm.coi.realm.model.COIPaster;
 import com.mcylm.coi.realm.model.COIStructure;
-import com.mcylm.coi.realm.tools.data.BuildData;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
@@ -104,7 +103,7 @@ public abstract class LineBuild extends COIBuilding {
                         , finalStructure.clone(), false, TeamUtils.getTeamByPlayer(player).getType().getBlockColor()
                         , getNpcCreators(), ((block, blockToPlace, type) -> {
                     getBlocks().add(block);
-                    block.setMetadata("building", new BuildData(building));
+                    //block.setMetadata("building", new BuildData(building));
                     if (ItemUtils.SUITABLE_CONTAINER_TYPES.contains(type)) {
                         getChestsLocation().add(block.getLocation());
                     }
@@ -115,7 +114,7 @@ public abstract class LineBuild extends COIBuilding {
 
                 pasters.add(coiPaster);
 
-                Entry.getBuilder().pasteStructure(coiPaster);
+                Entry.getBuilder().pasteStructure(coiPaster, building);
 
                 if (!iterator.hasNext()) {
                     this.cancel();
@@ -226,7 +225,7 @@ public abstract class LineBuild extends COIBuilding {
                         , finalStructure.clone(), false, TeamUtils.getTeamByPlayer(player).getType().getBlockColor()
                         , getNpcCreators(), ((block, blockToPlace, type) -> {
                     getBlocks().add(block);
-                    block.setMetadata("building", new BuildData(building));
+                    // block.setMetadata("building", new BuildData(building));
                     if (ItemUtils.SUITABLE_CONTAINER_TYPES.contains(type)) {
                         getChestsLocation().add(block.getLocation());
                     }
@@ -237,7 +236,7 @@ public abstract class LineBuild extends COIBuilding {
 
                 pasters.add(coiPaster);
 
-                Entry.getBuilder().pasteStructure(coiPaster);
+                Entry.getBuilder().pasteStructure(coiPaster, building);
 
                 if (!iterator.hasNext()) {
                     this.cancel();

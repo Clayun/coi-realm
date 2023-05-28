@@ -22,6 +22,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,15 +52,15 @@ public class COIBuilder implements Builder {
      * 粘贴建筑方法，不处理玩家相关逻辑
      * @param paster
      */
-    public void pasteStructure(COIPaster paster){
-        pasteStructure(paster,null);
+    public void pasteStructure(COIPaster paster, @Nullable COIBuilding building){
+        pasteStructure(paster,null, building);
     }
 
     /**
      * 粘贴一个建筑
      * @param paster
      */
-    public void pasteStructure(COIPaster paster,Player player){
+    public void pasteStructure(COIPaster paster,Player player, @Nullable COIBuilding building){
 
         COIStructure structure = paster.getStructure();
 
@@ -69,8 +70,9 @@ public class COIBuilder implements Builder {
         // 建筑基点
         Location basicLocation = paster.getLocation();
 
-        List<COIBlock> needBuildBlocks = new ArrayList<>();
+        List<COIBlock> needBuildCOIBlocks = new ArrayList<>();
 
+        List<Block> needBuildBlocks = new ArrayList<>();
         // 根据建筑基点设置每个方块的真实坐标
         for(COIBlock coiBlock : allBlocks){
             coiBlock.setX(coiBlock.getX() + basicLocation.getBlockX());
@@ -80,15 +82,26 @@ public class COIBuilder implements Builder {
             if("AIR".equals(coiBlock.getMaterial())
                 && !paster.isWithAir()){
                 //删除掉空气方块
-            }else
-                needBuildBlocks.add(coiBlock);
+            }else {
+                needBuildCOIBlocks.add(coiBlock);
+
+            }
         }
 
         // NPC出生点方块名称
         String spawnerBlockTypeName = Entry.getInstance().getConfig().getString("game.npc.spawner-material");
 
         //根据Y轴排序
-        needBuildBlocks.sort(Comparator.comparingDouble(COIBlock::getY));
+        needBuildCOIBlocks.sort(Comparator.comparingDouble(COIBlock::getY));
+        needBuildCOIBlocks.forEach(coiBlock -> {
+
+            Block block = Bukkit.getWorld(paster.getWorldName()).getBlockAt(coiBlock.getX(), coiBlock.getY(), coiBlock.getZ());
+            if (building != null) {
+                block.setMetadata("building", new BuildData(building));
+            }
+            needBuildBlocks.add(block);
+
+        });
 
         new BukkitRunnable() {
 
@@ -105,9 +118,9 @@ public class COIBuilder implements Builder {
                 for(int i = 0; i < paster.getUnit(); i ++){
 
                     // 如果方块游标还没达到总方块数量，就继续建造
-                    if(index <= (needBuildBlocks.size() - 1)){
+                    if(index <= (needBuildCOIBlocks.size() - 1)){
 
-                        COIBlock coiBlock = needBuildBlocks.get(index);
+                        COIBlock coiBlock = needBuildCOIBlocks.get(index);
 
                         // 主线程同步更新世界方块
                         new BukkitRunnable(){
@@ -115,8 +128,7 @@ public class COIBuilder implements Builder {
                             @Override
                             public void run() {
                                 // 根据COI结构方块获取MC里面的方块
-                                Block block = Bukkit.getWorld(paster.getWorldName()).getBlockAt(coiBlock.getX(),coiBlock.getY(),coiBlock.getZ());
-
+                                Block block = needBuildBlocks.get(index);
                                 Material material = Material.getMaterial(coiBlock.getMaterial());
 
                                 BlockData blockData = Bukkit.createBlockData(coiBlock.getBlockData());
@@ -147,7 +159,7 @@ public class COIBuilder implements Builder {
                                 block.getWorld().playEffect(block.getLocation(),Effect.STEP_SOUND,1);
                                 // 设置玩家提示信息
                                 if(player != null){
-                                    LoggerUtils.sendActionbar(player,getBuildingProgress(structure.getName(),needBuildBlocks.size(),index,paster.getInterval(),paster.getUnit()));
+                                    LoggerUtils.sendActionbar(player,getBuildingProgress(structure.getName(),needBuildCOIBlocks.size(),index,paster.getInterval(),paster.getUnit()));
                                 }
                             }
 
@@ -157,7 +169,7 @@ public class COIBuilder implements Builder {
 
                     }else{
                         if(player != null){
-                            LoggerUtils.sendActionbar(player,getBuildingProgress(structure.getName(),needBuildBlocks.size(),index,paster.getInterval(),paster.getUnit()));
+                            LoggerUtils.sendActionbar(player,getBuildingProgress(structure.getName(),needBuildCOIBlocks.size(),index,paster.getInterval(),paster.getUnit()));
                         }
 
                         // 建造完成，设置NPC投入生产

@@ -6,7 +6,6 @@ import com.mcylm.coi.realm.model.COIBlock;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.model.COIPaster;
 import com.mcylm.coi.realm.model.COIStructure;
-import com.mcylm.coi.realm.tools.data.BuildData;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.LocationUtils;
@@ -169,7 +168,7 @@ public class COIBuilding implements Serializable {
                 , structure, false, TeamUtils.getTeamByPlayer(player).getType().getBlockColor()
                 , getNpcCreators(), ((block, blockToPlace, type) -> {
             blocks.add(block);
-            block.setMetadata("building", new BuildData(building));
+            // block.setMetadata("building", new BuildData(building));
             if (ItemUtils.SUITABLE_CONTAINER_TYPES.contains(type)) {
                 chestsLocation.add(block.getLocation());
             }
@@ -179,7 +178,7 @@ public class COIBuilding implements Serializable {
         }));
 
         // 开始建造
-        Entry.getBuilder().pasteStructure(coiPaster, player);
+        Entry.getBuilder().pasteStructure(coiPaster, player, building);
 
         new BukkitRunnable() {
             @Override
@@ -254,7 +253,7 @@ public class COIBuilding implements Serializable {
                 , structure, false, getTeam().getType().getBlockColor()
                 , npcCreators, ((block, blockToPlace, type) -> {
             getBlocks().add(block);
-            block.setMetadata("building", new BuildData(building));
+            // block.setMetadata("building", new BuildData(building));
             if (ItemUtils.SUITABLE_CONTAINER_TYPES.contains(type)) {
                 chestsLocation.add(block.getLocation());
             }
@@ -264,14 +263,14 @@ public class COIBuilding implements Serializable {
         }));
 
         // 开始建造
-        Entry.getBuilder().pasteStructure(coiPaster, player);
+        Entry.getBuilder().pasteStructure(coiPaster, player, building);
 
         new BukkitRunnable() {
             @Override
             public void run() {
                 if (coiPaster.isComplete()) {
                     // 监听建造状态
-                    complete = coiPaster.isComplete();
+                    complete = true;
                     Bukkit.getScheduler().runTask(Entry.getInstance(), () -> {
                         upgradeBuildSuccess();
                     });
@@ -462,6 +461,9 @@ public class COIBuilding implements Serializable {
     }
 
     public void damage(Entity attacker, int damage, Block attackBlock) {
+        if (!isComplete()) {
+            return;
+        }
         if (damage >= getHealth().get()) {
             getHealth().set(0);
             destroy(true);
@@ -541,6 +543,9 @@ public class COIBuilding implements Serializable {
     }
 
     public void destroy(boolean effect) {
+        if (!isComplete()) {
+            return;
+        }
         for (Hologram value : holograms.values()) {
             value.delete();
         }
