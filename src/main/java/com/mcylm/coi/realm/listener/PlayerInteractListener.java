@@ -5,8 +5,6 @@ import com.mcylm.coi.realm.clipboard.PlayerClipboard;
 import com.mcylm.coi.realm.enums.COIServerMode;
 import com.mcylm.coi.realm.gui.BuildEditGUI;
 import com.mcylm.coi.realm.gui.BuilderGUI;
-import com.mcylm.coi.realm.model.COIPaster;
-import com.mcylm.coi.realm.model.COIStructure;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.data.BuildData;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
@@ -72,32 +70,7 @@ public class PlayerInteractListener implements Listener {
      * 粘贴建筑
      * @param event
      */
-//    @EventHandler
-    public void onPasteBuilding(PlayerInteractEvent event){
 
-        Action action = event.getAction();
-
-        //判断是右手，同时避免触发两次
-        if(Action.RIGHT_CLICK_BLOCK  == action && event.getHand().equals(EquipmentSlot.HAND)
-                //空手触发
-                && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.DIAMOND_PICKAXE){
-
-            Block clickedBlock = event.getClickedBlock();
-            Location location = clickedBlock.getLocation();
-            Player player = event.getPlayer();
-
-            //测试使用
-            COIStructure newTest = Entry.getBuilder().getStructureByFile("mofang.structure");
-
-            //创建一个粘贴工具
-            COIPaster coiPaster = new COIPaster(false,2,5,player.getWorld().getName(),location,newTest,false,null,null);
-
-            //更新世界方块
-            Entry.getBuilder().pasteStructure(coiPaster,player);
-
-        }
-
-    }
 
     /**
      * 粘贴建筑并设置NPC
