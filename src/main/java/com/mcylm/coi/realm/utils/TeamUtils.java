@@ -55,7 +55,7 @@ public class TeamUtils {
 
             while (usedCursor.size() < locations.size()){
                 Random rand = new Random();
-                int value = rand.nextInt(7);
+                int value = rand.nextInt(6);
                 if(usedCursor.contains(value)){
                     continue;
                 }
