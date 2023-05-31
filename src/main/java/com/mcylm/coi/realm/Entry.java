@@ -104,10 +104,12 @@ public class Entry extends ExtendedJavaPlugin {
 
         registerEventListeners();
         registerDefaultBuildings();
+
         // 一切准备就绪，创建主游戏进程
         game = new COIGame();
 
-        // TODO 开始游戏
+        // 游戏开始
+        game.start();
 
     }
 

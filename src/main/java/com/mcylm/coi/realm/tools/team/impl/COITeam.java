@@ -29,6 +29,9 @@ public class COITeam implements Team {
     // Players list (only name)
     private List<String> players;
 
+    // 默认出生点
+    private Location spawner;
+
     // 队内NPC共享食物箱子位置
     // Team npc share food chest location
     private List<Location> foodChests;
@@ -41,12 +44,13 @@ public class COITeam implements Team {
     // Team formation
     private List<List<Integer>> battleFormation;
 
-    public COITeam(COITeamType type) {
+    public COITeam(COITeamType type,Location spawner) {
         this.type = type;
         this.players = new ArrayList<>();
         this.foodChests = new ArrayList<>();
         this.finishedBuildings = new ArrayList<>();
         this.battleFormation = new ArrayList<>();
+        this.spawner = spawner;
     }
 
     /**
@@ -60,7 +64,7 @@ public class COITeam implements Team {
     @Override
     public boolean join(Player player) {
 
-        if(getPlayers().size() >= 5){
+        if(getPlayers().size() >= Entry.getInstance().getConfig().getInt("game.max-group-players")){
             // 加入失败，队伍满了
             // Join fail,the team is full.
             return false;
