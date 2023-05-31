@@ -1,5 +1,7 @@
 # COI REALM（岛屿冲突 领域）
 
+- Readme in [English](README_EN.md)
+
 这是一个岛屿冲突的新的RTS游戏分支。
 
 玩家的目标是摧毁所有其他玩家的基地。
