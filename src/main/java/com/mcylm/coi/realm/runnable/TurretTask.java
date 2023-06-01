@@ -48,9 +48,10 @@ public class TurretTask {
     protected void attack() {
 
         Location l = this.turret.getMuzzle().clone();
-//        l.setY(this.turret.getLocation().getY() + 1.5D);
-//        l.setX(l.getX() + 0.5D);
-//        l.setZ(l.getZ() + 0.5D);
+        // 从方块的正中心点射出
+        l.setY(l.getY() + 0.5D);
+        l.setX(l.getX() + 0.5D);
+        l.setZ(l.getZ() + 0.5D);
         Entity enemy = getNearestEnemy(l, this.turret);
         if (enemy != null) {
             LoggerUtils.debug("检测到最近的攻击实体目标");
@@ -110,6 +111,7 @@ public class TurretTask {
                     }
                 }else if(e.getType().equals(EntityType.ZOMBIE)
                     || e.getType().equals(EntityType.SKELETON)
+                    || e.getType().equals(EntityType.SPIDER)
                     || e.getType().equals(EntityType.CREEPER)){
                     // 自然生物类的，也可以直接挂上攻击目标
                     attackPermission = true;

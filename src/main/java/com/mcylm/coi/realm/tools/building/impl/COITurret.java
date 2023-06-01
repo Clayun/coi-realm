@@ -22,6 +22,8 @@ public class COITurret extends COIBuilding {
     private String buff;
     // 粒子效果
     private String particle;
+    // 粒子大小
+    private int particleSize;
     // 最小攻击伤害
     private double minDamage;
     // 最大攻击伤害
@@ -35,13 +37,25 @@ public class COITurret extends COIBuilding {
     private double radius;
 
     public COITurret() {
+        // TODO 这块要搬到配置文件里
+        // BUFF 是 effect
         this.buff = null;
+        // 粒子效果
         this.particle = "REDSTONE";
+        // 粒子的大小
+        this.particleSize = 1;
+        // 最小伤害
         this.minDamage = 3d;
+        // 最大伤害
         this.maxDamage = 6d;
+        // 击退距离
+        this.repulsionDistance = 2d;
+        // 每次攻击的间隔时间
         this.coolDown = 2;
-        this.turretCoolDown = new TurretTask(this);
+        // 攻击半径，如果发射方块和目标之间有其他方块挡着，是不会触发攻击的
         this.radius = 30;
+        // 自动攻击Task
+        this.turretCoolDown = new TurretTask(this);
         // 默认等级为1
         setLevel(1);
         // 初始化NPC创建器
@@ -117,7 +131,7 @@ public class COITurret extends COIBuilding {
 
         for (; length < distance; p2.add(vector)) {
             actual = new Location(core.getWorld(), p2.getX(), p2.getY(), p2.getZ());
-            generateParticles(turret.getParticle(), actual, 0.0F, 0.0F, 0.0F, 0.0F, 1);
+            generateParticles(turret.getParticle(), actual, 0.0F, 0.0F, 0.0F, turret.getTeam().getType().getLeatherColor(), 1,turret.getParticleSize());
             length += 0.25D;
         }
         Vector nuevoVector = vector.clone().setY(vector.getY() + 0.2D);
@@ -128,15 +142,16 @@ public class COITurret extends COIBuilding {
 
     /**
      * 生成粒子效果
-     * @param particle
+     * @param particle 粒子效果
      * @param loc
      * @param xOffset
      * @param yOffset
      * @param zOffset
-     * @param speed
+     * @param color 粒子颜色
      * @param count
+     * @param size 粒子大小
      */
-    public static void generateParticles(String particle, Location loc, float xOffset, float yOffset, float zOffset, float speed, int count) {
+    public static void generateParticles(String particle, Location loc, float xOffset, float yOffset, float zOffset, Color color, int count,int size) {
 
 
         float x = (float)loc.getX();
@@ -148,21 +163,10 @@ public class COITurret extends COIBuilding {
             @Override
             public void run() {
                 // 在这里执行需要耗时操作的代码
-                Particle.DustOptions options = new Particle.DustOptions(Color.BLUE,2);
+                Particle.DustOptions options = new Particle.DustOptions(color,2);
                 loc.getWorld().spawnParticle(Particle.valueOf(particle),x,y,z,count,xOffset,yOffset,zOffset,0d,options);
             }
         });
 
-
-
-//        EnumParticle enumParticle = EnumParticle.valueOf(particle);
-//
-//
-//        PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles(enumParticle, false, x, y, z, xOffset,
-//                yOffset, zOffset, speed, count, null);
-//
-//        for (Player p : Bukkit.getOnlinePlayers()) {
-//            (((CraftPlayer)p).getHandle()).playerConnection.sendPacket(packet);
-//        }
     }
 }
