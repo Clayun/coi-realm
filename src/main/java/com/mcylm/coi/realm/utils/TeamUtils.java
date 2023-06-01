@@ -202,15 +202,13 @@ public class TeamUtils {
      */
     public static void tpSpawner(Player p){
 
-        if(Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
-            COITeam teamByPlayer = getTeamByPlayer(p);
-            if(teamByPlayer == null){
-                p.kick(Component.text("没队伍自动踢出服务器"));
-                return;
-            }
-            Location spawner = teamByPlayer.getSpawner();
-            p.teleport(spawner);
+        COITeam teamByPlayer = getTeamByPlayer(p);
+        if(teamByPlayer == null){
+            p.kick(Component.text("没队伍自动踢出服务器"));
+            return;
         }
+        Location spawner = teamByPlayer.getSpawner();
+        p.teleport(spawner);
 
     }
 

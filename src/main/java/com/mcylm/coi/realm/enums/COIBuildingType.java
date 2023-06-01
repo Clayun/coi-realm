@@ -65,7 +65,7 @@ public class COIBuildingType {
 
     public static final COIBuildingType TURRET_NORMAL = new COIBuildingType(
             "TURRET",
-            "防御炮塔",
+            "基础防御炮塔",
             Material.AMETHYST_BLOCK,
             """
             防御炮塔会自动检测周围的地方单位,并自动攻击.

@@ -1,5 +1,7 @@
 # COI REALM
 
+![logo{200x200}](coi_logo.png)
+
 `Before forking this repo, I hope you can read Chinese so that you can understand the code notes. `  
 
 This is a new branch for RTS Game.  

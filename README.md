@@ -1,5 +1,7 @@
 # COI REALM（岛屿冲突 领域）
 
+![logo{200x200}](coi_logo.png)
+
 - Readme in [English](README_EN.md)
 
 这是一个岛屿冲突的新的RTS游戏分支。
