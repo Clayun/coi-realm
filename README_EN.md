@@ -1,6 +1,6 @@
 # COI REALM
 
-![logo{200x200}](coi_logo.png)
+![logo{100x100}](coi_logo.png)
 
 `Before forking this repo, I hope you can read Chinese so that you can understand the code notes. `  
 
