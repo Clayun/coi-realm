@@ -1,4 +1,4 @@
-# COI REALM（岛屿冲突 领域）
+# 介绍
 
 ![logo{100x100}](coi_logo.png)
 
