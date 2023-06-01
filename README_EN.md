@@ -1,6 +1,7 @@
 # INTRODUCE
-
-![logo{100x100}](coi_logo.png)
+<div align="center">
+  <img src="coi_logo.png" alt="Your Logo">
+</div>
 
 `Before forking this repo, I hope you can read Chinese so that you can understand the code notes. `  
 

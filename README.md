@@ -1,6 +1,8 @@
 # 介绍
 
-![logo{100x100}](coi_logo.png)
+<div align="center">
+  <img src="coi_logo.png" alt="Your Logo">
+</div>
 
 - Readme in [English](README_EN.md)
 
