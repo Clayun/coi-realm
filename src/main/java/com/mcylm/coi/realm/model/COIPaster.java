@@ -30,6 +30,9 @@ public class COIPaster {
     // 建筑基点位置
     private Location location;
 
+    // 防御塔类建筑的发射方块位置
+    private Location muzzle;
+
     // 建筑结构体
     private COIStructure structure;
 

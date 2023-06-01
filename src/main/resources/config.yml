@@ -21,6 +21,10 @@ game:
   building:
     # 建筑材料，建议和矿工挖掘捡起的某样物资一致
     material: 'EMERALD'
+  # 防御塔相关的配置
+  turret:
+    # 炮口的方块，激光射线会从这个方块发出
+    muzzle-material: 'AMETHYST_BLOCK'
   # 每个小组最大玩家数量
   max-group-players: 5
   # 矿物重生时间

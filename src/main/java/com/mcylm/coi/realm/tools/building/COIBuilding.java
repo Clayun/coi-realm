@@ -86,6 +86,9 @@ public abstract class COIBuilding implements Serializable {
     // 建筑基点
     private Location location;
 
+    // 炮口，防御塔类建筑才有的
+    private Location muzzle;
+
     // 总方块数量
     private Integer totalBlocks;
 
@@ -173,7 +176,7 @@ public abstract class COIBuilding implements Serializable {
         COIBuilding building = this;
         // 构造一个建造器
         COIPaster coiPaster = new COIPaster(false, getType().getUnit(), getType().getInterval()
-                , location.getWorld().getName(), location
+                , location.getWorld().getName(), location,null
                 , structure, false, TeamUtils.getTeamByPlayer(player).getType().getBlockColor()
                 , getNpcCreators(), ((block, blockToPlace, type) -> {
             blocks.add(block);
@@ -196,6 +199,7 @@ public abstract class COIBuilding implements Serializable {
                     // 监听建造状态
                     complete = coiPaster.isComplete();
                     Bukkit.getScheduler().runTask(Entry.getInstance(), () -> {
+                        setMuzzle(coiPaster.getMuzzle());
                         buildSuccess(location, player);
                     });
                     this.cancel();
@@ -262,7 +266,7 @@ public abstract class COIBuilding implements Serializable {
         COIBuilding building = this;
         // 构造一个建造器
         COIPaster coiPaster = new COIPaster(false, getType().getUnit(), getType().getInterval()
-                , location.getWorld().getName(), location
+                , location.getWorld().getName(), location,null
                 , structure, false, getTeam().getType().getBlockColor()
                 , npcCreators, ((block, blockToPlace, type) -> {
             getBlocks().add(block);

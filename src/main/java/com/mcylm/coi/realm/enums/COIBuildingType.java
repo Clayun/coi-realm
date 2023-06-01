@@ -63,6 +63,15 @@ public class COIBuildingType {
             5,
             5L);
 
+    public static final COIBuildingType TURRET_NORMAL = new COIBuildingType(
+            "TURRET",
+            "防御炮塔",
+            Material.AMETHYST_BLOCK,
+            """
+            防御炮塔会自动检测周围的地方单位,并自动攻击.""",
+            5,
+            5L);
+
     // CODE
     private String code;
     // 建筑名称 building name

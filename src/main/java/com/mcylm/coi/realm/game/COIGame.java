@@ -4,7 +4,7 @@ import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COITeamType;
 import com.mcylm.coi.realm.player.COIPlayer;
 import com.mcylm.coi.realm.runnable.AttackGoalTask;
-import com.mcylm.coi.realm.runnable.GameWaitingTask;
+import com.mcylm.coi.realm.runnable.BasicGameTask;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
@@ -64,7 +64,7 @@ public class COIGame {
      */
     public void start(){
         // 启动游戏进程
-        GameWaitingTask.runTask();
+        new BasicGameTask().waiting();
     }
 
     private Map<Player, COIPlayer> coiPlayers = new HashMap<>();

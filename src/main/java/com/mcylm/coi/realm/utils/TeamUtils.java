@@ -9,6 +9,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
@@ -94,6 +95,41 @@ public class TeamUtils {
     }
 
     /**
+     * 判断两个玩家是否在同一个队伍
+     * @param player1
+     * @param player2
+     * @return
+     */
+    public static boolean inSameTeam(String player1,String player2){
+        COITeam team = getTeamByPlayer(player1);
+
+        if(team == null){
+            return false;
+        }
+
+        if(team.getPlayers().contains(player2)){
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 判断玩家是否在当前队伍当中
+     * @param player
+     * @param team
+     * @return
+     */
+    public static boolean inTeam(String player,COITeam team){
+
+        if(team.getPlayers().contains(player)){
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * 获取玩家所在小队
      * @return
      */
@@ -107,6 +143,23 @@ public class TeamUtils {
         while(iterator.hasNext()){
             COITeam coiTeam = iterator.next();
             if(coiTeam.getPlayers().contains(player.getName())){
+                return coiTeam;
+            }
+        }
+
+        return null;
+    }
+
+    public static COITeam getTeamByPlayer(String player){
+
+        List<COITeam> teams = Entry.getGame().getTeams();
+
+        Iterator<COITeam> iterator = teams.iterator();
+
+        // 查询所有队伍
+        while(iterator.hasNext()){
+            COITeam coiTeam = iterator.next();
+            if(coiTeam.getPlayers().contains(player)){
                 return coiTeam;
             }
         }
@@ -168,6 +221,34 @@ public class TeamUtils {
         for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
             tpSpawner(p);
         }
+    }
+
+    /**
+     * 自动将玩家匹配一个队伍
+     */
+    public static void autoJoinTeam(){
+
+        for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
+
+            COITeam team = TeamUtils.getTeamByPlayer(p);
+
+            if(team == null){
+                // 玩家没选择队伍
+                // 自动选择一个人数最少的队伍丢进去
+                COITeam minPlayersTeam = TeamUtils.getMinPlayersTeam();
+
+                if(minPlayersTeam == null){
+                    // 全都满了，直接给当前玩家踢了吧
+                    p.kick(Component.text("当前服务器已满，请更换服务器后重试"), PlayerKickEvent.Cause.KICK_COMMAND);
+                    return;
+                }
+
+                // 替玩家加入小队
+                minPlayersTeam.join(p);
+
+            }
+        }
+
     }
 
 }
