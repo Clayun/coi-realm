@@ -791,12 +791,13 @@ public class COIHuman implements AI {
             return;
         }
 
+        // 死亡掉落全部物资
+        dropAllItems(getLastLocation());
+
         if (coiNpc.isCanRespawn()) {
             if (!isRespawning) {
                 isRespawning = true;
                 LoggerUtils.debug("NPC死亡了");
-                // 死亡掉落全部物资
-                dropAllItems(getLastLocation());
             }
 
             if (isRespawning) {
