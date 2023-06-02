@@ -5,6 +5,7 @@ import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.tools.npc.AI;
 import lombok.Getter;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -30,6 +31,6 @@ public class NpcAITask {
                 ai.move();
 
             }
-        }.runTaskTimer(Entry.getInstance(), 0,ai.delayTick());
+        }.runTaskTimer(Entry.getInstance(), 0, ai.delayTick());
     }
 }

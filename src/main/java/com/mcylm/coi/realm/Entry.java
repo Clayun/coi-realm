@@ -13,6 +13,7 @@ import com.mcylm.coi.realm.managers.COIBuildingManager;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.tools.building.impl.*;
 import com.mcylm.coi.realm.tools.data.EntityData;
+import com.mcylm.coi.realm.tools.npc.impl.COIMonster;
 import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
@@ -122,7 +123,9 @@ public class Entry extends ExtendedJavaPlugin {
         // 注册监听器
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new PlayerInteractListener(), this);
+        // AI事件监听器
         COISoldier.registerListener();
+        COIMonster.registerListener();
         if(COIServerMode.parseCode(SERVER_MODE).equals(COIServerMode.RELEASE)){
             pluginManager.registerEvents(new MineralsBreakListener(), this);
         }

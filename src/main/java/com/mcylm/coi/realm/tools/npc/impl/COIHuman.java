@@ -42,7 +42,7 @@ public class COIHuman implements AI {
     private COINpc coiNpc;
     // NPC饱食度
     private double hunger;
-
+    // 饥饿度计数
     private int hungerTick = 0;
     // NPC是否已生成
     private boolean isSpawn = false;
@@ -63,7 +63,7 @@ public class COIHuman implements AI {
     // 每次减少的饱食度
     private final double HUNGER_COST = 0.5d;
     // 最大生命值
-    private final int MAX_HEALTH = 20;
+    private int MAX_HEALTH = 20;
     // 重生计数值
     private int RESPAWN_DELAY_COUNT = 0;
     // 是否正在重生COUNT
@@ -811,6 +811,9 @@ public class COIHuman implements AI {
                     LoggerUtils.debug("NPC复活了");
                 }
             }
+        }else{
+            // 无法复活的，直接删除
+            coiNpc.getNpc().remove();
         }
 
     }
@@ -913,7 +916,6 @@ public class COIHuman implements AI {
             // 满血
             LivingEntity entity = (LivingEntity) npc.getEntity();
 
-
             NpcAITask.runTask(this);
 
             entity.setMetadata("entityData", new EntityData(getCoiNpc()));
@@ -1011,11 +1013,35 @@ public class COIHuman implements AI {
     }
 
     /**
+     * 获取NPC实时血量
+     * @return
+     */
+    public double getHealth(){
+        if(!isAlive()){
+            return 0;
+        }
+        LivingEntity entity = (LivingEntity) npc.getEntity();
+        return entity.getHealth();
+    }
+
+    /**
+     * 设置NPC实时血量
+     * @param health
+     */
+    public void setHealth(double health){
+        if(!isAlive()){
+            return;
+        }
+        LivingEntity entity = (LivingEntity) npc.getEntity();
+        entity.setHealth(health);
+    }
+
+    /**
      * 内部方法，设置NPC的饥饿度
      *
      * @param hunger
      */
-    private void setHunger(double hunger) {
+    public void setHunger(double hunger) {
         this.hunger = hunger;
     }
 

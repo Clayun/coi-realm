@@ -68,12 +68,6 @@ public class COINpc implements Serializable {
     // NPC的素材收集背包
     private Inventory inventory;
 
-    /*
-    // NPC的食物袋
-    private List<ItemStack> foodBag;
-
-     */
-
     // 警戒范围
     private double alertRadius = 5;
 
@@ -87,6 +81,8 @@ public class COINpc implements Serializable {
     private String followPlayerName;
 
     // 是否死亡复活
+    // 如果是一次性的NPC，建议设置为false
+    // 死亡时自动删除
     private boolean canRespawn = true;
 
     // 出生点
