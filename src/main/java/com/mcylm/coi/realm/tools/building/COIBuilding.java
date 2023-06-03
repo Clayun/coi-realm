@@ -13,6 +13,7 @@ import com.mcylm.coi.realm.utils.LocationUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import com.mcylm.coi.realm.utils.rotation.Rotation;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
@@ -43,15 +44,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * 建筑物结构
  */
-@Setter
-@Getter
+@Data
 public abstract class COIBuilding implements Serializable {
-
-    public void applyConfig() {
-        consume = config.getConsume();
-        maxLevel = config.getConsume();
-        setBuildingLevelStructure(config.getStructures());
-    }
 
     // 是否可建造
     private boolean available = false;
@@ -629,6 +623,11 @@ public abstract class COIBuilding implements Serializable {
 
     public abstract BuildingConfig getDefaultConfig();
 
+    private void applyConfig() {
+        consume = config.getConsume();
+        maxLevel = config.getConsume();
+        setBuildingLevelStructure(config.getStructures());
+    }
 
     public void setConfig(BuildingConfig config){
         this.config = config;

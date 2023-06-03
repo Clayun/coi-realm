@@ -54,7 +54,7 @@ public class TeamUtils {
             // 如果有多个出生点，大于队伍数量，就随机取点，不能重复
             List<Integer> usedCursor = new ArrayList<>();
 
-            while (usedCursor.size() < locations.size()){
+            while (usedCursor.size() < 6){
                 Random rand = new Random();
                 int value = rand.nextInt(6);
                 if(usedCursor.contains(value)){

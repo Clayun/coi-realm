@@ -99,6 +99,7 @@ public class Entry extends ExtendedJavaPlugin {
             //注册建筑结构相关的命令
             getCommand("structure").setExecutor(new COIStructureCommand());
             getCommand("cdebug").setExecutor(new DebugCommand());
+            LoggerUtils.log("命令注册完成");
         }
 
         registerEventListeners();
@@ -106,6 +107,7 @@ public class Entry extends ExtendedJavaPlugin {
 
         // 一切准备就绪，创建主游戏进程
         game = new COIGame();
+        LoggerUtils.log("小游戏主线程创建完成");
 
         // 游戏开始
         game.start();
@@ -161,6 +163,9 @@ public class Entry extends ExtendedJavaPlugin {
                         }.runTaskTimer(getInstance(), 2, 3);
                     }
                 });
+
+
+        LoggerUtils.log("监听器注册完成");
     }
     private void registerDefaultBuildings() {
         buildingManager.registerBuilding(COIBuildingType.STOPE, COIStope.class);
@@ -171,6 +176,8 @@ public class Entry extends ExtendedJavaPlugin {
 
         // 防御塔系列
         buildingManager.registerBuilding(COIBuildingType.TURRET_NORMAL, COITurret.class);
+
+        LoggerUtils.log("建筑文件注册完成");
     }
 
     public static void runSync(Runnable runnable) {
