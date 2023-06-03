@@ -33,7 +33,7 @@ import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * PVE怪物
+ * PVE怪物（正常会刷在野外的几个随机的地方）
  * 会攻击附近的目标小队
  * 优先攻击目标小队的NPC-》玩家-》建筑
  * 死亡掉落一定的物资
