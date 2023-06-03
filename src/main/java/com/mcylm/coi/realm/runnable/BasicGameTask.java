@@ -149,7 +149,7 @@ public class BasicGameTask implements GameTaskApi {
 
     @Override
     public void stopping() {
-// 游戏状态标注为结算中
+        // 游戏状态标注为结算中
         Entry.getGame().setStatus(COIGameStatus.STOPPING);
 
         // 游戏结算进程

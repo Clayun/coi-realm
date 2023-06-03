@@ -216,9 +216,17 @@ public class TeamUtils {
      * 全部玩家都传送到各自的出生点
      */
     public static void tpAllPlayersToSpawner(){
-        for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
-            tpSpawner(p);
-        }
+
+        // 同步线程去TP
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
+                    tpSpawner(p);
+                }
+            }
+        }.runTaskLater(Entry.getInstance(), 0);
+
     }
 
     /**
