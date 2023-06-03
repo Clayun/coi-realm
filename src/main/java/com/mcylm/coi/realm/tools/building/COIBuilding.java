@@ -52,6 +52,7 @@ public abstract class COIBuilding implements Serializable {
         maxLevel = config.getConsume();
         setBuildingLevelStructure(config.getStructures());
     }
+
     // 是否可建造
     private boolean available = false;
 

@@ -94,8 +94,6 @@ public class Entry extends ExtendedJavaPlugin {
 
         saveDefaultConfig();
 
-
-
         // 开发测试环境注册
         if(serverMode.equals(COIServerMode.DEVELOP)){
             //注册建筑结构相关的命令

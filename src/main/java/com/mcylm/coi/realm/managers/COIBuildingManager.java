@@ -79,6 +79,7 @@ public class COIBuildingManager {
                 COIBuilding building = clazz.getDeclaredConstructor().newInstance();
                 building.setType(type);
                 building.setConfig(buildingConfigMap.get(type));
+                building.applyConfig();
             result.add(building);
             } catch (Exception e) {
                 throw new RuntimeException(e);
