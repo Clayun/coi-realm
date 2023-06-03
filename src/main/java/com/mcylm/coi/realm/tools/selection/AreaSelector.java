@@ -65,7 +65,7 @@ public class AreaSelector implements Selector {
                     select(selectedLocation, structure);
                 }
             }
-        }.runTaskTimerAsynchronously(Entry.getInstance(), 15, 20);
+        }.runTaskTimerAsynchronously(Entry.getInstance(), 5, 5); // 间隔修改为1/4秒
     }
 
 

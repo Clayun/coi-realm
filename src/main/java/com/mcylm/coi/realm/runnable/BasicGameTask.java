@@ -42,7 +42,6 @@ public class BasicGameTask implements GameTaskApi {
                 // 最少开启游戏人数
                 int minPlayers = Entry.getInstance().getConfig().getInt("game.min-players");
 
-
                 if(size >= minPlayers){
                     // 大于或等于最小在线人数
                     // 倒计时开始

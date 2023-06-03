@@ -628,4 +628,10 @@ public abstract class COIBuilding implements Serializable {
     }
 
     public abstract BuildingConfig getDefaultConfig();
+
+
+    public void setConfig(BuildingConfig config){
+        this.config = config;
+        applyConfig();
+    }
 }
