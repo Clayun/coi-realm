@@ -15,6 +15,7 @@ import com.mcylm.coi.realm.tools.building.impl.*;
 import com.mcylm.coi.realm.tools.data.EntityData;
 import com.mcylm.coi.realm.tools.npc.impl.COIMonster;
 import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
+import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Getter;
@@ -22,8 +23,11 @@ import me.lucko.helper.Events;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -129,6 +133,14 @@ public class Entry extends ExtendedJavaPlugin {
         if(COIServerMode.parseCode(SERVER_MODE).equals(COIServerMode.RELEASE)){
             pluginManager.registerEvents(new MineralsBreakListener(), this);
         }
+        Events.subscribe(PlayerRespawnEvent.class)
+                .handler(e -> {
+                    Player p = e.getPlayer();
+                    COITeam team = TeamUtils.getTeamByPlayer(p);
+                    if(team !=null){
+                        e.setRespawnLocation(team.getSpawner());
+                    }
+                });
         Events.subscribe(EntityChangeBlockEvent.class)
                 .handler(e -> {
                     if (e.getEntity().getType() == EntityType.FALLING_BLOCK && e.getEntity().hasMetadata("break_falling_block")) {

@@ -226,7 +226,7 @@ public class TeamUtils {
 
         try {
             COIBuilding building = Entry.getInstance().getBuildingManager().getBuildingTemplateByType(COIBuildingType.BASE);
-
+            building.setTeam(team);
             building.build(spawner,team,true);
 
         } catch (Exception e) {
