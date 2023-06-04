@@ -183,6 +183,7 @@ public class COIBuilder implements Builder {
                         // 建造完成，设置NPC投入生产
                         if(spawnLocation != null){
                             // 赋值出生点
+                            paster.setSpawnLocation(spawnLocation);
                             paster.getNpcCreators().forEach(npc -> npc.setSpawnLocation(spawnLocation));
                         }
 

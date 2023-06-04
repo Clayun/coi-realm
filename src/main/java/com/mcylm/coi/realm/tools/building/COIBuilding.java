@@ -171,7 +171,7 @@ public abstract class COIBuilding implements Serializable {
         COIBuilding building = this;
         // 构造一个建造器
         COIPaster coiPaster = new COIPaster(false, getType().getUnit(), getType().getInterval()
-                , location.getWorld().getName(), location,null
+                , location.getWorld().getName(), location,null,null
                 , structure, false, TeamUtils.getTeamByPlayer(player).getType().getBlockColor()
                 , getNpcCreators(), ((block, blockToPlace, type) -> {
             blocks.add(block);
@@ -206,6 +206,94 @@ public abstract class COIBuilding implements Serializable {
         if (!buildings.contains(building)) {
             buildings.add(building);
         }
+    }
+
+    /**
+     * 系统自动建造，适用于AI阵营，还有基地建造
+     * @param location
+     * @param team
+     * @param isBase
+     */
+    public void build(Location location, COITeam team,boolean isBase) {
+
+        if (!isAvailable()) {
+            return;
+        }
+
+        // 建筑开始就记录位置
+        setLocation(location.clone());
+        setWorld(location.getWorld().getName());
+
+        String structureName = getStructureByLevel();
+
+        if (structureName == null) {
+            return;
+        }
+        // 实例化建筑结构
+        COIStructure structure = Entry.getBuilder().getStructureByFile(structureName);
+
+
+        // 设置名称
+        structure.setName(getType().getName());
+
+        structure = prepareStructure(structure, location.clone());
+
+        // 预先计算建筑的方块位置，及总方块数量
+        List<COIBlock> allBlocks = getAllBlocksByStructure(structure);
+        setRemainingBlocks(allBlocks);
+        setTotalBlocks(allBlocks.size());
+
+        // 设置NPC所属小队
+        getNpcCreators().forEach(npcCreator -> {
+            npcCreator.setTeam(team);
+            npcCreator.setBuilding(this);
+        });
+
+        COIBuilding building = this;
+        // 构造一个建造器
+        COIPaster coiPaster = new COIPaster(false, getType().getUnit(), getType().getInterval()
+                , location.getWorld().getName(), location,null,null
+                , structure, false, team.getType().getBlockColor()
+                , getNpcCreators(), ((block, blockToPlace, type) -> {
+            blocks.add(block);
+            // block.setMetadata("building", new BuildData(building));
+            if (ItemUtils.SUITABLE_CONTAINER_TYPES.contains(type)) {
+                chestsLocation.add(block.getLocation());
+            }
+            originalBlockData.put(block.getLocation(), block.getBlockData().clone());
+            originalBlocks.put(block.getLocation(), block.getType());
+            return type;
+        }));
+
+        // 开始建造
+        Entry.getBuilder().pasteStructure(coiPaster, null, building);
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (coiPaster.isComplete()) {
+                    // 监听建造状态
+                    complete = coiPaster.isComplete();
+                    Bukkit.getScheduler().runTask(Entry.getInstance(), () -> {
+                        setMuzzle(coiPaster.getMuzzle());
+                        buildSuccess(location, null);
+                        if(isBase){
+                            setTeamSpawnLocation(coiPaster.getSpawnLocation(),team);
+                        }
+                    });
+                    this.cancel();
+
+                }
+            }
+        }.runTaskTimerAsynchronously(Entry.getInstance(), 0L, 20L);
+        List<COIBuilding> buildings = team.getFinishedBuildings();
+        if (!buildings.contains(building)) {
+            buildings.add(building);
+        }
+    }
+
+    private void setTeamSpawnLocation(Location location,COITeam team){
+        team.setSpawner(location);
     }
 
     public void buildSuccess(Location location, Player player) {
@@ -261,7 +349,7 @@ public abstract class COIBuilding implements Serializable {
         COIBuilding building = this;
         // 构造一个建造器
         COIPaster coiPaster = new COIPaster(false, getType().getUnit(), getType().getInterval()
-                , location.getWorld().getName(), location,null
+                , location.getWorld().getName(), location,null,null
                 , structure, false, getTeam().getType().getBlockColor()
                 , npcCreators, ((block, blockToPlace, type) -> {
             getBlocks().add(block);

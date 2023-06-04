@@ -5,6 +5,7 @@ import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COITeamType;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.team.Team;
+import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Location;
@@ -51,6 +52,8 @@ public class COITeam implements Team {
         this.finishedBuildings = new ArrayList<>();
         this.battleFormation = new ArrayList<>();
         this.spawner = spawner;
+        // 初始化大本营
+        TeamUtils.initTeamBase(this);
     }
 
     /**

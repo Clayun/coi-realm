@@ -1,9 +1,11 @@
 package com.mcylm.coi.realm.utils;
 
 import com.mcylm.coi.realm.Entry;
+import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COIGUIType;
 import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COITeamType;
+import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -219,8 +221,17 @@ public class TeamUtils {
      * 并返回玩家的出生点
      * @param team
      */
-    public static Location initTeamBase(COITeam team){
+    public static void initTeamBase(COITeam team){
         Location spawner = team.getSpawner();
+
+        try {
+            COIBuilding building = Entry.getInstance().getBuildingManager().getBuildingTemplateByType(COIBuildingType.BASE);
+
+            building.build(spawner,team,true);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
     }
 

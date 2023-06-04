@@ -30,6 +30,9 @@ public class COIPaster {
     // 建筑基点位置
     private Location location;
 
+    // 建筑基点位置
+    private Location spawnLocation;
+
     // 防御塔类建筑的发射方块位置
     private Location muzzle;
 
@@ -47,17 +50,4 @@ public class COIPaster {
 
     // 替换方块时触发
     private BlockPlaceHandler handler;
-
-    public COIPaster(boolean complete, int unit, long interval, String worldName, Location location, COIStructure structure, boolean withAir, Material blockColor, List<COINpc> npcCreators) {
-        this.complete = complete;
-        this.unit = unit;
-        this.interval = interval;
-        this.worldName = worldName;
-        this.location = location;
-        this.structure = structure;
-        this.withAir = withAir;
-        this.blockColor = blockColor;
-        this.npcCreators = npcCreators;
-        this.handler = ((block, blockToPlace, type) -> Material.valueOf(blockToPlace.getMaterial()));
-    }
 }
