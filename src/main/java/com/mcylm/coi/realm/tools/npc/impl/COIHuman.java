@@ -5,30 +5,33 @@ import com.google.common.cache.CacheBuilder;
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.runnable.NpcAITask;
+import com.mcylm.coi.realm.tools.attack.target.impl.EntityTarget;
 import com.mcylm.coi.realm.tools.data.EntityData;
 import com.mcylm.coi.realm.tools.npc.AI;
-import com.mcylm.coi.realm.utils.GUIUtils;
-import com.mcylm.coi.realm.utils.InventoryUtils;
-import com.mcylm.coi.realm.utils.ItemUtils;
-import com.mcylm.coi.realm.utils.LoggerUtils;
+import com.mcylm.coi.realm.utils.*;
+import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
+import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings;
+import me.filoghost.holographicdisplays.api.hologram.line.TextHologramLine;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.npc.NPC;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 所有AI的父类
@@ -76,6 +79,10 @@ public class COIHuman implements AI {
     private final Cache<Item, Item> ignoredItems = CacheBuilder.newBuilder()
             .expireAfterWrite(20, TimeUnit.SECONDS)
             .build();
+
+    // 悬浮字相关
+    private Map<Player, Hologram> holograms = new HashMap<>();
+    private Map<Player, AtomicInteger> hologramVisitors = new HashMap<>();
 
     // 构造NPC
     public COIHuman(COINpc npcCreator) {
@@ -222,7 +229,77 @@ public class COIHuman implements AI {
             return;
         }
 
-        LoggerUtils.broadcastMessage(getName() + "：" + message);
+        // 在脑袋顶上显示文字
+
+        // NPC附近20格范围内的玩家都能看到
+        List<Entity> nearbyEntities = getNpc().getEntity().getNearbyEntities(20, 20, 20);
+
+        for(Entity entity : nearbyEntities){
+            if (entity.getType().equals(EntityType.PLAYER)) {
+                Player p = (Player) entity;
+
+                LoggerUtils.debug("检测到NPC附近玩家："+p.getName());
+
+                if(p.isOnline()){
+                    if (hologramVisitors.containsKey(p)) {
+                        hologramVisitors.get(p).set(5);
+                    } else {
+                        hologramVisitors.put(p, new AtomicInteger(5));
+                    }
+                    if (!holograms.containsKey(p)) {
+
+                        LoggerUtils.debug("开始展示NPC说的话");
+
+                        // 在NPC头上2.5格的位置显示
+                        double floatHeight = 2.8;
+                        Location location = getNpc().getEntity().getLocation().clone();
+                        location.setY(location.getY() + floatHeight);
+
+                        Hologram hologram = HolographicDisplaysAPI.get(Entry.getInstance()).createHologram(location);
+                        hologram.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
+                        hologram.getVisibilitySettings().setIndividualVisibility(p, VisibilitySettings.Visibility.VISIBLE);
+                        hologram.getLines().appendText(LoggerUtils.replaceColor(message));
+
+                        holograms.put(p, hologram);
+                        new BukkitRunnable() {
+                            int tick = 0;
+
+                            @Override
+                            public void run() {
+
+                                if (!holograms.containsKey(p)) {
+                                    Entry.runSync(hologram::delete);
+                                    this.cancel();
+                                } else {
+                                    if (tick++ == 20) {
+                                        tick = 0;
+                                        if (hologramVisitors.get(p).decrementAndGet() == 0) {
+                                            holograms.remove(p);
+                                            hologramVisitors.remove(p);
+                                        }
+
+                                    }
+
+                                    Location newLoc = getNpc().getEntity().getLocation().clone();
+                                    newLoc.setY(newLoc.getY() + floatHeight);
+
+                                    Entry.runSync(() -> {
+                                        if (hologram.isDeleted()) return;
+                                        hologram.setPosition(newLoc);
+                                    });
+                                }
+                            }
+                        }.runTaskTimerAsynchronously(Entry.getInstance(), 1, 1);
+
+                    }
+                }
+
+            }
+        }
+
+
+
+
     }
 
     /**
@@ -489,6 +566,7 @@ public class COIHuman implements AI {
                 entity.getEquipment().setHelmet(itemStack);
                 backpack.remove(itemStack);
                 LoggerUtils.debug("NPC穿上了头盔");
+                say("这可是个好东西啊，脑袋保住了");
                 continue;
             }
 
@@ -510,6 +588,7 @@ public class COIHuman implements AI {
                 entity.getEquipment().setChestplate(itemStack);
                 backpack.remove(itemStack);
                 LoggerUtils.debug("NPC穿上了胸甲");
+                say("这是什么宝贝，胸罩么");
                 continue;
             }
 
@@ -531,6 +610,7 @@ public class COIHuman implements AI {
                 entity.getEquipment().setLeggings(itemStack);
                 backpack.remove(itemStack);
                 LoggerUtils.debug("NPC穿上了裤子");
+                say("这难道就是皇帝的丝袜么");
                 continue;
             }
 
@@ -553,6 +633,7 @@ public class COIHuman implements AI {
                 entity.getEquipment().setBoots(itemStack);
                 backpack.remove(itemStack);
                 LoggerUtils.debug("NPC穿上了鞋");
+                say("英雄不能没有切尔西！");
                 continue;
             }
 
@@ -590,6 +671,7 @@ public class COIHuman implements AI {
                     entity.getEquipment().setItemInMainHand(itemStack);
                     backpack.remove(itemStack);
                     LoggerUtils.debug("NPC装备了武器或工具");
+                    say("这东西真不错，很趁手！");
                 }
             }
         }
@@ -735,6 +817,8 @@ public class COIHuman implements AI {
 
         npc.setProtected(false);
         this.isSpawn = true;
+
+        say("干活！干活！");
     }
 
     @Override

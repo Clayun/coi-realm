@@ -106,7 +106,7 @@ public class COIMiner extends COIHuman{
     public void findAndBreakBlock(){
 
         if(!isAlive() || isTooHungryToWork()){
-            LoggerUtils.debug("累了");
+            LoggerUtils.debug("NPC 饱食度过低，开始摆烂");
             return;
         }
 
