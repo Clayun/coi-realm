@@ -339,7 +339,7 @@ public class COIMiner extends COIHuman{
      */
     private void stealOre(){
 
-        say("这可不怪我啊，箱子满了，我能怎么办");
+        say("箱子满了，我只能含泪收下了");
 
         COIMinerCreator coiNpc = (COIMinerCreator) getCoiNpc();
         for(ItemStack itemStack : coiNpc.getInventory()){

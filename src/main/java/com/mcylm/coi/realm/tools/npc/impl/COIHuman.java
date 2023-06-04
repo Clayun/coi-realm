@@ -235,7 +235,7 @@ public class COIHuman implements AI {
         List<Entity> nearbyEntities = getNpc().getEntity().getNearbyEntities(20, 20, 20);
 
         for(Entity entity : nearbyEntities){
-            if (entity.getType().equals(EntityType.PLAYER)) {
+            if (entity != null && entity.getType().equals(EntityType.PLAYER)) {
                 Player p = (Player) entity;
 
                 LoggerUtils.debug("检测到NPC附近玩家："+p.getName());
