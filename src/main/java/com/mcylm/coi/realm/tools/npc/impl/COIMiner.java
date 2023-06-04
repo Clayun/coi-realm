@@ -290,8 +290,8 @@ public class COIMiner extends COIHuman{
         List<Location> chestsLocation = coiNpc.getChestsLocation();
 
         if(chestsLocation.isEmpty()){
-            // 原地待命
-            LoggerUtils.debug("no chest");
+            // 被矿工偷走了
+            stealOre();
             return;
         }
 
@@ -299,8 +299,8 @@ public class COIMiner extends COIHuman{
         Location notFullChestLocation = getEmptyChestByLocations(chestsLocation);
 
         if(notFullChestLocation == null){
-            // 原地待命
-            LoggerUtils.debug("full");
+            // 被矿工偷走了
+            stealOre();
             return;
         }
 
@@ -315,20 +315,41 @@ public class COIMiner extends COIHuman{
                         List<String> npcFoods = Entry.getNpcFoods();
 
 
-                            // 不是食物的就丢进箱子里
-                            if(!npcFoods.contains(itemStack.getType().toString())){
+                        // 不是食物的就丢进箱子里
+                        if(!npcFoods.contains(itemStack.getType().toString())){
 
-                                Map<Integer, ItemStack> extra = ItemUtils.addItemIntoContainer(notFullChestLocation, itemStack);
-                                if (extra.isEmpty()) {
-                                    coiNpc.getInventory().remove(itemStack);
-                                } else {
-                                    extra.values().forEach(i -> itemStack.setAmount(i.getAmount()));
-                                }
-
+                            Map<Integer, ItemStack> extra = ItemUtils.addItemIntoContainer(notFullChestLocation, itemStack);
+                            if (extra.isEmpty()) {
+                                coiNpc.getInventory().remove(itemStack);
+                            } else {
+                                extra.values().forEach(i -> itemStack.setAmount(i.getAmount()));
                             }
+
+                        }
 
 
                     }
+                }
+            }
+        }
+    }
+
+    /**
+     * 多余的直接蒸发掉，被矿工贪污了
+     */
+    private void stealOre(){
+
+        say("这可不怪我啊，箱子满了，我能怎么办");
+
+        COIMinerCreator coiNpc = (COIMinerCreator) getCoiNpc();
+        for(ItemStack itemStack : coiNpc.getInventory()){
+            if(itemStack != null && !itemStack.getType().equals(Material.AIR)){
+
+                List<String> npcFoods = Entry.getNpcFoods();
+
+                // 不是食物的就直接丢进入虚空里面
+                if(!npcFoods.contains(itemStack.getType().toString())){
+                    coiNpc.getInventory().remove(itemStack);
                 }
             }
         }
