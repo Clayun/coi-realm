@@ -182,7 +182,9 @@ public class TeamUtils {
         // 查询所有队伍
         while(iterator.hasNext()){
             COITeam coiTeam = iterator.next();
-            if(coiTeam.getPlayers().size() <= players){
+
+            // 修改为仅小于，这样就不会反复进入最后一个队伍
+            if(coiTeam.getPlayers().size() < players){
                 minimumTeam = coiTeam;
                 players = coiTeam.getPlayers().size();
             }

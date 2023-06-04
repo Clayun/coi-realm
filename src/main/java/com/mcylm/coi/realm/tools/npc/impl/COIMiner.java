@@ -82,7 +82,8 @@ public class COIMiner extends COIHuman{
                     if(material != null){
                         if(material == block.getBlockData().getMaterial()){
                             // 加入到队列当中
-                            if (getNpc().getNavigator().canNavigateTo(block.getLocation())) {
+                            if (getNpc().getNavigator().canNavigateTo(block.getLocation())
+                                && canStand(block.getLocation())) {
                                 locations.add(block);
                             }
                             i++;
@@ -144,11 +145,12 @@ public class COIMiner extends COIHuman{
 
                         LivingEntity entity = (LivingEntity) getNpc().getEntity();
                         BlockBreaker.BlockBreakerConfiguration blockBreakerConfiguration = new BlockBreaker.BlockBreakerConfiguration();
-                        blockBreakerConfiguration.radius(5);
+                        blockBreakerConfiguration.radius(3);
                         blockBreakerConfiguration.item(entity.getEquipment().getItemInMainHand());
                         Block finalTargetBlock = targetBlock;
                         blockBreakerConfiguration.callback(
                                 new BukkitRunnable() {
+
                                     @Override
                                     public void run() {
 
@@ -159,8 +161,6 @@ public class COIMiner extends COIHuman{
 
                                         // 方块复活时间
                                         int restoreTimer = Entry.getInstance().getConfig().getInt("game.mineral-restore-timer");
-
-
 
                                         // 重生矿物方块
                                         new BukkitRunnable() {
@@ -191,16 +191,22 @@ public class COIMiner extends COIHuman{
 
                 } else {
 
-                    findPath(targetBlock.getLocation());
+                    if(canStand(targetBlock.getLocation())){
+                        findPath(targetBlock.getLocation());
+                        LoggerUtils.debug("寻路中");
+                    }else{
 
-                    LoggerUtils.debug("寻路中");
+                    }
                 }
             }
 
 
+        }else{
+            // 如果队列中还有方块没拆，就先拆队列里的
+            addBlockTargets();
         }
 
-        addBlockTargets();
+
     }
 
     /**
@@ -349,7 +355,7 @@ public class COIMiner extends COIHuman{
 
         return null;
     }
-
+    @Override
     public void move() {
         super.move();
         //找可拆除的去拆
