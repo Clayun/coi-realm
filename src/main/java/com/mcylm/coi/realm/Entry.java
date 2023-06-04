@@ -168,6 +168,7 @@ public class Entry extends ExtendedJavaPlugin {
         LoggerUtils.log("监听器注册完成");
     }
     private void registerDefaultBuildings() {
+        buildingManager.registerBuilding(COIBuildingType.BASE, COIBase.class);
         buildingManager.registerBuilding(COIBuildingType.STOPE, COIStope.class);
         buildingManager.registerBuilding(COIBuildingType.MILL, COIMill.class);
         buildingManager.registerBuilding(COIBuildingType.MILITARY_CAMP, COICamp.class);

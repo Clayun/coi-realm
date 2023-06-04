@@ -11,6 +11,16 @@ import org.bukkit.Material;
 @AllArgsConstructor
 public class COIBuildingType {
 
+    public static final COIBuildingType BASE = new COIBuildingType(
+            "BASE",
+            "大本营",
+            Material.BEACON,
+            """
+            大本营是整个小队的复活点,也是最重要的建筑,
+            如果大本营被拆掉了,则小队就输了,请务必保护好本建筑""",
+            5,
+            5L);
+
     public static final COIBuildingType MILL = new COIBuildingType(
             "MILL",
             "磨坊",

@@ -215,6 +215,16 @@ public class TeamUtils {
     }
 
     /**
+     * 初始化小队的基地
+     * 并返回玩家的出生点
+     * @param team
+     */
+    public static Location initTeamBase(COITeam team){
+        Location spawner = team.getSpawner();
+
+    }
+
+    /**
      * 全部玩家都传送到各自的出生点
      */
     public static void tpAllPlayersToSpawner(){

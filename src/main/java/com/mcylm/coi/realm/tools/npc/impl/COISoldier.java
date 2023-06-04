@@ -80,14 +80,6 @@ public class COISoldier extends COIHuman implements Commandable {
     }
 
     /**
-     * 警戒
-     */
-    private void alert() {
-
-
-
-    }
-    /**
      * 攻击实体
      */
     private void meleeAttackTarget() {
