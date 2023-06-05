@@ -105,10 +105,11 @@ public class COIHuman implements AI {
         }
 
         this.coiNpc = npcCreator;
+
         // 创建 CitizensNPC 实例
         this.npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, getName());
         this.isCreated = true;
-
+        this.coiNpc.setId(this.npc.getUniqueId().toString());
         initNpcAttributes(npcCreator);
 
         return this;
@@ -784,10 +785,10 @@ public class COIHuman implements AI {
         // 捡起附近需要的物品 使用同步进程去做
         pickItems();
         // 吃饱了回血
-        if (hungerTick++ > 5) {
+//        if (hungerTick++ > 5) {
             fullStomach();
-            hungerTick = 0;
-        }
+//            hungerTick = 0;
+//        }
         // 没吃饱就去吃
         eatFood();
         // 寻找食物

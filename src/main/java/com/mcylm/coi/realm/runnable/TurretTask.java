@@ -104,11 +104,24 @@ public class TurretTask {
                 if (e.getType().equals(EntityType.PLAYER)) {
                     Player p = (Player)e;
 
+                    // 用于判断类型为Player的NPC是否是所在小队的
+                    String uniqueId = e.getUniqueId().toString();
+
+                    // 先将实体当作玩家判断是否是本小队的
                     if(!TeamUtils.inTeam(p.getName(),torreta.getTeam())){
                         // 非小队内成员，同时非所属人
                         // 就设置为攻击目标
                         attackPermission = true;
                     }
+
+                    if(attackPermission){
+                        // 如果实体作为玩家非本校对，就把他再当作NPC去判断
+                        if(TeamUtils.checkNPCInTeam(uniqueId,torreta.getTeam())){
+                            // 是本小队的NPC，就取消锁定攻击
+                            attackPermission = false;
+                        }
+                    }
+
                 }else if(e.getType().equals(EntityType.ZOMBIE)
                     || e.getType().equals(EntityType.SKELETON)
                     || e.getType().equals(EntityType.SPIDER)

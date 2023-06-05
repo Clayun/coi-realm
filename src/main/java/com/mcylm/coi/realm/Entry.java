@@ -7,6 +7,7 @@ import com.mcylm.coi.realm.cmd.DebugCommand;
 import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COIServerMode;
 import com.mcylm.coi.realm.game.COIGame;
+import com.mcylm.coi.realm.listener.GameListener;
 import com.mcylm.coi.realm.listener.MineralsBreakListener;
 import com.mcylm.coi.realm.listener.PlayerInteractListener;
 import com.mcylm.coi.realm.managers.COIBuildingManager;
@@ -21,6 +22,7 @@ import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Getter;
 import me.lucko.helper.Events;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -121,26 +123,22 @@ public class Entry extends ExtendedJavaPlugin {
     @Override
     protected void disable() {
 
+        // 全T掉，防止boss bar叠加显示
+        for(Player p : getServer().getOnlinePlayers()){
+            p.kick(Component.text("服务器重载中,请稍后重连"));
+        }
     }
 
     private void registerEventListeners() {
         // 注册监听器
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new PlayerInteractListener(), this);
+        pluginManager.registerEvents(new GameListener(), this);
+        pluginManager.registerEvents(new MineralsBreakListener(), this);
         // AI事件监听器
         COISoldier.registerListener();
         COIMonster.registerListener();
-        if(COIServerMode.parseCode(SERVER_MODE).equals(COIServerMode.RELEASE)){
-            pluginManager.registerEvents(new MineralsBreakListener(), this);
-        }
-        Events.subscribe(PlayerRespawnEvent.class)
-                .handler(e -> {
-                    Player p = e.getPlayer();
-                    COITeam team = TeamUtils.getTeamByPlayer(p);
-                    if(team !=null){
-                        e.setRespawnLocation(team.getSpawner());
-                    }
-                });
+
         Events.subscribe(EntityChangeBlockEvent.class)
                 .handler(e -> {
                     if (e.getEntity().getType() == EntityType.FALLING_BLOCK && e.getEntity().hasMetadata("break_falling_block")) {

@@ -5,6 +5,7 @@ import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COIGUIType;
 import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COITeamType;
+import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import net.kyori.adventure.text.Component;
@@ -278,6 +279,26 @@ public class TeamUtils {
             }
         }
 
+    }
+
+    /**
+     * 判断NPC是否是所在小队的
+     * @param uniqueId
+     * @param team
+     * @return
+     */
+    public static boolean checkNPCInTeam(String uniqueId,COITeam team){
+        for(COIBuilding building : team.getFinishedBuildings()){
+            if(building.getNpcCreators().size() > 0){
+                for(COINpc npc : building.getNpcCreators()){
+                    if(npc.getId().equals(uniqueId)){
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
 }
