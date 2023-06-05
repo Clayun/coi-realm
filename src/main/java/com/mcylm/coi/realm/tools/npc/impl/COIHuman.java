@@ -77,11 +77,6 @@ public class COIHuman implements AI {
     private Location lastLocation = null;
     // 想捡的物品
     private Item targetItem;
-
-    private boolean sitting = false;
-
-    // NPC自带的空气小板凳，摆烂时的专座
-    private ArmorStand npcSeat;
     // 暂时屏蔽的物品
     private final Cache<Item, Item> ignoredItems = CacheBuilder.newBuilder()
             .expireAfterWrite(20, TimeUnit.SECONDS)
@@ -146,8 +141,6 @@ public class COIHuman implements AI {
         if (respawn) {
             // 清空背包
             this.coiNpc.setInventory(GUIUtils.createNpcInventory(3));
-            // 清空食物袋
-            //  this.coiNpc.setFoodBag(new ArrayList<>());
 
             // 如果NPC还存活
             if (isAlive()) {
@@ -166,7 +159,6 @@ public class COIHuman implements AI {
         } else {
             // 还原背包
             this.coiNpc.setInventory(oldNpc.getInventory());
-            // this.coiNpc.setFoodBag(oldNpc.getFoodBag());
         }
 
 
@@ -190,8 +182,6 @@ public class COIHuman implements AI {
             return;
         }
 
-        standUp();
-
         if (canStand(location)) {
             npc.faceLocation(location);
             Navigator navigator = npc.getNavigator();
@@ -206,51 +196,7 @@ public class COIHuman implements AI {
 
     }
 
-    /**
-     * NPC坐下
-     */
-    private void sitDown(){
-        Entity e = getNpc().getEntity();
 
-        if(e.getType().equals(EntityType.PLAYER)){
-
-            if(!sitting){
-                Player player = (Player)e;
-                // 用 ArmorStand 来托起玩家
-                Location sitLoc = player.getLocation().add(0, -0.7, 0); // 设置坐着的位置，需要稍微把玩家托起来，需要根据需求设置
-                npcSeat = sitLoc.getWorld().spawn(sitLoc, ArmorStand.class); // 创建一个盔甲架实体
-                npcSeat.setGravity(false); // 禁用掉盔甲架实体的重力
-                npcSeat.setVisible(false); // 设置盔甲架实体为不可见
-                npcSeat.setCanMove(false); // 不可移动
-
-                // 让座位跟随玩家实体一起移动
-                npcSeat.addPassenger(player);
-                sitting = true;
-            }
-
-        }
-
-    }
-
-    /**
-     * 站起来，并收起摆烂小板凳
-     */
-    private void standUp(){
-        Entity e = getNpc().getEntity();
-
-        if(npcSeat != null && sitting){
-            if(e.getType().equals(EntityType.PLAYER)){
-                Player player = (Player)e;
-                // 让座位跟随玩家实体一起移动
-                npcSeat.removePassenger(player);
-                npcSeat.remove();
-                npcSeat = null;
-                sitting = false;
-            }
-        }
-
-
-    }
 
     /**
      * 方块上方是否可以站立
@@ -457,7 +403,6 @@ public class COIHuman implements AI {
                 || foodChests.isEmpty()) {
             LoggerUtils.debug("食物箱子不存在");
             // 食物箱子不存在，就直接原地摆烂
-            sitDown();
             say("肚子好饿！附近都没有吃的了");
             return;
         }
@@ -491,7 +436,6 @@ public class COIHuman implements AI {
         if(distance > FOOD_CHEST_MAX_DISTANCE){
             // 如果食品箱子的距离大于 最大寻找的距离
             // 直接原地摆烂
-            sitDown();
             say("肚子好饿！附近都没有吃的了");
             return;
         }
