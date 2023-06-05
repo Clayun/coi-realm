@@ -38,8 +38,8 @@ public class COIBase extends COIBuilding {
 
         return new BuildingConfig()
                 .setStructures(getBuildingLevelStructure())
-                .setMaxLevel(2)
-                .setConsume(100);
+                .setMaxLevel(10)
+                .setConsume(200);
     }
 
     @Override
@@ -62,6 +62,14 @@ public class COIBase extends COIBuilding {
     private void initStructure() {
         getBuildingLevelStructure().put(1, "base1.structure");
         getBuildingLevelStructure().put(2, "base2.structure");
+        getBuildingLevelStructure().put(3, "base2.structure");
+        getBuildingLevelStructure().put(4, "base2.structure");
+        getBuildingLevelStructure().put(5, "base2.structure");
+        getBuildingLevelStructure().put(6, "base2.structure");
+        getBuildingLevelStructure().put(7, "base2.structure");
+        getBuildingLevelStructure().put(8, "base2.structure");
+        getBuildingLevelStructure().put(9, "base2.structure");
+        getBuildingLevelStructure().put(10, "base2.structure");
     }
 
     @Override

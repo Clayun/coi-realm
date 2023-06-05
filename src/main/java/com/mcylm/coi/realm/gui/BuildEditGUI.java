@@ -29,36 +29,41 @@ public class BuildEditGUI extends Gui {
 
         if (isFirstDraw()) {
 
+
             // 放置按钮
             MenuPopulator populator = BUTTONS.newPopulator(this);
 
-            populator.accept(ItemStackBuilder.of(Material.BARRIER)
-                    .name("&c拆除")
-                    .lore("")
-                    .lore("&f> &a返还资源： &c"+ building.getDestroyReturn())
-                    .build(() -> {
-                        if (!building.isComplete()) {
-                            LoggerUtils.sendMessage("&c建筑仍在建造中", getPlayer());
-                            return;
-                        }
-                        if (!building.isAlive()) {
-                            LoggerUtils.sendMessage("&c建筑已被拆毁", getPlayer());
-                            return;
-                        }
-                        building.destroy(true);
-                        int returnResource = building.getDestroyReturn();
-                        int group = returnResource / 64;
-                        int amount = returnResource % 64;
-                        Material material = building.getResourceType();
-                        for (int i = 0; i < group; i++) {
-                            getPlayer().getWorld().dropItemNaturally(getPlayer().getLocation(), new ItemStack(material, 64));
-                        }
+            // 显示在GUI的才算
+            if(building.getType().isInGUI()){
+                populator.accept(ItemStackBuilder.of(Material.BARRIER)
+                        .name("&c拆除")
+                        .lore("")
+                        .lore("&f> &a返还资源： &c"+ building.getDestroyReturn())
+                        .build(() -> {
+                            if (!building.isComplete()) {
+                                LoggerUtils.sendMessage("&c建筑仍在建造中", getPlayer());
+                                return;
+                            }
+                            if (!building.isAlive()) {
+                                LoggerUtils.sendMessage("&c建筑已被拆毁", getPlayer());
+                                return;
+                            }
+                            building.destroy(true);
+                            int returnResource = building.getDestroyReturn();
+                            int group = returnResource / 64;
+                            int amount = returnResource % 64;
+                            Material material = building.getResourceType();
+                            for (int i = 0; i < group; i++) {
+                                getPlayer().getWorld().dropItemNaturally(getPlayer().getLocation(), new ItemStack(material, 64));
+                            }
 
-                        getPlayer().getWorld().dropItemNaturally(getPlayer().getLocation(), new ItemStack(material, amount));
-                        close();
-                    })
+                            getPlayer().getWorld().dropItemNaturally(getPlayer().getLocation(), new ItemStack(material, amount));
+                            close();
+                        })
 
-            );
+                );
+            }
+
 
             populator.accept(building.getLevel() < building.getMaxLevel() ? ItemStackBuilder.of(Material.BEACON)
                     .name("&a升级建筑")

@@ -19,7 +19,8 @@ public class COIBuildingType {
             大本营是整个小队的复活点,也是最重要的建筑,
             如果大本营被拆掉了,则小队就输了,请务必保护好本建筑""",
             5,
-            5L);
+            5L,
+            false);
 
     public static final COIBuildingType MILL = new COIBuildingType(
             "MILL",
@@ -31,7 +32,8 @@ public class COIBuildingType {
             农民会将其采集并制作成面包并放入磨坊的箱子中.
             请注意:每个NPC都需要食物补充能量,磨坊的是非常重要的建筑""",
             5,
-            5L);
+            5L,
+            true);
 
     public static final COIBuildingType STOPE = new COIBuildingType(
             "STOPE",
@@ -42,7 +44,8 @@ public class COIBuildingType {
             矿工会全自动收集矿物,并存入矿场的箱子中,
             收集的资源可用于建造新的建筑,或者给战士制作装备.""",
             5,
-            5L);
+            5L,
+            true);
 
     public static final COIBuildingType MILITARY_CAMP = new COIBuildingType(
             "MILITARY_CAMP",
@@ -53,7 +56,8 @@ public class COIBuildingType {
             战士会默认自动巡逻,当发现敌方战士或者是敌方建筑时,
             会自动攻击敌方单位""",
             5,
-            5L);
+            5L,
+            true);
 
     public static final COIBuildingType WALL_NORMAL = new COIBuildingType(
             "WALL_NORMAL",
@@ -62,7 +66,8 @@ public class COIBuildingType {
             """
             城墙是防卫类建筑,需要建造多个城墙点来保卫建筑""",
             5,
-            5L);
+            5L,
+            true);
 
     public static final COIBuildingType DOOR_NORMAL = new COIBuildingType(
             "DOOR_NORMAL",
@@ -71,7 +76,8 @@ public class COIBuildingType {
             """
             城门是防卫类建筑""",
             5,
-            5L);
+            5L,
+            true);
 
     public static final COIBuildingType TURRET_NORMAL = new COIBuildingType(
             "TURRET",
@@ -82,7 +88,8 @@ public class COIBuildingType {
             小提示：看到敌方防御塔,可以尝试躲找个掩体,
             在掩体后面是不会被防御塔攻击的哦""",
             5,
-            5L);
+            5L,
+            true);
 
     // CODE
     private String code;
@@ -97,5 +104,8 @@ public class COIBuildingType {
     private int unit;
     // 几tick建造一次
     private long interval;
+    // 是否在GUI当中显示
+    // false的情况下，无法在GUI里面拆除建筑
+    private boolean inGUI;
 
 }

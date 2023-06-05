@@ -718,7 +718,7 @@ public abstract class COIBuilding implements Serializable {
 
     private void applyConfig() {
         consume = config.getConsume();
-        maxLevel = config.getConsume();
+        maxLevel = config.getMaxLevel();
         setBuildingLevelStructure(config.getStructures());
     }
 

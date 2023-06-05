@@ -57,35 +57,38 @@ public class BuilderGUI {
             List<Item> items = new ArrayList<>();
             for (COIBuilding building : Entry.getInstance().getBuildingManager().getAllBuildingTemplates()) {
 
-                items.add(ItemStackBuilder.of(building.getType().getItemType())
-                        .name(building.getType().getName())
-                        .amount(getBuildingNum(team.getBuildingByType(building.getType())))
-                        .lore("")
-                        .lore("&f> &a已造数量： &c" + team.getBuildingByType(building.getType()).size())
-                        .lore("&f> &a所需耗材： &c" + building.getConsume())
-                        .lore("&f> &a拥有材料： &c" + building.getPlayerHadResource(p))
-                        .lore("&f> &a介绍：")
-                        .lore(autoLineFeed(building.getType().getIntroduce()))
-                        .lore("")
-                        .lore("&f> &a&l点击进行建造")
-                        .build(() -> {
-                            // 点击时触发下面的方法
-                            // TODO 封装建造方法
+                if(building.getType().isInGUI()){
+                    items.add(ItemStackBuilder.of(building.getType().getItemType())
+                            .name(building.getType().getName())
+                            .amount(getBuildingNum(team.getBuildingByType(building.getType())))
+                            .lore("")
+                            .lore("&f> &a已造数量： &c" + team.getBuildingByType(building.getType()).size())
+                            .lore("&f> &a所需耗材： &c" + building.getConsume())
+                            .lore("&f> &a拥有材料： &c" + building.getPlayerHadResource(p))
+                            .lore("&f> &a介绍：")
+                            .lore(autoLineFeed(building.getType().getIntroduce()))
+                            .lore("")
+                            .lore("&f> &a&l点击进行建造")
+                            .build(() -> {
+                                // 点击时触发下面的方法
+                                // TODO 封装建造方法
 
-                            building.setTeam(team);
-                            // building.build(location,getPlayer());
-                            if (building.getStructureByLevel() != null) {
-                                if (building instanceof LineBuild lineBuild) {
-                                    new LineSelector(p, lineBuild, location);
+                                building.setTeam(team);
+                                // building.build(location,getPlayer());
+                                if (building.getStructureByLevel() != null) {
+                                    if (building instanceof LineBuild lineBuild) {
+                                        new LineSelector(p, lineBuild, location);
+                                    } else {
+                                        new AreaSelector(p, building, location);
+                                    }
                                 } else {
-                                    new AreaSelector(p, building, location);
+                                    building.build(location, p);
                                 }
-                            } else {
-                                building.build(location, p);
-                            }
 
-                            paginatedGui.close();
-                        }));
+                                paginatedGui.close();
+                            }));
+                }
+
             }
             return items;
         }).open();
