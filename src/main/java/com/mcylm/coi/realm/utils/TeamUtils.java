@@ -303,4 +303,20 @@ public class TeamUtils {
         return true;
     }
 
+    /**
+     * 获取NPC所在的队伍
+     * @param entity
+     * @return
+     */
+    public static COITeam getNPCTeam(Entity entity){
+        @Nullable COINpc data = EntityData.getNpcByEntity(entity);
+
+        if (data != null && data.getTeam() != null) {
+            return data.getTeam();
+
+        }
+
+        return null;
+    }
+
 }

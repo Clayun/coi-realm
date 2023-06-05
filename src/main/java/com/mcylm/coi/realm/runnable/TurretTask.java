@@ -104,9 +104,6 @@ public class TurretTask {
                 if (e.getType().equals(EntityType.PLAYER)) {
                     Player p = (Player)e;
 
-                    // 用于判断类型为Player的NPC是否是所在小队的
-                    String uniqueId = e.getUniqueId().toString();
-
                     // 先将实体当作玩家判断是否是本小队的
                     if(!TeamUtils.inTeam(p.getName(),torreta.getTeam())){
                         // 非小队内成员，同时非所属人

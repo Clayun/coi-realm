@@ -28,6 +28,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -302,6 +303,9 @@ public abstract class COIBuilding implements Serializable {
 
     public void upgradeBuild(Player player) {
 
+        // 升级建筑先关闭complete，否则可以重复搞
+        complete = false;
+
         for (Block b : getBlocks()) {
             b.removeMetadata("building", Entry.getInstance());
 
@@ -567,6 +571,8 @@ public abstract class COIBuilding implements Serializable {
         if (damage >= getHealth().get()) {
             getHealth().set(0);
             destroy(true);
+            // 检查小队是否落败
+            checkDefeat(attacker);
         } else {
             getHealth().addAndGet(-damage);
         }
@@ -574,6 +580,44 @@ public abstract class COIBuilding implements Serializable {
             if (e instanceof Player p) {
                 displayHealth(p);
             }
+        }
+    }
+
+    private void checkDefeat(Entity attacker){
+        // 击败小队的
+        COITeam defeatedByTeam = null;
+        Player player = null;
+        // 判断是否是大本营
+        if(getType().equals(COIBuildingType.BASE)){
+            // 如果是大本营被拆除
+            // 所属小队就判定失败
+            if (attacker.getType().equals(EntityType.PLAYER)) {
+                Player p = (Player)attacker;
+
+                // 先把拆除建筑的当玩家
+                COITeam teamByPlayer = TeamUtils.getTeamByPlayer(p);
+                if(null != teamByPlayer){
+                    defeatedByTeam = teamByPlayer;
+                    player = p;
+                }else{
+                    COITeam npcTeam = TeamUtils.getNPCTeam(attacker);
+                    if(null != npcTeam){
+                        // 把拆除建筑的当NPC
+                        defeatedByTeam = npcTeam;
+                        COINpc npc = COINpc.getNPCByEntity(attacker);
+                        if(npc != null){
+                            String followPlayerName = npc.getFollowPlayerName();
+                            Player followPlayer = Bukkit.getPlayer(followPlayerName);
+                            if(followPlayer!= null
+                                && followPlayer.isOnline()){
+                                player = followPlayer;
+                            }
+                        }
+                    }
+                }
+
+            }
+            getTeam().defeatedBy(player,defeatedByTeam);
         }
     }
 
@@ -705,6 +749,8 @@ public abstract class COIBuilding implements Serializable {
             deductionResources(player, getUpgradeRequiredConsume());
             level++;
             upgradeBuild(player);
+        }else{
+            LoggerUtils.sendMessage("背包里的资源不够，请去收集资源", player);
         }
     }
 

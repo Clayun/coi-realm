@@ -2,7 +2,9 @@ package com.mcylm.coi.realm.tools.team.impl;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIBuildingType;
+import com.mcylm.coi.realm.enums.COIScoreType;
 import com.mcylm.coi.realm.enums.COITeamType;
+import com.mcylm.coi.realm.model.COIScore;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.team.Team;
 import com.mcylm.coi.realm.utils.TeamUtils;
@@ -11,6 +13,7 @@ import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -45,12 +48,24 @@ public class COITeam implements Team {
     // Team formation
     private List<List<Integer>> battleFormation;
 
+    // 是否被击败（大本营被攻破）
+    private boolean defeat = false;
+
+    // 小队的积分
+    // 用于结算小队玩家的奖励的权重
+    private double score = 0;
+
+    // 积分明细
+    // TODO 本数据建议结算时存入数据库，可以用于计算成就等
+    private List<COIScore> scoreRecords;
+
     public COITeam(COITeamType type,Location spawner) {
         this.type = type;
         this.players = new ArrayList<>();
         this.foodChests = new ArrayList<>();
         this.finishedBuildings = new ArrayList<>();
         this.battleFormation = new ArrayList<>();
+        this.scoreRecords = new ArrayList<>();
         this.spawner = spawner;
         // 初始化大本营
         TeamUtils.initTeamBase(this);
@@ -121,6 +136,40 @@ public class COITeam implements Team {
         return results;
     }
 
+    @Override
+    public void manageScore(COIScoreType type, Player player) {
+
+        if(type == null || player == null){
+            return;
+        }
+
+        // 加减总积分
+        score = score + type.getScore();
+
+        COIScore coiScore = new COIScore(type, LocalDateTime.now(),player);
+
+        // 存储记录
+        getScoreRecords().add(coiScore);
+
+    }
+
+    /**
+     * 失败
+     * 1.记录双方小队的积分
+     * 2.将所有玩家变换成观察者模式
+     * @param player
+     * @param team
+     */
+    @Override
+    public void defeatedBy(Player player,COITeam team) {
+
+        if(player == null && team == null){
+            // 如果两个都是null，代表被野怪给干掉的
+        }else{
+            // 被玩家或者玩家的随从NPC干掉了
+        }
+    }
+
     /**
      * 获取GUI显示的内容
      * Get GUI view content for player name
@@ -136,4 +185,6 @@ public class COITeam implements Team {
 
         return format;
     }
+
+
 }

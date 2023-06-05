@@ -1,6 +1,7 @@
 package com.mcylm.coi.realm.model;
 
 import com.mcylm.coi.realm.tools.building.COIBuilding;
+import com.mcylm.coi.realm.tools.data.EntityData;
 import com.mcylm.coi.realm.tools.npc.AI;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import lombok.Getter;
@@ -10,8 +11,10 @@ import lombok.ToString;
 import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -78,6 +81,7 @@ public class COINpc implements Serializable {
     private double maxDamage = 8;
 
     // 跟随的玩家
+    // 很重要的属性，决定了NPC产生的积分结算给哪个玩家
     private String followPlayerName;
 
     // 是否死亡复活
@@ -139,5 +143,20 @@ public class COINpc implements Serializable {
 
     public void upgrade() {
         level++;
+    }
+
+    /**
+     * 获取NPC数据
+     * @param entity
+     * @return
+     */
+    public static COINpc getNPCByEntity(Entity entity){
+        @Nullable COINpc data = EntityData.getNpcByEntity(entity);
+
+        if (data != null) {
+            return data;
+        }
+
+        return null;
     }
 }
