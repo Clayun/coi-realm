@@ -3,6 +3,7 @@ package com.mcylm.coi.realm.tools.building.impl;
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.config.BuildingConfig;
+import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,16 +22,14 @@ import java.util.Set;
 public class COIDoor extends COIBuilding {
 
     private Set<Block> doorBlocks = new HashSet<>();
-    //private List<Location> connectPoints = new ArrayList<>();
-    private boolean open;
-    private Material doorMaterial;
-    //private Material connectPointMaterial;
 
+    // 当前门是否是开着的
+    private boolean open = false;
+    private Material doorMaterial;
 
     public COIDoor() {
         setLevel(1);
-        //setDoorMaterial(Material.IRON_BLOCK);
-        //setConnectPointMaterial(Material.REDSTONE_BLOCK);
+        setDoorMaterial(Material.IRON_BLOCK);
         setAvailable(true);
         initStructure();
     }
@@ -45,6 +44,13 @@ public class COIDoor extends COIBuilding {
 
     @Override
     public void buildSuccess(Location location, Player player) {
+        super.buildSuccess(location, player);
+
+        for (Block b : getBlocks()) {
+            if (b.getType() == doorMaterial) {
+                doorBlocks.add(b);
+            }
+        }
 
         new BukkitRunnable() {
             @Override
@@ -55,8 +61,8 @@ public class COIDoor extends COIBuilding {
                 }
 
                 boolean openDoor = false;
-                for (Player p : location.getWorld().getPlayers()) {
-                    if (TeamUtils.getTeamByPlayer(p) == getTeam() && p.getLocation().distance(location) <= 6) {
+                for (Player p : Entry.getInstance().getServer().getOnlinePlayers()) {
+                    if (TeamUtils.inTeam(p.getName(),getTeam()) && p.getLocation().distance(location) <= 6) {
                         openDoor = true;
                     }
                 }
@@ -66,23 +72,8 @@ public class COIDoor extends COIBuilding {
                     Bukkit.getScheduler().runTask(Entry.getInstance(), () -> close());
                 }
             }
-        }.runTaskTimerAsynchronously(Entry.getInstance(), 1, 1);
+        }.runTaskTimerAsynchronously(Entry.getInstance(), 1, 20);
 
-        for (Block b : getBlocks()) {
-            if (b.getType() == doorMaterial) {
-                doorBlocks.add(b);
-            }
-        }
-        super.buildSuccess(location, player);
-    }
-
-    public void buildWall(Location location, int minY, int maxY) {
-        for (int y = minY; y < maxY; y++) {
-            Block block = location.clone().add(0,y,0).getBlock();
-            if (!block.isSolid()) {
-                COIBuilder.placeBlockForBuilding(block, this, Material.STONE);
-            }
-        }
     }
 
     @Override
@@ -101,8 +92,6 @@ public class COIDoor extends COIBuilding {
         this.open = false;
         doorBlocks.forEach(b -> b.setType(doorMaterial));
     }
-
-
 
 
     private void initStructure(){
