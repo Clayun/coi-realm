@@ -6,17 +6,22 @@ import com.mcylm.coi.realm.enums.COIGUIType;
 import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COITeamType;
 import com.mcylm.coi.realm.model.COINpc;
+import com.mcylm.coi.realm.tools.attack.target.impl.EntityTarget;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
+import com.mcylm.coi.realm.tools.data.EntityData;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -283,22 +288,19 @@ public class TeamUtils {
 
     /**
      * 判断NPC是否是所在小队的
-     * @param uniqueId
+     * @param entity
      * @param team
      * @return
      */
-    public static boolean checkNPCInTeam(String uniqueId,COITeam team){
-        for(COIBuilding building : team.getFinishedBuildings()){
-            if(building.getNpcCreators().size() > 0){
-                for(COINpc npc : building.getNpcCreators()){
-                    if(npc.getId().equals(uniqueId)){
-                        return true;
-                    }
-                }
-            }
+    public static boolean checkNPCInTeam(Entity entity, COITeam team){
+        @Nullable COINpc data = EntityData.getNpcByEntity(entity);
+
+        if (data != null && data.getTeam() != team) {
+            return false;
+
         }
 
-        return false;
+        return true;
     }
 
 }

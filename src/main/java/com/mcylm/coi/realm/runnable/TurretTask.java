@@ -116,7 +116,7 @@ public class TurretTask {
 
                     if(attackPermission){
                         // 如果实体作为玩家非本校对，就把他再当作NPC去判断
-                        if(TeamUtils.checkNPCInTeam(uniqueId,torreta.getTeam())){
+                        if(TeamUtils.checkNPCInTeam(e,torreta.getTeam())){
                             // 是本小队的NPC，就取消锁定攻击
                             attackPermission = false;
                         }

@@ -638,8 +638,13 @@ public abstract class COIBuilding implements Serializable {
         return consume + level * 80;
     }
 
+    /**
+     * 拆除返还的资源
+     * @return
+     */
     public int getDestroyReturn() {
-        return Math.toIntExact(Math.round(consume + (level - 1) * 80 * 0.8));
+        // 优化算法
+        return Math.toIntExact(Math.round((consume + (level - 1) * 80) * 0.8));
     }
 
     public void destroy(boolean effect) {

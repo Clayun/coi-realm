@@ -91,18 +91,14 @@ public class COISoldier extends COIHuman implements Commandable {
         // 在攻击伤害范围内，随机产生伤害
         double damage = rand.nextInt((int) ((getCoiNpc().getMaxDamage() + 1) - getCoiNpc().getMinDamage())) + getCoiNpc().getMinDamage();
 
-
         if (getNpc().getEntity().getLocation().distance(target.getTargetLocation()) <= 3 && target.getType() == TargetType.ENTITY) {
-
             // 挥动手
             ((LivingEntity) getNpc().getEntity()).swingMainHand();
-
-
             damage(target, damage, target.getTargetLocation());
 
         }
 
-
+        // 攻击建筑
         for (Block b : LocationUtils.selectionRadiusByDistance(getLocation().getBlock(), 3, 3)) {
             COIBuilding building = BuildData.getBuildingByBlock(b);
             if (building != null && building.getTeam() != getCoiNpc().getTeam()) {
@@ -113,9 +109,6 @@ public class COISoldier extends COIHuman implements Commandable {
                 break;
             }
         }
-
-
-
 
         findPath(target.getTargetLocation());
 

@@ -281,13 +281,17 @@ public class COIHuman implements AI {
 
                                     }
 
-                                    Location newLoc = getNpc().getEntity().getLocation().clone();
-                                    newLoc.setY(newLoc.getY() + floatHeight);
+                                    if(isAlive()){
+                                        // 活着的情况下，再去显示
+                                        Location newLoc = getNpc().getEntity().getLocation().clone();
+                                        newLoc.setY(newLoc.getY() + floatHeight);
 
-                                    Entry.runSync(() -> {
-                                        if (hologram.isDeleted()) return;
-                                        hologram.setPosition(newLoc);
-                                    });
+                                        Entry.runSync(() -> {
+                                            if (hologram.isDeleted()) return;
+                                            hologram.setPosition(newLoc);
+                                        });
+                                    }
+
                                 }
                             }
                         }.runTaskTimerAsynchronously(Entry.getInstance(), 1, 1);
