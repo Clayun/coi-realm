@@ -107,7 +107,6 @@ public class COIMiner extends COIHuman{
     public void findAndBreakBlock(){
 
         if(!isAlive() || isTooHungryToWork()){
-            say("肚子饿死了，也没个吃的，摆烂了！");
             LoggerUtils.debug("NPC 饱食度过低，开始摆烂");
             return;
         }

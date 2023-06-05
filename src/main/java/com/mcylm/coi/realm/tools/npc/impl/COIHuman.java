@@ -61,6 +61,8 @@ public class COIHuman implements AI {
     private static final int HUNGER_DELAY = 20;
     // 饥饿度计数值
     private int HUNGER_DELAY_COUNT = 0;
+    // 查询最近的食物箱子，最大距离
+    private int FOOD_CHEST_MAX_DISTANCE = 20;
     // 因为饥饿，每秒掉血数量
     private final double HUNGER_DAMAGE = 0.5d;
     // 每次减少的饱食度
@@ -75,6 +77,11 @@ public class COIHuman implements AI {
     private Location lastLocation = null;
     // 想捡的物品
     private Item targetItem;
+
+    private boolean sitting = false;
+
+    // NPC自带的空气小板凳，摆烂时的专座
+    private ArmorStand npcSeat;
     // 暂时屏蔽的物品
     private final Cache<Item, Item> ignoredItems = CacheBuilder.newBuilder()
             .expireAfterWrite(20, TimeUnit.SECONDS)
@@ -175,13 +182,15 @@ public class COIHuman implements AI {
      */
     @Override
     public void findPath(Location location) {
-        if (npc == null) {
+        if (!isAlive()) {
             return;
         }
 
         if (!npc.isSpawned()) {
             return;
         }
+
+        standUp();
 
         if (canStand(location)) {
             npc.faceLocation(location);
@@ -194,6 +203,52 @@ public class COIHuman implements AI {
 
 
         }
+
+    }
+
+    /**
+     * NPC坐下
+     */
+    private void sitDown(){
+        Entity e = getNpc().getEntity();
+
+        if(e.getType().equals(EntityType.PLAYER)){
+
+            if(!sitting){
+                Player player = (Player)e;
+                // 用 ArmorStand 来托起玩家
+                Location sitLoc = player.getLocation().add(0, -0.7, 0); // 设置坐着的位置，需要稍微把玩家托起来，需要根据需求设置
+                npcSeat = sitLoc.getWorld().spawn(sitLoc, ArmorStand.class); // 创建一个盔甲架实体
+                npcSeat.setGravity(false); // 禁用掉盔甲架实体的重力
+                npcSeat.setVisible(false); // 设置盔甲架实体为不可见
+                npcSeat.setCanMove(false); // 不可移动
+
+                // 让座位跟随玩家实体一起移动
+                npcSeat.addPassenger(player);
+                sitting = true;
+            }
+
+        }
+
+    }
+
+    /**
+     * 站起来，并收起摆烂小板凳
+     */
+    private void standUp(){
+        Entity e = getNpc().getEntity();
+
+        if(npcSeat != null && sitting){
+            if(e.getType().equals(EntityType.PLAYER)){
+                Player player = (Player)e;
+                // 让座位跟随玩家实体一起移动
+                npcSeat.removePassenger(player);
+                npcSeat.remove();
+                npcSeat = null;
+                sitting = false;
+            }
+        }
+
 
     }
 
@@ -230,6 +285,9 @@ public class COIHuman implements AI {
             return;
         }
 
+        // 最大显示时长（秒）
+        int maxShowTimer = 3;
+
         // 在脑袋顶上显示文字
 
         // NPC附近20格范围内的玩家都能看到
@@ -243,9 +301,9 @@ public class COIHuman implements AI {
 
                 if(p.isOnline()){
                     if (hologramVisitors.containsKey(p)) {
-                        hologramVisitors.get(p).set(5);
+                        hologramVisitors.get(p).set(maxShowTimer);
                     } else {
-                        hologramVisitors.put(p, new AtomicInteger(5));
+                        hologramVisitors.put(p, new AtomicInteger(maxShowTimer));
                     }
                     if (!holograms.containsKey(p)) {
 
@@ -367,6 +425,7 @@ public class COIHuman implements AI {
                 }
 
             }
+
         } else {
             // 如果食物背包里是空的，同时饱食度低于10，就去磨坊拿吃的
 
@@ -397,8 +456,9 @@ public class COIHuman implements AI {
         if (foodChests == null
                 || foodChests.isEmpty()) {
             LoggerUtils.debug("食物箱子不存在");
-            // 食物箱子不存在，就直接返回出生点
-            findPath(getCoiNpc().getSpawnLocation());
+            // 食物箱子不存在，就直接原地摆烂
+            sitDown();
+            say("肚子好饿！附近都没有吃的了");
             return;
         }
 
@@ -426,6 +486,14 @@ public class COIHuman implements AI {
                 }
 
             }
+        }
+
+        if(distance > FOOD_CHEST_MAX_DISTANCE){
+            // 如果食品箱子的距离大于 最大寻找的距离
+            // 直接原地摆烂
+            sitDown();
+            say("肚子好饿！附近都没有吃的了");
+            return;
         }
 
 
@@ -789,10 +857,12 @@ public class COIHuman implements AI {
         // 捡起附近需要的物品 使用同步进程去做
         pickItems();
         // 吃饱了回血
-//        if (hungerTick++ > 5) {
-            fullStomach();
+//        if (hungerTick++ > 2) {
+//
 //            hungerTick = 0;
 //        }
+
+        fullStomach();
         // 没吃饱就去吃
         eatFood();
         // 寻找食物

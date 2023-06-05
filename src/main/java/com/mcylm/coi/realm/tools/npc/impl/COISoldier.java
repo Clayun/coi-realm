@@ -16,6 +16,7 @@ import com.mcylm.coi.realm.tools.data.BuildData;
 import com.mcylm.coi.realm.tools.data.EntityData;
 import com.mcylm.coi.realm.tools.npc.COISoldierCreator;
 import com.mcylm.coi.realm.utils.LocationUtils;
+import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Getter;
 import lombok.Setter;
 import me.lucko.helper.Events;
@@ -62,6 +63,14 @@ public class COISoldier extends COIHuman implements Commandable {
                     if (livingEntity instanceof Player player && player.getGameMode() == GameMode.CREATIVE) {
                         return;
                     }
+
+                    // 相同队伍的，不攻击
+                    if(livingEntity instanceof Player player){
+                        if(npc.getTeam() == TeamUtils.getTeamByPlayer(player)){
+                            return;
+                        }
+                    }
+
                     ((COISoldier) creator.getNpc()).setTarget(new EntityTarget(livingEntity, 8));
 
                 }
