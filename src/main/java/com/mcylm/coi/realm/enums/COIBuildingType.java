@@ -84,6 +84,17 @@ public class COIBuildingType {
             5,
             5L);
 
+    // 怪物Building
+    public static final COIBuildingType MONSTER_BASE = new COIBuildingType(
+            "MONSTER_BASE",
+            "怪物本营",
+            Material.BEACON,
+            """
+            怪物的复活点
+            """,
+            5,
+            5L);
+
     // CODE
     private String code;
     // 建筑名称 building name

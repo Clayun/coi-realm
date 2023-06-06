@@ -107,7 +107,7 @@ public class COICamp extends COIBuilding {
         COISoldierCreator npcCreator = new COISoldierCreator();
         npcCreator.setInventory(inventory);
         npcCreator.setAggressive(true);
-        npcCreator.setAlertRadius(5);
+        npcCreator.setAlertRadius(10);
         npcCreator.setBreakBlockMaterials(breakBlockMaterials);
         npcCreator.setName("战士");
         npcCreator.setLevel(1);
