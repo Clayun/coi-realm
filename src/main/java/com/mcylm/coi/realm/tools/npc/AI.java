@@ -1,7 +1,7 @@
 package com.mcylm.coi.realm.tools.npc;
 
 import com.mcylm.coi.realm.model.COINpc;
-import com.mcylm.coi.realm.tools.npc.impl.COIHuman;
+import com.mcylm.coi.realm.tools.npc.impl.COIEntity;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -14,10 +14,10 @@ import java.util.List;
 public interface AI {
 
     // 创建NPC
-    COIHuman create(COINpc coiNpc);
+    COIEntity create(COINpc coiNpc);
 
     // 更新NPC
-    COIHuman update(COINpc coiNpc,boolean respawn);
+    COIEntity update(COINpc coiNpc, boolean respawn);
 
     // AI寻路
     void findPath(Location location);

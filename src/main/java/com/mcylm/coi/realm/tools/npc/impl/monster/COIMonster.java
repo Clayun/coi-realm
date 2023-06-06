@@ -1,4 +1,4 @@
-package com.mcylm.coi.realm.tools.npc.impl;
+package com.mcylm.coi.realm.tools.npc.impl.monster;
 
 import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.model.COINpc;
@@ -13,12 +13,14 @@ import com.mcylm.coi.realm.tools.attack.target.impl.EntityTarget;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.data.BuildData;
 import com.mcylm.coi.realm.tools.data.EntityData;
-import com.mcylm.coi.realm.tools.npc.COISoldierCreator;
+import com.mcylm.coi.realm.tools.npc.COIMonsterCreator;
+import com.mcylm.coi.realm.tools.npc.impl.COIEntity;
+import com.mcylm.coi.realm.utils.GUIUtils;
 import com.mcylm.coi.realm.utils.LocationUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
-import lombok.Getter;
 import lombok.Setter;
 import me.lucko.helper.Events;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -28,16 +30,39 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 
-/**
- * 战士
- * 会对敌对阵营的建筑进行破坏，并主动攻击敌对阵营玩家
- * 主动跟随阵营内拥有将军令的玩家
- */
-@Getter
-public class COISoldier extends COIEntity implements Commandable {
+public abstract class COIMonster extends COIEntity implements Commandable {
+
+
+    public COIMonster(COINpc npcCreator) {
+        super(npcCreator);
+        npcCreator.setTeam(TeamUtils.getMonsterTeam());
+    }
+
+    protected void initNpcAttributes(COINpc npcCreator) {
+
+        // 恢复血量和饱食度
+        initEntityStatus();
+        setHunger(Integer.MAX_VALUE);
+
+        // 如果背包未初始化
+        if (npcCreator.getInventory() == null) {
+            npcCreator.setInventory(GUIUtils.createNpcInventory(3));
+        }
+
+
+        // 设置NPC的名称使用 Hologram
+        this.npc.setAlwaysUseNameHologram(true);
+        this.npc.setUseMinecraftAI(true);
+        this.npc.data().set(NPC.Metadata.KEEP_CHUNK_LOADED, true);
+    }
+
+    @Override
+    public EntityType getNpcType() {
+        return EntityType.ZOMBIE;
+    }
+
 
     private CompletableFuture<BuildingTarget> targetFuture = null;
 
@@ -50,7 +75,7 @@ public class COISoldier extends COIEntity implements Commandable {
         Events.subscribe(EntityDamageByEntityEvent.class).handler(e -> {
             @Nullable COINpc npc = EntityData.getNpcByEntity(e.getEntity());
             Entity target = e.getDamager();
-            if (npc instanceof COISoldierCreator creator) {
+            if (npc instanceof COIMonsterCreator creator) {
 
                 if (e.getDamager() instanceof Projectile projectile) {
                     if (projectile.getShooter() instanceof LivingEntity s) {
@@ -70,58 +95,47 @@ public class COISoldier extends COIEntity implements Commandable {
                         }
                     }
 
-                    ((COISoldier) creator.getNpc()).setTarget(new EntityTarget(livingEntity, 8));
+                    ((COIMonster) creator.getNpc()).setTarget(new EntityTarget(livingEntity, 8));
 
                 }
             }
 
         });
     }
-    // 周围发现敌人，进入战斗模式
-    private boolean fighting = false;
 
-    private Target target;
+    protected Target target;
 
-    public COISoldier(COISoldierCreator npcCreator) {
-        super(npcCreator);
-
-    }
 
     /**
      * 攻击实体
      */
     private void meleeAttackTarget() {
-        if (target == null) return;
-
-        // 对生物体直接产生伤害
-        Random rand = new Random();
-
-        // 在攻击伤害范围内，随机产生伤害
-        double damage = rand.nextInt((int) ((getCoiNpc().getMaxDamage() + 1) - getCoiNpc().getMinDamage())) + getCoiNpc().getMinDamage();
-
-        if (getNpc().getEntity().getLocation().distance(target.getTargetLocation()) <= 3 && target.getType() == TargetType.ENTITY) {
-            // 挥动手
-            ((LivingEntity) getNpc().getEntity()).swingMainHand();
-            damage(target, damage, target.getTargetLocation());
-
-        }
 
         // 攻击建筑
         for (Block b : LocationUtils.selectionRadiusByDistance(getLocation().getBlock(), 3, 3)) {
             COIBuilding building = BuildData.getBuildingByBlock(b);
             if (building != null && building.getTeam() != getCoiNpc().getTeam()) {
                 ((LivingEntity) getNpc().getEntity()).swingMainHand();
-                building.damage(getNpc().getEntity(), (int) damage, b);
+                building.damage(getNpc().getEntity(), (int) getDamage(), b);
                 b.getWorld().playEffect(b.getLocation(), Effect.STEP_SOUND,1);
 
                 break;
             }
         }
 
-        findPath(target.getTargetLocation());
+        if (target.getType() == TargetType.BUILDING) {
+            findPath(target.getTargetLocation());
+        } else if (target.getType() == TargetType.ENTITY){
+            EntityTarget entityTarget = (EntityTarget) target;
+            Mob mobNpc = ((Mob) getNpc().getEntity());
+            if (!(mobNpc.getTarget() == entityTarget.getEntity())) {
+                mobNpc.setTarget(entityTarget.getEntity());
+            }
+        }
 
     }
 
+    public abstract int getDamage();
 
 
     /**
@@ -261,7 +275,6 @@ public class COISoldier extends COIEntity implements Commandable {
 
         }
 
-        fighting = needFight;
     }
 
     @Override
@@ -296,4 +309,6 @@ public class COISoldier extends COIEntity implements Commandable {
     public AttackGoal getGoal() {
         return goal;
     }
+
+
 }

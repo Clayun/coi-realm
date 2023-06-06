@@ -23,7 +23,7 @@ import java.util.*;
  * 相较于普通AI增加了拆方块的功能，可以在此基础上细分工种
  * 矿工会寻找矿物，挖到之后会捡回来放到箱子里，循环反复
  */
-public class COIMiner extends COIHuman{
+public class COIMiner extends COIEntity {
 
     // 是否正在挖掘中
     private boolean isBreaking = false;
@@ -43,9 +43,9 @@ public class COIMiner extends COIHuman{
      * @param respawn 是否重新生成，重新生成会清空背包
      * @return
      */
-    public COIHuman update(COIMinerCreator coiNpc, boolean respawn) {
+    public COIEntity update(COIMinerCreator coiNpc, boolean respawn) {
 
-        COIHuman update = super.update(coiNpc, respawn);
+        COIEntity update = super.update(coiNpc, respawn);
 
         if(update != null && respawn){
             // 初始化NPC待拆方块

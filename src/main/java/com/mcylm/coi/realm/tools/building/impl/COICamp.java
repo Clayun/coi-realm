@@ -2,10 +2,7 @@ package com.mcylm.coi.realm.tools.building.impl;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.model.COINpc;
-import com.mcylm.coi.realm.player.COIPlayer;
 import com.mcylm.coi.realm.tools.attack.impl.FollowGoal;
-import com.mcylm.coi.realm.tools.attack.impl.GatherGoal;
-import com.mcylm.coi.realm.tools.attack.impl.PatrolGoal;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.config.BuildingConfig;
 import com.mcylm.coi.realm.tools.npc.COISoldierCreator;
@@ -69,7 +66,7 @@ public class COICamp extends COIBuilding {
                             soldier = new COISoldier(npcCreator);
                             soldier.spawn(creator.getSpawnLocation());
                             // 仅用于跟随的 Commander
-                            soldier.setCommander(new COIPlayer(player));
+                            soldier.setCommander(player);
                             // 游戏主流程简化，改为跟随建造者行走
                             soldier.setGoal(new FollowGoal(soldier));
                             soldier.getGoal().start();
@@ -78,7 +75,7 @@ public class COICamp extends COIBuilding {
                         }
                     }
                 }
-            }.runTaskTimer(Entry.getInstance(),0,20l);
+            }.runTaskTimer(Entry.getInstance(),0, 20L);
 
 
     }

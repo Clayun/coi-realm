@@ -1,14 +1,13 @@
 package com.mcylm.coi.realm.gui;
 
 import com.mcylm.coi.realm.Entry;
+import com.mcylm.coi.realm.enums.COITeamType;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.LoggerUtils;
-import com.mcylm.coi.realm.utils.TeamUtils;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
 import me.lucko.helper.menu.scheme.MenuPopulator;
 import me.lucko.helper.menu.scheme.MenuScheme;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 public class ChooseTeamGUI extends Gui {
@@ -31,7 +30,9 @@ public class ChooseTeamGUI extends Gui {
         // 放置按钮
         MenuPopulator populator = BUTTONS.newPopulator(this);
         for (COITeam team : Entry.getGame().getTeams()) {
-
+            if (team.getType() == COITeamType.MONSTER) {
+                continue;
+            }
             populator.accept(ItemStackBuilder.of(team.getType().getBlockColor())
                     .name(team.getType().getColor() + team.getType().getName())
                     .amount(getChooseTeamGUIPeopleAmount(team))

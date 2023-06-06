@@ -11,7 +11,9 @@ public enum AttackGoalType {
     ATTACK("主动进攻", Material.IRON_SWORD, "主动进攻"),
     FOLLOW("跟随", Material.NAME_TAG, "跟随命令者"),
     LOCK("锁定", Material.DIAMOND_SWORD, "锁定几个目标进行攻击"),
-    GATHER("集合", Material.FEATHER,"将NPC呼唤至命令者");
+    GATHER("集合", Material.FEATHER,"将NPC呼唤至命令者"),
+    TEAM_FOLLOW("列队跟随", Material.NAME_TAG, "跟随队伍")
+    ;
     private String name;
     // GUI显示的材质
     private Material itemType;

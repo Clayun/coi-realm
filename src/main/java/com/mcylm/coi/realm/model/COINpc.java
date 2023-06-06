@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -97,6 +96,9 @@ public class COINpc implements Serializable {
 
     // NPC
     private AI npc;
+
+    // NPC Type
+    protected EntityType npcType = EntityType.PLAYER;
 
     // 服装类型
     public static List<Material> CLOTHES = new ArrayList<>(){{

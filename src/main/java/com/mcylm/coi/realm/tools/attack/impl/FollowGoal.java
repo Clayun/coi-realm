@@ -17,8 +17,8 @@ public class FollowGoal extends SimpleGoal {
         Commandable npc = getExecutor();
 
         if (npc.getTarget() == null && npc.getCommander() != null) {
-            if (npc.getLocation() != null && npc.getLocation().distance(npc.getCommander().getBukkitPlayer().getLocation()) >= maxRadius) {
-                npc.findPath(npc.getCommander().getBukkitPlayer().getLocation());
+            if (npc.getLocation() != null && npc.getLocation().distance(npc.getCommander().getLocation()) >= maxRadius) {
+                npc.findPath(npc.getCommander().getLocation());
             }
         }
 

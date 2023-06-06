@@ -20,8 +20,8 @@ public class GatherGoal extends SimpleGoal {
         }
 
         if (npc.getTarget() == null && npc.getCommander() != null) {
-            if (npc.getLocation() != null && npc.getLocation().distance(npc.getCommander().getBukkitPlayer().getLocation()) >= 10) {
-                npc.findPath(npc.getCommander().getBukkitPlayer().getLocation());
+            if (npc.getLocation() != null && npc.getLocation().distance(npc.getCommander().getLocation()) >= 10) {
+                npc.findPath(npc.getCommander().getLocation());
             }
         }
     }

@@ -2,24 +2,17 @@ package com.mcylm.coi.realm.utils;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIBuildingType;
-import com.mcylm.coi.realm.enums.COIGUIType;
-import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COITeamType;
 import com.mcylm.coi.realm.model.COINpc;
-import com.mcylm.coi.realm.tools.attack.target.impl.EntityTarget;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.data.EntityData;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
+import lombok.Getter;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,6 +26,8 @@ import java.util.Random;
  */
 public class TeamUtils {
 
+    @Getter
+    private static COITeam monsterTeam;
     /**
      * 初始化队伍
      */
@@ -83,7 +78,7 @@ public class TeamUtils {
         COITeam green = new COITeam(COITeamType.GREEN,spawnerList.get(3));
         COITeam yellow = new COITeam(COITeamType.YELLOW,spawnerList.get(4));
         COITeam blue = new COITeam(COITeamType.BLUE,spawnerList.get(5));
-
+        monsterTeam = new COITeam(COITeamType.MONSTER, spawnerList.get(6));
         List<COITeam> results = new ArrayList<>();
 
         results.add(red);
@@ -92,6 +87,7 @@ public class TeamUtils {
         results.add(blue);
         results.add(purple);
         results.add(black);
+        results.add(monsterTeam);
 
         return results;
     }

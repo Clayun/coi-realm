@@ -1,14 +1,13 @@
 package com.mcylm.coi.realm.tools.attack;
 
 
-import com.mcylm.coi.realm.player.COIPlayer;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.LivingEntity;
 
 public interface Commandable extends DamageableAI {
 
-    void setCommander(COIPlayer player);
+    void setCommander(LivingEntity entity);
 
-    COIPlayer getCommander();
+    LivingEntity getCommander();
 
     void setGoal(AttackGoal goal);
 

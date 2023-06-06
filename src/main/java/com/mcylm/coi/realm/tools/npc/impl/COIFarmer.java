@@ -29,7 +29,7 @@ import java.util.*;
  * 角色会将身上有的小麦都做成面包，并放到箱子里
  * 如果没有小麦，就会寻找附近的泥土，开始种植，并使用骨粉催熟，循环反复
  */
-public class COIFarmer extends COIHuman{
+public class COIFarmer extends COIEntity {
 
     // 耕地
     private List<Block> farmlands;

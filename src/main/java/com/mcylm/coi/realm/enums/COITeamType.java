@@ -21,6 +21,7 @@ public enum  COITeamType {
     BLACK("BLACK","黑队","&0",NamedTextColor.BLACK,Material.BLACK_TERRACOTTA,Color.BLACK,32),
     PURPLE("PURPLE","紫队","&5",NamedTextColor.LIGHT_PURPLE,Material.PURPLE_TERRACOTTA,Color.PURPLE,34),
 
+    MONSTER("WHITE", "野怪", "&r", NamedTextColor.WHITE, Material.WHITE_TERRACOTTA, Color.WHITE, -1);
     ;
 
     // CODE

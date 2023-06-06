@@ -36,10 +36,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 所有AI的父类
  * 通用AI，拥有基本生存能力，能捡东西，吃东西
  */
-public class COIHuman implements AI {
+public class COIEntity implements AI {
 
     // CitizensNPC 实例
-    private NPC npc;
+    protected NPC npc;
     // COIAI 实例
     private COINpc coiNpc;
     // NPC饱食度
@@ -86,9 +86,10 @@ public class COIHuman implements AI {
     private Map<Player, AtomicInteger> hologramVisitors = new HashMap<>();
 
     // 构造NPC
-    public COIHuman(COINpc npcCreator) {
+    public COIEntity(COINpc npcCreator) {
         npcCreator.setNpc(this);
         create(npcCreator);
+
     }
 
     /**
@@ -98,7 +99,7 @@ public class COIHuman implements AI {
      * @return
      */
     @Override
-    public COIHuman create(COINpc npcCreator) {
+    public COIEntity create(COINpc npcCreator) {
 
         if (npcCreator == null) {
             LoggerUtils.log("npc创建对象为空，无法生成NPC");
@@ -108,13 +109,14 @@ public class COIHuman implements AI {
         this.coiNpc = npcCreator;
 
         // 创建 CitizensNPC 实例
-        this.npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, getName());
+        this.npc = CitizensAPI.getNPCRegistry().createNPC(npcCreator.getNpcType(), getName());
         this.isCreated = true;
         this.coiNpc.setId(this.npc.getUniqueId().toString());
         initNpcAttributes(npcCreator);
 
         return this;
     }
+
 
     /**
      * 更新 NPC属性
@@ -124,7 +126,7 @@ public class COIHuman implements AI {
      * @return
      */
     @Override
-    public COIHuman update(COINpc coiNpc, boolean respawn) {
+    public COIEntity update(COINpc coiNpc, boolean respawn) {
 
         if (this.coiNpc == null || !isCreated) {
             LoggerUtils.log("npc从未创建，无法更新");
@@ -985,7 +987,7 @@ public class COIHuman implements AI {
     /**
      * 初始化NPC的参数
      */
-    private void initNpcAttributes(COINpc npcCreator) {
+    protected void initNpcAttributes(COINpc npcCreator) {
 
         // 恢复血量和饱食度
         initEntityStatus();
@@ -1011,7 +1013,7 @@ public class COIHuman implements AI {
     /**
      * 初始化生物状态
      */
-    private void initEntityStatus() {
+    protected void initEntityStatus() {
         // 饥饿值默认20
         setHunger(DEFAULT_HUNGER);
 
