@@ -53,6 +53,8 @@ game:
     - '872,49,540'
     - '750,50,839'
     - '435,49,841'
+
+  # 墙体的判定高度
   wall-detect-height: 26
 
 # NPC可食用的 Material Name
