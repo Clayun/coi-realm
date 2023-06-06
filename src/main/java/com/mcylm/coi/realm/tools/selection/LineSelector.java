@@ -5,6 +5,7 @@ import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.model.COIStructure;
 import com.mcylm.coi.realm.tools.building.LineBuild;
 import com.mcylm.coi.realm.utils.LocationUtils;
+import com.mcylm.coi.realm.utils.LoggerUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -16,6 +17,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -89,6 +92,7 @@ public class LineSelector implements Selector {
 
             List<Block> blocks = new ArrayList<>();
             Iterator<Location> iterator = line.iterator();
+            LocalDateTime startTime = LocalDateTime.now();
             while (iterator.hasNext()) {
                 Location point = iterator.next();
                 Block block = getSuitableBlock(structure, point);
@@ -121,13 +125,18 @@ public class LineSelector implements Selector {
                 builder.location(particleLoc).receivers(player).spawn();
             }
 
+            LocalDateTime endTime = LocalDateTime.now();
+            Duration duration = Duration.between(startTime, endTime);
+            long millis = duration.toMillis();
+            LoggerUtils.debug("select方法执行所需时间（毫秒）："+millis);
+
             String state = canPlace ? "§a可放置" : "§c不可放置";
 
             player.sendActionBar("§a潜行进行放置 右键选择新点 §c切换物品取消 §e当前状态: " + state);
 
-
             if (player.isSneaking() && canPlace) {
                 stop(false);
+                LoggerUtils.debug("玩家蹲下确认的建造");
                 Bukkit.getScheduler().runTask(Entry.getInstance(), () -> place(buildPoints));
             }
         } else {
