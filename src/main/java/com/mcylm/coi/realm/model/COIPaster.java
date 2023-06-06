@@ -38,7 +38,7 @@ public class COIPaster {
     private COIStructure structure;
 
     // 是否建造空气方块
-    private boolean withAir;
+    private boolean withAir = true;
 
     // 小队的特殊颜色方块替换
     private Material blockColor;

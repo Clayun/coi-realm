@@ -11,10 +11,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -150,14 +148,14 @@ public abstract class LineBuild extends COIBuilding {
     public void upgradeBuild(Player player) {
 
 
+        // 升级建筑先关闭complete，否则可以重复搞
+        setComplete(false);
+
         for (Block b : getBlocks()) {
             b.removeMetadata("building", Entry.getInstance());
 
         }
-
-
-        Set<Map.Entry<Location, Material>> blocks = getOriginalBlocks().entrySet();
-        Set<Map.Entry<Location, BlockData>> blockData = getOriginalBlockData().entrySet();
+        /*
         for (Map.Entry<Location, Material> entry : blocks) {
             Block block = entry.getKey().getBlock();
             if (block.getState() instanceof Container container) {
@@ -167,21 +165,19 @@ public abstract class LineBuild extends COIBuilding {
             }
             block.setType(entry.getValue());
         }
+
+
         for (Map.Entry<Location, BlockData> entry : blockData) {
             entry.getKey().getBlock().setBlockData(entry.getValue());
         }
 
-        getBlocks().clear();
-        getOriginalBlocks().clear();
-        getOriginalBlockData().clear();
+         */
+
+        // blocks.clear();
+        // originalBlocks.clear();
+        // originalBlockData.clear();
         getRemainingBlocks().clear();
-        getChestsLocation().clear();
-
-
-        // 建筑开始就记录位置
-        Location location = points.get(points.size() / 2).clone();
-        setLocation(location.clone());
-        setWorld(location.getWorld().getName());
+        // chestsLocation.clear();
 
         String structureName = getStructureByLevel();
 
@@ -194,6 +190,8 @@ public abstract class LineBuild extends COIBuilding {
 
         // 设置名称
         structure.setName(getType().getName());
+
+        Location location = points.get(points.size() / 2).clone();
 
         structure = prepareStructure(structure, location.clone());
 
@@ -228,12 +226,23 @@ public abstract class LineBuild extends COIBuilding {
                         , finalStructure.clone(), false, TeamUtils.getTeamByPlayer(player).getType().getBlockColor()
                         , getNpcCreators(), ((block, blockToPlace, type) -> {
                     getBlocks().add(block);
+
+                    if (block.getState() instanceof Container container && type != block.getType()) {
+
+                        for (ItemStack item : container.getInventory().getContents()) {
+
+                            if (item != null) block.getWorld().dropItemNaturally(block.getLocation(), item);
+
+                        }
+                        chestsLocation.remove(block.getLocation());
+                    }
+
                     // block.setMetadata("building", new BuildData(building));
                     if (ItemUtils.SUITABLE_CONTAINER_TYPES.contains(type)) {
-                        getChestsLocation().add(block.getLocation());
+                        chestsLocation.add(block.getLocation());
                     }
-                    getOriginalBlockData().put(block.getLocation(), block.getBlockData().clone());
-                    getOriginalBlocks().put(block.getLocation(), block.getType());
+                    originalBlockData.putIfAbsent(block.getLocation(), block.getBlockData().clone());
+                    originalBlocks.putIfAbsent(block.getLocation(), block.getType());
                     return type;
                 }));
 

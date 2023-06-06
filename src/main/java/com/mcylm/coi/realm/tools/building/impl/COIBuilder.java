@@ -82,9 +82,8 @@ public class COIBuilder implements Builder {
             if("AIR".equals(coiBlock.getMaterial())
                 && !paster.isWithAir()){
                 //删除掉空气方块
-            }else {
+            } else {
                 needBuildCOIBlocks.add(coiBlock);
-
             }
         }
 
@@ -92,6 +91,7 @@ public class COIBuilder implements Builder {
         String spawnerBlockTypeName = Entry.getInstance().getConfig().getString("game.npc.spawner-material");
         // 炮口位置方块名称
         String muzzleBlockTypeName = Entry.getInstance().getConfig().getString("game.turret.muzzle-material");
+
 
         //根据Y轴排序
         needBuildCOIBlocks.sort(Comparator.comparingDouble(COIBlock::getY));

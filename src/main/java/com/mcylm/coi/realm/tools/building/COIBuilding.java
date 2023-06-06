@@ -47,72 +47,72 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class COIBuilding implements Serializable {
 
     // 是否可建造
-    private boolean available = false;
+    protected boolean available = false;
 
     // 是否建造完成
-    private boolean complete = false;
+    protected boolean complete = false;
 
     // 是否"活"着
-    private boolean alive = true;
+    protected boolean alive = true;
 
     // 建筑类型
-    private COIBuildingType type;
+    protected COIBuildingType type;
 
     // 所需消耗的材料
-    private int consume = 0;
+    protected int consume = 0;
 
     // 建筑的全部方块
-    private List<COIBlock> remainingBlocks;
+    protected List<COIBlock> remainingBlocks;
 
     // 地图中建筑的所有方块
-    private Set<Block> blocks = new HashSet<>();
+    protected Set<Block> blocks = new HashSet<>();
 
     // 建筑所替换的原方块数据
-    private Map<Location, BlockData> originalBlockData = new ConcurrentHashMap<>();
-    private Map<Location, Material> originalBlocks = new ConcurrentHashMap<>();
+    protected Map<Location, BlockData> originalBlockData = new ConcurrentHashMap<>();
+    protected Map<Location, Material> originalBlocks = new ConcurrentHashMap<>();
 
     // 放置物品的箱子位置
-    private List<Location> chestsLocation = new ArrayList<>();
+    protected List<Location> chestsLocation = new ArrayList<>();
 
     // 所在世界名称
-    private String world;
+    protected String world;
 
     // 建筑基点
-    private Location location;
+    protected Location location;
 
     // 炮口，防御塔类建筑才有的
-    private Location muzzle;
+    protected Location muzzle;
 
     // 总方块数量
-    private Integer totalBlocks;
+    protected Integer totalBlocks;
 
     // 建筑等级
-    private int level = 1;
+    protected int level = 1;
 
     // 最高等级
-    private Integer maxLevel = 1;
+    protected Integer maxLevel = 1;
 
     // 建筑等级对照建筑结构表
     // key为等级，value是建筑结构文件名称
-    private Map<Integer, String> buildingLevelStructure = new HashMap<>();
+    protected Map<Integer, String> buildingLevelStructure = new HashMap<>();
 
     // 建筑生成的NPC创建器，不生成NPC就设置NULL
-    private List<COINpc> npcCreators = new ArrayList<>();
+    protected List<COINpc> npcCreators = new ArrayList<>();
 
     // 建筑所属的队伍
-    private COITeam team;
+    protected COITeam team;
 
     // 建筑血量
-    private AtomicInteger health = new AtomicInteger(getMaxHealth());
+    protected AtomicInteger health = new AtomicInteger(getMaxHealth());
 
     // 建筑配置
-    private BuildingConfig config;
+    protected BuildingConfig config;
 
     // 悬浮字相关
-    private Map<Player, Hologram> holograms = new HashMap<>();
-    private Map<Player, AtomicInteger> hologramVisitors = new HashMap<>();
+    protected Map<Player, Hologram> holograms = new HashMap<>();
+    protected Map<Player, AtomicInteger> hologramVisitors = new HashMap<>();
 
-    private static String getHealthBarText(double max, double current, int length) {
+    protected static String getHealthBarText(double max, double current, int length) {
         double percent = current / max;
         StringBuilder text = new StringBuilder("§a建筑血量: ");
         int healthLength = Math.toIntExact(Math.round(length * percent));
@@ -291,7 +291,7 @@ public abstract class COIBuilding implements Serializable {
         }
     }
 
-    private void setTeamSpawnLocation(Location location,COITeam team){
+    protected void setTeamSpawnLocation(Location location,COITeam team){
         team.setSpawner(location);
     }
 
@@ -308,8 +308,6 @@ public abstract class COIBuilding implements Serializable {
             b.removeMetadata("building", Entry.getInstance());
 
         }
-        Set<Map.Entry<Location, Material>> blocks = getOriginalBlocks().entrySet();
-        Set<Map.Entry<Location, BlockData>> blockData = getOriginalBlockData().entrySet();
         /*
         for (Map.Entry<Location, Material> entry : blocks) {
             Block block = entry.getKey().getBlock();
@@ -328,7 +326,7 @@ public abstract class COIBuilding implements Serializable {
 
          */
 
-        blocks.clear();
+        // blocks.clear();
         // originalBlocks.clear();
         // originalBlockData.clear();
         remainingBlocks.clear();
@@ -360,6 +358,17 @@ public abstract class COIBuilding implements Serializable {
                 , structure, false, getTeam().getType().getBlockColor()
                 , npcCreators, ((block, blockToPlace, type) -> {
             getBlocks().add(block);
+
+            if (block.getState() instanceof Container container && type != block.getType()) {
+
+                for (ItemStack item : container.getInventory().getContents()) {
+
+                    if (item != null) block.getWorld().dropItemNaturally(block.getLocation(), item);
+
+                }
+                chestsLocation.remove(block.getLocation());
+            }
+
             // block.setMetadata("building", new BuildData(building));
             if (ItemUtils.SUITABLE_CONTAINER_TYPES.contains(type)) {
                 chestsLocation.add(block.getLocation());
@@ -367,10 +376,7 @@ public abstract class COIBuilding implements Serializable {
             originalBlockData.putIfAbsent(block.getLocation(), block.getBlockData().clone());
             originalBlocks.putIfAbsent(block.getLocation(), block.getType());
             return type;
-        }), (block, blockToPlace, type) -> {
-            return !Entry.UPGRADE_SKIP_BLOCKS.contains(block.getType().toString()); // 符合条件 相当于不替换
-        });
-
+        }));
         // 开始建造
         Entry.getBuilder().pasteStructure(coiPaster, player, building);
 
@@ -441,7 +447,7 @@ public abstract class COIBuilding implements Serializable {
     }
 
     // 找到箱子的位置
-    private List<Location> getChestsLocation(List<COIBlock> blocks) {
+    protected List<Location> getChestsLocation(List<COIBlock> blocks) {
 
         List<Location> chestsLocations = new ArrayList<>();
         for (COIBlock block : blocks) {
@@ -588,7 +594,7 @@ public abstract class COIBuilding implements Serializable {
         }
     }
 
-    private void checkDefeat(Entity attacker){
+    protected void checkDefeat(Entity attacker){
         // 击败小队的
         COITeam defeatedByTeam = null;
         Player player = null;
