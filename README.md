@@ -1,7 +1,7 @@
 # 介绍
 
 <div align="center">
-  <img src="coi_logo.png" alt="Your Logo">
+  <img src="images/coi_logo2.png" alt="Your Logo">
 </div>
 
 README in [English](README_EN.md)
