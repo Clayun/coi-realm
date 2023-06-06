@@ -35,7 +35,7 @@ public enum COIScoreType {
             "%s 升级了 %s 获得奖励积分 %s",
             50),
 
-    VICTORY("大获全胜",
+    VICTORY("胜利奖",
             "小队获得最后的胜利",
             "小队获得最后的胜利！获得奖励积分 %s",
             200),
