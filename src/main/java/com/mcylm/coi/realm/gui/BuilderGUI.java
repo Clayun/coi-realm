@@ -40,7 +40,14 @@ public class BuilderGUI {
         COITeam team = TeamUtils.getTeamByPlayer(p);
 
         // 未加入小队的，还有等待中的时候，都打开选队GUI
-        if (team == null || Entry.getGame().getStatus().equals(COIGameStatus.WAITING)) {
+        if (team == null) {
+            LoggerUtils.sendMessage("请选择你要加入的小队", p);
+            ChooseTeamGUI chooseTeamGUI = new ChooseTeamGUI(p);
+            chooseTeamGUI.open();
+            return;
+        }
+
+        if (Entry.getGame().getStatus().equals(COIGameStatus.WAITING)) {
             LoggerUtils.sendMessage("请选择你要加入的小队", p);
             ChooseTeamGUI chooseTeamGUI = new ChooseTeamGUI(p);
             chooseTeamGUI.open();

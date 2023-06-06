@@ -7,6 +7,7 @@ import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.runnable.NpcAITask;
 import com.mcylm.coi.realm.tools.data.EntityData;
 import com.mcylm.coi.realm.tools.npc.AI;
+import com.mcylm.coi.realm.tools.trait.DisguiseTrait;
 import com.mcylm.coi.realm.utils.GUIUtils;
 import com.mcylm.coi.realm.utils.InventoryUtils;
 import com.mcylm.coi.realm.utils.ItemUtils;
@@ -14,7 +15,7 @@ import com.mcylm.coi.realm.utils.LoggerUtils;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings;
-import me.libraryaddict.disguise.disguisetypes.MobDisguise;
+import me.libraryaddict.disguise.disguisetypes.*;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.npc.NPC;
@@ -111,6 +112,27 @@ public class COIEntity implements AI {
 
         // 创建 CitizensNPC 实例
         this.npc = CitizensAPI.getNPCRegistry().createNPC(npcCreator.getNpcType(), getName());
+
+        // 设置伪装
+        if(getCoiNpc().getDisguiseType() != null){
+
+            DisguiseTrait disguiseTrait = new DisguiseTrait();
+
+            DisguiseType disguiseType = getCoiNpc().getDisguiseType();
+            Disguise disguise;
+
+            if (disguiseType.isMisc()) {
+                disguise = new MiscDisguise(disguiseType);
+            } else if (disguiseType.isMob()) {
+                disguise = new MobDisguise(disguiseType);
+            } else {
+                disguise = new PlayerDisguise(getName());
+            }
+
+            disguiseTrait.setDisguise(disguise);
+            npc.addTrait(disguiseTrait);
+        }
+
         this.isCreated = true;
         this.coiNpc.setId(this.npc.getUniqueId().toString());
         initNpcAttributes(npcCreator);
@@ -828,13 +850,6 @@ public class COIEntity implements AI {
 
         npc.spawn(location);
 
-        // 设置伪装
-        if(getCoiNpc().getDisguise() != null){
-            MobDisguise disguise = getCoiNpc().getDisguise();
-            disguise.setEntity(npc.getEntity());
-            disguise.startDisguise();
-        }
-
         // 恢复血量和饱食度
         initEntityStatus();
 
@@ -848,10 +863,6 @@ public class COIEntity implements AI {
     public void despawn() {
         if (this.npc != null) {
             npc.despawn();
-            if(getCoiNpc().getDisguise() != null){
-                MobDisguise disguise = getCoiNpc().getDisguise();
-                disguise.stopDisguise();
-            }
             this.isSpawn = false;
         }
     }

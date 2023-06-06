@@ -164,8 +164,7 @@ public class COIStope extends COIBuilding {
         npcCreator.setInventory(inventory);
 
         // 设置伪装
-        MobDisguise mobDisguise = new MobDisguise(DisguiseType.MINECART_CHEST);
-        npcCreator.setDisguise(mobDisguise);
+        npcCreator.setDisguiseType(DisguiseType.MINECART_CHEST);
 
         npcCreator.setAggressive(false);
         npcCreator.setAlertRadius(5);

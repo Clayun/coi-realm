@@ -20,13 +20,13 @@ import java.util.Set;
 public class COIPillagerCreator extends COIMonsterCreator{
     @Setter
     @Getter
-    private AttackTeam team;
-    public COIPillagerCreator(AttackTeam team) {
+    private AttackTeam attackteam;
+    public COIPillagerCreator(AttackTeam attackteam) {
         setNpcType(EntityType.PILLAGER);
-        this.team = team;
+        this.attackteam = attackteam;
     }
 
-    public static COIPillagerCreator initCOIPillagerCreator(AttackTeam team) {
+    public static COIPillagerCreator initCOIPillagerCreator(AttackTeam attackteam) {
         // 背包内的物品
         Inventory inventory = GUIUtils.createNpcInventory(3);
         inventory.addItem(new ItemStack(Material.CROSSBOW));
@@ -43,7 +43,7 @@ public class COIPillagerCreator extends COIMonsterCreator{
         for(Material clothesType : clothes){
             pickItemMaterials.add(clothesType.name());
         }
-        COIPillagerCreator npcCreator = new COIPillagerCreator(team);
+        COIPillagerCreator npcCreator = new COIPillagerCreator(attackteam);
         npcCreator.setInventory(inventory);
         npcCreator.setAggressive(true);
         npcCreator.setAlertRadius(10);
