@@ -121,6 +121,11 @@ public class AreaSelector implements Selector {
             if (BuildData.getBuildingByBlock(block) != null) {
                 canPlace = false;
             }
+
+            if(block.isSolid()){
+                // 建筑只能在完全空白的地方建造
+                canPlace = false;
+            }
         }
         Region regionFloor = new Region(start.clone(), end.clone().set(end.getX(), start.getY() - 1, end.getZ()));
         Set<Block> blocks = regionFloor.getBlocks();
