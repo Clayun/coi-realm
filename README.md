@@ -1,21 +1,26 @@
 
-<div align="center">
-  <img src="images/coi_logo2.png" alt="Your Logo">
-</div>
+<h1 align="center">
+⚡️岛屿冲突 COI-Realm
+</h1>
 
-README in [English](README_EN.md)
+<p align="center">
+    <a href="README_EN.md">English</a> | 中文
+</p>
 
-这是一个岛屿冲突的新的RTS游戏分支。
+<p align="center">
+    <em>在Minecraft里面来一场RTS游戏吧</em>
+</p>
 
-<font color="yellow">本插件基于 PaperAPI
-如果你想使用本插件开服务器，请使用Paper服务端1.19.4及以上版本</font>
+<font color="yellow">**本插件基于 PaperAPI
+如果你想使用本插件开服务器，请使用Paper服务端1.19.4及以上版本**</font>
 
+## 这到底是个啥游戏
 
-玩家的目标是摧毁所有其他玩家的基地。
-一个团队可以有1-5名玩家，
-每个玩家都需要建造建筑并使用AI去收集资源。
-并使用这些资源来为AI战士制造武器和盔甲，
-并使用这些武器和盔甲去攻击其他玩家阵营
+🚀 玩家的目标是摧毁所有其他玩家的基地。  
+🚀 一个团队可以有1-5名玩家，  
+🚀 每个玩家都需要建造建筑并使用AI去收集资源。  
+🚀 并使用这些资源来为AI战士制造武器和盔甲，  
+🚀 并使用这些武器和盔甲去攻击其他玩家阵营  
 
 # 开发任务
 1. 实现预设三种AI的全部效果 [<font color="green">100%</font>]
