@@ -56,6 +56,9 @@ public class Entry extends ExtendedJavaPlugin {
     // NPC可食用的 Material Name
     private static List<String> NPC_FOODS;
 
+    // 城墙根部坐标检测起始高度
+    public static Integer WALL_DETECT_HEIGHT = 18;
+
     // 主游戏进程管理
     private static COIGame game;
 
@@ -84,7 +87,7 @@ public class Entry extends ExtendedJavaPlugin {
         SERVER_MODE = getConfig().getString("server-mode");
         MAX_GROUP_PLAYERS = getConfig().getInt("game.max-group-players");
         NPC_FOODS = getConfig().getStringList("foods");
-
+        WALL_DETECT_HEIGHT = getConfig().getInt("game.wall-detect-height");
         COIServerMode serverMode = COIServerMode.parseCode(SERVER_MODE);
 
         if(serverMode == null){

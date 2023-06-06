@@ -14,8 +14,6 @@ import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import com.mcylm.coi.realm.utils.rotation.Rotation;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings;
@@ -762,7 +760,7 @@ public abstract class COIBuilding implements Serializable {
 
     public abstract BuildingConfig getDefaultConfig();
 
-    private void applyConfig() {
+    protected void applyConfig() {
         consume = config.getConsume();
         maxLevel = config.getMaxLevel();
         setBuildingLevelStructure(config.getStructures());

@@ -83,7 +83,7 @@ public class LineSelector implements Selector {
             Iterator<Location> iterator = line.iterator();
             while (iterator.hasNext()) {
                 Location point = iterator.next();
-                Block block = point.getWorld().getHighestBlockAt(point);
+                Block block = getSuitableBlock(structure, point);
                 if (blocks.contains(block)) {
                     iterator.remove();
                     continue;
@@ -127,6 +127,28 @@ public class LineSelector implements Selector {
             player.sendActionBar("§a右键选择点 §c切换物品取消 §e当前状态: §f需要选点");
 
         }
+    }
+
+    private Block getSuitableBlock(COIStructure structure, Location loc) {
+        loc = loc.clone();
+        loc.setY(Entry.WALL_DETECT_HEIGHT);
+        int freeHeight = 0;
+        Block rootBlock = loc.getBlock();
+        while (loc.getY() < 256) {
+
+            if (freeHeight >= structure.getHeight()) {
+                return rootBlock;
+            }
+            if (!loc.getBlock().isSolid()) {
+                freeHeight++;
+            } else {
+                freeHeight = 0;
+                rootBlock = loc.getBlock().getRelative(0,1,0);
+            }
+            loc.add(0,1,0);
+
+        }
+        return rootBlock;
     }
 
 
