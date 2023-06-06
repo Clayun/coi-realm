@@ -29,6 +29,8 @@ public class COIWall extends LineBuild {
         COIWall wall = new COIWall();
         wall.setType(getType());
         wall.setTeam(getTeam());
+        wall.setConfig(getConfig());
+
         return wall;
     }
 

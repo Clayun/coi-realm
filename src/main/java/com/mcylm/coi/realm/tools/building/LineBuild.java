@@ -154,6 +154,8 @@ public abstract class LineBuild extends COIBuilding {
             b.removeMetadata("building", Entry.getInstance());
 
         }
+
+
         Set<Map.Entry<Location, Material>> blocks = getOriginalBlocks().entrySet();
         Set<Map.Entry<Location, BlockData>> blockData = getOriginalBlockData().entrySet();
         for (Map.Entry<Location, Material> entry : blocks) {
