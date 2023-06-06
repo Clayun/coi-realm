@@ -1,11 +1,11 @@
 package com.mcylm.coi.realm.tools.npc.impl.monster;
 
-import com.mcylm.coi.realm.tools.npc.COIMonsterCreator;
+import com.mcylm.coi.realm.tools.npc.monster.COIPillagerCreator;
 
-public class COIZombie extends COIMonster {
+public class COIPillager extends COIMonster {
 
 
-    public COIZombie(COIMonsterCreator npcCreator) {
+    public COIPillager(COIPillagerCreator npcCreator) {
         super(npcCreator);
     }
 

@@ -13,6 +13,7 @@ import com.mcylm.coi.realm.listener.PlayerInteractListener;
 import com.mcylm.coi.realm.managers.COIBuildingManager;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.tools.building.impl.*;
+import com.mcylm.coi.realm.tools.building.impl.monster.COIMonsterBase;
 import com.mcylm.coi.realm.tools.data.EntityData;
 import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
 import com.mcylm.coi.realm.tools.npc.impl.monster.COIMonster;
@@ -193,6 +194,8 @@ public class Entry extends ExtendedJavaPlugin {
         // 防御塔系列
         buildingManager.registerBuilding(COIBuildingType.TURRET_NORMAL, COITurret.class);
 
+        // 怪物系列
+        buildingManager.registerBuilding(COIBuildingType.MONSTER_BASE, COIMonsterBase.class);
         LoggerUtils.log("建筑文件注册完成");
     }
 
