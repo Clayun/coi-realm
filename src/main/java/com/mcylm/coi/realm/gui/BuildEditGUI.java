@@ -34,7 +34,7 @@ public class BuildEditGUI extends Gui {
             MenuPopulator populator = BUTTONS.newPopulator(this);
 
             // 显示在GUI的才算
-            if(building.getType().isInGUI()){
+            if(building.getConfig().isShowInMenu()){
                 populator.accept(ItemStackBuilder.of(Material.BARRIER)
                         .name("&c拆除")
                         .lore("")

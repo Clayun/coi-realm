@@ -4,7 +4,9 @@ import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.config.BuildingConfig;
+import com.mcylm.coi.realm.tools.npc.COICartCreator;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
+import com.mcylm.coi.realm.tools.npc.impl.COICart;
 import com.mcylm.coi.realm.tools.npc.impl.COIMiner;
 import com.mcylm.coi.realm.utils.GUIUtils;
 import lombok.Data;
@@ -15,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,7 +34,7 @@ public class COIStope extends COIBuilding {
         // 默认等级为1
         setLevel(1);
         // 初始化NPC创建器
-        setNpcCreators(List.of(initMinerCreator()));
+        setNpcCreators(initNPCCreator());
         //初始化完成，可建造
         setAvailable(true);
         initStructure();
@@ -52,13 +55,19 @@ public class COIStope extends COIBuilding {
         for (COINpc creator : getNpcCreators()) {
             // 如果建筑建造完成，NPC就初始化
             if (isComplete()) {
-                COIMinerCreator npcCreator = (COIMinerCreator) creator;
-                // 设置箱子
-                npcCreator.setChestsLocation(getChestsLocation());
-                COIMiner worker = new COIMiner(npcCreator);
-                worker.spawn(creator.getSpawnLocation());
+                
+                if(creator instanceof COIMinerCreator){
+                    COIMinerCreator npcCreator = (COIMinerCreator) creator;
+                    // 设置箱子
+                    npcCreator.setChestsLocation(getChestsLocation());
+                    COIMiner worker = new COIMiner(npcCreator);
+                    worker.spawn(creator.getSpawnLocation());
 
-
+                }else if(creator instanceof COICartCreator){
+                    COICartCreator npcCreator = (COICartCreator) creator;
+                    COICart worker = new COICart(npcCreator);
+                    worker.spawn(creator.getSpawnLocation());
+                }
             }
         }
 
@@ -129,6 +138,43 @@ public class COIStope extends COIBuilding {
                 "WQ5OTU5MGRkMGRlZjE0MjhiODJhMmE4OTA3OTczN2Q3ZjVhZDA4MTQ5MTVlZmY1ZDdmNjgyNTk2OWYzIn19fQ");
 
         return npcCreator;
+    }
+
+    /**
+     * 构造一个矿工NPC创建器
+     *
+     * @return
+     */
+    private COICartCreator initCartCreator() {
+
+        // 背包内的物品
+        Inventory inventory = GUIUtils.createNpcInventory(3);
+
+        // 从配置文件读取矿工要捡起来的东西
+        List<String> picks = Entry.getInstance().getConfig().getStringList("miner.picks");
+        Set<String> pickItemMaterials = new HashSet<>();
+        pickItemMaterials.addAll(picks);
+
+
+        COICartCreator npcCreator = new COICartCreator();
+        npcCreator.setInventory(inventory);
+
+        npcCreator.setAggressive(false);
+        npcCreator.setAlertRadius(5);
+        npcCreator.setBreakBlockMaterials(new HashSet<>());
+        npcCreator.setName("矿物运输员");
+        npcCreator.setLevel(1);
+        npcCreator.setPickItemMaterials(pickItemMaterials);
+
+        return npcCreator;
+    }
+    
+    private List<COINpc> initNPCCreator(){
+        List<COINpc> npcList = new ArrayList<>();
+        npcList.add(initCartCreator());
+        npcList.add(initMinerCreator());
+        
+        return npcList;
     }
 
     /**

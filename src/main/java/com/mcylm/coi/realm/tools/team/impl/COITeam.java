@@ -40,6 +40,9 @@ public class COITeam implements Team {
     // Team npc share food chest location
     private List<Location> foodChests;
 
+    // 大本营的共享资源箱子（存放各种东西）
+    private List<Location> resourcesChests;
+
     // 已经建造的建筑（允许有重复的）
     // All built building(allow repeat buildings)
     private List<COIBuilding> finishedBuildings;
@@ -63,6 +66,7 @@ public class COITeam implements Team {
         this.type = type;
         this.players = new ArrayList<>();
         this.foodChests = new ArrayList<>();
+        this.resourcesChests = new ArrayList<>();
         this.finishedBuildings = new ArrayList<>();
         this.battleFormation = new ArrayList<>();
         this.scoreRecords = new ArrayList<>();
