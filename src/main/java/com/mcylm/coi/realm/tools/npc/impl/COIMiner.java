@@ -68,8 +68,8 @@ public class COIMiner extends COIHuman{
         // NPC的目标方块类型
         Set<String> blocks =  getCoiNpc().getBreakBlockMaterials();
 
-        // 检测周围需要 7 格半径范围内的全部方块
-        List<Block> blocksNearByNpc = getNearbyBlocks(7);
+        // 检测周围需要 20 格半径范围内的全部方块
+        List<Block> blocksNearByNpc = getNearbyBlocks(20);
 
         int i = 0;
 
