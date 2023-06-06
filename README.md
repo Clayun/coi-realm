@@ -1,4 +1,3 @@
-# 介绍
 
 <div align="center">
   <img src="images/coi_logo2.png" alt="Your Logo">
