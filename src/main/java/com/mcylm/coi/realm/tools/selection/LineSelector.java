@@ -102,8 +102,7 @@ public class LineSelector implements Selector {
             int i = 0;
             for (Location point : line) {
                 i++;
-                Block block = point.getWorld().getHighestBlockAt(point);
-
+                Block block = getSuitableBlock(structure, point);
                 buildPoints.add(block.getLocation());
                 ParticleBuilder builder = new ParticleBuilder(Particle.REDSTONE);
                 builder.color(canPlace ? Color.LIME : Color.RED);
@@ -135,7 +134,6 @@ public class LineSelector implements Selector {
         int freeHeight = 0;
         Block rootBlock = loc.getBlock();
         while (loc.getY() < 256) {
-
             if (freeHeight >= structure.getHeight()) {
                 return rootBlock;
             }
@@ -155,8 +153,7 @@ public class LineSelector implements Selector {
     public void place(List<Location> points) {
 
         for (Location point : points) {
-            Block block = point.getWorld().getHighestBlockAt(point);
-
+            Block block = point.getBlock();
             Location loc = point.clone();
             for (int i = block.getY(); i > 0; i--) {
                 Block block1 = loc.subtract(0, 1, 0).getBlock();
