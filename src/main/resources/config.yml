@@ -30,9 +30,9 @@ game:
   # 矿物重生时间
   mineral-restore-timer: 10
   # 最少多少个玩家开始游戏
-  min-players: 1
+  min-players: 2
   # 游戏开始等待时间（秒）
-  waiting-timer: 60
+  waiting-timer: 120
   # 游戏总时长（秒）
   gaming-timer: 1200
   # 游戏结束后多少秒自动关服（秒）
