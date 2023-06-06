@@ -44,8 +44,9 @@ public class COIBase extends COIBuilding {
 
     @Override
     public void buildSuccess(Location location, Player player) {
-
-
+        // 生成之后，把基地的箱子设置为资源共享箱子
+        // 矿车会自动把物资运到这些箱子当中
+        getTeam().setResourcesChests(getChestsLocation());
     }
 
     @Override
