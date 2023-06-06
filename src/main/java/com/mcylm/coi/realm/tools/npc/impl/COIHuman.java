@@ -5,18 +5,18 @@ import com.google.common.cache.CacheBuilder;
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.runnable.NpcAITask;
+import com.mcylm.coi.realm.tools.attack.target.impl.EntityTarget;
 import com.mcylm.coi.realm.tools.data.EntityData;
 import com.mcylm.coi.realm.tools.npc.AI;
-import com.mcylm.coi.realm.utils.GUIUtils;
-import com.mcylm.coi.realm.utils.InventoryUtils;
-import com.mcylm.coi.realm.utils.ItemUtils;
-import com.mcylm.coi.realm.utils.LoggerUtils;
+import com.mcylm.coi.realm.utils.*;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings;
+import me.filoghost.holographicdisplays.api.hologram.line.TextHologramLine;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.npc.NPC;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -27,6 +27,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -109,7 +111,6 @@ public class COIHuman implements AI {
 
         // 创建 CitizensNPC 实例
         this.npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, getName());
-
         this.isCreated = true;
         this.coiNpc.setId(this.npc.getUniqueId().toString());
         initNpcAttributes(npcCreator);
@@ -1001,7 +1002,6 @@ public class COIHuman implements AI {
         this.npc.setAlwaysUseNameHologram(true);
 
         // 初始化NPC的皮肤
-        this.npc.data().set(NPC.Metadata.DEFAULT_PROTECTED, true);
         this.npc.data().set("player-skin-textures", npcCreator.getSkinTextures());
         this.npc.data().set("cached-skin-uuid-name", npcCreator.getSkinName());
         this.npc.data().set("player-skin-name", npcCreator.getSkinName());
