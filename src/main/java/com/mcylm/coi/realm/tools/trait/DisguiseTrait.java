@@ -29,7 +29,6 @@ public class DisguiseTrait extends Trait {
 
     @Override
     public void onSpawn() {
-
         disguise();
     }
 

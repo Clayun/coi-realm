@@ -22,6 +22,7 @@ import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.entity.*;
@@ -534,7 +535,10 @@ public class COIEntity implements AI {
             if (entity.getHealth() < MAX_HEALTH) {
 
                 if (MAX_HEALTH - entity.getHealth() >= 1) {
-                    entity.setHealth(entity.getHealth() + 1);
+                    if(entity.getMaxHealth() - entity.getHealth() > 1){
+                        entity.setHealth(entity.getHealth() + 1);
+                    }
+
                 } else {
                     entity.setHealth(MAX_HEALTH);
                 }
@@ -1043,7 +1047,7 @@ public class COIEntity implements AI {
 
             entity.setMetadata("entityData", new EntityData(getCoiNpc()));
 
-            entity.setHealth(MAX_HEALTH);
+            entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(MAX_HEALTH);
         }
     }
 

@@ -80,11 +80,6 @@ public class PlayerInteractListener implements Listener {
     @EventHandler
     public void onBuilding(PlayerInteractEvent event) {
 
-        if(Entry.getGame().getStatus().equals(COIGameStatus.WAITING)){
-            // 如果是等待中，就不打开建筑编辑菜单
-            return;
-        }
-
         Action action = event.getAction();
 
         //判断是右手，同时避免触发两次

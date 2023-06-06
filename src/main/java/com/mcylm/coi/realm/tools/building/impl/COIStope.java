@@ -15,6 +15,7 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -165,11 +166,12 @@ public class COIStope extends COIBuilding {
 
         // 设置伪装
         npcCreator.setDisguiseType(DisguiseType.MINECART_CHEST);
+        npcCreator.setNpcType(EntityType.HORSE);
 
         npcCreator.setAggressive(false);
         npcCreator.setAlertRadius(5);
         npcCreator.setBreakBlockMaterials(new HashSet<>());
-        npcCreator.setName("矿物运输员");
+        npcCreator.setName("矿车");
         npcCreator.setLevel(1);
         npcCreator.setPickItemMaterials(pickItemMaterials);
 
