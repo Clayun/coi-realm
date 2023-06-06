@@ -84,6 +84,7 @@ README in [English](README_EN.md)
 矿工会全自动收集矿物,并存入矿场的箱子中,
 收集的资源可用于建造新的建筑,或者给战士制作装备
 
+
 2.磨坊
 <div align="left">
   <img src="images/farmer.png" alt="磨坊">
@@ -93,6 +94,7 @@ README in [English](README_EN.md)
 农民会将其采集并制作成面包并放入磨坊的箱子中.
 请注意:每个NPC都需要食物补充能量,磨坊的是非常重要的建筑
 
+
 3.军营
 <div align="left">
   <img src="images/fighter.png" alt="军营">
@@ -101,6 +103,7 @@ README in [English](README_EN.md)
 战士会默认自动巡逻,当发现敌方战士或者是敌方建筑时,
 会自动攻击敌方单位
 
+
 4.城墙
 <div align="left">
   <img src="images/wall.png" alt="城墙">
@@ -108,11 +111,13 @@ README in [English](README_EN.md)
 城墙是防卫类建筑,需要建造多个城墙点来保卫建筑
 玩家需要选两个点，城墙会自动按照向量连线并自动建造
 
+
 5.城门
 <div align="left">
   <img src="images/door.png" alt="城门">
 </div>
 只要是自己小队的玩家，走近城门，就能自动开门
+
 
 6.防御炮塔
 <div align="left">
