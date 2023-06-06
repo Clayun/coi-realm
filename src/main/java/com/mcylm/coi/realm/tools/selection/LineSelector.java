@@ -61,9 +61,17 @@ public class LineSelector implements Selector {
                         stop(false);
                     }
                     select(structure);
+                    try {
+                        Thread.sleep(50 * 8);
+                        run();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+
                 }
+
             }
-        }.runTaskTimerAsynchronously(Entry.getInstance(), 8, 8);
+        }.runTaskAsynchronously(Entry.getInstance());
     }
 
     public void select(COIStructure structure) {
@@ -89,7 +97,7 @@ public class LineSelector implements Selector {
                     continue;
                 }
                 blocks.add(block);
-                for (int i = 0; i < block.getY(); i++) {
+                for (int i = block.getY(); i < 256; i++) {
                     Block block1 = point.getWorld().getBlockAt(point.getBlockX(), i, point.getBlockZ());
                     if (!building.pointCheck(block1)) {
                         canPlace = false;
@@ -141,7 +149,7 @@ public class LineSelector implements Selector {
                 freeHeight++;
             } else {
                 freeHeight = 0;
-                rootBlock = loc.getBlock().getRelative(0,1,0);
+                rootBlock = loc.getBlock();
             }
             loc.add(0,1,0);
 
@@ -155,8 +163,8 @@ public class LineSelector implements Selector {
         for (Location point : points) {
             Block block = point.getBlock();
             Location loc = point.clone();
-            for (int i = block.getY(); i > 0; i--) {
-                Block block1 = loc.subtract(0, 1, 0).getBlock();
+            for (int i = block.getY(); i < 256; i++) {
+                Block block1 = loc.add(0, 1, 0).getBlock();
                 if (!building.pointCheck(block1)) {
                     canPlace = false;
                 }
@@ -164,6 +172,7 @@ public class LineSelector implements Selector {
         }
 
         if (canPlace) {
+
 
 
             Iterator<Location> iterator = points.listIterator();
