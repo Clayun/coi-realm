@@ -122,7 +122,9 @@ public class AreaSelector implements Selector {
                 canPlace = false;
             }
 
-            if(block.isSolid()){
+            Location clone = block.getLocation().clone();
+            clone.setY(clone.getY() + 1);
+            if(clone.getBlock().isSolid()){
                 // 建筑只能在完全空白的地方建造
                 canPlace = false;
             }
