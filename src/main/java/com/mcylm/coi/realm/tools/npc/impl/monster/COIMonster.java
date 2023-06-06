@@ -18,6 +18,7 @@ import com.mcylm.coi.realm.tools.npc.impl.COIEntity;
 import com.mcylm.coi.realm.utils.GUIUtils;
 import com.mcylm.coi.realm.utils.LocationUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
+import lombok.Getter;
 import lombok.Setter;
 import me.lucko.helper.Events;
 import net.citizensnpcs.api.npc.NPC;
@@ -32,10 +33,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+@Getter
 public abstract class COIMonster extends COIEntity implements Commandable {
 
 
-    public COIMonster(COINpc npcCreator) {
+    public COIMonster(COIMonsterCreator npcCreator) {
         super(npcCreator);
         npcCreator.setTeam(TeamUtils.getMonsterTeam());
     }
@@ -56,11 +58,6 @@ public abstract class COIMonster extends COIEntity implements Commandable {
         this.npc.setAlwaysUseNameHologram(true);
         this.npc.setUseMinecraftAI(true);
         this.npc.data().set(NPC.Metadata.KEEP_CHUNK_LOADED, true);
-    }
-
-    @Override
-    public EntityType getNpcType() {
-        return EntityType.ZOMBIE;
     }
 
 
