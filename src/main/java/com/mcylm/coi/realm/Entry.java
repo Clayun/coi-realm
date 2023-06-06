@@ -156,19 +156,16 @@ public class Entry extends ExtendedJavaPlugin {
                     Inventory inv = EntityData.getNpcByEntity(e.getRightClicked()).getInventory();
 
                     e.getPlayer().openInventory(inv);
-                    if (inv != null) {
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                if (e.getRightClicked().isDead() || e.getPlayer().getWorld() != e.getRightClicked().getWorld() || e.getPlayer().getLocation().distance(e.getRightClicked().getLocation()) > 6) {
-                                    this.cancel();
-                                    e.getPlayer().closeInventory();
-                                }
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            if (e.getRightClicked().isDead() || e.getPlayer().getWorld() != e.getRightClicked().getWorld() || e.getPlayer().getLocation().distance(e.getRightClicked().getLocation()) > 6) {
+                                this.cancel();
+                                e.getPlayer().closeInventory();
                             }
-                        }.runTaskTimer(getInstance(), 2, 3);
-                    }
+                        }
+                    }.runTaskTimer(getInstance(), 2, 3);
                 });
-
 
         LoggerUtils.log("监听器注册完成");
     }
