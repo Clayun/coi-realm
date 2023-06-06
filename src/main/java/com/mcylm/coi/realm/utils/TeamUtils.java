@@ -33,33 +33,35 @@ public class TeamUtils {
      */
     public static List<COITeam> initTeams(){
 
+        int maxTeam = 7;
+
         List<String> locations = Entry.getInstance().getConfig().getStringList("game.spawn-locations");
         String world = Entry.getInstance().getConfig().getString("game.spawn-world");
 
         List<Location> spawnerList = new ArrayList<>();
 
         // 如果小于队伍数量，就让后面几个队伍重复
-        if(locations.size() < 6){
+        if(locations.size() < maxTeam){
             for(String str : locations){
                 Location location = getLocation(str, world);
                 spawnerList.add(location);
             }
 
             // 有几个队伍是没有出生点的
-            int num = 6 - locations.size();
+            int num = maxTeam - locations.size();
 
             for(int i = 0; i <= num; i++){
                 Location location = getLocation(locations.get(0), world);
                 spawnerList.add(location);
             }
 
-        }else if(locations.size() >= 6){
+        }else if(locations.size() >= maxTeam){
             // 如果有多个出生点，大于队伍数量，就随机取点，不能重复
             List<Integer> usedCursor = new ArrayList<>();
 
-            while (usedCursor.size() < 6){
+            while (usedCursor.size() < maxTeam){
                 Random rand = new Random();
-                int value = rand.nextInt(6);
+                int value = rand.nextInt(maxTeam);
                 if(usedCursor.contains(value)){
                     continue;
                 }
@@ -188,7 +190,8 @@ public class TeamUtils {
             COITeam coiTeam = iterator.next();
 
             // 修改为仅小于，这样就不会反复进入最后一个队伍
-            if(coiTeam.getPlayers().size() < players){
+            if(coiTeam.getPlayers().size() < players
+                && coiTeam.getType().getSlot() != -1){
                 minimumTeam = coiTeam;
                 players = coiTeam.getPlayers().size();
             }

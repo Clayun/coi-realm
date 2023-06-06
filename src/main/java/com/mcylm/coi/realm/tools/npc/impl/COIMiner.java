@@ -61,8 +61,6 @@ public class COIMiner extends COIEntity {
      */
     private void addBlockTargets() {
 
-        LoggerUtils.debug("添加需要拆除的方块进入缓冲器");
-
         List<Block> locations = new ArrayList<>();
 
         // NPC的目标方块类型
@@ -97,8 +95,6 @@ public class COIMiner extends COIEntity {
         // 添加到缓冲区
         this.targetBlocks.addAll(locations);
 
-        LoggerUtils.debug("添加了："+i+"个方块");
-
     }
 
     /**
@@ -107,7 +103,6 @@ public class COIMiner extends COIEntity {
     public void findAndBreakBlock(){
 
         if(!isAlive() || isTooHungryToWork()){
-            LoggerUtils.debug("NPC 饱食度过低，开始摆烂");
             return;
         }
 
@@ -117,7 +112,6 @@ public class COIMiner extends COIEntity {
         if(b){
             //满足回城条件，回城存放资源
             backAndSaveResources();
-            LoggerUtils.debug("完事了");
             return;
         }
 
@@ -128,16 +122,10 @@ public class COIMiner extends COIEntity {
 
         if(targetBlocks != null && targetBlocks.size() > 0){
 
-            LoggerUtils.debug("矿物还有："+targetBlocks.size());
-
             targetBlock = getNearestBlock(getNpc().getEntity().getLocation());
 
             if(targetBlock != null){
                 if (getNpc().getEntity().getLocation().distance(targetBlock.getLocation()) <= 3) {
-
-                    LoggerUtils.debug("位置小于3");
-
-                    LoggerUtils.debug("isBreaking "+isBreaking);
 
                     if (!isBreaking) {
 
@@ -180,20 +168,16 @@ public class COIMiner extends COIEntity {
                         );
                         BlockBreaker breaker = getNpc().getBlockBreaker(targetBlock, blockBreakerConfiguration);
                         if (breaker.shouldExecute()) {
-                            LoggerUtils.debug("开始挖矿");
                             isBreaking = true;
                             TaskRunnable run = new TaskRunnable(breaker);
                             run.setTaskId(Bukkit.getScheduler().scheduleSyncRepeatingTask(Entry.getInstance(), run, 0, 1));
                         }
-                    }else{
-                        LoggerUtils.debug("还在挖呢");
                     }
 
                 } else {
 
                     if(canStand(targetBlock.getLocation())){
                         findPath(targetBlock.getLocation());
-                        LoggerUtils.debug("寻路中");
                     }else{
 
                     }

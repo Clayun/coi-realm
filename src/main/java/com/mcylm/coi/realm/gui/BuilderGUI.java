@@ -1,6 +1,7 @@
 package com.mcylm.coi.realm.gui;
 
 import com.mcylm.coi.realm.Entry;
+import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.LineBuild;
 import com.mcylm.coi.realm.tools.selection.AreaSelector;
@@ -38,8 +39,9 @@ public class BuilderGUI {
 
         COITeam team = TeamUtils.getTeamByPlayer(p);
 
-        if (team == null) {
-            LoggerUtils.sendMessage("你还未加入任何小队", p);
+        // 未加入小队的，还有等待中的时候，都打开选队GUI
+        if (team == null || Entry.getGame().getStatus().equals(COIGameStatus.WAITING)) {
+            LoggerUtils.sendMessage("请选择你要加入的小队", p);
             ChooseTeamGUI chooseTeamGUI = new ChooseTeamGUI(p);
             chooseTeamGUI.open();
             return;

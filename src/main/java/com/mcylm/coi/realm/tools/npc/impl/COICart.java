@@ -6,6 +6,8 @@ import com.mcylm.coi.realm.tools.npc.COICartCreator;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -62,9 +64,12 @@ public class COICart extends COIEntity {
      * 收取资源
      */
     private void collectingResources(){
+
+        LoggerUtils.debug("寻找可以运输的资源");
+
         COICartCreator coiNpc = (COICartCreator) getCoiNpc();
 
-        List<Location> chestsLocation = coiNpc.getBuilding().getChestsLocation();
+        List<Location> chestsLocation = coiNpc.getChestsLocation();
 
         if(chestsLocation.isEmpty()){
             // 返回出生点
@@ -115,11 +120,14 @@ public class COICart extends COIEntity {
      */
     private void transportResources(){
 
+        LoggerUtils.debug("开始配送资源资源");
+
         COICartCreator coiNpc = (COICartCreator) getCoiNpc();
 
-        List<Location> chestsLocation = coiNpc.getTeam().getResourcesChests();
+        List<Location> chestsLocation = coiNpc.getToSaveResourcesLocations();
 
         if(chestsLocation.isEmpty()){
+            LoggerUtils.debug("存放资源的箱子不存在");
             // 返回出生点
             findPath(coiNpc.getSpawnLocation());
             return;
@@ -129,6 +137,7 @@ public class COICart extends COIEntity {
         Location notFullChestLocation = getEmptyChestByLocations(chestsLocation);
 
         if(notFullChestLocation == null){
+            LoggerUtils.debug("存放资源的箱子都满了");
             // 返回出生点
             findPath(coiNpc.getSpawnLocation());
             return;
@@ -160,6 +169,26 @@ public class COICart extends COIEntity {
                 }
             }
         }
+    }
+    @Override
+    public void findPath(Location location) {
+        if (!isAlive()) {
+            return;
+        }
+
+        if (!npc.isSpawned()) {
+            return;
+        }
+
+        npc.faceLocation(location);
+
+        Navigator navigator = npc.getNavigator();
+        navigator.getDefaultParameters()
+                .stuckAction(null)
+                .useNewPathfinder(false);
+
+        navigator.setTarget(location);
+
     }
 
 

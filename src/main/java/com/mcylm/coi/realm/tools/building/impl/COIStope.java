@@ -65,6 +65,8 @@ public class COIStope extends COIBuilding {
 
                 }else if(creator instanceof COICartCreator){
                     COICartCreator npcCreator = (COICartCreator) creator;
+                    npcCreator.setChestsLocation(getChestsLocation());
+                    npcCreator.setToSaveResourcesLocations(getTeam().getResourcesChests());
                     COICart worker = new COICart(npcCreator);
                     worker.spawn(creator.getSpawnLocation());
                 }
@@ -156,7 +158,7 @@ public class COIStope extends COIBuilding {
         pickItemMaterials.addAll(picks);
 
 
-        COICartCreator npcCreator = new COICartCreator();
+        COICartCreator npcCreator = new COICartCreator(getChestsLocation());
         npcCreator.setInventory(inventory);
 
         npcCreator.setAggressive(false);
