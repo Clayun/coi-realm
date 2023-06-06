@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -99,6 +100,9 @@ public class COINpc implements Serializable {
 
     // NPC Type
     protected EntityType npcType = EntityType.PLAYER;
+
+    // 伪装成其他实体
+    private MobDisguise disguise;
 
     // 服装类型
     public static List<Material> CLOTHES = new ArrayList<>(){{

@@ -11,6 +11,8 @@ import com.mcylm.coi.realm.tools.npc.impl.COIMiner;
 import com.mcylm.coi.realm.utils.GUIUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -160,6 +162,10 @@ public class COIStope extends COIBuilding {
 
         COICartCreator npcCreator = new COICartCreator(getChestsLocation());
         npcCreator.setInventory(inventory);
+
+        // 设置伪装
+        MobDisguise mobDisguise = new MobDisguise(DisguiseType.MINECART_CHEST);
+        npcCreator.setDisguise(mobDisguise);
 
         npcCreator.setAggressive(false);
         npcCreator.setAlertRadius(5);

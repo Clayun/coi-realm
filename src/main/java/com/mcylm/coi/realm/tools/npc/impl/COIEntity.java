@@ -14,6 +14,7 @@ import com.mcylm.coi.realm.utils.LoggerUtils;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings;
+import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.npc.NPC;
@@ -802,11 +803,6 @@ public class COIEntity implements AI {
         // 捡起附近需要的物品 使用同步进程去做
         pickItems();
         // 吃饱了回血
-//        if (hungerTick++ > 2) {
-//
-//            hungerTick = 0;
-//        }
-
         fullStomach();
         // 没吃饱就去吃
         eatFood();
@@ -832,6 +828,13 @@ public class COIEntity implements AI {
 
         npc.spawn(location);
 
+        // 设置伪装
+        if(getCoiNpc().getDisguise() != null){
+            MobDisguise disguise = getCoiNpc().getDisguise();
+            disguise.setEntity(npc.getEntity());
+            disguise.startDisguise();
+        }
+
         // 恢复血量和饱食度
         initEntityStatus();
 
@@ -845,6 +848,10 @@ public class COIEntity implements AI {
     public void despawn() {
         if (this.npc != null) {
             npc.despawn();
+            if(getCoiNpc().getDisguise() != null){
+                MobDisguise disguise = getCoiNpc().getDisguise();
+                disguise.stopDisguise();
+            }
             this.isSpawn = false;
         }
     }
