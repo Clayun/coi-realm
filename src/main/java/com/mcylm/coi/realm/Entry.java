@@ -59,6 +59,8 @@ public class Entry extends ExtendedJavaPlugin {
     // 城墙根部坐标检测起始高度
     public static Integer WALL_DETECT_HEIGHT = 18;
 
+    // 建筑升级中跳过的方块
+    public static List<String> UPGRADE_SKIP_BLOCKS;
     // 主游戏进程管理
     private static COIGame game;
 
@@ -70,6 +72,7 @@ public class Entry extends ExtendedJavaPlugin {
 
     @Override
     protected void enable() {
+
 
         instance = this;
         builder = new COIBuilder();
@@ -88,6 +91,7 @@ public class Entry extends ExtendedJavaPlugin {
         MAX_GROUP_PLAYERS = getConfig().getInt("game.max-group-players");
         NPC_FOODS = getConfig().getStringList("foods");
         WALL_DETECT_HEIGHT = getConfig().getInt("game.wall-detect-height");
+        UPGRADE_SKIP_BLOCKS = getConfig().getStringList("upgrade-skip-blocks");
         COIServerMode serverMode = COIServerMode.parseCode(SERVER_MODE);
 
         if(serverMode == null){

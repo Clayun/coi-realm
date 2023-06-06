@@ -73,3 +73,9 @@ miner:
   # 矿工会挖掘的物品名称
   breaks:
     - 'EMERALD_ORE'
+
+# 建筑升级中跳过的方块
+upgrade-skip-blocks:
+  - "CHEST"
+  - "BARREL"
+  - "SHULKER_BOX"

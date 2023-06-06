@@ -310,6 +310,7 @@ public abstract class COIBuilding implements Serializable {
         }
         Set<Map.Entry<Location, Material>> blocks = getOriginalBlocks().entrySet();
         Set<Map.Entry<Location, BlockData>> blockData = getOriginalBlockData().entrySet();
+        /*
         for (Map.Entry<Location, Material> entry : blocks) {
             Block block = entry.getKey().getBlock();
             if (block.getState() instanceof Container container) {
@@ -319,15 +320,19 @@ public abstract class COIBuilding implements Serializable {
             }
             block.setType(entry.getValue());
         }
+
+
         for (Map.Entry<Location, BlockData> entry : blockData) {
             entry.getKey().getBlock().setBlockData(entry.getValue());
         }
 
+         */
+
         blocks.clear();
-        originalBlocks.clear();
-        originalBlockData.clear();
+        // originalBlocks.clear();
+        // originalBlockData.clear();
         remainingBlocks.clear();
-        chestsLocation.clear();
+        // chestsLocation.clear();
 
         String structureName = getStructureByLevel();
 
@@ -359,10 +364,12 @@ public abstract class COIBuilding implements Serializable {
             if (ItemUtils.SUITABLE_CONTAINER_TYPES.contains(type)) {
                 chestsLocation.add(block.getLocation());
             }
-            originalBlockData.put(block.getLocation(), block.getBlockData().clone());
-            originalBlocks.put(block.getLocation(), block.getType());
+            originalBlockData.putIfAbsent(block.getLocation(), block.getBlockData().clone());
+            originalBlocks.putIfAbsent(block.getLocation(), block.getType());
             return type;
-        }));
+        }), (block, blockToPlace, type) -> {
+            return !Entry.UPGRADE_SKIP_BLOCKS.contains(block.getType().toString()); // 符合条件 相当于不替换
+        });
 
         // 开始建造
         Entry.getBuilder().pasteStructure(coiPaster, player, building);
