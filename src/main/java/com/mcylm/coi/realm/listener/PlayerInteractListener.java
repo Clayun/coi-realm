@@ -2,6 +2,7 @@ package com.mcylm.coi.realm.listener;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.clipboard.PlayerClipboard;
+import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COIServerMode;
 import com.mcylm.coi.realm.gui.BuildEditGUI;
 import com.mcylm.coi.realm.gui.BuilderGUI;
@@ -78,6 +79,11 @@ public class PlayerInteractListener implements Listener {
      */
     @EventHandler
     public void onBuilding(PlayerInteractEvent event) {
+
+        if(Entry.getGame().getStatus().equals(COIGameStatus.WAITING)){
+            // 如果是等待中，就不打开建筑编辑菜单
+            return;
+        }
 
         Action action = event.getAction();
 
