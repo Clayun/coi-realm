@@ -57,7 +57,7 @@ public class BuilderGUI {
             List<Item> items = new ArrayList<>();
             for (COIBuilding building : Entry.getInstance().getBuildingManager().getAllBuildingTemplates()) {
 
-                if(building.getType().isInGUI()){
+                if(building.getConfig().isShowInMenu()){
                     items.add(ItemStackBuilder.of(building.getType().getItemType())
                             .name(building.getType().getName())
                             .amount(getBuildingNum(team.getBuildingByType(building.getType())))

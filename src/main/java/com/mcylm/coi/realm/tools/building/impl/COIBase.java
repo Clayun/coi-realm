@@ -1,22 +1,11 @@
 package com.mcylm.coi.realm.tools.building.impl;
 
-import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.config.BuildingConfig;
-import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
-import com.mcylm.coi.realm.tools.npc.impl.COIFarmer;
-import com.mcylm.coi.realm.utils.GUIUtils;
-import com.mcylm.coi.realm.utils.TeamUtils;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * 基地
@@ -39,6 +28,7 @@ public class COIBase extends COIBuilding {
         return new BuildingConfig()
                 .setStructures(getBuildingLevelStructure())
                 .setMaxLevel(10)
+                .setShowInMenu(false)
                 .setConsume(200);
     }
 

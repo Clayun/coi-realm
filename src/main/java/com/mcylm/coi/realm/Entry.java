@@ -15,6 +15,7 @@ import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.tools.building.impl.*;
 import com.mcylm.coi.realm.tools.data.EntityData;
 import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
+import com.mcylm.coi.realm.tools.npc.impl.monster.COIMonster;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Getter;
@@ -140,6 +141,8 @@ public class Entry extends ExtendedJavaPlugin {
         pluginManager.registerEvents(new MineralsBreakListener(), this);
         // AI事件监听器
         COISoldier.registerListener();
+
+        COIMonster.registerListener();
 
         Events.subscribe(EntityChangeBlockEvent.class)
                 .handler(e -> {

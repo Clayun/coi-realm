@@ -21,6 +21,9 @@ public class DebugCommand implements CommandExecutor {
         if (args[0].equalsIgnoreCase("team")) {
             new ChooseTeamGUI(player).open();
         }
+        if (args[0].equalsIgnoreCase("monster")) {
+
+        }
 
         return true;
     }

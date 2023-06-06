@@ -14,11 +14,15 @@ import java.util.Map;
 public class BuildingConfig {
 
     public BuildingConfig() {
+        showInMenu = true;
         this.maxLevel = 1;
         this.consume = 16;
         this.structures = Map.of();
         this.customOptions = new JsonObject();
     }
+
+    @SerializedName("show_in_menu")
+    boolean showInMenu;
 
     @SerializedName("max_level")
     private int maxLevel;

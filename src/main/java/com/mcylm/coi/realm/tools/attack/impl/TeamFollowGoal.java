@@ -25,7 +25,7 @@ public class TeamFollowGoal extends SimpleGoal {
             if (followingEntity.isDead() && index > 0) {
                 team.getMembers().remove(index - 1);
             }
-            if (npc.getLocation() != null && npc.getLocation().distance(npc.getCommander().getLocation()) >= ) {
+            if (npc.getLocation() != null && npc.getLocation().distance(npc.getCommander().getLocation()) >= 3) {
                 npc.findPath(followingEntity.getLocation());
             }
         }
@@ -52,10 +52,6 @@ public class TeamFollowGoal extends SimpleGoal {
     @Override
     public AttackGoalType getType() {
         return AttackGoalType.TEAM_FOLLOW;
-    }
-
-    private int getTeamId(COIEntity entity) {
-        team.getMembers().
     }
 
 
