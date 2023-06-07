@@ -60,7 +60,7 @@ public class COIStructure implements Cloneable {
             block.setX(rX);
             block.setZ(rZ);
             BlockData data = Bukkit.createBlockData(block.getBlockData());
-            int rv = Math.round(rotation.getDegrees() / 90f);
+            int rv = Math.round(Math.floorMod(rotation.getDegrees(), 360) / 90f);
 
             if (data instanceof Rotatable rotatable) {
                 rotatable.setRotation(LocationUtils.rotateBlockFace(rotatable.getRotation(), rv, false));
