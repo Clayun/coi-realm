@@ -249,13 +249,35 @@ public class COICart extends COIEntity {
      * @return 是否有足够的电量
      */
     private boolean automaticCharging(){
+
         if(getHunger() <= 7){
             say("电池电量过低，准备返回充电桩");
             findPath(getCoiNpc().getSpawnLocation());
             needCharging = true;
+
+            if(getLocation().distance(getCoiNpc().getSpawnLocation()) <= 3){
+                // 开始充电
+                say("充电中...");
+
+                // 最大电量 20
+                if(getHunger() < 20){
+                    setHunger(getHunger() + 0.5);
+
+                    // 如果开启强制充电，就充满
+                    if(needCharging){
+                        if(getHunger() >= 20){
+                            needCharging = false;
+                            return true;
+                        }
+                    }
+                }
+
+            }
+
             return false;
         }
 
+        // 普通充电
         if(getLocation().distance(getCoiNpc().getSpawnLocation()) <= 3){
             // 开始充电
             say("充电中...");
@@ -263,17 +285,7 @@ public class COICart extends COIEntity {
             // 最大电量 20
             if(getHunger() < 20){
                 setHunger(getHunger() + 0.5);
-
-                // 如果开启强制充电，就充满
-                if(needCharging){
-                    if(getHunger() >= 20){
-                        needCharging = false;
-                        return true;
-                    }
-                }
             }
-
-
         }
 
         // 未开启强制充电，就呆几秒，充几秒
