@@ -75,8 +75,6 @@ public class COICart extends COIEntity {
      */
     private void collectingResources(){
 
-        LoggerUtils.debug("寻找可以运输的资源");
-
         COICartCreator coiNpc = (COICartCreator) getCoiNpc();
 
         List<Location> chestsLocation = coiNpc.getChestsLocation();
@@ -129,8 +127,6 @@ public class COICart extends COIEntity {
      * 运输资源
      */
     private void transportResources(){
-
-        LoggerUtils.debug("开始配送资源资源");
 
         COICartCreator coiNpc = (COICartCreator) getCoiNpc();
 
