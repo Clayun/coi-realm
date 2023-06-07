@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,6 +18,6 @@ import java.util.List;
 public class MapData {
 
     // 矿脉的位置
-    private List<COIVein> veins;
+    private List<COIVein> veins = new ArrayList<>();
 
 }
