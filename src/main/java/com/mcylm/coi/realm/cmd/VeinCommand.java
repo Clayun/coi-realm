@@ -1,6 +1,7 @@
 package com.mcylm.coi.realm.cmd;
 
 import com.mcylm.coi.realm.Entry;
+import com.mcylm.coi.realm.runnable.VeinGenerateTask;
 import com.mcylm.coi.realm.tools.map.COIVein;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import org.bukkit.Location;
@@ -44,6 +45,17 @@ public class VeinCommand implements CommandExecutor {
                     COIVein vein = new COIVein(structureName, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getWorld().getName(), chance, resetTime);
                     Entry.getMapData().getVeins().add(vein);
                     LoggerUtils.sendMessage("&a成功添加", player);
+
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            Entry.getInstance().saveMapData();
+                        }
+                    }.runTaskAsynchronously(Entry.getInstance());
+                } else if (args.length >= 1 && args[0].equalsIgnoreCase("test")) {
+                    VeinGenerateTask.getTasks().forEach(BukkitRunnable::cancel);
+                    VeinGenerateTask.getTasks().clear();
+                    VeinGenerateTask.runTask();
 
                 }
             }

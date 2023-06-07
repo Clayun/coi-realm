@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -30,17 +31,19 @@ public class COIVein {
 
     private int restTime;
 
-    public void startGenerate() {
+    public BukkitRunnable startGenerate() {
 
         Location location = getLocation();
-        new BukkitRunnable() {
+        @NotNull BukkitRunnable runnable = new BukkitRunnable() {
             @Override
             public void run() {
 
                 placeVein(location);
 
             }
-        }.runTaskTimer(Entry.getInstance(), 0, restTime * 20L);
+        };
+        runnable.runTaskTimer(Entry.getInstance(), 0, restTime * 20L);
+        return runnable;
     }
 
     public Location getLocation() {
