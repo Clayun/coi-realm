@@ -13,8 +13,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Container;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Rail;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -26,6 +31,8 @@ import java.util.*;
  * 会自动把矿工挖的绿宝石运输到
  */
 public class COICart extends COIEntity {
+
+    private boolean needCharging = false;
 
 
     public COICart(COICartCreator npcCreator) {
@@ -49,10 +56,13 @@ public class COICart extends COIEntity {
         return update;
     }
 
+
+
     /**
      * 行动
      */
     private void action(){
+
         if(getCoiNpc().getInventory().isEmpty()){
             collectingResources();
         }else{
@@ -64,8 +74,6 @@ public class COICart extends COIEntity {
      * 收取资源
      */
     private void collectingResources(){
-
-        LoggerUtils.debug("寻找可以运输的资源");
 
         COICartCreator coiNpc = (COICartCreator) getCoiNpc();
 
@@ -119,8 +127,6 @@ public class COICart extends COIEntity {
      * 运输资源
      */
     private void transportResources(){
-
-        LoggerUtils.debug("开始配送资源资源");
 
         COICartCreator coiNpc = (COICartCreator) getCoiNpc();
 
@@ -234,11 +240,74 @@ public class COICart extends COIEntity {
         return null;
     }
 
+    /**
+     * 自动充电
+     * @return 是否有足够的电量
+     */
+    private boolean automaticCharging(){
+
+        // 需要强制充电
+        if(needCharging){
+
+            findPath(getCoiNpc().getSpawnLocation());
+
+            if(getLocation().distance(getCoiNpc().getSpawnLocation()) <= 3){
+                // 开始充电
+                say("强制充电中...");
+
+                // 最大电量 20
+                if(getHunger() < 20){
+                    setHunger(getHunger() + 0.5);
+
+                    // 如果开启强制充电，就充满
+                    if(needCharging){
+                        if(getHunger() >= 20){
+                            needCharging = false;
+                            return true;
+                        }
+                    }
+                }
+
+            }
+
+            return false;
+        }
+
+        // 普通充电
+        if(getLocation().distance(getCoiNpc().getSpawnLocation()) <= 3){
+            // 开始充电
+            say("充电中...");
+
+            // 最大电量 20
+            if(getHunger() < 20){
+                setHunger(getHunger() + 0.5);
+            }else{
+                needCharging = false;
+            }
+        }
+
+
+        if(getHunger() <= 7){
+            say("电池电量过低，准备返回充电桩");
+            needCharging = true;
+
+            return false;
+        }
+
+        return true;
+    }
+
     @Override
     public void move() {
         super.move();
-        // 开始行动
-        action();
+        // 电池电量检测
+        boolean b = automaticCharging();
+
+        if(b){
+            // 开始行动
+            action();
+        }
+
     }
 
 }
