@@ -467,15 +467,26 @@ public class COIBuilder implements Builder {
 
     /**
      * 通过两点获取COI结构体
-     * @param point1
-     * @param point2
+     * @param firstPoint
+     * @param secondPoint
      * @return
      */
-    public COIStructure getStructureByTwoLocations(Location point1,Location point2){
+    public COIStructure getStructureByTwoLocations(Location firstPoint,Location secondPoint){
 
-        int length = Math.abs(point1.getBlockX() - point2.getBlockX())+1;
-        int height = Math.abs(point1.getBlockY() - point2.getBlockY())+1;
-        int width = Math.abs(point1.getBlockZ() - point2.getBlockZ())+1;
+        double maxX = Math.max(firstPoint.getX(), secondPoint.getX());
+        double maxY = Math.max(firstPoint.getY(), secondPoint.getY());
+        double maxZ = Math.max(firstPoint.getZ(), secondPoint.getZ());
+
+        double minX = Math.min(firstPoint.getX(), secondPoint.getX());
+        double minY = Math.min(firstPoint.getY(), secondPoint.getY());
+        double minZ = Math.min(firstPoint.getZ(), secondPoint.getZ());
+
+        firstPoint.set(minX, minY, minZ);
+        secondPoint.set(maxX, maxY, maxZ);
+
+        int length = Math.abs(firstPoint.getBlockX() - secondPoint.getBlockX())+1;
+        int height = Math.abs(firstPoint.getBlockY() - secondPoint.getBlockY())+1;
+        int width = Math.abs(firstPoint.getBlockZ() - secondPoint.getBlockZ())+1;
 
         LoggerUtils.debug("建筑长 "+length);
         LoggerUtils.debug("建筑高 "+height);
@@ -498,26 +509,26 @@ public class COIBuilder implements Builder {
                     coiY = y;
                     coiZ = z;
 
-                    int blockX = point1.getBlockX() + x;
-                    int blockY = point1.getBlockY() + y;
-                    int blockZ = point1.getBlockZ() + z;
+                    int blockX = firstPoint.getBlockX() + x;
+                    int blockY = firstPoint.getBlockY() + y;
+                    int blockZ = firstPoint.getBlockZ() + z;
 
-                    if(point2.getBlockX() < point1.getBlockX()){
+                    if(secondPoint.getBlockX() < firstPoint.getBlockX()){
 //                        LoggerUtils.debug("P2 X < P1");
-                        blockX = point1.getBlockX() + (-1) * x;
+                        blockX = firstPoint.getBlockX() + (-1) * x;
                     }
 
-                    if(point2.getBlockY() < point1.getBlockY()){
+                    if(secondPoint.getBlockY() < firstPoint.getBlockY()){
 //                        LoggerUtils.debug("P2 Y < P1");
-                        blockY = point1.getBlockY() + (-1) * y;
+                        blockY = firstPoint.getBlockY() + (-1) * y;
                     }
 
-                    if(point2.getBlockZ() < point1.getBlockZ()){
+                    if(secondPoint.getBlockZ() < firstPoint.getBlockZ()){
 //                        LoggerUtils.debug("P2 Z < P1");
-                        blockZ = point1.getBlockZ() + (-1) * z;
+                        blockZ = firstPoint.getBlockZ() + (-1) * z;
                     }
 
-                    Block block = point1.getWorld().getBlockAt(blockX,blockY,blockZ);
+                    Block block = firstPoint.getWorld().getBlockAt(blockX,blockY,blockZ);
 
                     COIBlock coiBlock = new COIBlock();
                     coiBlock.setX(coiX);
