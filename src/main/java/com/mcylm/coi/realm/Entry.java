@@ -92,9 +92,9 @@ public class Entry extends ExtendedJavaPlugin {
         builder = new COIBuilder();
         NPC_FOODS = new ArrayList<>();
 
-        LoggerUtils.log(Entry.getInstance().getName()+" 开始加载...");
+        LoggerUtils.log(Entry.getInstance().getName() + " 开始加载...");
 
-        PLUGIN_FILE_PATH = "plugins/"+ Entry.getInstance().getName()+"/";
+        PLUGIN_FILE_PATH = "plugins/" + Entry.getInstance().getName() + "/";
 
         if (!new File(PLUGIN_FILE_PATH).exists()) {
             new File(PLUGIN_FILE_PATH).mkdir();
@@ -108,12 +108,12 @@ public class Entry extends ExtendedJavaPlugin {
         UPGRADE_SKIP_BLOCKS = getConfig().getStringList("upgrade-skip-blocks");
         COIServerMode serverMode = COIServerMode.parseCode(SERVER_MODE);
 
-        if(serverMode == null){
+        if (serverMode == null) {
             LoggerUtils.log("服务器模式识别失败！");
             this.getServer().shutdown();
         }
 
-        LoggerUtils.log("当前插件模式："+serverMode.getName());
+        LoggerUtils.log("当前插件模式：" + serverMode.getName());
 
         saveDefaultConfig();
         if (!mapDataFile.exists()) {
@@ -122,9 +122,8 @@ public class Entry extends ExtendedJavaPlugin {
         readMapData();
 
 
-
         // 开发测试环境注册
-        if(serverMode.equals(COIServerMode.DEVELOP)){
+        if (serverMode.equals(COIServerMode.DEVELOP)) {
             //注册建筑结构相关的命令
             getCommand("structure").setExecutor(new COIStructureCommand());
             getCommand("cdebug").setExecutor(new DebugCommand());
@@ -148,7 +147,7 @@ public class Entry extends ExtendedJavaPlugin {
     protected void disable() {
 
         // 全T掉，防止boss bar叠加显示
-        for(Player p : getServer().getOnlinePlayers()){
+        for (Player p : getServer().getOnlinePlayers()) {
             p.kick(Component.text("服务器重载中,请稍后重连"));
         }
     }
@@ -202,6 +201,7 @@ public class Entry extends ExtendedJavaPlugin {
 
         LoggerUtils.log("监听器注册完成");
     }
+
     private void registerDefaultBuildings() {
         buildingManager.registerBuilding(COIBuildingType.BASE, COIBase.class);
         buildingManager.registerBuilding(COIBuildingType.STOPE, COIStope.class);
@@ -240,7 +240,7 @@ public class Entry extends ExtendedJavaPlugin {
 
     public void readMapData() {
         try (FileReader reader = new FileReader(mapDataFile)) {
-            mapData = GSON.fromJson(reader ,MapData.class);
+            mapData = GSON.fromJson(reader, MapData.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -251,12 +251,11 @@ public class Entry extends ExtendedJavaPlugin {
         if (mapData == null) {
             mapData = new MapData();
         }
-         if (!mapDataFile.exists()) {
-            try (FileWriter writer = new FileWriter(mapDataFile)) {
-                GSON.toJson(mapData, writer);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+        try (FileWriter writer = new FileWriter(mapDataFile)) {
+            GSON.toJson(mapData, writer);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+
     }
 }
