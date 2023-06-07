@@ -428,7 +428,10 @@ public class COIEntity implements AI {
                 || foodChests.isEmpty()) {
             LoggerUtils.debug("食物箱子不存在");
             // 食物箱子不存在，就直接原地摆烂
-            say("肚子好饿！附近都没有吃的了");
+            if(getNpc().getEntity() instanceof Player){
+                say("肚子好饿！附近都没有吃的了");
+            }
+
             return;
         }
 
@@ -461,7 +464,9 @@ public class COIEntity implements AI {
         if(distance > FOOD_CHEST_MAX_DISTANCE){
             // 如果食品箱子的距离大于 最大寻找的距离
             // 直接原地摆烂
-            say("肚子好饿！附近都没有吃的了");
+            if(getNpc().getEntity() instanceof Player){
+                say("肚子好饿！附近都没有吃的了");
+            }
             return;
         }
 

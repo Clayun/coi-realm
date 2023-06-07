@@ -32,6 +32,8 @@ import java.util.*;
  */
 public class COICart extends COIEntity {
 
+    private boolean needCharging = false;
+
 
     public COICart(COICartCreator npcCreator) {
         super(npcCreator);
@@ -242,11 +244,54 @@ public class COICart extends COIEntity {
         return null;
     }
 
+    /**
+     * 自动充电
+     * @return 是否有足够的电量
+     */
+    private boolean automaticCharging(){
+        if(getHunger() <= 7){
+            say("电池电量过低，准备返回充电桩");
+            findPath(getCoiNpc().getSpawnLocation());
+            needCharging = true;
+            return false;
+        }
+
+        if(getLocation().distance(getCoiNpc().getSpawnLocation()) <= 3){
+            // 开始充电
+            say("充电中...");
+
+            // 最大电量 30
+            if(getHunger() < 30){
+                setHunger(getHunger() + 1);
+
+                // 如果开启强制充电，就充满
+                if(needCharging){
+                    if(getHunger() >= 30){
+                        needCharging = false;
+                        return true;
+                    }
+                }
+            }
+
+
+
+        }
+
+        // 未开启强制充电，就呆几秒，充几秒
+        return true;
+    }
+
     @Override
     public void move() {
         super.move();
-        // 开始行动
-        action();
+        // 电池电量检测
+        boolean b = automaticCharging();
+
+        if(b){
+            // 开始行动
+            action();
+        }
+
     }
 
 }
