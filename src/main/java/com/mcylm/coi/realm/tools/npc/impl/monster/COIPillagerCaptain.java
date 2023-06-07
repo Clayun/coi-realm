@@ -8,4 +8,11 @@ public class COIPillagerCaptain extends COIPillager {
     public COIPillagerCaptain(COIPillagerCreator npcCreator) {
         super(npcCreator);
     }
+
+    @Override
+    public int getDamage() {
+        return 10;
+    }
+
+
 }

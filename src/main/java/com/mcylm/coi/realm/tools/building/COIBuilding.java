@@ -231,7 +231,6 @@ public abstract class COIBuilding implements Serializable {
         // 实例化建筑结构
         COIStructure structure = Entry.getBuilder().getStructureByFile(structureName);
 
-
         // 设置名称
         structure.setName(getType().getName());
 
