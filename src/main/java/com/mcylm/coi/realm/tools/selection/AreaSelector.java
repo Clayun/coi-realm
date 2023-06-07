@@ -147,6 +147,7 @@ public class AreaSelector implements Selector {
 
         player.sendActionBar("§a潜行进行放置 右键选择新点 §c切换物品取消 §e当前状态: " + state);
 
+
         ParticleRect rect = new ParticleRect(start, end.getZ() - start.getZ(), end.getX() - start.getX(), end.getY() - start.getY());
 
         if (player.isSneaking() && canPlace) {

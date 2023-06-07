@@ -14,8 +14,11 @@ public class NpcAITask {
     private static Set<AI> aiSet = new HashSet<>();
 
     public static void runTask(AI ai) {
-        aiSet.add(ai);
+
         if (!aiSet.contains(ai)) {
+
+            aiSet.add(ai);
+
             new BukkitRunnable() {
                 @Override
                 public void run() {
