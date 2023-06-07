@@ -18,7 +18,6 @@ public class NpcAITask {
         if (!aiSet.contains(ai)) {
 
             aiSet.add(ai);
-
             new BukkitRunnable() {
                 @Override
                 public void run() {
