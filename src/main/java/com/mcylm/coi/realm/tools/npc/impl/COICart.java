@@ -250,10 +250,10 @@ public class COICart extends COIEntity {
      */
     private boolean automaticCharging(){
 
-        if(getHunger() <= 7){
-            say("电池电量过低，准备返回充电桩");
+        // 需要强制充电
+        if(needCharging){
+
             findPath(getCoiNpc().getSpawnLocation());
-            needCharging = true;
 
             if(getLocation().distance(getCoiNpc().getSpawnLocation()) <= 3){
                 // 开始充电
@@ -273,6 +273,11 @@ public class COICart extends COIEntity {
                 }
 
             }
+        }
+
+        if(getHunger() <= 7){
+            say("电池电量过低，准备返回充电桩");
+            needCharging = true;
 
             return false;
         }
