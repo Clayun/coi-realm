@@ -85,8 +85,17 @@ public class COIStope extends COIBuilding {
         super.upgradeBuildSuccess();
         for (COINpc creator : getNpcCreators()) {
 
-            COIMinerCreator npcCreator = (COIMinerCreator) creator;
-            npcCreator.setChestsLocation(getChestsLocation());
+            if(creator instanceof COIMinerCreator){
+                // 设置箱子
+                COIMinerCreator npcCreator = (COIMinerCreator) creator;
+                npcCreator.setChestsLocation(getChestsLocation());
+
+            }else if(creator instanceof COICartCreator){
+                COICartCreator npcCreator = (COICartCreator) creator;
+                npcCreator.setChestsLocation(getChestsLocation());
+            }
+
+
         }
     }
 

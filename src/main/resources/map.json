@@ -1,0 +1,214 @@
+{
+  "veins": [
+    {
+      "structureName": "kuangmai2.structure",
+      "x": 581,
+      "y": 52,
+      "z": 184,
+      "yaw": -117.74893,
+      "world": "RTSv2",
+      "spawnChance": 0.8,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai3.structure",
+      "x": 585,
+      "y": 52,
+      "z": 195,
+      "yaw": -135.8981,
+      "world": "RTSv2",
+      "spawnChance": 0.8,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai3.structure",
+      "x": 688,
+      "y": 52,
+      "z": 109,
+      "yaw": 69.75128,
+      "world": "RTSv2",
+      "spawnChance": 0.8,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai2.structure",
+      "x": 345,
+      "y": 50,
+      "z": 171,
+      "yaw": 54.30241,
+      "world": "RTSv2",
+      "spawnChance": 0.8,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai2.structure",
+      "x": 449,
+      "y": 50,
+      "z": 201,
+      "yaw": 133.0539,
+      "world": "RTSv2",
+      "spawnChance": 0.8,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 364,
+      "y": 50,
+      "z": 246,
+      "yaw": -174.89682,
+      "world": "RTSv2",
+      "spawnChance": 0.8,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 107,
+      "y": 50,
+      "z": 365,
+      "yaw": -1.195404,
+      "world": "RTSv2",
+      "spawnChance": 0.8,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai2.structure",
+      "x": 150,
+      "y": 49,
+      "z": 454,
+      "yaw": -114.44754,
+      "world": "RTSv2",
+      "spawnChance": 0.8,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai2.structure",
+      "x": 214,
+      "y": 50,
+      "z": 432,
+      "yaw": -122.99719,
+      "world": "RTSv2",
+      "spawnChance": 0.8,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 511,
+      "y": 49,
+      "z": 879,
+      "yaw": -149.39581,
+      "world": "RTSv2",
+      "spawnChance": 0.8,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai2.structure",
+      "x": 436,
+      "y": 50,
+      "z": 917,
+      "yaw": 117.45438,
+      "world": "RTSv2",
+      "spawnChance": 0.8,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai2.structure",
+      "x": 371,
+      "y": 50,
+      "z": 869,
+      "yaw": -116.09387,
+      "world": "RTSv2",
+      "spawnChance": 0.8,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 711,
+      "y": 50,
+      "z": 805,
+      "yaw": -97.04834,
+      "world": "RTSv2",
+      "spawnChance": 0.8,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai2.structure",
+      "x": 749,
+      "y": 49,
+      "z": 735,
+      "yaw": -30.300049,
+      "world": "RTSv2",
+      "spawnChance": 0.8,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai2.structure",
+      "x": 831,
+      "y": 50,
+      "z": 837,
+      "yaw": 62.5448,
+      "world": "RTSv2",
+      "spawnChance": 0.8,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 821,
+      "y": 50,
+      "z": 479,
+      "yaw": -51.010254,
+      "world": "RTSv2",
+      "spawnChance": 0.8,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai2.structure",
+      "x": 944,
+      "y": 49,
+      "z": 507,
+      "yaw": 64.34473,
+      "world": "RTSv2",
+      "spawnChance": 0.8,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai2.structure",
+      "x": 948,
+      "y": 49,
+      "z": 543,
+      "yaw": 139.33813,
+      "world": "RTSv2",
+      "spawnChance": 0.8,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 885,
+      "y": 49,
+      "z": 147,
+      "yaw": -22.366943,
+      "world": "RTSv2",
+      "spawnChance": 0.8,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 840,
+      "y": 49,
+      "z": 234,
+      "yaw": -132.3247,
+      "world": "RTSv2",
+      "spawnChance": 0.8,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai2.structure",
+      "x": 923,
+      "y": 50,
+      "z": 268,
+      "yaw": -103.67236,
+      "world": "RTSv2",
+      "spawnChance": 0.8,
+      "resetTime": 60
+    }
+  ]
+}
