@@ -1,30 +1,18 @@
 package com.mcylm.coi.realm.tools.npc.impl;
 
 import com.mcylm.coi.realm.Entry;
-import com.mcylm.coi.realm.runnable.TaskRunnable;
 import com.mcylm.coi.realm.tools.npc.COICartCreator;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.ai.Navigator;
-import net.citizensnpcs.api.npc.BlockBreaker;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.Container;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.block.data.Rail;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 矿车
@@ -176,6 +164,7 @@ public class COICart extends COIEntity {
             }
         }
     }
+    /*
     @Override
     public void findPath(Location location) {
         if (!isAlive()) {
@@ -197,6 +186,8 @@ public class COICart extends COIEntity {
 
     }
 
+
+     */
 
 
     /**

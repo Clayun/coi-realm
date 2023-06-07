@@ -18,6 +18,7 @@ import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings;
 import me.libraryaddict.disguise.disguisetypes.*;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Navigator;
+import net.citizensnpcs.api.ai.PathStrategy;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -31,6 +32,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -88,6 +90,9 @@ public class COIEntity implements AI {
     private Map<Player, Hologram> holograms = new HashMap<>();
     private Map<Player, AtomicInteger> hologramVisitors = new HashMap<>();
 
+    private @Nullable PathStrategy currentPath;
+    private int findPathCooldown = 0;
+
     // 构造NPC
     public COIEntity(COINpc npcCreator) {
         npcCreator.setNpc(this);
@@ -115,7 +120,7 @@ public class COIEntity implements AI {
         this.npc = CitizensAPI.getNPCRegistry().createNPC(npcCreator.getNpcType(), getName());
 
         // 设置伪装
-        if(getCoiNpc().getDisguiseType() != null){
+        if (getCoiNpc().getDisguiseType() != null) {
 
             DisguiseTrait disguiseTrait = new DisguiseTrait();
 
@@ -207,20 +212,28 @@ public class COIEntity implements AI {
             return;
         }
 
-        if (canStand(location)) {
-            npc.faceLocation(location);
-            Navigator navigator = npc.getNavigator();
-            navigator.getDefaultParameters()
-                    .stuckAction(null)
-                    .useNewPathfinder(false);
-
-            navigator.setTarget(location);
-
-
+        if (currentPath != null && currentPath.getCurrentDestination() != null) {
+            if (currentPath.getCurrentDestination().distance(location) < 3) {
+                return;
+            }
         }
 
-    }
+        if (findPathCooldown++ > 2) {
+            findPathCooldown = 0;
+        } else {
+            return;
+        }
 
+        npc.faceLocation(location);
+        Navigator navigator = npc.getNavigator();
+        navigator.getDefaultParameters()
+                .stuckAction(null)
+                .useNewPathfinder(false);
+
+        navigator.setTarget(location);
+
+
+    }
 
 
     /**
@@ -264,13 +277,13 @@ public class COIEntity implements AI {
         // NPC附近20格范围内的玩家都能看到
         List<Entity> nearbyEntities = getNpc().getEntity().getNearbyEntities(20, 20, 20);
 
-        for(Entity entity : nearbyEntities){
+        for (Entity entity : nearbyEntities) {
             if (entity != null && entity.getType().equals(EntityType.PLAYER)) {
                 Player p = (Player) entity;
 
-                LoggerUtils.debug("检测到NPC附近玩家："+p.getName());
+                LoggerUtils.debug("检测到NPC附近玩家：" + p.getName());
 
-                if(p.isOnline()){
+                if (p.isOnline()) {
                     if (hologramVisitors.containsKey(p)) {
                         hologramVisitors.get(p).set(maxShowTimer);
                     } else {
@@ -310,7 +323,7 @@ public class COIEntity implements AI {
 
                                     }
 
-                                    if(isAlive()){
+                                    if (isAlive()) {
                                         // 活着的情况下，再去显示
                                         Location newLoc = getNpc().getEntity().getLocation().clone();
                                         newLoc.setY(newLoc.getY() + floatHeight);
@@ -330,8 +343,6 @@ public class COIEntity implements AI {
 
             }
         }
-
-
 
 
     }
@@ -360,7 +371,7 @@ public class COIEntity implements AI {
 
         Inventory backpack = getCoiNpc().getInventory();
         // 在背包里找吃的
-        if(!backpack.isEmpty()){
+        if (!backpack.isEmpty()) {
 //            LoggerUtils.debug("试图吃东西"); // 太频繁了，取消显示
             Iterator<ItemStack> iterator = backpack.iterator();
             while (iterator.hasNext()) {
@@ -428,7 +439,7 @@ public class COIEntity implements AI {
                 || foodChests.isEmpty()) {
             LoggerUtils.debug("食物箱子不存在");
             // 食物箱子不存在，就直接原地摆烂
-            if(getNpc().getEntity() instanceof Player){
+            if (getNpc().getEntity() instanceof Player) {
                 say("肚子好饿！附近都没有吃的了");
             }
 
@@ -461,10 +472,10 @@ public class COIEntity implements AI {
             }
         }
 
-        if(distance > FOOD_CHEST_MAX_DISTANCE){
+        if (distance > FOOD_CHEST_MAX_DISTANCE) {
             // 如果食品箱子的距离大于 最大寻找的距离
             // 直接原地摆烂
-            if(getNpc().getEntity() instanceof Player){
+            if (getNpc().getEntity() instanceof Player) {
                 say("肚子好饿！附近都没有吃的了");
             }
             return;
@@ -540,7 +551,7 @@ public class COIEntity implements AI {
             if (entity.getHealth() < MAX_HEALTH) {
 
                 if (MAX_HEALTH - entity.getHealth() >= 1) {
-                    if(entity.getMaxHealth() - entity.getHealth() > 1){
+                    if (entity.getMaxHealth() - entity.getHealth() > 1) {
                         entity.setHealth(entity.getHealth() + 1);
                     }
 
@@ -558,18 +569,18 @@ public class COIEntity implements AI {
                 HUNGER_DELAY_COUNT++;
             }
 
-        }else{
-            if(getHunger() > 0){
+        } else {
+            if (getHunger() > 0) {
                 setHunger(getHunger() - HUNGER_COST);
                 HUNGER_DELAY_COUNT = 0;
             }
         }
 
-        if(getHunger() <= 0){
-            if(entity.getHealth() >= 1){
+        if (getHunger() <= 0) {
+            if (entity.getHealth() >= 1) {
                 // 自动造成伤害
                 entity.damage(HUNGER_DAMAGE);
-                if(!isAlive() && entity.getHealth() <= 0d){
+                if (!isAlive() && entity.getHealth() <= 0d) {
                     // 生命值归零，死亡，饿死的情况下，可以自动报废建筑
                     LoggerUtils.debug("NPC 饿死了");
                 }
@@ -827,6 +838,8 @@ public class COIEntity implements AI {
 
     @Override
     public void move() {
+        currentPath = getNpc().getNavigator().getPathStrategy();
+
         // 记录位置
         saveLastLocation();
         // 优先穿衣服
@@ -942,7 +955,7 @@ public class COIEntity implements AI {
                     LoggerUtils.debug("NPC复活了");
                 }
             }
-        }else{
+        } else {
             // 无法复活的，直接删除
             coiNpc.getNpc().remove();
         }
@@ -1146,10 +1159,11 @@ public class COIEntity implements AI {
 
     /**
      * 获取NPC实时血量
+     *
      * @return
      */
-    public double getHealth(){
-        if(!isAlive()){
+    public double getHealth() {
+        if (!isAlive()) {
             return 0;
         }
         LivingEntity entity = (LivingEntity) npc.getEntity();
@@ -1158,10 +1172,11 @@ public class COIEntity implements AI {
 
     /**
      * 设置NPC实时血量
+     *
      * @param health
      */
-    public void setHealth(double health){
-        if(!isAlive()){
+    public void setHealth(double health) {
+        if (!isAlive()) {
             return;
         }
         LivingEntity entity = (LivingEntity) npc.getEntity();

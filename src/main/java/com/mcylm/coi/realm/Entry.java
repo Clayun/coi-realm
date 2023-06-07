@@ -29,6 +29,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.PluginManager;
@@ -162,6 +163,13 @@ public class Entry extends ExtendedJavaPlugin {
         COISoldier.registerListener();
 
         COIMonster.registerListener();
+
+        Events.subscribe(ProjectileHitEvent.class)
+                .handler(e -> {
+                    if (e.getHitEntity() != null && e.getHitEntity().hasMetadata("preview_block")) {
+                        e.setCancelled(true);
+                    }
+        });
 
         Events.subscribe(EntityChangeBlockEvent.class)
                 .handler(e -> {

@@ -634,7 +634,16 @@ public abstract class COIBuilding implements Serializable {
 
     public COIStructure prepareStructure(COIStructure structure, Location loc) {
         loc.setYaw(loc.getYaw() + 90);
-        structure.rotate(Rotation.fromDegrees(Math.round(loc.getYaw() / 90) * 90));
+        int n = Math.round(loc.getYaw() / 90);
+        if (n == 1) {
+            n = 3;
+        } else if (n == 3) {
+            n = 1;
+        } else if (n == 4) { // 强制0度
+            n = 0;
+        }
+
+        structure.rotate(Rotation.fromDegrees(n * 90));
         return structure;
     }
 

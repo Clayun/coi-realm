@@ -11,17 +11,20 @@ import com.mcylm.coi.realm.utils.particle.ParticleRect;
 import com.mcylm.coi.realm.utils.region.Region;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Particle;
+import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 @Getter
 @Setter
@@ -33,6 +36,8 @@ public class AreaSelector implements Selector {
     private COIBuilding building;
     private boolean stop;
     private float yaw;
+    private COIStructure structure;
+    private Set<FallingBlock> fakeBlocks = new HashSet<>();
 
     public AreaSelector(Player p, COIBuilding building, Location location) {
         this.player = p;
@@ -50,8 +55,8 @@ public class AreaSelector implements Selector {
 
         location.setYaw(yaw);
         // 实例化建筑结构
-        COIStructure structure = building.prepareStructure(Entry.getBuilder().getStructureByFile(structureName), location.clone());
-
+        structure = building.prepareStructure(Entry.getBuilder().getStructureByFile(structureName), location.clone());
+        createFakeBlocks();
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -235,6 +240,89 @@ public class AreaSelector implements Selector {
     @Override
     public void selectLocation(Location loc) {
         selectedLocation = loc;
+
+        this.yaw = player.getLocation().getYaw();
+
+        selectedLocation.setYaw(yaw);
+        // 实例化建筑结构
+        structure = building.prepareStructure(Entry.getBuilder().getStructureByFile(building.getStructureByLevel()), selectedLocation.clone());
+
+        createFakeBlocks();
+    }
+
+    private void createFakeBlocks() {
+
+        fakeBlocks.forEach(Entity::remove);
+        fakeBlocks.clear();
+
+        // 这是个给BukkitRunnable的List
+        List<FallingBlock> blocks = new ArrayList<>();
+
+        List<COIBlock> coiBlocks = structure.getBlocks();
+        int chunkSize = 64;
+        List<List<COIBlock>> result = IntStream.range(0, (coiBlocks.size() + chunkSize - 1) / chunkSize)
+                .mapToObj(i -> coiBlocks.subList(i * chunkSize, Math.min((i + 1) * chunkSize, coiBlocks.size())))
+                .toList();
+
+        if (structure != null) {
+            int t = 0;
+            for (List<COIBlock> part : result) {
+                t++;
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+
+                        for (COIBlock block : part) {
+                            if (isStop()) {
+                                this.cancel();
+                                return;
+                            }
+                            if (Material.AIR.toString().equals(block.getMaterial())) {
+                                continue;
+                            }
+                            Location blockLoc = selectedLocation.clone().add(block.getX() + 0.5, block.getY() + 0.5, block.getZ() + 0.5);
+                            if (blockLoc.getBlock().isSolid()) continue;
+                            FallingBlock fallingBlock = selectedLocation.getWorld().spawnFallingBlock(blockLoc, Bukkit.createBlockData(block.getBlockData()));
+                            fallingBlock.setSilent(true);
+                            fallingBlock.setDropItem(false);
+                            fallingBlock.setGravity(false);
+                            fallingBlock.setMetadata("preview_block", new FixedMetadataValue(Entry.getInstance(), true));
+                            // fallingBlock.setGlowing(true);
+
+                            fallingBlock.setInvulnerable(true);
+                            fakeBlocks.add(fallingBlock);
+                            blocks.add(fallingBlock);
+
+                            for (Player p : Bukkit.getOnlinePlayers()) {
+                                if (p != player) {
+                                    p.hideEntity(Entry.getInstance(), fallingBlock);
+                                }
+                            }
+                        }
+                    }
+                }.runTaskLater(Entry.getInstance(), t);
+
+            }
+        }
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+
+                for (FallingBlock block : blocks) {
+                    block.setTicksLived(10);
+                    for (Player p: Bukkit.getOnlinePlayers()) {
+                        if (p != player) {
+                            p.hideEntity(Entry.getInstance(), block);
+                        }
+                    }
+                    if (block.isDead() || stop) {
+                        this.cancel();
+                    }
+                }
+            }
+        }.runTaskTimer(Entry.getInstance(), 0, 5);
+
     }
 
     @Override
@@ -243,6 +331,14 @@ public class AreaSelector implements Selector {
         if (sendMsg) player.sendActionBar("§c已取消");
 
         selectors.remove(player);
+        Entry.runSync(() -> {
+
+            fakeBlocks.forEach(e -> {
+                e.getChunk().load();
+                e.remove();
+            });
+            fakeBlocks.clear();
+        });
     }
 
 }
