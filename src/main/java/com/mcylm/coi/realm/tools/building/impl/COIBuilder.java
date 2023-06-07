@@ -154,7 +154,9 @@ public class COIBuilder implements Builder {
                                     Location cloneLocation = block.getLocation().clone();
                                     cloneLocation.setY(cloneLocation.getY() + 1);
                                     spawnLocation = cloneLocation;
-                                }else if(block.getType().equals(Material.getMaterial(muzzleBlockTypeName))){
+                                }
+
+                                if(block.getType().equals(Material.getMaterial(muzzleBlockTypeName))){
                                     // 如果匹配炮口方块
                                     Location cloneLocation = block.getLocation().clone();
                                     muzzleLocation = cloneLocation;
@@ -191,6 +193,7 @@ public class COIBuilder implements Builder {
                         // 炮口位置
                         if(muzzleLocation != null){
                             paster.setMuzzle(muzzleLocation);
+                            LoggerUtils.debug("定位炮口方块");
                         }
 
                         // 通知外部建造完成

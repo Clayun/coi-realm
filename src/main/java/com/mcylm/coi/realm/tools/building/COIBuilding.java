@@ -192,8 +192,8 @@ public abstract class COIBuilding implements Serializable {
                 if (coiPaster.isComplete()) {
                     // 监听建造状态
                     complete = coiPaster.isComplete();
+                    muzzle = coiPaster.getMuzzle();
                     Bukkit.getScheduler().runTask(Entry.getInstance(), () -> {
-                        setMuzzle(coiPaster.getMuzzle());
                         buildSuccess(location, player);
                     });
                     this.cancel();
@@ -273,8 +273,8 @@ public abstract class COIBuilding implements Serializable {
                 if (coiPaster.isComplete()) {
                     // 监听建造状态
                     complete = coiPaster.isComplete();
+                    muzzle = coiPaster.getMuzzle();
                     Bukkit.getScheduler().runTask(Entry.getInstance(), () -> {
-                        setMuzzle(coiPaster.getMuzzle());
                         buildSuccess(location, null);
                         if(isBase){
                             setTeamSpawnLocation(coiPaster.getSpawnLocation(),team);
