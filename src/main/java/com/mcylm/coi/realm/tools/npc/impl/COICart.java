@@ -260,19 +260,18 @@ public class COICart extends COIEntity {
             // 开始充电
             say("充电中...");
 
-            // 最大电量 30
-            if(getHunger() < 30){
-                setHunger(getHunger() + 1);
+            // 最大电量 20
+            if(getHunger() < 20){
+                setHunger(getHunger() + 0.5);
 
                 // 如果开启强制充电，就充满
                 if(needCharging){
-                    if(getHunger() >= 30){
+                    if(getHunger() >= 20){
                         needCharging = false;
                         return true;
                     }
                 }
             }
-
 
 
         }
