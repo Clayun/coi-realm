@@ -268,7 +268,7 @@ public class COIEntity implements AI {
             if (entity != null && entity.getType().equals(EntityType.PLAYER)) {
                 Player p = (Player) entity;
 
-                LoggerUtils.debug("检测到NPC附近玩家："+p.getName());
+//                LoggerUtils.debug("检测到NPC附近玩家："+p.getName());
 
                 if(p.isOnline()){
                     if (hologramVisitors.containsKey(p)) {
@@ -278,7 +278,7 @@ public class COIEntity implements AI {
                     }
                     if (!holograms.containsKey(p)) {
 
-                        LoggerUtils.debug("开始展示NPC说的话");
+//                        LoggerUtils.debug("开始展示NPC说的话");
 
                         // 在NPC头上2.5格的位置显示
                         double floatHeight = 2.8;
@@ -768,10 +768,12 @@ public class COIEntity implements AI {
             }
         }
 
+
         if (targetItem != null && !targetItem.isDead()) {
+            // 如果目标Item 存在的情况下
             Set<String> picks = getCoiNpc().getPickItemMaterials();
             if (picks != null && picks.size() > 0) {
-
+                // 如果NPC需要捡起来的物品列表不为空
 
                 if (picks.contains(targetItem.getItemStack().getType().toString())) {
 
@@ -786,11 +788,11 @@ public class COIEntity implements AI {
                             ignoredItems.put(targetItem, targetItem);
                             targetItem = null;
                         }
+                    }else {
+                        findPath(targetItem.getLocation());
                     }
 
 
-                } else {
-                    findPath(targetItem.getLocation());
                 }
 
 
