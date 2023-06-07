@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mcylm.coi.realm.cmd.COIStructureCommand;
 import com.mcylm.coi.realm.cmd.DebugCommand;
+import com.mcylm.coi.realm.cmd.VeinCommand;
 import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COIServerMode;
 import com.mcylm.coi.realm.game.COIGame;
@@ -127,6 +128,7 @@ public class Entry extends ExtendedJavaPlugin {
             //注册建筑结构相关的命令
             getCommand("structure").setExecutor(new COIStructureCommand());
             getCommand("cdebug").setExecutor(new DebugCommand());
+            getCommand("cvein").setExecutor(new VeinCommand());
             LoggerUtils.log("命令注册完成");
         }
 
