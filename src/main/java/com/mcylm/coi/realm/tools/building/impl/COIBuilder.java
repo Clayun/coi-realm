@@ -193,7 +193,6 @@ public class COIBuilder implements Builder {
                         // 炮口位置
                         if(muzzleLocation != null){
                             paster.setMuzzle(muzzleLocation);
-                            LoggerUtils.debug("定位炮口方块");
                         }
 
                         // 通知外部建造完成
