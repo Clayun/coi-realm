@@ -141,32 +141,8 @@ public class COIMiner extends COIEntity {
 
                                     @Override
                                     public void run() {
-
                                         // 拆除完成
                                         isBreaking = false;
-
-                                        LoggerUtils.debug("拆除完成了！"+isBreaking);
-
-                                        /*
-
-                                        // 方块复活时间
-                                        int restoreTimer = Entry.getInstance().getConfig().getInt("game.mineral-restore-timer");
-
-                                        // 重生矿物方块
-                                        new BukkitRunnable() {
-                                            @Override
-                                            public void run() {
-                                                if (getCoiNpc().getBuilding().isAlive() || isAlive()) {
-
-                                                    finalTargetBlock.setType(restoreBlock);
-
-                                                }
-
-                                            }
-                                        }.runTaskLater(Entry.getInstance(), 20L * restoreTimer);
-
-
-                                         */
                                     }
                                 }
                         );

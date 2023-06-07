@@ -1,6 +1,7 @@
 package com.mcylm.coi.realm.game;
 
 import com.mcylm.coi.realm.enums.COIGameStatus;
+import com.mcylm.coi.realm.enums.COITeamType;
 import com.mcylm.coi.realm.player.COIPlayer;
 import com.mcylm.coi.realm.runnable.AttackGoalTask;
 import com.mcylm.coi.realm.runnable.BasicGameTask;
@@ -62,6 +63,14 @@ public class COIGame {
     private Map<Player, COIPlayer> coiPlayers = new HashMap<>();
 
 
+    public COITeam getMonsterTeam(){
+        for(COITeam team : getTeams()){
+            if(team.getType().equals(COITeamType.MONSTER)){
+                return team;
+            }
+        }
 
+        return null;
+    }
 
 }

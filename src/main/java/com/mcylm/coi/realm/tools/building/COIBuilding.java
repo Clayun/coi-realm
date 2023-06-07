@@ -192,8 +192,8 @@ public abstract class COIBuilding implements Serializable {
                 if (coiPaster.isComplete()) {
                     // 监听建造状态
                     complete = coiPaster.isComplete();
+                    muzzle = coiPaster.getMuzzle();
                     Bukkit.getScheduler().runTask(Entry.getInstance(), () -> {
-                        setMuzzle(coiPaster.getMuzzle());
                         buildSuccess(location, player);
                     });
                     this.cancel();
@@ -226,11 +226,11 @@ public abstract class COIBuilding implements Serializable {
         String structureName = getStructureByLevel();
 
         if (structureName == null) {
+
             return;
         }
         // 实例化建筑结构
         COIStructure structure = Entry.getBuilder().getStructureByFile(structureName);
-
 
         // 设置名称
         structure.setName(getType().getName());
@@ -273,8 +273,8 @@ public abstract class COIBuilding implements Serializable {
                 if (coiPaster.isComplete()) {
                     // 监听建造状态
                     complete = coiPaster.isComplete();
+                    muzzle = coiPaster.getMuzzle();
                     Bukkit.getScheduler().runTask(Entry.getInstance(), () -> {
-                        setMuzzle(coiPaster.getMuzzle());
                         buildSuccess(location, null);
                         if(isBase){
                             setTeamSpawnLocation(coiPaster.getSpawnLocation(),team);
@@ -297,6 +297,7 @@ public abstract class COIBuilding implements Serializable {
 
     public void buildSuccess(Location location, Player player) {
         // 建筑成功可以放个烟花
+
     }
 
     public void upgradeBuild(Player player) {

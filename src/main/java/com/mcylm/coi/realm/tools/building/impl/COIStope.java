@@ -119,6 +119,7 @@ public class COIStope extends COIBuilding {
         Set<String> pickItemMaterials = new HashSet<>();
         pickItemMaterials.addAll(picks);
 
+
         // 衣服默认捡起
         List<Material> clothes = COINpc.CLOTHES;
 

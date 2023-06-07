@@ -54,7 +54,6 @@ public class TurretTask {
         l.setZ(l.getZ() + 0.5D);
         Entity enemy = getNearestEnemy(l, this.turret);
         if (enemy != null) {
-            LoggerUtils.debug("检测到最近的攻击实体目标");
             double minDamage = this.turret.getMinDamage() * 100.0D;
             double maxDamage = this.turret.getMaxDamage() * 100.0D;
             double realDamage = getNumeroAleatorio((int)minDamage, (int)maxDamage) / 100.0D;
@@ -78,7 +77,6 @@ public class TurretTask {
                     ((Player) enemy).addPotionEffect(potionEffect);
                 }
             }
-
 
 //            Player player = (Player) enemigo;
 //            LoggerUtils.sendMessage("&6受到&b"+this.turret.getName()+"&c攻击造成 &b"+realDamage+" &c点真实伤害",player);

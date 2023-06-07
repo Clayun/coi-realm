@@ -33,7 +33,7 @@ public class DebugCommand implements CommandExecutor {
                 COIBuilding building = Entry.getInstance().getBuildingManager().getBuildingTemplateByType(COIBuildingType.MONSTER_BASE);
                 building.setNpcCreators(List.of(COIPillagerCreator.initCOIPillagerCreator(null)));
                 building.setTeam(TeamUtils.getMonsterTeam());
-                building.build(player.getLocation(), null);
+                building.build(player.getLocation(),TeamUtils.getMonsterTeam(),false );
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
