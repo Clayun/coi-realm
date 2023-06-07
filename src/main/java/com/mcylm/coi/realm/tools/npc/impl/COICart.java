@@ -13,8 +13,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Container;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Rail;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -49,10 +54,13 @@ public class COICart extends COIEntity {
         return update;
     }
 
+
+
     /**
      * 行动
      */
     private void action(){
+
         if(getCoiNpc().getInventory().isEmpty()){
             collectingResources();
         }else{
