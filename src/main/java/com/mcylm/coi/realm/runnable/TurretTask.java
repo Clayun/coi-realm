@@ -107,6 +107,7 @@ public class TurretTask {
                         // 非小队内成员，同时非所属人
                         // 就设置为攻击目标
                         attackPermission = true;
+                        LoggerUtils.debug(p.getName()+"非小队内成员，锁定攻击");
                     }
 
                     if(attackPermission){
@@ -114,6 +115,7 @@ public class TurretTask {
                         if(TeamUtils.checkNPCInTeam(e,torreta.getTeam())){
                             // 是本小队的NPC，就取消锁定攻击
                             attackPermission = false;
+                            LoggerUtils.debug(e.getName()+"是本小队的NPC，取消锁定攻击");
                         }
                     }
 
