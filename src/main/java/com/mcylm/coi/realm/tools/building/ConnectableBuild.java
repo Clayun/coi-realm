@@ -1,11 +1,9 @@
 package com.mcylm.coi.realm.tools.building;
 
-import com.mcylm.coi.realm.Entry;
-import com.mcylm.coi.realm.tools.data.BuildData;
+import com.mcylm.coi.realm.tools.data.metadata.BuildData;
 import com.mcylm.coi.realm.utils.LocationUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;

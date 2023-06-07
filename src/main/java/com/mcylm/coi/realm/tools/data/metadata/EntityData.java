@@ -1,11 +1,9 @@
-package com.mcylm.coi.realm.tools.data;
+package com.mcylm.coi.realm.tools.data.metadata;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.model.COINpc;
-import com.mcylm.coi.realm.tools.building.COIBuilding;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;

@@ -147,6 +147,8 @@ public class COIMiner extends COIEntity {
 
                                         LoggerUtils.debug("拆除完成了！"+isBreaking);
 
+                                        /*
+
                                         // 方块复活时间
                                         int restoreTimer = Entry.getInstance().getConfig().getInt("game.mineral-restore-timer");
 
@@ -163,6 +165,8 @@ public class COIMiner extends COIEntity {
                                             }
                                         }.runTaskLater(Entry.getInstance(), 20L * restoreTimer);
 
+
+                                         */
                                     }
                                 }
                         );

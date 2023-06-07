@@ -1,11 +1,9 @@
 package com.mcylm.coi.realm.runnable;
 
 import com.mcylm.coi.realm.Entry;
-import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.tools.npc.AI;
 import lombok.Getter;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -17,20 +15,22 @@ public class NpcAITask {
 
     public static void runTask(AI ai) {
         aiSet.add(ai);
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (!aiSet.contains(ai)) {
-                    this.cancel();
-                    return;
-                }
-                if (ai.isRemoved()) {
-                    aiSet.remove(ai);
-                    return;
-                }
-                ai.move();
+        if (!aiSet.contains(ai)) {
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    if (!aiSet.contains(ai)) {
+                        this.cancel();
+                        return;
+                    }
+                    if (ai.isRemoved()) {
+                        aiSet.remove(ai);
+                        return;
+                    }
+                    ai.move();
 
-            }
-        }.runTaskTimer(Entry.getInstance(), 0, ai.delayTick());
+                }
+            }.runTaskTimer(Entry.getInstance(), 0, ai.delayTick());
+        }
     }
 }

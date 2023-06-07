@@ -6,7 +6,7 @@ import com.mcylm.coi.realm.model.COIBlock;
 import com.mcylm.coi.realm.model.COIStructure;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.FloatableBuild;
-import com.mcylm.coi.realm.tools.data.BuildData;
+import com.mcylm.coi.realm.tools.data.metadata.BuildData;
 import com.mcylm.coi.realm.utils.particle.ParticleRect;
 import com.mcylm.coi.realm.utils.region.Region;
 import lombok.Getter;

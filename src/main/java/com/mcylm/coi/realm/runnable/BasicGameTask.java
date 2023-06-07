@@ -3,13 +3,11 @@ package com.mcylm.coi.realm.runnable;
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.runnable.api.GameTaskApi;
-import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class BasicGameTask implements GameTaskApi {
@@ -92,7 +90,8 @@ public class BasicGameTask implements GameTaskApi {
     public void gaming() {
         // 游戏状态标为游戏中
         Entry.getGame().setStatus(COIGameStatus.GAMING);
-
+        // 生成矿脉
+        VeinGenerateTask.runTask();
         // 游戏中进程
         // 1.开启倒计时
         // 2.游戏结束后启动 GameStoppingTask

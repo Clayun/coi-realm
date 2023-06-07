@@ -3,15 +3,13 @@ package com.mcylm.coi.realm.tools.attack.target.impl;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.tools.attack.target.Target;
 import com.mcylm.coi.realm.tools.attack.target.TargetType;
-import com.mcylm.coi.realm.tools.data.EntityData;
+import com.mcylm.coi.realm.tools.data.metadata.EntityData;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 @AllArgsConstructor
 @Getter

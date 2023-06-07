@@ -8,7 +8,7 @@ import com.mcylm.coi.realm.model.COIPaster;
 import com.mcylm.coi.realm.model.COIStructure;
 import com.mcylm.coi.realm.tools.building.Builder;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
-import com.mcylm.coi.realm.tools.data.BuildData;
+import com.mcylm.coi.realm.tools.data.metadata.BuildData;
 import com.mcylm.coi.realm.utils.FileUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TimeUtils;
@@ -207,6 +207,152 @@ public class COIBuilder implements Builder {
 
     }
 
+    @Override
+    public void pasteStructureWithoutBuilding(COIPaster paster, Player player) {
+
+        COIStructure structure = paster.getStructure();
+
+        // 全部待建造的方块
+        List<COIBlock> allBlocks = structure.getBlocks();
+
+        // 建筑基点
+        Location basicLocation = paster.getLocation();
+
+        List<COIBlock> needBuildCOIBlocks = new ArrayList<>();
+
+        List<Block> needBuildBlocks = new ArrayList<>();
+        // 根据建筑基点设置每个方块的真实坐标
+        for(COIBlock coiBlock : allBlocks){
+            coiBlock.setX(coiBlock.getX() + basicLocation.getBlockX());
+            coiBlock.setY(coiBlock.getY() + basicLocation.getBlockY());
+            coiBlock.setZ(coiBlock.getZ() + basicLocation.getBlockZ());
+
+            if("AIR".equals(coiBlock.getMaterial())
+                    && !paster.isWithAir()){
+                //删除掉空气方块
+            } else {
+                needBuildCOIBlocks.add(coiBlock);
+            }
+        }
+
+        // NPC出生点方块名称
+        String spawnerBlockTypeName = Entry.getInstance().getConfig().getString("game.npc.spawner-material");
+        // 炮口位置方块名称
+        String muzzleBlockTypeName = Entry.getInstance().getConfig().getString("game.turret.muzzle-material");
+
+
+        //根据Y轴排序
+        needBuildCOIBlocks.sort(Comparator.comparingDouble(COIBlock::getY));
+        needBuildCOIBlocks.forEach(coiBlock -> {
+
+            Block block = Bukkit.getWorld(paster.getWorldName()).getBlockAt(coiBlock.getX(), coiBlock.getY(), coiBlock.getZ());
+
+            needBuildBlocks.add(block);
+
+        });
+
+        new BukkitRunnable() {
+
+            // 建造到第几个方块
+            int index = 0;
+
+            // NPC出生方块
+            private Location spawnLocation = null;
+            // 炮口方块
+            private Location muzzleLocation = null;
+
+            @Override
+            public void run() {
+
+                // 每次建造几个方块
+                for(int i = 0; i < paster.getUnit(); i ++){
+
+                    // 如果方块游标还没达到总方块数量，就继续建造
+                    if(index <= (needBuildCOIBlocks.size() - 1)){
+
+                        COIBlock coiBlock = needBuildCOIBlocks.get(index);
+
+                        Block block = needBuildBlocks.get(index);
+
+                        // 主线程同步更新世界方块
+                        new BukkitRunnable(){
+
+                            @Override
+                            public void run() {
+                                // 根据COI结构方块获取MC里面的方块
+                                Material material = Material.getMaterial(coiBlock.getMaterial());
+
+                                BlockData blockData = Bukkit.createBlockData(coiBlock.getBlockData());
+
+                                if(paster.getBlockColor() != null){
+                                    if(isTerracotta(material)){
+                                        material = paster.getBlockColor();
+                                        blockData = Bukkit.createBlockData(material);
+                                    }
+                                }
+
+                                if (paster.getCondition().check(block, coiBlock, material)) {
+                                    block.setType(paster.getHandler().handle(block, coiBlock, material));
+                                }
+
+                                if(block.getType().equals(Material.getMaterial(spawnerBlockTypeName))){
+                                    // 如果匹配出生点方块
+                                    Location cloneLocation = block.getLocation().clone();
+                                    cloneLocation.setY(cloneLocation.getY() + 1);
+                                    spawnLocation = cloneLocation;
+                                }else if(block.getType().equals(Material.getMaterial(muzzleBlockTypeName))){
+                                    // 如果匹配炮口方块
+                                    Location cloneLocation = block.getLocation().clone();
+                                    muzzleLocation = cloneLocation;
+                                }
+
+                                BlockState state = block.getState();
+                                state.setBlockData(blockData);
+                                state.update(true);
+
+                                // 设置建造特效
+                                block.getWorld().playEffect(block.getLocation(),Effect.STEP_SOUND,1);
+                                // 设置玩家提示信息
+                                if(player != null){
+                                    LoggerUtils.sendActionbar(player,getBuildingProgress(structure.getName(),needBuildCOIBlocks.size(),index,paster.getInterval(),paster.getUnit()));
+                                }
+                            }
+
+                        }.runTask(Entry.getInstance());
+
+                        ++index;
+
+                    }else{
+                        if(player != null){
+                            LoggerUtils.sendActionbar(player,getBuildingProgress(structure.getName(),needBuildCOIBlocks.size(),index,paster.getInterval(),paster.getUnit()));
+                        }
+
+                        // 建造完成，设置NPC投入生产
+                        if(spawnLocation != null){
+                            // 赋值出生点
+                            paster.setSpawnLocation(spawnLocation);
+                            paster.getNpcCreators().forEach(npc -> npc.setSpawnLocation(spawnLocation));
+                        }
+
+                        // 炮口位置
+                        if(muzzleLocation != null){
+                            paster.setMuzzle(muzzleLocation);
+                        }
+
+                        // 通知外部建造完成
+                        paster.setComplete(true);
+
+                        this.cancel();
+                    }
+                }
+
+
+
+            }
+        }.runTaskTimerAsynchronously(Entry.getInstance(),0,paster.getInterval());
+
+    }
+
     /**
      * 获取建造进度 Actionbar 内容
      * @param buildingName 建筑名称
@@ -270,6 +416,7 @@ public class COIBuilder implements Builder {
         }
 
         return coiStructure.clone();
+
     }
 
 

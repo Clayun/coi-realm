@@ -4,7 +4,7 @@ import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.ConnectableBuild;
 import com.mcylm.coi.realm.tools.building.config.BuildingConfig;
-import com.mcylm.coi.realm.tools.data.BuildData;
+import com.mcylm.coi.realm.tools.data.metadata.BuildData;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

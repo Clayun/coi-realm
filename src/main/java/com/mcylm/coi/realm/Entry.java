@@ -14,7 +14,8 @@ import com.mcylm.coi.realm.managers.COIBuildingManager;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.tools.building.impl.*;
 import com.mcylm.coi.realm.tools.building.impl.monster.COIMonsterBase;
-import com.mcylm.coi.realm.tools.data.EntityData;
+import com.mcylm.coi.realm.tools.data.MapData;
+import com.mcylm.coi.realm.tools.data.metadata.EntityData;
 import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
 import com.mcylm.coi.realm.tools.npc.impl.monster.COIMonster;
 import com.mcylm.coi.realm.utils.LoggerUtils;
@@ -33,6 +34,9 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,11 +70,18 @@ public class Entry extends ExtendedJavaPlugin {
     // 主游戏进程管理
     private static COIGame game;
 
+    // 地图数据
+    @Getter
+    private static MapData mapData;
+
     // GSON
     public static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     @Getter
     private COIBuildingManager buildingManager = new COIBuildingManager();
+
+    private File mapDataFile = new File(getDataFolder(), "map.json");
+
 
     @Override
     protected void enable() {
@@ -104,6 +115,12 @@ public class Entry extends ExtendedJavaPlugin {
         LoggerUtils.log("当前插件模式："+serverMode.getName());
 
         saveDefaultConfig();
+        if (!mapDataFile.exists()) {
+            saveMapData();
+        }
+        readMapData();
+
+
 
         // 开发测试环境注册
         if(serverMode.equals(COIServerMode.DEVELOP)){
@@ -217,5 +234,27 @@ public class Entry extends ExtendedJavaPlugin {
 
     public static COIGame getGame() {
         return game;
+    }
+
+    public void readMapData() {
+        try (FileReader reader = new FileReader(mapDataFile)) {
+            mapData = GSON.fromJson(reader ,MapData.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public void saveMapData() {
+        if (mapData == null) {
+            mapData = new MapData();
+        }
+         if (!mapDataFile.exists()) {
+            try (FileWriter writer = new FileWriter(mapDataFile)) {
+                GSON.toJson(mapData, writer);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

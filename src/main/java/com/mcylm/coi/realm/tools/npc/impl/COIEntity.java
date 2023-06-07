@@ -5,7 +5,7 @@ import com.google.common.cache.CacheBuilder;
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.runnable.NpcAITask;
-import com.mcylm.coi.realm.tools.data.EntityData;
+import com.mcylm.coi.realm.tools.data.metadata.EntityData;
 import com.mcylm.coi.realm.tools.npc.AI;
 import com.mcylm.coi.realm.tools.trait.DisguiseTrait;
 import com.mcylm.coi.realm.utils.GUIUtils;
