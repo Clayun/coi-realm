@@ -29,7 +29,7 @@ public class COIVein {
     @Getter
     private double spawnChance;
 
-    private int restTime;
+    private int resetTime;
 
     public BukkitRunnable startGenerate() {
 
@@ -42,7 +42,7 @@ public class COIVein {
 
             }
         };
-        runnable.runTaskTimer(Entry.getInstance(), 0, restTime * 20L);
+        runnable.runTaskTimer(Entry.getInstance(), 0, resetTime * 20L);
         return runnable;
     }
 
