@@ -92,7 +92,7 @@
 <div align="left">
   <img src="images/building.png" alt="建造中">
 </div>
-建筑所需占位会用粒子的方式展示出来
+建筑所需占位会用粒子以及falling block预览(上图得换新了)的方式展示出来
 
 确定位置之后只要按下shift就可以开启自动建造
 
