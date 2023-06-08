@@ -108,17 +108,21 @@ public abstract class COIMonster extends COIEntity implements Commandable {
      */
     private void meleeAttackTarget() {
 
-        // 攻击建筑
-        for (Block b : LocationUtils.selectionRadiusByDistance(getLocation().getBlock(), 3, 3)) {
-            COIBuilding building = BuildData.getBuildingByBlock(b);
-            if (building != null && building.getTeam() != getCoiNpc().getTeam()) {
-                ((LivingEntity) getNpc().getEntity()).swingMainHand();
-                building.damage(getNpc().getEntity(), (int) getDamage(), b);
-                b.getWorld().playEffect(b.getLocation(), Effect.STEP_SOUND,1);
+        if(getLocation() != null){
+            // 攻击建筑
+            for (Block b : LocationUtils.selectionRadiusByDistance(getLocation().getBlock(), 3, 3)) {
+                COIBuilding building = BuildData.getBuildingByBlock(b);
+                if (building != null && building.getTeam() != getCoiNpc().getTeam()) {
+                    ((LivingEntity) getNpc().getEntity()).swingMainHand();
+                    building.damage(getNpc().getEntity(), (int) getDamage(), b);
+                    b.getWorld().playEffect(b.getLocation(), Effect.STEP_SOUND,1);
 
-                break;
+                    break;
+                }
             }
         }
+
+
 
         if(target != null){
             if (target.getType() == TargetType.BUILDING) {
