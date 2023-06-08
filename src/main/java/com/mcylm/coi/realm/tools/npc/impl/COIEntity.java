@@ -223,12 +223,12 @@ public class COIEntity implements AI {
         }
 
         if (currentPath != null && currentPath.getCurrentDestination() != null) {
-            if (currentPath.getCurrentDestination().distance(location) < 3) {
+            if (currentPath.getCurrentDestination().distance(location) < 1.8) {
                 return;
             }
         }
 
-        if (findPathCooldown++ > 2) {
+        if (findPathCooldown++ > 3) {
             findPathCooldown = 0;
         } else {
             return;
