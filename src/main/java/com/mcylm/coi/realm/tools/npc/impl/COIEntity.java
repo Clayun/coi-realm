@@ -146,7 +146,10 @@ public class COIEntity implements AI {
                 disguise = new PlayerDisguise(getName());
             }
 
-            getCoiNpc().getFlagWatcherHandler().accept(disguise.getWatcher());
+            if(getCoiNpc().getFlagWatcherHandler() != null){
+                getCoiNpc().getFlagWatcherHandler().accept(disguise.getWatcher());
+            }
+
 
             disguiseTrait.setDisguise(disguise);
             npc.addTrait(disguiseTrait);
@@ -444,7 +447,7 @@ public class COIEntity implements AI {
 
         if (foodChests == null
                 || foodChests.isEmpty()) {
-            LoggerUtils.debug("食物箱子不存在");
+//            LoggerUtils.debug("食物箱子不存在");
             // 食物箱子不存在，就直接原地摆烂
             if (getNpc().getEntity() instanceof Player) {
                 say("肚子好饿！附近都没有吃的了");

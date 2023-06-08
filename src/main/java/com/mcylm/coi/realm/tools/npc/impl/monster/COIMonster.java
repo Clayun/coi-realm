@@ -184,6 +184,10 @@ public abstract class COIMonster extends COIEntity implements Commandable {
      */
     private boolean automaticCharging(){
 
+        if(!isAlive()){
+            return true;
+        }
+
         // 需要强制充电
         if(needCharging){
 

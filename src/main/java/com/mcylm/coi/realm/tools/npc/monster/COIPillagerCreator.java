@@ -29,7 +29,8 @@ public class COIPillagerCreator extends COIMonsterCreator{
     public static COIPillagerCreator initCOIPillagerCreator(AttackTeam attackteam) {
         // 背包内的物品
         Inventory inventory = GUIUtils.createNpcInventory(3);
-        inventory.addItem(new ItemStack(Material.CROSSBOW));
+        // 改在spawn方法里面了
+//        inventory.addItem(new ItemStack(Material.CROSSBOW));
 
         // 不破坏方块
         Set<String> breakBlockMaterials = new HashSet<>();
