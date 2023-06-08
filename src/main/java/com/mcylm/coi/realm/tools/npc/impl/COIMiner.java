@@ -1,21 +1,27 @@
 package com.mcylm.coi.realm.tools.npc.impl;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.BlockPosition;
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.runnable.TaskRunnable;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
+import com.mcylm.coi.realm.utils.ChestUtils;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import net.citizensnpcs.api.npc.BlockBreaker;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
@@ -273,6 +279,16 @@ public class COIMiner extends COIEntity {
         if(getLocation() != null){
             if(getLocation().distance(notFullChestLocation) < 3){
 
+                // 打开箱子
+                ChestUtils.setChestOpened(notFullChestLocation.getBlock(),true);
+
+                // 等待一秒
+                try {
+                    Thread.sleep(1000l);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
                 for(ItemStack itemStack : coiNpc.getInventory()){
                     if(itemStack != null && !itemStack.getType().equals(Material.AIR)){
 
@@ -294,6 +310,10 @@ public class COIMiner extends COIEntity {
 
                     }
                 }
+
+                // 关闭箱子
+                ChestUtils.setChestOpened(notFullChestLocation.getBlock(),false);
+
             }
         }
     }

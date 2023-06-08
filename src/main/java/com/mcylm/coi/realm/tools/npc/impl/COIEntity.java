@@ -495,7 +495,7 @@ public class COIEntity implements AI {
         // 最近的食物箱子
         if (nearestLocation != null) {
 
-            LoggerUtils.debug("找到箱子");
+//            LoggerUtils.debug("找到箱子");
             // 如果距离大于3，就走过去
             if (distance > 3) {
                 findPath(nearestLocation);

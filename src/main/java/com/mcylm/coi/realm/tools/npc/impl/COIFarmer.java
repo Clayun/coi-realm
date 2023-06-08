@@ -4,6 +4,7 @@ import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.runnable.TaskRunnable;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
+import com.mcylm.coi.realm.utils.ChestUtils;
 import com.mcylm.coi.realm.utils.InventoryUtils;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import net.citizensnpcs.api.npc.BlockBreaker;
@@ -233,6 +234,15 @@ public class COIFarmer extends COIEntity {
         if(getLocation() != null){
             if(getLocation().distance(notFullChestLocation) < 3){
 
+                ChestUtils.setChestOpened(notFullChestLocation.getBlock(),true);
+
+                // 等待一秒
+                try {
+                    Thread.sleep(1000l);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
                 for(ItemStack itemStack : getFarmerInventory()){
                     if(itemStack != null){
 
@@ -248,6 +258,9 @@ public class COIFarmer extends COIEntity {
 
                     }
                 }
+
+                ChestUtils.setChestOpened(notFullChestLocation.getBlock(),false);
+
             }
         }
     }

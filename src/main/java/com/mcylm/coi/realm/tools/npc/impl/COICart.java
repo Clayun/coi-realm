@@ -5,6 +5,7 @@ import com.mcylm.coi.realm.tools.npc.COICartCreator;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
+import net.citizensnpcs.api.ai.Navigator;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -168,30 +169,27 @@ public class COICart extends COIEntity {
             }
         }
     }
-    /*
-    @Override
-    public void findPath(Location location) {
-        if (!isAlive()) {
-            return;
-        }
 
-        if (!npc.isSpawned()) {
-            return;
-        }
-
-        npc.faceLocation(location);
-
-        Navigator navigator = npc.getNavigator();
-        navigator.getDefaultParameters()
-                .stuckAction(null)
-                .useNewPathfinder(false);
-
-        navigator.setTarget(location);
-
-    }
-
-
-     */
+//    @Override
+//    public void findPath(Location location) {
+//        if (!isAlive()) {
+//            return;
+//        }
+//
+//        if (!npc.isSpawned()) {
+//            return;
+//        }
+//
+//        npc.faceLocation(location);
+//
+//        Navigator navigator = npc.getNavigator();
+//        navigator.getDefaultParameters()
+//                .stuckAction(null)
+//                .useNewPathfinder(true);
+//
+//        navigator.setTarget(location);
+//
+//    }
 
 
     /**
@@ -298,11 +296,11 @@ public class COICart extends COIEntity {
 
     @Override
     public void move() {
-        super.move();
         // 电池电量检测
         boolean b = automaticCharging();
 
         if(b){
+            super.move();
             // 开始行动
             action();
         }
