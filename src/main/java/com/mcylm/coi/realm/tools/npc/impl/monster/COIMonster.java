@@ -120,15 +120,19 @@ public abstract class COIMonster extends COIEntity implements Commandable {
             }
         }
 
-        if (target.getType() == TargetType.BUILDING) {
-            findPath(target.getTargetLocation());
-        } else if (target.getType() == TargetType.ENTITY){
-            EntityTarget entityTarget = (EntityTarget) target;
-            Mob mobNpc = ((Mob) getNpc().getEntity());
-            if (!(mobNpc.getTarget() == entityTarget.getEntity())) {
-                mobNpc.setTarget(entityTarget.getEntity());
+        if(target != null){
+            if (target.getType() == TargetType.BUILDING) {
+                findPath(target.getTargetLocation());
+            } else if (target.getType() == TargetType.ENTITY){
+                EntityTarget entityTarget = (EntityTarget) target;
+                Mob mobNpc = ((Mob) getNpc().getEntity());
+                if (!(mobNpc.getTarget() == entityTarget.getEntity())) {
+                    mobNpc.setTarget(entityTarget.getEntity());
+                }
             }
         }
+
+
 
     }
 

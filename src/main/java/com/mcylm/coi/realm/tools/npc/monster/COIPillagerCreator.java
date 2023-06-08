@@ -31,6 +31,10 @@ public class COIPillagerCreator extends COIMonsterCreator{
         Inventory inventory = GUIUtils.createNpcInventory(3);
         inventory.addItem(new ItemStack(Material.CROSSBOW));
 
+        ItemStack itemStack = new ItemStack(Material.BREAD);
+        itemStack.setAmount(200);
+        inventory.addItem(itemStack);
+
         // 不破坏方块
         Set<String> breakBlockMaterials = new HashSet<>();
 
