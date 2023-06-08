@@ -114,7 +114,7 @@ public class COISoldier extends COIEntity implements Commandable {
         super(npcCreator);
 
         getNpc().setUseMinecraftAI(true);
-
+        getNpc().setAlwaysUseNameHologram(false);
     }
 
     /**
