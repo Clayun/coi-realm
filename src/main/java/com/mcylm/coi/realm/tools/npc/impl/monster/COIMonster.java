@@ -108,6 +108,10 @@ public abstract class COIMonster extends COIEntity implements Commandable {
      */
     private void meleeAttackTarget() {
 
+        if(!isAlive()){
+            return;
+        }
+
         if(getLocation() != null){
             // 攻击建筑
             for (Block b : LocationUtils.selectionRadiusByDistance(getLocation().getBlock(), 3, 3)) {
