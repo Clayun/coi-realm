@@ -107,7 +107,7 @@ public class COINpc implements Serializable {
     private DisguiseType disguiseType;
 
     // 伪装时对flag watcher 进行的操作
-    private Consumer<FlagWatcher> flagWatcherHandler;
+    private Consumer<FlagWatcher> flagWatcherHandler = flagWatcher -> {};
 
     // 服装类型
     public static List<Material> CLOTHES = new ArrayList<>(){{
@@ -170,4 +170,6 @@ public class COINpc implements Serializable {
 
         return null;
     }
+
+
 }

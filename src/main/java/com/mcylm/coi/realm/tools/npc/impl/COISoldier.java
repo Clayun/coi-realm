@@ -22,10 +22,12 @@ import me.lucko.helper.Events;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -156,8 +158,17 @@ public class COISoldier extends COIEntity implements Commandable {
             findPath(target.getTargetLocation());
 
         }
-        if (target.getType() == TargetType.ENTITY) {
+        if (target.getType() == TargetType.ENTITY && npcEntity.getEquipment().getItemInMainHand().getType() == Material.CROSSBOW) {
             npcEntity.setTarget(((EntityTarget) target).getEntity());
+        } else {
+            if (getNpc().getEntity().getLocation().distance(target.getTargetLocation()) <= 3 && target.getType() == TargetType.ENTITY) {
+                // 挥动手
+                ((LivingEntity) getNpc().getEntity()).swingMainHand();
+                damage(target, damage, target.getTargetLocation());
+
+            }
+            findPath(target.getTargetLocation());
+
         }
 
     }
@@ -335,5 +346,15 @@ public class COISoldier extends COIEntity implements Commandable {
     @Override
     public AttackGoal getGoal() {
         return goal;
+    }
+
+    @Override
+    public void spawn(Location location) {
+        super.spawn(location);
+
+        getCoiNpc().getInventory().addItem(new ItemStack(Material.LEATHER_HELMET));
+
+        Mob npcEntity = ((Mob) getNpc().getEntity());
+        npcEntity.getEquipment().setItemInMainHand(new ItemStack(new Random().nextBoolean() ? Material.CROSSBOW : Material.IRON_SWORD));
     }
 }

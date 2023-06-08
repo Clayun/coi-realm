@@ -92,7 +92,7 @@ public class COICamp extends COIBuilding {
 
         // 背包内的物品
         Inventory inventory = GUIUtils.createNpcInventory(3);
-        inventory.addItem(new ItemStack(new Random().nextBoolean() ? Material.BOW : Material.IRON_SWORD));
+        inventory.addItem(new ItemStack(new Random().nextBoolean() ? Material.CROSSBOW : Material.IRON_SWORD));
         inventory.addItem(new ItemStack(Material.LEATHER_HELMET));
         // 不破坏方块
         Set<String> breakBlockMaterials = new HashSet<>();
@@ -110,7 +110,8 @@ public class COICamp extends COIBuilding {
 
         COISoldierCreator npcCreator = new COISoldierCreator();
 
-        npcCreator.setNpcType(EntityType.SKELETON);
+        npcCreator.setNpcType(EntityType.PILLAGER);
+
         npcCreator.setDisguiseType(DisguiseType.PLAYER);
         npcCreator.setInventory(inventory);
         npcCreator.setAggressive(true);
