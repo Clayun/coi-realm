@@ -13,7 +13,7 @@ public class PatrolGoal extends SimpleGoal {
     int moveAroundTick = 0;
 
     // 最大巡逻范围
-    int maxRadius = 40;
+    int maxRadius = 20;
     // 巡逻中心位置
     Location point;
     public PatrolGoal(Commandable npc) {

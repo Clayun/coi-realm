@@ -20,7 +20,12 @@ public class COIMonsterBase extends COIBuilding {
         //初始化完成，可建造
         setAvailable(true);
         // 初始化NPC创建器
-        setNpcCreators(List.of(COIPillagerCreator.initCOIPillagerCreator(null)));
+        setNpcCreators(List.of(
+                // 一个野怪小队3个人
+                COIPillagerCreator.initCOIPillagerCreator(null),
+                COIPillagerCreator.initCOIPillagerCreator(null),
+                COIPillagerCreator.initCOIPillagerCreator(null)
+                ));
         initStructure();
     }
 
