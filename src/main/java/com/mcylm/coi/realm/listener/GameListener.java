@@ -17,6 +17,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -29,6 +30,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.Collection;
 
 public class GameListener implements Listener {
 
@@ -54,53 +57,67 @@ public class GameListener implements Listener {
                 // 先取消生成
                 event.setCancelled(true);
 
-                // 是个活得
-                try {
-
-                    // 周围30格有建筑物则不允许生成怪物小队
-                    // TODO 游戏中后期要自动调整这个数字
-                    int radius = 30;
-
-                    int maxMonsterBase = 50;
-
-                    // 生成的几率
-                    boolean result = hasChance(0.2);
-
-                    if(result){
-                        // 判断所在位置附近有没有建筑物
-                        Location clone = event.getLocation().clone();
-
-                        for (Block b : LocationUtils.selectionRadiusByDistance(clone.getBlock(), radius, radius)) {
-                            COIBuilding building = BuildData.getBuildingByBlock(b);
-                            if (building != null && building.getTeam() != TeamUtils.getMonsterTeam()) {
-
-                                // 半径范围内发现玩家小队的建筑，禁止生成
-                               return;
-                            }
-                        }
-
-                        COITeam monsterTeam = Entry.getGame().getMonsterTeam();
-
-                        if(monsterTeam != null){
-                            // 开启怪物阵营的情况下，才会生成
-
-                            if(monsterTeam.getFinishedBuildings().size() >= maxMonsterBase){
-                                // 超过最大创建数量了，禁止生成
-                                return;
-                            }
-
-                            clone.setY(clone.getY() - 1);
-                            COIBuilding monsterBase = Entry.getInstance().getBuildingManager().getBuildingTemplateByType(COIBuildingType.MONSTER_BASE);
-                            monsterBase.setTeam(monsterTeam);
-                            monsterBase.build(clone,monsterTeam,false);
-                        }
-                    }
-
-
-
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+                // 周围30格有建筑物则不允许生成怪物小队
+                // TODO 游戏中后期要自动调整这个数字
+//                int radius = 40;
+//
+//                // 必须在周围有玩家才能生成
+//                int playerRadius = 20;
+//
+//                int maxMonsterBase = 50;
+//
+//                // 生成的几率
+//                boolean result = hasChance(0.03);
+//
+//                if(result){
+//                    // 判断所在位置附近有没有建筑物
+//                    Location clone = event.getLocation().clone();
+//
+//                    for (Block b : LocationUtils.selectionRadiusByDistance(clone.getBlock(), radius, radius)) {
+//                        COIBuilding building = BuildData.getBuildingByBlock(b);
+//                        if (building != null && building.getTeam() != TeamUtils.getMonsterTeam()) {
+//
+//                            // 半径范围内发现玩家小队的建筑，禁止生成
+//                            return;
+//                        }
+//                    }
+//
+//                    Collection<LivingEntity> nearbyEntities = clone.getNearbyLivingEntities(playerRadius, playerRadius, playerRadius);
+//
+//                    // 周围必须有玩家才能生成
+//                    boolean hasPlayer = false;
+//                    for(LivingEntity entity : nearbyEntities){
+//                        if(entity instanceof Player){
+//                            hasPlayer = true;
+//                            break;
+//                        }
+//                    }
+//
+//                    if(!hasPlayer){
+//                        return;
+//                    }
+//
+//                    COITeam monsterTeam = Entry.getGame().getMonsterTeam();
+//
+//                    if(monsterTeam != null){
+//                        // 开启怪物阵营的情况下，才会生成
+//
+//                        if(monsterTeam.getFinishedBuildings().size() >= maxMonsterBase){
+//                            // 超过最大创建数量了，禁止生成
+//                            return;
+//                        }
+//
+//                        clone.setY(clone.getY() - 1);
+//                        COIBuilding monsterBase = null;
+//                        try {
+//                            monsterBase = Entry.getInstance().getBuildingManager().getBuildingTemplateByType(COIBuildingType.MONSTER_BASE);
+//                        } catch (Exception e) {
+//                            throw new RuntimeException(e);
+//                        }
+//                        monsterBase.setTeam(monsterTeam);
+//                        monsterBase.build(clone,monsterTeam,false);
+//                    }
+//                }
 
 
             }
