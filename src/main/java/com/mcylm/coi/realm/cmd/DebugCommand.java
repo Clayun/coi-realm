@@ -36,7 +36,7 @@ public class DebugCommand implements CommandExecutor {
                 building.setTeam(TeamUtils.getMonsterTeam());
 
                 Location clone = player.getLocation().clone();
-                clone.setY(clone.getY() + 1);
+                clone.setY(clone.getY() - 1);
                 building.build(clone,TeamUtils.getMonsterTeam(),false );
             } catch (Exception e) {
                 throw new RuntimeException(e);
