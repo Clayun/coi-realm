@@ -1,27 +1,21 @@
 package com.mcylm.coi.realm.tools.npc.impl;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.BlockPosition;
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.runnable.TaskRunnable;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.utils.ChestUtils;
 import com.mcylm.coi.realm.utils.ItemUtils;
-import com.mcylm.coi.realm.utils.LoggerUtils;
 import net.citizensnpcs.api.npc.BlockBreaker;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
@@ -283,37 +277,38 @@ public class COIMiner extends COIEntity {
                 ChestUtils.setChestOpened(notFullChestLocation.getBlock(),true);
 
                 // 等待一秒
-                try {
-                    Thread.sleep(1000l);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
 
-                for(ItemStack itemStack : coiNpc.getInventory()){
-                    if(itemStack != null && !itemStack.getType().equals(Material.AIR)){
-
-                        List<String> npcFoods = Entry.getNpcFoods();
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
 
 
-                        // 不是食物的就丢进箱子里
-                        if(!npcFoods.contains(itemStack.getType().toString())){
+                        for (ItemStack itemStack : coiNpc.getInventory()) {
+                            if (itemStack != null && !itemStack.getType().equals(Material.AIR)) {
 
-                            Map<Integer, ItemStack> extra = ItemUtils.addItemIntoContainer(notFullChestLocation, itemStack);
-                            if (extra.isEmpty()) {
-                                coiNpc.getInventory().remove(itemStack);
-                            } else {
-                                extra.values().forEach(i -> itemStack.setAmount(i.getAmount()));
+                                List<String> npcFoods = Entry.getNpcFoods();
+
+
+                                // 不是食物的就丢进箱子里
+                                if (!npcFoods.contains(itemStack.getType().toString())) {
+
+                                    Map<Integer, ItemStack> extra = ItemUtils.addItemIntoContainer(notFullChestLocation, itemStack);
+                                    if (extra.isEmpty()) {
+                                        coiNpc.getInventory().remove(itemStack);
+                                    } else {
+                                        extra.values().forEach(i -> itemStack.setAmount(i.getAmount()));
+                                    }
+
+                                }
+
+
                             }
-
                         }
 
-
+                        // 关闭箱子
+                        ChestUtils.setChestOpened(notFullChestLocation.getBlock(), false);
                     }
-                }
-
-                // 关闭箱子
-                ChestUtils.setChestOpened(notFullChestLocation.getBlock(),false);
-
+                }.runTaskLater(Entry.getInstance(), 20L);
             }
         }
     }

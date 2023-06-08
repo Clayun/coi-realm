@@ -237,30 +237,30 @@ public class COIFarmer extends COIEntity {
                 ChestUtils.setChestOpened(notFullChestLocation.getBlock(),true);
 
                 // 等待一秒
-                try {
-                    Thread.sleep(1000l);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
 
-                for(ItemStack itemStack : getFarmerInventory()){
-                    if(itemStack != null){
+                        for (ItemStack itemStack : getFarmerInventory()) {
+                            if (itemStack != null) {
 
-                        // 把面包丢进箱子里
-                        if(itemStack.getType() == Material.BREAD){
-                            Map<Integer, ItemStack> extra = ItemUtils.addItemIntoContainer(notFullChestLocation, itemStack);
-                            if (extra.isEmpty()) {
-                                getFarmerInventory().remove(itemStack);
-                            } else {
-                                extra.values().forEach(i -> itemStack.setAmount(i.getAmount()));
+                                // 把面包丢进箱子里
+                                if (itemStack.getType() == Material.BREAD) {
+                                    Map<Integer, ItemStack> extra = ItemUtils.addItemIntoContainer(notFullChestLocation, itemStack);
+                                    if (extra.isEmpty()) {
+                                        getFarmerInventory().remove(itemStack);
+                                    } else {
+                                        extra.values().forEach(i -> itemStack.setAmount(i.getAmount()));
+                                    }
+                                }
+
                             }
                         }
 
+
+                        ChestUtils.setChestOpened(notFullChestLocation.getBlock(), false);
                     }
-                }
-
-                ChestUtils.setChestOpened(notFullChestLocation.getBlock(),false);
-
+                }.runTaskLater(Entry.getInstance(), 20L);
             }
         }
     }
