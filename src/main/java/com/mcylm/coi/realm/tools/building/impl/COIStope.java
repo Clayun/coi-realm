@@ -175,7 +175,7 @@ public class COIStope extends COIBuilding {
 
         // 设置伪装
         npcCreator.setDisguiseType(DisguiseType.MINECART_CHEST);
-        npcCreator.setNpcType(EntityType.ZOMBIFIED_PIGLIN);
+        npcCreator.setNpcType(EntityType.PIG);
 
         npcCreator.setAggressive(false);
         npcCreator.setAlertRadius(5);
