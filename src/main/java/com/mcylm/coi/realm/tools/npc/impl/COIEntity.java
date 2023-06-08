@@ -236,13 +236,17 @@ public class COIEntity implements AI {
 
         npc.faceLocation(location);
         Navigator navigator = npc.getNavigator();
-        navigator.getDefaultParameters()
+        navigator.getLocalParameters()
                 .stuckAction(null)
-                .useNewPathfinder(false);
+                .useNewPathfinder(useNewPathfinder());
 
         navigator.setTarget(location);
 
 
+    }
+
+    protected boolean useNewPathfinder() {
+        return false;
     }
 
 

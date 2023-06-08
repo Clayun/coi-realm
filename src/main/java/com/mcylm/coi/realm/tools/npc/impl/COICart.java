@@ -5,7 +5,6 @@ import com.mcylm.coi.realm.tools.npc.COICartCreator;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
-import net.citizensnpcs.api.ai.Navigator;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -307,4 +306,8 @@ public class COICart extends COIEntity {
 
     }
 
+    @Override
+    protected boolean useNewPathfinder() {
+        return true;
+    }
 }
