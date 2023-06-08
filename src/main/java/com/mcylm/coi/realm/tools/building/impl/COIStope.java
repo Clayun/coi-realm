@@ -165,9 +165,9 @@ public class COIStope extends COIBuilding {
         Inventory inventory = GUIUtils.createNpcInventory(3);
 
         // 从配置文件读取矿工要捡起来的东西
-        List<String> picks = Entry.getInstance().getConfig().getStringList("miner.picks");
-        Set<String> pickItemMaterials = new HashSet<>();
-        pickItemMaterials.addAll(picks);
+//        List<String> picks = Entry.getInstance().getConfig().getStringList("miner.picks");
+//        Set<String> pickItemMaterials = new HashSet<>();
+//        pickItemMaterials.addAll(picks);
 
 
         COICartCreator npcCreator = new COICartCreator(getChestsLocation());
@@ -182,7 +182,7 @@ public class COIStope extends COIBuilding {
         npcCreator.setBreakBlockMaterials(new HashSet<>());
         npcCreator.setName("矿车");
         npcCreator.setLevel(1);
-        npcCreator.setPickItemMaterials(pickItemMaterials);
+        npcCreator.setPickItemMaterials(new HashSet<>());
 
         return npcCreator;
     }
