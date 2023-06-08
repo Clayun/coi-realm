@@ -241,8 +241,6 @@ public class COIEntity implements AI {
                 .useNewPathfinder(useNewPathfinder());
 
         navigator.setTarget(location);
-
-
     }
 
     protected boolean useNewPathfinder() {

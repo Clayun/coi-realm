@@ -112,11 +112,6 @@ public class BuilderGUI {
                 || buildings.size() == 0) {
             return 1;
         }
-        int maxStackSize = buildings.get(0).getType().getItemType().getMaxStackSize();
-
-        if (buildings.size() > maxStackSize) {
-            return maxStackSize;
-        }
         return buildings.size();
     }
 

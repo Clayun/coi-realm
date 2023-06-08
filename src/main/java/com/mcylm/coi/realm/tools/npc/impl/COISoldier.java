@@ -186,27 +186,6 @@ public class COISoldier extends COIEntity implements Commandable {
 
     }
 
-
-
-    /**
-     * 行军寻路
-     *
-     * @param location
-     * @param faceLocation
-     */
-    public void walk(Location location, Location faceLocation) {
-        if (getNpc() == null) {
-            return;
-        }
-
-        if (!getNpc().isSpawned()) {
-            return;
-        }
-
-        getNpc().faceLocation(faceLocation);
-        getNpc().getNavigator().setTarget(location);
-    }
-
     /**
      * 更换NPC跟随的玩家
      *

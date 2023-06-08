@@ -173,31 +173,6 @@ public class COICart extends COIEntity {
         }
     }
 
-//    @Override
-//    public void findPath(Location location) {
-//        if (!isAlive()) {
-//            return;
-//        }
-//
-//        if (!npc.isSpawned()) {
-//            return;
-//        }
-//
-//        npc.faceLocation(location);
-//
-//        Navigator navigator = npc.getNavigator();
-//        navigator.getDefaultParameters()
-//                .stuckAction(null)
-//                .useNewPathfinder(true);
-//
-//        navigator.setTarget(location);
-//
-//        Iterable<Vector> path = navigator.getPathStrategy().getPath();
-//
-//        navigator.setTarget(path);
-//
-//    }
-
 
     /**
      * 找一个相对比较空的箱子装东西

@@ -5,6 +5,7 @@ import com.mcylm.coi.realm.enums.COITeamType;
 import com.mcylm.coi.realm.player.COIPlayer;
 import com.mcylm.coi.realm.runnable.AttackGoalTask;
 import com.mcylm.coi.realm.runnable.BasicGameTask;
+import com.mcylm.coi.realm.tools.npc.impl.COIEntity;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Data;
@@ -29,6 +30,9 @@ public class COIGame {
     // 一场游戏里的全部小队
     // all teams in one Game
     private List<COITeam> teams;
+    // 玩家缓存
+    private Map<Player, COIPlayer> coiPlayers = new HashMap<>();
+
 
     public COIGame() {
         this.teams = new ArrayList<>();
@@ -58,19 +62,6 @@ public class COIGame {
     public void start(){
         // 启动游戏进程
         new BasicGameTask().waiting();
-    }
-
-    private Map<Player, COIPlayer> coiPlayers = new HashMap<>();
-
-
-    public COITeam getMonsterTeam(){
-        for(COITeam team : getTeams()){
-            if(team.getType().equals(COITeamType.MONSTER)){
-                return team;
-            }
-        }
-
-        return null;
     }
 
 }
