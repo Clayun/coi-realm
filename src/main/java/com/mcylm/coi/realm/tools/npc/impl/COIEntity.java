@@ -119,6 +119,17 @@ public class COIEntity implements AI {
         // 创建 CitizensNPC 实例
         this.npc = CitizensAPI.getNPCRegistry().createNPC(npcCreator.getNpcType(), getName());
 
+        this.isCreated = true;
+        this.coiNpc.setId(this.npc.getUniqueId().toString());
+        initNpcAttributes(npcCreator);
+
+        return this;
+    }
+
+    /**
+     * 设置伪装
+     */
+    private void initDisguise(){
         // 设置伪装
         if (getCoiNpc().getDisguiseType() != null) {
 
@@ -141,13 +152,7 @@ public class COIEntity implements AI {
             npc.addTrait(disguiseTrait);
         }
 
-        this.isCreated = true;
-        this.coiNpc.setId(this.npc.getUniqueId().toString());
-        initNpcAttributes(npcCreator);
-
-        return this;
     }
-
 
     /**
      * 更新 NPC属性
@@ -877,6 +882,8 @@ public class COIEntity implements AI {
 
         // 更新NPC的名称
         updateName();
+
+        initDisguise();
 
         npc.spawn(location);
 

@@ -28,7 +28,7 @@ public class COIPillager extends COIMonster {
 
         super.spawn(location);
 
-        setHunger(500);
+        setHunger(40);
         // 初始化背包
         getCoiNpc().getInventory().addItem(new ItemStack(Material.CROSSBOW));
     }

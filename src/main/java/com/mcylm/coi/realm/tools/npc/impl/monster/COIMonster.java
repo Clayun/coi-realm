@@ -36,6 +36,8 @@ import java.util.concurrent.CompletableFuture;
 @Getter
 public abstract class COIMonster extends COIEntity implements Commandable {
 
+    // 是否需要补充能量
+    private boolean needCharging = false;
 
     public COIMonster(COIMonsterCreator npcCreator) {
         super(npcCreator);
@@ -176,14 +178,75 @@ public abstract class COIMonster extends COIEntity implements Commandable {
     }
 
 
+    /**
+     * 自动充电
+     * @return 是否有足够的电量
+     */
+    private boolean automaticCharging(){
+
+        // 需要强制充电
+        if(needCharging){
+
+            findPath(getCoiNpc().getSpawnLocation());
+
+            if(getLocation().distance(getCoiNpc().getSpawnLocation()) <= 3){
+                // 开始充电
+                say("休息中...");
+
+                // 最大电量 40
+                if(getHunger() < 40){
+                    setHunger(getHunger() + 0.5);
+
+                    // 如果开启强制充电，就充满
+                    if(needCharging){
+                        if(getHunger() >= 40){
+                            needCharging = false;
+                            return true;
+                        }
+                    }
+                }
+
+            }
+
+            return false;
+        }
+
+        // 普通充电
+        if(getLocation().distance(getCoiNpc().getSpawnLocation()) <= 3){
+            // 开始充电
+            say("休息中...");
+
+            // 最大电量 40
+            if(getHunger() < 40){
+                setHunger(getHunger() + 0.5);
+            }else{
+                needCharging = false;
+            }
+        }
+
+
+        if(getHunger() <= 7){
+            say("好累啊，回去休息了");
+            needCharging = true;
+
+            return false;
+        }
+
+        return true;
+    }
 
     @Override
     public void move() {
         super.move();
 
+        boolean b = automaticCharging();
 
-        //警戒周围
-        meleeAttackTarget();
+        if(b){
+            //警戒周围
+            meleeAttackTarget();
+        }
+
+
 
         if (target != null && target.isDead()) target = null;
     }
