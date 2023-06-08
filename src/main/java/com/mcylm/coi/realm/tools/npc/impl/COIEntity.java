@@ -834,7 +834,7 @@ public class COIEntity implements AI {
      *
      * @param item
      */
-    protected void addItemToInventory(ItemStack item) {
+    public void addItemToInventory(ItemStack item) {
         if (item != null) {
             Inventory backpack = getCoiNpc().getInventory();
             if (!InventoryUtils.canInventoryHoldItem(backpack, item)) {
