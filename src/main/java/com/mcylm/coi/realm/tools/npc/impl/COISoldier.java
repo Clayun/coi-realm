@@ -84,7 +84,7 @@ public class COISoldier extends COIEntity implements Commandable {
 
                     @Nullable COINpc npc = EntityData.getNpcByEntity(e.getEntity());
                     Entity target = e.getTarget();
-                    if (npc instanceof COISoldierCreator creator) {
+                    if (npc instanceof COISoldierCreator) {
 
                         if (target instanceof LivingEntity livingEntity) {
 
@@ -95,6 +95,11 @@ public class COISoldier extends COIEntity implements Commandable {
                                 }
                             }
 
+                            @Nullable COINpc data = EntityData.getNpcByEntity(livingEntity);
+
+                            if (data != null && data.getTeam() == npc.getTeam()) {
+                                e.setCancelled(true);
+                            }
                         }
                     }
                 });
