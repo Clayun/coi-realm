@@ -12,7 +12,6 @@ import com.mcylm.coi.realm.utils.GUIUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -176,7 +175,7 @@ public class COIStope extends COIBuilding {
 
         // 设置伪装
         npcCreator.setDisguiseType(DisguiseType.MINECART_CHEST);
-        npcCreator.setNpcType(EntityType.HORSE);
+        npcCreator.setNpcType(EntityType.ZOMBIFIED_PIGLIN);
 
         npcCreator.setAggressive(false);
         npcCreator.setAlertRadius(5);

@@ -306,8 +306,5 @@ public class COICart extends COIEntity {
 
     }
 
-    @Override
-    protected boolean useNewPathfinder() {
-        return true;
-    }
+
 }
