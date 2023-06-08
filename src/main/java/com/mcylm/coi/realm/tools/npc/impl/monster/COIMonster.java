@@ -108,27 +108,39 @@ public abstract class COIMonster extends COIEntity implements Commandable {
      */
     private void meleeAttackTarget() {
 
-        // 攻击建筑
-        for (Block b : LocationUtils.selectionRadiusByDistance(getLocation().getBlock(), 3, 3)) {
-            COIBuilding building = BuildData.getBuildingByBlock(b);
-            if (building != null && building.getTeam() != getCoiNpc().getTeam()) {
-                ((LivingEntity) getNpc().getEntity()).swingMainHand();
-                building.damage(getNpc().getEntity(), (int) getDamage(), b);
-                b.getWorld().playEffect(b.getLocation(), Effect.STEP_SOUND,1);
+        if(!isAlive()){
+            return;
+        }
 
-                break;
+        if(getLocation() != null){
+            // 攻击建筑
+            for (Block b : LocationUtils.selectionRadiusByDistance(getLocation().getBlock(), 3, 3)) {
+                COIBuilding building = BuildData.getBuildingByBlock(b);
+                if (building != null && building.getTeam() != getCoiNpc().getTeam()) {
+                    ((LivingEntity) getNpc().getEntity()).swingMainHand();
+                    building.damage(getNpc().getEntity(), (int) getDamage(), b);
+                    b.getWorld().playEffect(b.getLocation(), Effect.STEP_SOUND,1);
+
+                    break;
+                }
             }
         }
 
-        if (target.getType() == TargetType.BUILDING) {
-            findPath(target.getTargetLocation());
-        } else if (target.getType() == TargetType.ENTITY){
-            EntityTarget entityTarget = (EntityTarget) target;
-            Mob mobNpc = ((Mob) getNpc().getEntity());
-            if (!(mobNpc.getTarget() == entityTarget.getEntity())) {
-                mobNpc.setTarget(entityTarget.getEntity());
+
+
+        if(target != null){
+            if (target.getType() == TargetType.BUILDING) {
+                findPath(target.getTargetLocation());
+            } else if (target.getType() == TargetType.ENTITY){
+                EntityTarget entityTarget = (EntityTarget) target;
+                Mob mobNpc = ((Mob) getNpc().getEntity());
+                if (!(mobNpc.getTarget() == entityTarget.getEntity())) {
+                    mobNpc.setTarget(entityTarget.getEntity());
+                }
             }
         }
+
+
 
     }
 

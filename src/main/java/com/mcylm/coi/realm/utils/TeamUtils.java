@@ -294,9 +294,12 @@ public class TeamUtils {
     public static boolean checkNPCInTeam(Entity entity, COITeam team){
         @Nullable COINpc data = EntityData.getNpcByEntity(entity);
 
-        if (data != null && data.getTeam() != team) {
+        if(data == null){
             return false;
+        }
 
+        if (data.getTeam() != team) {
+            return false;
         }
 
         return true;

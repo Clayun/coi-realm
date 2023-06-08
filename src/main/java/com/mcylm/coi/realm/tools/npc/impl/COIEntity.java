@@ -729,6 +729,8 @@ public class COIEntity implements AI {
                     || itemStack.getType() == Material.NETHERITE_HOE
                     || itemStack.getType() == Material.STONE_HOE
                     || itemStack.getType() == Material.WOODEN_HOE
+                    // 弩
+                    || itemStack.getType() == Material.CROSSBOW
                     //Bow
                     || itemStack.getType() == Material.BOW
             ) {

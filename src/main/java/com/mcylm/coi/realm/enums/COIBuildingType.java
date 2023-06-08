@@ -87,7 +87,7 @@ public class COIBuildingType {
     // 怪物Building
     public static final COIBuildingType MONSTER_BASE = new COIBuildingType(
             "MONSTER_BASE",
-            "怪物本营",
+            "怪物营地",
             Material.BEACON,
             """
             怪物的复活点
