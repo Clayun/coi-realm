@@ -7,6 +7,7 @@ import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.npc.monster.COIPillagerCreator;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -33,7 +34,10 @@ public class DebugCommand implements CommandExecutor {
                 COIBuilding building = Entry.getInstance().getBuildingManager().getBuildingTemplateByType(COIBuildingType.MONSTER_BASE);
                 building.setNpcCreators(List.of(COIPillagerCreator.initCOIPillagerCreator(null)));
                 building.setTeam(TeamUtils.getMonsterTeam());
-                building.build(player.getLocation(),TeamUtils.getMonsterTeam(),false );
+
+                Location clone = player.getLocation().clone();
+                clone.setY(clone.getY() + 1);
+                building.build(clone,TeamUtils.getMonsterTeam(),false );
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
