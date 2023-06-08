@@ -51,6 +51,10 @@ public class COICart extends COIEntity {
      */
     private void action(){
 
+        if(!isAlive()){
+            return;
+        }
+
         if(getCoiNpc().getInventory().isEmpty()){
             collectingResources();
         }else{
@@ -236,6 +240,10 @@ public class COICart extends COIEntity {
      * @return 是否有足够的电量
      */
     private boolean automaticCharging(){
+
+        if(!isAlive()){
+            return true;
+        }
 
         // 需要强制充电
         if(needCharging){

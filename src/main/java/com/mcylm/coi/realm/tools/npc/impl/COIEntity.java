@@ -119,6 +119,17 @@ public class COIEntity implements AI {
         // 创建 CitizensNPC 实例
         this.npc = CitizensAPI.getNPCRegistry().createNPC(npcCreator.getNpcType(), getName());
 
+        this.isCreated = true;
+        this.coiNpc.setId(this.npc.getUniqueId().toString());
+        initNpcAttributes(npcCreator);
+
+        return this;
+    }
+
+    /**
+     * 设置伪装
+     */
+    private void initDisguise(){
         // 设置伪装
         if (getCoiNpc().getDisguiseType() != null) {
 
@@ -135,19 +146,16 @@ public class COIEntity implements AI {
                 disguise = new PlayerDisguise(getName());
             }
 
-            getCoiNpc().getFlagWatcherHandler().accept(disguise.getWatcher());
+            if(getCoiNpc().getFlagWatcherHandler() != null){
+                getCoiNpc().getFlagWatcherHandler().accept(disguise.getWatcher());
+            }
+
 
             disguiseTrait.setDisguise(disguise);
             npc.addTrait(disguiseTrait);
         }
 
-        this.isCreated = true;
-        this.coiNpc.setId(this.npc.getUniqueId().toString());
-        initNpcAttributes(npcCreator);
-
-        return this;
     }
-
 
     /**
      * 更新 NPC属性
@@ -439,7 +447,7 @@ public class COIEntity implements AI {
 
         if (foodChests == null
                 || foodChests.isEmpty()) {
-            LoggerUtils.debug("食物箱子不存在");
+//            LoggerUtils.debug("食物箱子不存在");
             // 食物箱子不存在，就直接原地摆烂
             if (getNpc().getEntity() instanceof Player) {
                 say("肚子好饿！附近都没有吃的了");
@@ -877,6 +885,8 @@ public class COIEntity implements AI {
 
         // 更新NPC的名称
         updateName();
+
+        initDisguise();
 
         npc.spawn(location);
 
