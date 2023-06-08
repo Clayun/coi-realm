@@ -15,6 +15,7 @@ public class COISoldierCreator extends COINpc {
     private List<List<Integer>> formats;
 
     public COISoldierCreator(int npcNumber, List<List<Integer>> formats) {
+
         this.npcNumber = npcNumber;
         this.formats = formats;
     }

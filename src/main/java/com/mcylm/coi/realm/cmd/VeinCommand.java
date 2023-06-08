@@ -53,8 +53,6 @@ public class VeinCommand implements CommandExecutor {
                         }
                     }.runTaskAsynchronously(Entry.getInstance());
                 } else if (args.length >= 1 && args[0].equalsIgnoreCase("test")) {
-                    VeinGenerateTask.getTasks().forEach(BukkitRunnable::cancel);
-                    VeinGenerateTask.getTasks().clear();
                     VeinGenerateTask.runTask();
 
                 }

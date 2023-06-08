@@ -25,6 +25,7 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -76,6 +77,26 @@ public class COISoldier extends COIEntity implements Commandable {
             }
 
         });
+        Events.subscribe(EntityTargetEvent.class)
+                .handler(e -> {
+
+                    @Nullable COINpc npc = EntityData.getNpcByEntity(e.getEntity());
+                    Entity target = e.getTarget();
+                    if (npc instanceof COISoldierCreator creator) {
+
+                        if (target instanceof LivingEntity livingEntity) {
+
+                            // 相同队伍的，不攻击
+                            if(livingEntity instanceof Player player){
+                                if(npc.getTeam() == TeamUtils.getTeamByPlayer(player)){
+                                    e.setCancelled(true);
+                                }
+                            }
+
+                        }
+                    }
+                });
+
     }
     // 周围发现敌人，进入战斗模式
     private boolean fighting = false;
@@ -84,6 +105,8 @@ public class COISoldier extends COIEntity implements Commandable {
 
     public COISoldier(COISoldierCreator npcCreator) {
         super(npcCreator);
+
+        getNpc().setUseMinecraftAI(true);
 
     }
 
@@ -96,14 +119,22 @@ public class COISoldier extends COIEntity implements Commandable {
         // 对生物体直接产生伤害
         Random rand = new Random();
 
+
         // 在攻击伤害范围内，随机产生伤害
         double damage = rand.nextInt((int) ((getCoiNpc().getMaxDamage() + 1) - getCoiNpc().getMinDamage())) + getCoiNpc().getMinDamage();
 
+
+        /*
         if (getNpc().getEntity().getLocation().distance(target.getTargetLocation()) <= 3 && target.getType() == TargetType.ENTITY) {
             // 挥动手
             ((LivingEntity) getNpc().getEntity()).swingMainHand();
             damage(target, damage, target.getTargetLocation());
 
+        }
+        */
+
+        if (getLocation() == null) {
+            return;
         }
 
         // 攻击建筑
@@ -118,7 +149,16 @@ public class COISoldier extends COIEntity implements Commandable {
             }
         }
 
-        findPath(target.getTargetLocation());
+        Mob npcEntity = (Mob) getNpc().getEntity();
+
+        if (target.getType() == TargetType.BUILDING) {
+            // TODO 弓箭射击建筑 (创造个临时实体作为目标)
+            findPath(target.getTargetLocation());
+
+        }
+        if (target.getType() == TargetType.ENTITY) {
+            npcEntity.setTarget(((EntityTarget) target).getEntity());
+        }
 
     }
 

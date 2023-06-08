@@ -135,6 +135,8 @@ public class COIEntity implements AI {
                 disguise = new PlayerDisguise(getName());
             }
 
+            getCoiNpc().getFlagWatcherHandler().accept(disguise.getWatcher());
+
             disguiseTrait.setDisguise(disguise);
             npc.addTrait(disguiseTrait);
         }
@@ -727,6 +729,8 @@ public class COIEntity implements AI {
                     || itemStack.getType() == Material.NETHERITE_HOE
                     || itemStack.getType() == Material.STONE_HOE
                     || itemStack.getType() == Material.WOODEN_HOE
+                    //Bow
+                    || itemStack.getType() == Material.BOW
             ) {
                 if (entity.getEquipment().getItemInMainHand().getType().equals(Material.AIR)) {
                     entity.getEquipment().setItemInMainHand(itemStack);

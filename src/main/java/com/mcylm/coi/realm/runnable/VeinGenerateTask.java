@@ -14,6 +14,8 @@ public class VeinGenerateTask {
     private static Set<BukkitRunnable> tasks = new HashSet<>();
 
     public static void runTask() {
+        tasks.forEach(BukkitRunnable::cancel);
+        tasks.clear();
         SecureRandom random = new SecureRandom();
         for (COIVein vein : Entry.getMapData().getVeins()) {
             if (random.nextDouble() < vein.getSpawnChance()) {

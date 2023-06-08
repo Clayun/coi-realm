@@ -8,8 +8,11 @@ import com.mcylm.coi.realm.tools.building.config.BuildingConfig;
 import com.mcylm.coi.realm.tools.npc.COISoldierCreator;
 import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
 import com.mcylm.coi.realm.utils.GUIUtils;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -17,6 +20,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -88,8 +92,8 @@ public class COICamp extends COIBuilding {
 
         // 背包内的物品
         Inventory inventory = GUIUtils.createNpcInventory(3);
-        inventory.addItem(new ItemStack(Material.IRON_SWORD));
-
+        inventory.addItem(new ItemStack(new Random().nextBoolean() ? Material.BOW : Material.IRON_SWORD));
+        inventory.addItem(new ItemStack(Material.LEATHER_HELMET));
         // 不破坏方块
         Set<String> breakBlockMaterials = new HashSet<>();
 
@@ -105,6 +109,9 @@ public class COICamp extends COIBuilding {
         }
 
         COISoldierCreator npcCreator = new COISoldierCreator();
+
+        npcCreator.setNpcType(EntityType.SKELETON);
+        npcCreator.setDisguiseType(DisguiseType.PLAYER);
         npcCreator.setInventory(inventory);
         npcCreator.setAggressive(true);
         npcCreator.setAlertRadius(10);
@@ -112,6 +119,12 @@ public class COICamp extends COIBuilding {
         npcCreator.setName("战士");
         npcCreator.setLevel(1);
         npcCreator.setPickItemMaterials(pickItemMaterials);
+
+        npcCreator.setFlagWatcherHandler(flagWatcher -> {
+            PlayerWatcher playerWatcher = (PlayerWatcher) flagWatcher;
+            playerWatcher.setSkin("solider");
+        });
+        /*
         npcCreator.setSkinName("solider");
         npcCreator.setSkinSignature("LwMy/g2xAdhfHErWkk6pMM7SnIa2ERQW5X64w1q+/eEW3aamwP/1//nBdUqlWDZb/bQ0zhsl" +
                 "/JmnnJ118ePKzS6p7Gs1Hbk70EVEkuGA2f5VUK4F868944GHGxZAhbSC766IMSGuUCiusRfxuXHsF8k0LqKWZbO+" +
@@ -127,6 +140,8 @@ public class COICamp extends COIBuilding {
                 "jp7IlNLSU4iOnsidXJsIjoiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS83NDFlZ" +
                 "WQ5OTU5MGRkMGRlZjE0MjhiODJhMmE4OTA3OTczN2Q3ZjVhZDA4MTQ5MTVlZmY1ZDdmNjgyNTk2OWYzIn19fQ");
 
+
+         */
         return npcCreator;
     }
 

@@ -18,13 +18,12 @@ import java.util.List;
 public class DebugCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
-        if(!(commandSender instanceof Player)){
+        if(!(commandSender instanceof Player player)){
             // 这个指令只能让玩家使用
             // This command only player can use
             LoggerUtils.sendMessage("这个指令只能让玩家使用。",commandSender);
             return false;
         }
-        Player player = ((Player) commandSender);
         if (args[0].equalsIgnoreCase("team")) {
             new ChooseTeamGUI(player).open();
         }
@@ -33,7 +32,7 @@ public class DebugCommand implements CommandExecutor {
                 COIBuilding building = Entry.getInstance().getBuildingManager().getBuildingTemplateByType(COIBuildingType.MONSTER_BASE);
                 building.setNpcCreators(List.of(COIPillagerCreator.initCOIPillagerCreator(null)));
                 building.setTeam(TeamUtils.getMonsterTeam());
-                building.build(player.getLocation(),TeamUtils.getMonsterTeam(),false );
+                building.build(player.getLocation(),TeamUtils.getMonsterTeam(),false);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

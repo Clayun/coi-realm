@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -20,6 +21,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * AI属性
@@ -103,6 +105,9 @@ public class COINpc implements Serializable {
 
     // 伪装成其他实体
     private DisguiseType disguiseType;
+
+    // 伪装时对flag watcher 进行的操作
+    private Consumer<FlagWatcher> flagWatcherHandler;
 
     // 服装类型
     public static List<Material> CLOTHES = new ArrayList<>(){{

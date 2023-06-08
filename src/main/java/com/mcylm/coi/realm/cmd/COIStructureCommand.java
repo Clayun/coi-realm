@@ -14,7 +14,7 @@ public class COIStructureCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
 
         if(command.getName().equalsIgnoreCase("structure")){
-            if(!(commandSender instanceof Player)){
+            if(!(commandSender instanceof Player player)){
                 // 这个指令只能让玩家使用
                 // This command only player can use
                 LoggerUtils.sendMessage("这个指令只能让玩家使用。",commandSender);
@@ -27,8 +27,6 @@ public class COIStructureCommand implements CommandExecutor {
                 LoggerUtils.sendMessage("请求参数长度错误",commandSender);
                 return false;
             }
-
-            Player player = (Player) commandSender;
 
             // 保存建筑文件
             // save building into a file

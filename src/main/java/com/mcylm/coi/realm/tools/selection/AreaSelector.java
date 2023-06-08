@@ -287,7 +287,7 @@ public class AreaSelector implements Selector {
                             fallingBlock.setDropItem(false);
                             fallingBlock.setGravity(false);
                             fallingBlock.setMetadata("preview_block", new FixedMetadataValue(Entry.getInstance(), true));
-                            // fallingBlock.setGlowing(true);
+                            // fallingBlock.setGlowing(true); // 可能会让客户端很卡?
 
                             fallingBlock.setInvulnerable(true);
                             fakeBlocks.add(fallingBlock);
@@ -300,7 +300,7 @@ public class AreaSelector implements Selector {
                             }
                         }
                     }
-                }.runTaskLater(Entry.getInstance(), t);
+                }.runTaskLater(Entry.getInstance(), t); // 延迟生成 防止Geyser Bug
 
             }
         }
