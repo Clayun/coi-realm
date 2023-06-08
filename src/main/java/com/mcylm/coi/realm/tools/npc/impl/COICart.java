@@ -5,11 +5,13 @@ import com.mcylm.coi.realm.tools.npc.COICartCreator;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
+import net.citizensnpcs.api.ai.Navigator;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 
 import java.util.List;
 import java.util.Map;
@@ -189,6 +191,10 @@ public class COICart extends COIEntity {
 //                .useNewPathfinder(true);
 //
 //        navigator.setTarget(location);
+//
+//        Iterable<Vector> path = navigator.getPathStrategy().getPath();
+//
+//        navigator.setTarget(path);
 //
 //    }
 

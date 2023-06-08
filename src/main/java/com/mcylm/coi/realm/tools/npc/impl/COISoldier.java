@@ -73,6 +73,14 @@ public class COISoldier extends COIEntity implements Commandable {
                         }
                     }
 
+                    // 两个NPC是相同队伍的，不攻击
+                    if(TeamUtils.getNPCTeam(target) != null){
+                        if(TeamUtils.getNPCTeam(target) == npc.getTeam()){
+                            return;
+                        }
+                    }
+
+
                     ((COISoldier) creator.getNpc()).setTarget(new EntityTarget(livingEntity, 8));
 
                 }
