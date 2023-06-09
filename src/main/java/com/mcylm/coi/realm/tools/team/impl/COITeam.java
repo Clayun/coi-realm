@@ -10,7 +10,9 @@ import com.mcylm.coi.realm.tools.team.Team;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.time.LocalDateTime;
@@ -154,6 +156,33 @@ public class COITeam implements Team {
 
         // 存储记录
         getScoreRecords().add(coiScore);
+
+    }
+
+    /**
+     * 通过Entity给所属人添加积分
+     * @param type
+     * @param entity
+     */
+    public void addScore(COIScoreType type, Entity entity){
+        String npcOwner = TeamUtils.getNPCOwner(entity);
+
+        if(npcOwner != null){
+            Player player = Bukkit.getPlayer(npcOwner);
+
+            if(player != null){
+                addScore(type,player);
+            }
+        }else{
+            if(entity instanceof Player player){
+                // 判断entity是否玩家
+
+                if(TeamUtils.getTeamByPlayer(player) != null){
+                    addScore(type,player);
+                }
+            }
+        }
+
 
     }
 

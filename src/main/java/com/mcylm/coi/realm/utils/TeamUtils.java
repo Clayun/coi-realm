@@ -321,4 +321,20 @@ public class TeamUtils {
         return null;
     }
 
+    /**
+     * 获取NPC的所属人
+     * @param entity
+     * @return
+     */
+    public static String getNPCOwner(Entity entity){
+        @Nullable COINpc data = EntityData.getNpcByEntity(entity);
+
+        if (data != null && data.getBuilding() != null) {
+            return data.getBuilding().getBuildPlayerName();
+
+        }
+
+        return null;
+    }
+
 }

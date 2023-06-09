@@ -2,6 +2,7 @@ package com.mcylm.coi.realm.tools.building;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIBuildingType;
+import com.mcylm.coi.realm.enums.COIScoreType;
 import com.mcylm.coi.realm.model.COIBlock;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.model.COIPaster;
@@ -60,6 +61,9 @@ public abstract class COIBuilding implements Serializable {
 
     // 所需消耗的材料
     protected int consume = 0;
+
+    // 建造的当前建筑的玩家
+    protected String buildPlayerName;
 
     // 建筑的全部方块
     protected List<COIBlock> remainingBlocks;
@@ -130,6 +134,9 @@ public abstract class COIBuilding implements Serializable {
             return;
         }
 
+        // 记录玩家
+        this.buildPlayerName = player.getName();
+
         // 扣除玩家背包里的资源
         boolean b = deductionResources(player);
 
@@ -194,6 +201,7 @@ public abstract class COIBuilding implements Serializable {
                     complete = coiPaster.isComplete();
                     muzzle = coiPaster.getMuzzle();
                     Bukkit.getScheduler().runTask(Entry.getInstance(), () -> {
+                        setMuzzle(coiPaster.getMuzzle());
                         buildSuccess(location, player);
                     });
                     this.cancel();
@@ -275,6 +283,7 @@ public abstract class COIBuilding implements Serializable {
                     complete = coiPaster.isComplete();
                     muzzle = coiPaster.getMuzzle();
                     Bukkit.getScheduler().runTask(Entry.getInstance(), () -> {
+                        setMuzzle(coiPaster.getMuzzle());
                         buildSuccess(location, null);
                         if(isBase){
                             setTeamSpawnLocation(coiPaster.getSpawnLocation(),team);
@@ -298,6 +307,8 @@ public abstract class COIBuilding implements Serializable {
     public void buildSuccess(Location location, Player player) {
         // 建筑成功可以放个烟花
 
+        // 玩家新增建造奖励
+        getTeam().addScore(COIScoreType.BUILD,player);
     }
 
     public void upgradeBuild(Player player) {
@@ -388,6 +399,9 @@ public abstract class COIBuilding implements Serializable {
                     // 监听建造状态
                     complete = true;
                     Bukkit.getScheduler().runTask(Entry.getInstance(), () -> {
+
+                        // 升级奖励
+                        getTeam().addScore(COIScoreType.UPGRADE_BUILDING,player);
                         upgradeBuildSuccess();
                     });
                     this.cancel();
@@ -583,6 +597,7 @@ public abstract class COIBuilding implements Serializable {
         if (damage >= getHealth().get()) {
             getHealth().set(0);
             destroy(true);
+            getTeam().addScore(COIScoreType.DESTROY_BUILDING,attacker);
             // 检查小队是否落败
             checkDefeat(attacker);
         } else {
