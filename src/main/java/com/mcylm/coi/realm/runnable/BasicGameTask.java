@@ -2,13 +2,19 @@ package com.mcylm.coi.realm.runnable;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIGameStatus;
+import com.mcylm.coi.realm.model.COIPlayerScore;
+import com.mcylm.coi.realm.model.COIScoreDetail;
 import com.mcylm.coi.realm.runnable.api.GameTaskApi;
+import com.mcylm.coi.realm.tools.team.impl.COITeam;
+import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.List;
 
 public class BasicGameTask implements GameTaskApi {
 
@@ -150,6 +156,28 @@ public class BasicGameTask implements GameTaskApi {
         // 游戏状态标注为结算中
         Entry.getGame().setStatus(COIGameStatus.STOPPING);
 
+        // 胜利的队伍
+        COITeam victoryTeam = Entry.getGame().getVictoryTeam();
+
+        // 待结算奖励明细
+        // TODO 根据这个列表进行奖励结算
+        List<COIPlayerScore> rewardSettlement = Entry.getGame().getRewardSettlement();
+
+
+        // 公布玩家结算明细
+        for(Player p : Entry.getInstance().getServer().getOnlinePlayers()) {
+
+            List<COIScoreDetail> playerDetail = Entry.getGame().getPlayerDetail(p);
+
+            double total = 0;
+            LoggerUtils.sendMessage("------ 奖励结算 ------",p);
+            for(COIScoreDetail detail : playerDetail){
+                total = total + detail.getScore();
+                LoggerUtils.sendMessage(detail.toString(),p);
+            }
+            LoggerUtils.sendMessage("------ 总计："+total,p);
+        }
+
         // 游戏结算进程
         // 1.倒计时开始，
         // 2.游戏状态标为结束中（COIGameStatus.STOPPING）
@@ -162,21 +190,36 @@ public class BasicGameTask implements GameTaskApi {
             @Override
             public void run() {
 
-                // TODO 结算奖励
-
                 count ++;
 
                 // 倒计时的秒数
                 int countdown = stoppingTimer - count;
 
                 for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
-                    Title title = Title.title(
 
-                            // todo 颜色调整，放入配置文件中配置，倒计时秒数变成配置变量
-                            Component.text(countdown+"秒后游戏结束..."),
-                            Component.text("奖励已结算，可以在左下角查看"),
-                            Title.DEFAULT_TIMES);
-                    p.showTitle(title);
+                    if(countdown > 10){
+                        // 公布游戏结果
+                        Title title = Title.title(
+
+                                // todo 颜色调整，放入配置文件中配置，倒计时秒数变成配置变量
+                                Component.text(LoggerUtils.replaceColor(victoryTeam.getType().getColor()+victoryTeam.getType().getName()+" &f胜利！")),
+                                Component.text("奖励已结算，可以在左下角查看"),
+                                Title.DEFAULT_TIMES);
+                        p.showTitle(title);
+
+
+                    }else{
+                        // 倒计时最后10秒
+                        Title title = Title.title(
+
+                                // todo 颜色调整，放入配置文件中配置，倒计时秒数变成配置变量
+                                Component.text(LoggerUtils.replaceColor("&c"+countdown+"秒后游戏结束...")),
+                                Component.text("奖励已结算，可以在左下角查看"),
+                                Title.DEFAULT_TIMES);
+                        p.showTitle(title);
+                    }
+
+
                 }
 
                 if(count >= stoppingTimer){

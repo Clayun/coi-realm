@@ -1,7 +1,11 @@
 package com.mcylm.coi.realm.game;
 
 import com.mcylm.coi.realm.enums.COIGameStatus;
+import com.mcylm.coi.realm.enums.COIScoreType;
 import com.mcylm.coi.realm.enums.COITeamType;
+import com.mcylm.coi.realm.model.COIPlayerScore;
+import com.mcylm.coi.realm.model.COIScore;
+import com.mcylm.coi.realm.model.COIScoreDetail;
 import com.mcylm.coi.realm.player.COIPlayer;
 import com.mcylm.coi.realm.runnable.AttackGoalTask;
 import com.mcylm.coi.realm.runnable.BasicGameTask;
@@ -11,6 +15,7 @@ import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Data;
 import org.bukkit.entity.Player;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,5 +68,135 @@ public class COIGame {
         // 启动游戏进程
         new BasicGameTask().waiting();
     }
+
+    /**
+     * 获取获得胜利的队伍
+     * @return
+     */
+    public COITeam getVictoryTeam(){
+
+        List<COITeam> stillAliveTeams = new ArrayList<>();
+
+
+        for(COITeam team : getTeams()){
+            if(!team.isDefeat()){
+                // 没有被拆除大本营
+                stillAliveTeams.add(team);
+            }
+        }
+
+        // 如果仅剩一个，就它了
+        if(stillAliveTeams.size() == 1){
+            return stillAliveTeams.get(0);
+        }
+
+        COITeam victory = null;
+        double score = 0;
+        // 如果多个队伍都存货，找一个分数最高的
+
+        for(COITeam team : stillAliveTeams){
+            if(team.getScore() > score){
+                victory = team;
+                score = team.getScore();
+            }
+        }
+
+        return victory;
+
+    }
+
+    /**
+     * 奖励结算
+     * 本方法应该在游戏结束后调用
+     * 请不要在游戏未结束的时候调用
+     * @return 玩家 -> List<COIScore>
+     */
+    public List<COIPlayerScore> getRewardSettlement(){
+
+        COITeam victoryTeam = getVictoryTeam();
+
+        List<COIPlayerScore> results = new ArrayList<>();
+
+        for(COITeam team : getTeams()){
+            List<String> players = team.getPlayers();
+
+            for(String player : players){
+
+                double scoreNumber = 0;
+                // 玩家自己的得分
+                List<COIScore> playerScore = new ArrayList<>();
+
+                List<COIScore> scoreRecords = team.getScoreRecords();
+
+                for(COIScore score : scoreRecords){
+                    if(score.getPlayer().getName().equals(player)){
+                        playerScore.add(score);
+                        scoreNumber = scoreNumber + score.getType().getScore();
+                    }
+                }
+
+                if(victoryTeam.equals(team)){
+                    // 胜利队伍，全员获奖
+                    COIScore victoryBonus = new COIScore(COIScoreType.VICTORY, LocalDateTime.now(),null);
+                    scoreNumber = scoreNumber + victoryBonus.getType().getScore();
+                    playerScore.add(victoryBonus);
+                }
+
+                // 玩家结算数据
+                COIPlayerScore coiPlayerScore = new COIPlayerScore();
+                coiPlayerScore.setPlayer(player);
+                coiPlayerScore.setScore(scoreNumber);
+                coiPlayerScore.setScoreList(playerScore);
+
+                // 存值
+                results.add(coiPlayerScore);
+            }
+
+
+        }
+
+        return results;
+    }
+
+    /**
+     * 查询玩家的结算明细
+     * @param player
+     * @return
+     */
+    public List<COIScoreDetail> getPlayerDetail(Player player){
+        COITeam teamByPlayer = TeamUtils.getTeamByPlayer(player.getName());
+
+        // 临时缓存
+        Map<COIScoreType,List<COIScore>> map = new HashMap<>();
+
+        for(COIScore score : teamByPlayer.getScoreRecords()){
+            if(map.get(score.getType()) != null){
+                map.get(score.getType()).add(score);
+            }else{
+                map.put(score.getType(),List.of(score));
+            }
+        }
+
+        List<COIScoreDetail> details = new ArrayList<>();
+
+        for(COIScoreType type : map.keySet()){
+
+            double score = 0;
+
+            List<COIScore> coiScores = map.get(type);
+
+            for(COIScore coiScore : coiScores){
+                score = score + coiScore.getType().getScore();
+            }
+
+            COIScoreDetail detail = new COIScoreDetail(type,score,coiScores.size());
+
+            details.add(detail);
+        }
+
+        return details;
+    }
+
+
 
 }

@@ -141,7 +141,7 @@ public class COITeam implements Team {
     }
 
     @Override
-    public void manageScore(COIScoreType type, Player player) {
+    public void addScore(COIScoreType type, Player player) {
 
         if(type == null || player == null){
             return;
