@@ -252,6 +252,11 @@ public class COIGame {
             ItemStack ironPickaxe = new ItemStack(Material.IRON_PICKAXE);
             p.getInventory().addItem(ironPickaxe);
 
+            // 面包
+            ItemStack bread = new ItemStack(Material.BREAD);
+            bread.setAmount(32);
+            p.getInventory().addItem(bread);
+
             // 初始化玩家背包默认给的资源
             ItemStack emerald = new ItemStack(Material.EMERALD);
 
