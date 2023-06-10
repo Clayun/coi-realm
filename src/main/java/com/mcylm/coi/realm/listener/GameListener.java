@@ -6,6 +6,7 @@ import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COIServerMode;
 import com.mcylm.coi.realm.events.BuildingDamagedEvent;
+import com.mcylm.coi.realm.events.BuildingDestroyedEvent;
 import com.mcylm.coi.realm.tools.attack.target.impl.BuildingTarget;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.data.metadata.BuildData;
@@ -75,6 +76,43 @@ public class GameListener implements Listener {
 
                             Component.text(LoggerUtils.replaceColor("&c注意！")),
                             Component.text(LoggerUtils.replaceColor("&f"+event.getBuilding().getType().getName()+"正在被 "+attacker+" &f攻击，快防守！")),
+                            Title.DEFAULT_TIMES);
+                    p.showTitle(title);
+                    // 普通消息
+                    LoggerUtils.sendMessage(LoggerUtils.replaceColor(message),p);
+                }else{
+                    // 普通建筑被攻击
+                    p.sendActionBar(Component.text(LoggerUtils.replaceColor(message)));
+                    LoggerUtils.sendMessage(LoggerUtils.replaceColor(message),p);
+                }
+
+
+            }
+
+        }
+
+    }
+
+    @EventHandler
+    public void onBuildingDestroyed(BuildingDestroyedEvent event){
+
+
+        COITeam team = event.getBuilding().getTeam();
+        for (String playerName : team.getPlayers()) {
+
+            Player p = Bukkit.getPlayer(playerName);
+
+            if(p != null && p.isOnline()){
+
+                String message = "&c注意，您的 "+event.getBuilding().getType().getName()+" 已被拆除！";
+
+                // 基地被攻击
+                if(event.getBuilding().getType().equals(COIBuildingType.BASE)){
+                    // Title提醒
+                    Title title = Title.title(
+
+                            Component.text(LoggerUtils.replaceColor("&c注意！")),
+                            Component.text(LoggerUtils.replaceColor("&f您队伍的"+event.getBuilding().getType().getName()+"已被拆除！")),
                             Title.DEFAULT_TIMES);
                     p.showTitle(title);
                     // 普通消息

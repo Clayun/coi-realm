@@ -200,6 +200,11 @@ public class COITeam implements Team {
             return;
         }
 
+        // 失败后不允许加积分
+        if(isDefeat()){
+            return;
+        }
+
         // 加减总积分
         score = score + type.getScore();
 
@@ -250,10 +255,16 @@ public class COITeam implements Team {
     @Override
     public void defeatedBy(Player player,COITeam team) {
 
+        // 设为失败
+        setDefeat(true);
+
         if(player == null && team == null){
-            // 如果两个都是null，代表被野怪给干掉的
+            // 两个都是null
         }else{
+            // TODO 失败后的处理
             // 被玩家或者玩家的随从NPC干掉了
+            // 整队在怪物队伍复活
+            // 如果怪物队伍被拆了，则直接失败
         }
     }
 
