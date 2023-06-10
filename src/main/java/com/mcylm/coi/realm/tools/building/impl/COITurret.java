@@ -54,8 +54,6 @@ public class COITurret extends COIBuilding {
         this.coolDown = 2;
         // 攻击半径，如果发射方块和目标之间有其他方块挡着，是不会触发攻击的
         this.radius = 30;
-        // 自动攻击Task
-        this.turretCoolDown = new TurretTask(this);
         // 默认等级为1
         setLevel(1);
         // 初始化NPC创建器
@@ -76,8 +74,10 @@ public class COITurret extends COIBuilding {
 
     @Override
     public void buildSuccess(Location location, Player player) {
-
+        super.buildSuccess(location, player);
         // 建造完成就开启自动检测周围敌方单位并攻击
+        // 自动攻击Task
+        this.turretCoolDown = new TurretTask(this);
         this.turretCoolDown.action();
 
     }

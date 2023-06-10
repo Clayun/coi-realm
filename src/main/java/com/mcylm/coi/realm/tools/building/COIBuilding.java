@@ -200,8 +200,8 @@ public abstract class COIBuilding implements Serializable {
                     // 监听建造状态
                     complete = coiPaster.isComplete();
                     muzzle = coiPaster.getMuzzle();
+
                     Bukkit.getScheduler().runTask(Entry.getInstance(), () -> {
-                        setMuzzle(coiPaster.getMuzzle());
                         buildSuccess(location, player);
                     });
                     this.cancel();
@@ -306,7 +306,6 @@ public abstract class COIBuilding implements Serializable {
 
     public void buildSuccess(Location location, Player player) {
         // 建筑成功可以放个烟花
-
         // 玩家新增建造奖励
         getTeam().addScore(COIScoreType.BUILD,player);
     }

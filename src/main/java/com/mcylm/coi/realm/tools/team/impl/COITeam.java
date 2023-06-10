@@ -7,13 +7,16 @@ import com.mcylm.coi.realm.enums.COITeamType;
 import com.mcylm.coi.realm.model.COIScore;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.team.Team;
+import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Scoreboard;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -66,6 +69,8 @@ public class COITeam implements Team {
 
     public COITeam(COITeamType type,Location spawner) {
         this.type = type;
+        // 初始化本小队的计分板
+        registerScoreboardTeam();
         this.players = new ArrayList<>();
         this.foodChests = new ArrayList<>();
         this.resourcesChests = new ArrayList<>();
@@ -75,6 +80,44 @@ public class COITeam implements Team {
         this.spawner = spawner;
         // 初始化大本营
         TeamUtils.initTeamBase(this);
+    }
+
+    /**
+     * 注册小队
+     * @return
+     */
+    private void registerScoreboardTeam() {
+        org.bukkit.scoreboard.Team team = Entry.getInstance().getScoreboard().getTeam(getType().getCode());
+        if (team == null) {
+            Entry.getInstance().getScoreboard().registerNewTeam(getType().getCode());
+        }
+    }
+
+    /**
+     * 将玩家添加入计分板
+     * @param name
+     */
+    private void addPlayerToScoreboard(String name){
+        org.bukkit.scoreboard.Team team = Entry.getInstance().getScoreboard().getTeam(getType().getCode());
+        team.addEntry(name);
+    }
+
+    /**
+     * 添加实体到本小队
+     * @param entity
+     */
+    public void addEntityToScoreboard(Entity entity){
+        org.bukkit.scoreboard.Team team = Entry.getInstance().getScoreboard().getTeam(getType().getCode());
+        team.addEntity(entity);
+    }
+
+    /**
+     * 从计分板里删除生物
+     * @param entity
+     */
+    public void removeEntityFromScoreboard(Entity entity){
+        org.bukkit.scoreboard.Team team = Entry.getInstance().getScoreboard().getTeam(getType().getCode());
+        team.addEntity(entity);
     }
 
     /**
@@ -111,6 +154,9 @@ public class COITeam implements Team {
         // 加入队伍
         // Join team
         getPlayers().add(player.getName());
+
+        // 计分板添加玩家
+        addPlayerToScoreboard(player.getName());
 
         return true;
     }
@@ -156,6 +202,9 @@ public class COITeam implements Team {
 
         // 存储记录
         getScoreRecords().add(coiScore);
+
+        // 提示信息
+        LoggerUtils.sendMessage(coiScore.toString(),player);
 
     }
 
@@ -217,6 +266,19 @@ public class COITeam implements Team {
         }
 
         return format;
+    }
+
+    public List<String> getEnemyPlayers(){
+        List<String> players = new ArrayList<>();
+        for(COITeam team : Entry.getGame().getTeams()){
+            if(team.equals(this)){
+                continue;
+            }
+            players.addAll(team.getPlayers());
+
+        }
+
+        return players;
     }
 
 

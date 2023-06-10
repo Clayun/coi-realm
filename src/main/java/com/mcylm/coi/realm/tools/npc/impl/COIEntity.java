@@ -898,12 +898,17 @@ public class COIEntity implements AI {
         npc.setProtected(false);
         this.isSpawn = true;
 
+        // 添加生物到计分板
+        getCoiNpc().getBuilding().getTeam().addEntityToScoreboard(npc.getEntity());
+
         say("干活！干活！");
     }
 
     @Override
     public void despawn() {
         if (this.npc != null) {
+            // 删除生物
+            getCoiNpc().getBuilding().getTeam().removeEntityFromScoreboard(npc.getEntity());
             npc.despawn();
             this.isSpawn = false;
         }

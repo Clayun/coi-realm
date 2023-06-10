@@ -34,6 +34,7 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scoreboard.Scoreboard;
 
 import java.io.File;
 import java.io.FileReader;
@@ -84,6 +85,9 @@ public class Entry extends ExtendedJavaPlugin {
 
     private File mapDataFile = new File(getDataFolder(), "map.json");
 
+    // 计分板
+    @Getter
+    private Scoreboard scoreboard;
 
     @Override
     protected void enable() {
@@ -92,6 +96,7 @@ public class Entry extends ExtendedJavaPlugin {
         instance = this;
         builder = new COIBuilder();
         NPC_FOODS = new ArrayList<>();
+        scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
 
         LoggerUtils.log(Entry.getInstance().getName() + " 开始加载...");
 

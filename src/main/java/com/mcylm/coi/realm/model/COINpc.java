@@ -19,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -56,10 +57,10 @@ public class COINpc implements Serializable {
     private boolean aggressive = false;
 
     // NPC的友军（玩家名称）
-    private Set<String> friendPlayers;
+    private Set<String> friendPlayers = new HashSet<>();
 
     // NPC的敌对玩家（玩家名称）
-    private Set<String> enemyPlayers;
+    private Set<String> enemyPlayers = new HashSet<>();
 
     // 敌对生物
     private Set<EntityType> enemyEntities;
@@ -171,5 +172,13 @@ public class COINpc implements Serializable {
         return null;
     }
 
+    public Set<String> getFriendPlayers() {
+        friendPlayers.addAll(getTeam().getPlayers());
+        return friendPlayers;
+    }
 
+    public Set<String> getEnemyPlayers() {
+        enemyPlayers.addAll(getTeam().getEnemyPlayers());
+        return enemyPlayers;
+    }
 }

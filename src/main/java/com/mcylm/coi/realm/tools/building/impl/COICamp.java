@@ -152,7 +152,7 @@ public class COICamp extends COIBuilding {
      */
     private void initStructure(){
         getBuildingLevelStructure().put(1,"junying1.structure");
-        getBuildingLevelStructure().put(2,"junying2.structure");
+        getBuildingLevelStructure().put(2,"junying1.structure");
     }
 
     @Override

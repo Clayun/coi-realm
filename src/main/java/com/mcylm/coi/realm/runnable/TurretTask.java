@@ -47,6 +47,14 @@ public class TurretTask {
 
     protected void attack() {
 
+        if(this.turret.getMuzzle() == null){
+            LoggerUtils.debug("炮口方块位置不存在");
+
+            // 炮口位置不存在，就临时使用建筑点
+            this.turret.setMuzzle(this.turret.getLocation());
+            return;
+        }
+
         Location l = this.turret.getMuzzle().clone();
         // 从方块的正中心点射出
         l.setY(l.getY() + 0.5D);
@@ -107,7 +115,6 @@ public class TurretTask {
                         // 非小队内成员，同时非所属人
                         // 就设置为攻击目标
                         attackPermission = true;
-                        LoggerUtils.debug(p.getName()+"非小队内成员，锁定攻击");
                     }
 
                     if(attackPermission){
@@ -160,6 +167,7 @@ public class TurretTask {
             Location actual = l.add(vector);
             Block b = actual.getBlock();
             if (length >= 2.0D && b != null && !b.getType().equals(Material.AIR) && !b.getType().name().contains("LONG_GRASS") && !b.getType().name().contains("TALL_GRASS")) {
+                // 玩家是否躲在掩体后面，如果躲在掩体后面就不攻击
                 return true;
             }
             length++;

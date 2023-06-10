@@ -43,6 +43,7 @@ public class COIMill extends COIBuilding {
 
     @Override
     public void buildSuccess(Location location, Player player) {
+        super.buildSuccess(location, player);
 
         // 如果建筑建造完成，NPC就初始化
         for (COINpc creator : getNpcCreators()) {

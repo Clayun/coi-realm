@@ -52,7 +52,7 @@ public class COIStope extends COIBuilding {
 
     @Override
     public void buildSuccess(Location location, Player player) {
-
+        super.buildSuccess(location, player);
 
         for (COINpc creator : getNpcCreators()) {
             // 如果建筑建造完成，NPC就初始化

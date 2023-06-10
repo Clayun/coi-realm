@@ -92,7 +92,6 @@ public class COIBuilder implements Builder {
         // 炮口位置方块名称
         String muzzleBlockTypeName = Entry.getInstance().getConfig().getString("game.turret.muzzle-material");
 
-
         //根据Y轴排序
         needBuildCOIBlocks.sort(Comparator.comparingDouble(COIBlock::getY));
         needBuildCOIBlocks.forEach(coiBlock -> {
@@ -158,8 +157,7 @@ public class COIBuilder implements Builder {
 
                                 if(block.getType().equals(Material.getMaterial(muzzleBlockTypeName))){
                                     // 如果匹配炮口方块
-                                    Location cloneLocation = block.getLocation().clone();
-                                    muzzleLocation = cloneLocation;
+                                    muzzleLocation = block.getLocation().clone();
                                 }
 
                                 BlockState state = block.getState();

@@ -13,7 +13,9 @@ import com.mcylm.coi.realm.tools.npc.impl.COIEntity;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Data;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Scoreboard;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -37,7 +39,6 @@ public class COIGame {
     private List<COITeam> teams;
     // 玩家缓存
     private Map<Player, COIPlayer> coiPlayers = new HashMap<>();
-
 
     public COIGame() {
         this.teams = new ArrayList<>();
@@ -135,7 +136,7 @@ public class COIGame {
                     }
                 }
 
-                if(victoryTeam.equals(team)){
+                if(victoryTeam != null && victoryTeam.equals(team)){
                     // 胜利队伍，全员获奖
                     COIScore victoryBonus = new COIScore(COIScoreType.VICTORY, LocalDateTime.now(),null);
                     scoreNumber = scoreNumber + victoryBonus.getType().getScore();
@@ -173,7 +174,9 @@ public class COIGame {
             if(map.get(score.getType()) != null){
                 map.get(score.getType()).add(score);
             }else{
-                map.put(score.getType(),List.of(score));
+                List<COIScore> details = new ArrayList<>();
+                details.add(score);
+                map.put(score.getType(),details);
             }
         }
 

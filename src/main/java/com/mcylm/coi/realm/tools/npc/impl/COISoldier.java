@@ -15,6 +15,7 @@ import com.mcylm.coi.realm.tools.data.metadata.BuildData;
 import com.mcylm.coi.realm.tools.data.metadata.EntityData;
 import com.mcylm.coi.realm.tools.npc.COISoldierCreator;
 import com.mcylm.coi.realm.utils.LocationUtils;
+import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -87,30 +88,6 @@ public class COISoldier extends COIEntity implements Commandable {
             }
 
         });
-        Events.subscribe(EntityTargetEvent.class)
-                .handler(e -> {
-
-                    @Nullable COINpc npc = EntityData.getNpcByEntity(e.getEntity());
-                    Entity target = e.getTarget();
-                    if (npc instanceof COISoldierCreator) {
-
-                        if (target instanceof LivingEntity livingEntity) {
-
-                            // 相同队伍的，不攻击
-                            if(livingEntity instanceof Player player){
-                                if(npc.getTeam() == TeamUtils.getTeamByPlayer(player)){
-                                    e.setCancelled(true);
-                                }
-                            }
-
-                            @Nullable COINpc data = EntityData.getNpcByEntity(livingEntity);
-
-                            if (data != null && data.getTeam() == npc.getTeam()) {
-                                e.setCancelled(true);
-                            }
-                        }
-                    }
-                });
 
     }
     // 周围发现敌人，进入战斗模式
@@ -137,16 +114,6 @@ public class COISoldier extends COIEntity implements Commandable {
 
         // 在攻击伤害范围内，随机产生伤害
         double damage = rand.nextInt((int) ((getCoiNpc().getMaxDamage() + 1) - getCoiNpc().getMinDamage())) + getCoiNpc().getMinDamage();
-
-
-        /*
-        if (getNpc().getEntity().getLocation().distance(target.getTargetLocation()) <= 3 && target.getType() == TargetType.ENTITY) {
-            // 挥动手
-            ((LivingEntity) getNpc().getEntity()).swingMainHand();
-            damage(target, damage, target.getTargetLocation());
-
-        }
-        */
 
         if (getLocation() == null) {
             return;
@@ -186,21 +153,9 @@ public class COISoldier extends COIEntity implements Commandable {
 
     }
 
-    /**
-     * 更换NPC跟随的玩家
-     *
-     * @param newFollowPlayer
-     */
-    public void changeFollowPlayer(String newFollowPlayer) {
-        getCoiNpc().setFollowPlayerName(newFollowPlayer);
-    }
-
-
-
     @Override
     public void move() {
         super.move();
-
 
         //警戒周围
         meleeAttackTarget();

@@ -198,11 +198,21 @@ public class BasicGameTask implements GameTaskApi {
                 for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
 
                     if(countdown > 10){
+                        
+                        String message;
+
+                        if(victoryTeam != null){
+                            message = LoggerUtils.replaceColor(victoryTeam.getType().getColor()+victoryTeam.getType().getName()+" &f胜利！");
+                        }else{
+                            message = "平局";
+                        }
+
                         // 公布游戏结果
                         Title title = Title.title(
 
                                 // todo 颜色调整，放入配置文件中配置，倒计时秒数变成配置变量
-                                Component.text(LoggerUtils.replaceColor(victoryTeam.getType().getColor()+victoryTeam.getType().getName()+" &f胜利！")),
+
+                                Component.text(message),
                                 Component.text("奖励已结算，可以在左下角查看"),
                                 Title.DEFAULT_TIMES);
                         p.showTitle(title);
