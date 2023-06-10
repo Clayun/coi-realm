@@ -32,6 +32,7 @@ import org.bukkit.entity.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import javax.annotation.Nullable;
@@ -1095,6 +1096,31 @@ public class COIEntity implements AI {
             entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(MAX_HEALTH);
 
         }
+    }
+
+    /**
+     * 挥手
+     * @param second
+     */
+    public void swingMainHand(int second){
+
+        int ticks = second * 20;
+        int period = 5;
+        new BukkitRunnable() {
+
+            int i = 0;
+            @Override
+            public void run() {
+
+                i++;
+                // 挥动手
+                ((LivingEntity) getNpc().getEntity()).swingMainHand();
+
+                if(i == ticks / period){
+                    this.cancel();
+                }
+            }
+        }.runTaskTimerAsynchronously(Entry.getInstance(), 0, period);
     }
 
     /**

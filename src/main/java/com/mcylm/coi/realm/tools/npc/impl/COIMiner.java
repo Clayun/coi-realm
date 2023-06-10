@@ -129,7 +129,8 @@ public class COIMiner extends COIEntity {
                 if (getNpc().getEntity().getLocation().distance(targetBlock.getLocation()) <= 3) {
 
                     if (!isBreaking) {
-
+                        // 挥动手作为动作动画
+                        swingMainHand(2);
 
                         LivingEntity entity = (LivingEntity) getNpc().getEntity();
                         BlockBreaker.BlockBreakerConfiguration blockBreakerConfiguration = new BlockBreaker.BlockBreakerConfiguration();
@@ -143,6 +144,7 @@ public class COIMiner extends COIEntity {
                                     public void run() {
                                         // 拆除完成
                                         isBreaking = false;
+
                                     }
                                 }
                         );
@@ -151,10 +153,6 @@ public class COIMiner extends COIEntity {
                             isBreaking = true;
                             TaskRunnable run = new TaskRunnable(breaker);
                             run.setTaskId(Bukkit.getScheduler().scheduleSyncRepeatingTask(Entry.getInstance(), run, 0, 1));
-                            // 挥动手作为动作动画
-                            ((LivingEntity) getNpc().getEntity()).swingMainHand();
-                            ((LivingEntity) getNpc().getEntity()).swingMainHand();
-                            ((LivingEntity) getNpc().getEntity()).swingMainHand();
                         }
                     }
 
