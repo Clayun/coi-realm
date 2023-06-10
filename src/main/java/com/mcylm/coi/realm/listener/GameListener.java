@@ -5,6 +5,7 @@ import com.mcylm.coi.realm.clipboard.PlayerClipboard;
 import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COIServerMode;
+import com.mcylm.coi.realm.events.BuildingDamagedEvent;
 import com.mcylm.coi.realm.tools.attack.target.impl.BuildingTarget;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.data.metadata.BuildData;
@@ -15,6 +16,9 @@ import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import me.lucko.helper.Events;
 import net.citizensnpcs.api.CitizensAPI;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.title.Title;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -40,6 +44,46 @@ import java.util.Collection;
 
 public class GameListener implements Listener {
 
+    @EventHandler
+    public void onBuildingDamaged(BuildingDamagedEvent event){
+
+        String attacker = "神秘生物";
+
+        COITeam npcTeam = TeamUtils.getNPCTeam(event.getEntity());
+
+        if(npcTeam == null){
+            npcTeam = TeamUtils.getTeamByPlayer((Player)event.getEntity());
+        }
+
+        if(npcTeam != null){
+            attacker = npcTeam.getType().getColor()+npcTeam.getType().getName();
+        }
+
+        COITeam team = event.getBuilding().getTeam();
+        for (String playerName : team.getPlayers()) {
+
+            Player p = Bukkit.getPlayer(playerName);
+
+            if(p != null && p.isOnline()){
+                // 基地被攻击
+                if(event.getBuilding().getType().equals(COIBuildingType.BASE)){
+                    Title title = Title.title(
+
+                            Component.text(LoggerUtils.replaceColor("&c注意！")),
+                            Component.text(LoggerUtils.replaceColor("&f基地正在被 "+attacker+" &f攻击，快防守！")),
+                            Title.DEFAULT_TIMES);
+                    p.showTitle(title);
+                }else{
+                    // 普通建筑被攻击
+                    p.sendActionBar(Component.text(LoggerUtils.replaceColor("&c注意，您的 "+event.getBuilding().getType().getName()+" 正在被"+attacker+"攻击！")));
+                }
+
+
+            }
+
+        }
+
+    }
 
     @EventHandler
     public void onRespawn(PlayerRespawnEvent event){

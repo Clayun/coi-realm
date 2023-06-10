@@ -3,6 +3,7 @@ package com.mcylm.coi.realm.tools.building;
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COIScoreType;
+import com.mcylm.coi.realm.events.BuildingDamagedEvent;
 import com.mcylm.coi.realm.model.COIBlock;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.model.COIPaster;
@@ -593,6 +594,11 @@ public abstract class COIBuilding implements Serializable {
         if (!isComplete()) {
             return;
         }
+
+        // 触发事件
+        BuildingDamagedEvent event = new BuildingDamagedEvent(this,attacker);
+        Bukkit.getServer().getPluginManager().callEvent(event);
+
         if (damage >= getHealth().get()) {
             getHealth().set(0);
             destroy(true);
