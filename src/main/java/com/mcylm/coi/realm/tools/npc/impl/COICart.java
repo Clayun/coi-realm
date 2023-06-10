@@ -57,11 +57,28 @@ public class COICart extends COIEntity {
             return;
         }
 
-        if(getCoiNpc().getInventory().isEmpty()){
+        if(!needTransport()){
             collectingResources();
         }else{
             transportResources();
         }
+    }
+
+    /**
+     * 判断背包内是否有矿物
+     * @return
+     */
+    private boolean needTransport(){
+        if(getCoiNpc().getInventory().isEmpty()){
+            return false;
+        }else {
+            String material = Entry.getInstance().getConfig().getString("game.building.material");
+            if(!getCoiNpc().getInventory().contains(Material.getMaterial(material))){
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

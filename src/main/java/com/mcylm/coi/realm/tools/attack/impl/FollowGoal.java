@@ -19,6 +19,12 @@ public class FollowGoal extends SimpleGoal {
     // 跟随范围，超出范围会跟上玩家
     private int maxRadius = 5;
 
+    // 保持饥饿度到多少
+    private int keepHunger = 20;
+
+    // 每次投喂多少个
+    private int feedNum = 2;
+
     @Override
     public void tick() {
         Commandable npc = getExecutor();
@@ -30,15 +36,15 @@ public class FollowGoal extends SimpleGoal {
         }
 
         if (npc instanceof COIEntity entity) {
-            if (entity.isAlive() && entity.isTooHungryToWork()) {
+            if (entity.isAlive() && entity.getHunger() < keepHunger) {
                 if (npc.getCommander() instanceof Player player) {
-                    @NotNull HashMap<Integer, ItemStack> extra = player.getInventory().removeItem(new ItemStack(Material.BREAD, 10));
+                    @NotNull HashMap<Integer, ItemStack> extra = player.getInventory().removeItem(new ItemStack(Material.BREAD, feedNum));
                     if (extra.isEmpty()) {
-                        entity.addItemToInventory(new ItemStack(Material.BREAD, 10));
+                        entity.addItemToInventory(new ItemStack(Material.BREAD, feedNum));
                     } else {
                         extra.values().forEach(item -> {
-                            if (10 - item.getAmount() > 0) {
-                                entity.addItemToInventory(new ItemStack(Material.BREAD, 10 - item.getAmount()));
+                            if (feedNum - item.getAmount() > 0) {
+                                entity.addItemToInventory(new ItemStack(Material.BREAD, feedNum - item.getAmount()));
                             }
                         });
                     }

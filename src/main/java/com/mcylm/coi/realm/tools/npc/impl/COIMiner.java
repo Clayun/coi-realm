@@ -130,7 +130,7 @@ public class COIMiner extends COIEntity {
 
                     if (!isBreaking) {
                         // 挥动手作为动作动画
-                        swingMainHand(2);
+                        swingMainHand(1);
 
                         LivingEntity entity = (LivingEntity) getNpc().getEntity();
                         BlockBreaker.BlockBreakerConfiguration blockBreakerConfiguration = new BlockBreaker.BlockBreakerConfiguration();
