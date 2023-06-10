@@ -7,12 +7,14 @@ import com.mcylm.coi.realm.enums.COITeamType;
 import com.mcylm.coi.realm.model.COIScore;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.team.Team;
+import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -116,8 +118,11 @@ public class COITeam implements Team {
      * @param entity
      */
     public void removeEntityFromScoreboard(Entity entity){
+        if(entity == null){
+            return;
+        }
         org.bukkit.scoreboard.Team team = Entry.getInstance().getScoreboard().getTeam(getType().getCode());
-        team.addEntity(entity);
+        team.removeEntity(entity);
     }
 
     /**
@@ -279,6 +284,69 @@ public class COITeam implements Team {
         }
 
         return players;
+    }
+
+    /**
+     * 获取团队绿宝石总数
+     * @return
+     */
+    public int getTotalEmerald(){
+        int count = 0;
+
+        String material = Entry.getInstance().getConfig().getString("game.building.material");
+
+        // 先计算箱子里存了多少个
+        for(COIBuilding building : getFinishedBuildings()){
+            if(!building.getChestsLocation().isEmpty()){
+                // 总存储箱子
+                for(Location loc : building.getChestsLocation()){
+
+                    int num = ItemUtils.getItemAmountFromContainer(loc, Material.getMaterial(material));
+                    count = count + num;
+                }
+            }
+        }
+
+        // 再获取玩家身上的
+        for (String name : getPlayers()) {
+            Player player = Bukkit.getPlayer(name);
+
+            if(player.isOnline()){
+                int num = ItemUtils.getItemAmountFromInventory(player.getInventory(), Material.getMaterial(material));
+
+                count = count + num;
+            }
+
+        }
+
+        return count;
+    }
+
+    /**
+     * 获取团队总人口
+     * @return
+     */
+    public int getTotalPeople(){
+        int total = getPlayers().size();
+
+        // 计算总NPC数量
+        for(COIBuilding building : getFinishedBuildings()){
+            int size = building.getNpcCreators().size();
+
+            total = total + size;
+        }
+
+        return total;
+    }
+
+    public COIBuilding getBase(){
+        for(COIBuilding building : getFinishedBuildings()){
+            if(building.getType().equals(COIBuildingType.BASE)){
+                return building;
+            }
+        }
+
+        return null;
     }
 
 

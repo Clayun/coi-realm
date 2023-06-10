@@ -12,6 +12,7 @@ import com.mcylm.coi.realm.utils.TeamUtils;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -76,12 +77,14 @@ public class BasicGameTask implements GameTaskApi {
 
                         // 展示倒计时信息
                         for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
-                            Title title = Title.title(
 
+                            Title.Times times = Title.Times.times(Ticks.duration(0L), Ticks.duration(70L), Ticks.duration(0L));
+
+                            Title title = Title.title(
                                     // todo 颜色调整，放入配置文件中配置，倒计时秒数变成配置变量
-                                    Component.text(countdown+"秒等待中..."),
-                                    Component.text("使用手中的钻石镐来选择队伍吧"),
-                                    Title.DEFAULT_TIMES);
+                                    Component.text(LoggerUtils.replaceColor("&f"+countdown+" &c战斗准备中...")),
+                                    Component.text(LoggerUtils.replaceColor("&f使用背包里的 &c指南针 &f来选择队伍吧")),
+                                    times);
                             p.showTitle(title);
                         }
                     }
@@ -110,10 +113,10 @@ public class BasicGameTask implements GameTaskApi {
             int count = 0;
 
             BossBar bossBar = BossBar.bossBar(
-                    Component.text("还剩" + gamingTimer + "秒结束游戏"),
+                    Component.text(LoggerUtils.replaceColor("&c战斗开始了，请快速获取战备物资，拆光他们！")),
                     1,
-                    BossBar.Color.PINK,
-                    BossBar.Overlay.NOTCHED_6);
+                    BossBar.Color.RED,
+                    BossBar.Overlay.NOTCHED_10);
 
             @Override
             public void run() {
@@ -133,19 +136,30 @@ public class BasicGameTask implements GameTaskApi {
                     this.cancel();
 
                 }else{
-
                     // 倒计时的秒数
                     Integer countdown = gamingTimer - count;
-
                     // boss bar 的进度条
                     float progress = countdown.floatValue() / gamingTimer.floatValue();
-                    bossBar.name(Component.text("还剩" + countdown + "秒结束游戏"));
-                    bossBar.progress(progress);
 
-                    // 游戏在进行中，倒计时需要在 boss bar 中展示
-                    for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
-                        p.showBossBar(bossBar);
+                    if(count >= 3){
+                        bossBar.name(Component.text(LoggerUtils.replaceColor("&c战斗还有 &f" + countdown + " &c秒就要结束了！")));
+                        bossBar.progress(progress);
+
+                        // 游戏在进行中，倒计时需要在 boss bar 中展示
+                        for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
+                            p.showBossBar(bossBar);
+                        }
+                    }else{
+                        bossBar.name(Component.text(LoggerUtils.replaceColor("&c战斗开始了，请快速获取战备物资，拆光他们！")));
+                        bossBar.progress(progress);
+
+                        // 游戏在进行中，倒计时需要在 boss bar 中展示
+                        for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
+                            p.showBossBar(bossBar);
+                        }
                     }
+
+
 
                 }
 
@@ -194,6 +208,8 @@ public class BasicGameTask implements GameTaskApi {
 
             int count = 0;
 
+            Title.Times times = Title.Times.times(Ticks.duration(0L), Ticks.duration(70L), Ticks.duration(0L));
+
             @Override
             public void run() {
 
@@ -201,6 +217,8 @@ public class BasicGameTask implements GameTaskApi {
 
                 // 倒计时的秒数
                 int countdown = stoppingTimer - count;
+
+
 
                 for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
 
@@ -211,28 +229,30 @@ public class BasicGameTask implements GameTaskApi {
                         if(victoryTeam != null){
                             message = LoggerUtils.replaceColor(victoryTeam.getType().getColor()+victoryTeam.getType().getName()+" &f胜利！");
                         }else{
-                            message = "平局";
+                            message = LoggerUtils.replaceColor("&a平局");
                         }
 
                         // 公布游戏结果
                         Title title = Title.title(
 
-                                // todo 颜色调整，放入配置文件中配置，倒计时秒数变成配置变量
+                                // todo 放入配置文件中配置，倒计时秒数变成配置变量
 
                                 Component.text(message),
                                 Component.text("奖励已结算，可以在左下角查看"),
-                                Title.DEFAULT_TIMES);
+                                times);
                         p.showTitle(title);
 
 
                     }else{
+
+
                         // 倒计时最后10秒
                         Title title = Title.title(
 
-                                // todo 颜色调整，放入配置文件中配置，倒计时秒数变成配置变量
-                                Component.text(LoggerUtils.replaceColor("&c"+countdown+"秒后游戏结束...")),
-                                Component.text("奖励已结算，可以在左下角查看"),
-                                Title.DEFAULT_TIMES);
+                                // todo 放入配置文件中配置，倒计时秒数变成配置变量
+                                Component.text(LoggerUtils.replaceColor("&f"+countdown+" &c即将结束...")),
+                                Component.text(LoggerUtils.replaceColor("&f奖励已结算，可以在&6左下角&f查看")),
+                                times);
                         p.showTitle(title);
                     }
 

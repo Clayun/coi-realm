@@ -4,6 +4,7 @@ import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COIScoreType;
 import com.mcylm.coi.realm.enums.COITeamType;
+import com.mcylm.coi.realm.events.GameStatusEvent;
 import com.mcylm.coi.realm.model.COIPlayerScore;
 import com.mcylm.coi.realm.model.COIScore;
 import com.mcylm.coi.realm.model.COIScoreDetail;
@@ -11,6 +12,7 @@ import com.mcylm.coi.realm.player.COIPlayer;
 import com.mcylm.coi.realm.runnable.AttackGoalTask;
 import com.mcylm.coi.realm.runnable.BasicGameTask;
 import com.mcylm.coi.realm.tools.npc.impl.COIEntity;
+import com.mcylm.coi.realm.tools.team.impl.COIScoreboard;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
@@ -22,6 +24,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
 
 import java.time.LocalDateTime;
@@ -50,10 +53,26 @@ public class COIGame {
     public COIGame() {
         this.teams = new ArrayList<>();
         this.status = COIGameStatus.WAITING;
+
+        // 初始化计分板
+        new COIScoreboard().showBoard();
         // 初始化小队
         // init team
         setTeams(TeamUtils.initTeams());
         AttackGoalTask.runTask();
+    }
+
+    public void setStatus(COIGameStatus status) {
+        this.status = status;
+        // 触发游戏状态变更事件
+        new BukkitRunnable(){
+            @Override
+            public void run() {
+                GameStatusEvent event = new GameStatusEvent(status);
+                Bukkit.getServer().getPluginManager().callEvent(event);
+            }
+        }.runTask(Entry.getInstance());
+
     }
 
     /**
@@ -228,7 +247,7 @@ public class COIGame {
     }
 
     /**
-     * 初始化玩家游戏中的背包
+     * 初始化玩家游戏中各项设置
      */
     public void initPlayerGaming(){
 
@@ -266,6 +285,9 @@ public class COIGame {
                 emerald.setAmount(num);
                 p.getInventory().addItem(emerald);
             }
+
+            // 设置玩家的计分板
+            p.setScoreboard(Entry.getInstance().getScoreboard());
 
         }
     }

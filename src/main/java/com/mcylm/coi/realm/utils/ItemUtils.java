@@ -13,6 +13,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -125,6 +126,57 @@ public class ItemUtils {
             return new HashMap<>();
         }
     }
+
+    /**
+     * 获取箱子里某样物品的总数量
+     * @param location
+     * @param material
+     * @return
+     */
+    public static int getItemAmountFromContainer(Location location,Material material){
+
+        int count = 0;
+
+        Block block = location.getBlock();
+
+        if (block.getState() instanceof Container container){
+
+            @Nullable ItemStack[] contents = container.getInventory().getContents();
+            if(contents.length > 0){
+                for(ItemStack item : contents){
+                    if(item != null && item.getType().equals(material)){
+                        count = count + item.getAmount();
+                    }
+                }
+            }
+
+        }
+
+        return count;
+    }
+
+    /**
+     * 获取背包里面某样物品的数量
+     * @param inventory
+     * @param material
+     * @return
+     */
+    public static int getItemAmountFromInventory(Inventory inventory,Material material){
+
+        int count = 0;
+
+        @Nullable ItemStack[] contents = inventory.getContents();
+        if(contents.length > 0){
+            for(ItemStack item : contents){
+                if(item != null && item.getType().equals(material)){
+                    count = count + item.getAmount();
+                }
+            }
+        }
+
+        return count;
+    }
+
 
     /**
      * 从箱子里拿指定数量的物品

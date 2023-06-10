@@ -36,6 +36,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.Scoreboard;
 
 import java.io.File;
@@ -168,7 +169,6 @@ public class Entry extends ExtendedJavaPlugin {
         pluginManager.registerEvents(new MineralsBreakListener(), this);
         // AI事件监听器
         COISoldier.registerListener();
-
         COIMonster.registerListener();
 
         Events.subscribe(PlayerJoinEvent.class)

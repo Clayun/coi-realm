@@ -174,6 +174,30 @@ public class TeamUtils {
     }
 
     /**
+     * 获取敌对小队列表
+     * @param team
+     * @return
+     */
+    public static List<COITeam> getEnemyTeams(COITeam team){
+
+        List<COITeam> result = new ArrayList<>();
+
+        List<COITeam> teams = Entry.getGame().getTeams();
+
+        Iterator<COITeam> iterator = teams.iterator();
+
+        // 查询所有队伍
+        while(iterator.hasNext()){
+            COITeam coiTeam = iterator.next();
+            if(coiTeam != team && !coiTeam.getType().equals(COITeamType.MONSTER)){
+                result.add(coiTeam);
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * 获取一个人数最少的队伍
      * @return
      */
