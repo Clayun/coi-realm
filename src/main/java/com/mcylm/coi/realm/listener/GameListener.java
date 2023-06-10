@@ -65,17 +65,24 @@ public class GameListener implements Listener {
             Player p = Bukkit.getPlayer(playerName);
 
             if(p != null && p.isOnline()){
+
+                String message = "&c注意，您的 "+event.getBuilding().getType().getName()+" 正在被"+attacker+"攻击！";
+
                 // 基地被攻击
                 if(event.getBuilding().getType().equals(COIBuildingType.BASE)){
+                    // Title提醒
                     Title title = Title.title(
 
                             Component.text(LoggerUtils.replaceColor("&c注意！")),
-                            Component.text(LoggerUtils.replaceColor("&f基地正在被 "+attacker+" &f攻击，快防守！")),
+                            Component.text(LoggerUtils.replaceColor("&f"+event.getBuilding().getType().getName()+"正在被 "+attacker+" &f攻击，快防守！")),
                             Title.DEFAULT_TIMES);
                     p.showTitle(title);
+                    // 普通消息
+                    LoggerUtils.sendMessage(LoggerUtils.replaceColor(message),p);
                 }else{
                     // 普通建筑被攻击
-                    p.sendActionBar(Component.text(LoggerUtils.replaceColor("&c注意，您的 "+event.getBuilding().getType().getName()+" 正在被"+attacker+"攻击！")));
+                    p.sendActionBar(Component.text(LoggerUtils.replaceColor(message)));
+                    LoggerUtils.sendMessage(LoggerUtils.replaceColor(message),p);
                 }
 
 
