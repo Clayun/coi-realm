@@ -2,7 +2,9 @@ package com.mcylm.coi.realm.listener;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIGameStatus;
+import com.mcylm.coi.realm.enums.COIScoreType;
 import com.mcylm.coi.realm.model.COIBlock;
+import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import org.bukkit.Bukkit;
@@ -57,34 +59,12 @@ public class MineralsBreakListener implements Listener {
                         if(event.getBlock().getType().equals(material)){
                             matched = true;
 
-                            Block block = event.getBlock();
+                            // 挖矿奖励埋点
+                            COITeam team = TeamUtils.getTeamByPlayer(event.getPlayer());
+                            if(team != null){
+                                team.addScore(COIScoreType.GOOD_MINER,event.getPlayer());
+                            }
 
-                            COIBlock coiBlock = new COIBlock();
-                            coiBlock.setX(block.getX());
-                            coiBlock.setY(block.getY());
-                            coiBlock.setZ(block.getZ());
-                            coiBlock.setMaterial(block.getType().name());
-                            coiBlock.setBlockData(block.getBlockData().getAsString());
-
-                            // 重生矿物方块
-                            new BukkitRunnable() {
-                                @Override
-                                public void run() {
-
-                                    Material material = Material.getMaterial(coiBlock.getMaterial());
-
-                                    BlockData blockData = Bukkit.createBlockData(coiBlock.getBlockData());
-
-                                    block.setType(material);
-
-                                    BlockState state = block.getState();
-                                    state.setBlockData(blockData);
-                                    state.update(true);
-
-                                    LoggerUtils.debug("方块重生："+coiBlock.getMaterial());
-
-                                }
-                            }.runTaskLater(Entry.getInstance(),20L * restoreTimer);
                         }
 
                     }

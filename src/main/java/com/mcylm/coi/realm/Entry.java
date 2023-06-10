@@ -6,6 +6,7 @@ import com.mcylm.coi.realm.cmd.COIStructureCommand;
 import com.mcylm.coi.realm.cmd.DebugCommand;
 import com.mcylm.coi.realm.cmd.VeinCommand;
 import com.mcylm.coi.realm.enums.COIBuildingType;
+import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COIServerMode;
 import com.mcylm.coi.realm.game.COIGame;
 import com.mcylm.coi.realm.listener.GameListener;
@@ -31,6 +32,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -168,6 +170,14 @@ public class Entry extends ExtendedJavaPlugin {
         COISoldier.registerListener();
 
         COIMonster.registerListener();
+
+        Events.subscribe(PlayerJoinEvent.class)
+                .handler(e -> {
+                    if(Entry.getGame().getStatus().equals(COIGameStatus.WAITING)){
+                        // 等待中，就初始化背包
+                        Entry.getGame().initPlayerWaiting(e.getPlayer());
+                    }
+        });
 
         Events.subscribe(ProjectileHitEvent.class)
                 .handler(e -> {

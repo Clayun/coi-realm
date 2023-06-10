@@ -62,8 +62,13 @@ public class ItemUtils {
 
     public static void rename(ItemStack i, String s) {
         ItemMeta m = i.getItemMeta();
-        m.setDisplayName(s);
+        m.setDisplayName(LoggerUtils.replaceColor(s));
         i.setItemMeta(m);
+    }
+
+    public static String getName(ItemStack i) {
+        ItemMeta m = i.getItemMeta();
+        return m.getDisplayName();
     }
 
     public static void setLore(ItemStack i, List<String> lore) {

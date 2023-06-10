@@ -1,5 +1,6 @@
 package com.mcylm.coi.realm.game;
 
+import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COIScoreType;
 import com.mcylm.coi.realm.enums.COITeamType;
@@ -11,10 +12,16 @@ import com.mcylm.coi.realm.runnable.AttackGoalTask;
 import com.mcylm.coi.realm.runnable.BasicGameTask;
 import com.mcylm.coi.realm.tools.npc.impl.COIEntity;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
+import com.mcylm.coi.realm.utils.ItemUtils;
+import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Data;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.scoreboard.Scoreboard;
 
 import java.time.LocalDateTime;
@@ -198,6 +205,99 @@ public class COIGame {
         }
 
         return details;
+    }
+
+    /**
+     * 初始化玩家等待中的背包
+     */
+    public void initPlayerWaiting(Player p){
+
+        // 先清空玩家背包
+        p.getInventory().clear();
+
+        ItemStack itemStack = new ItemStack(Material.COMPASS);
+        ItemUtils.rename(itemStack,"&c选择队伍");
+        List<String> lore = new ArrayList<>();
+        lore.add("请右键打开菜单选择队伍");
+        ItemUtils.setLore(itemStack,lore);
+
+        p.getInventory().addItem(itemStack);
+
+        // TODO 可以在这里给于选择建筑皮肤菜单
+
+    }
+
+    /**
+     * 初始化玩家游戏中的背包
+     */
+    public void initPlayerGaming(){
+
+        for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
+            // 先清空玩家背包
+            p.getInventory().clear();
+
+            ItemStack itemStack = new ItemStack(Material.BOOK);
+            ItemUtils.rename(itemStack,"&b建筑蓝图");
+            List<String> lore = new ArrayList<>();
+            lore.add(LoggerUtils.replaceColor("&f游戏必不可少的建筑蓝图"));
+            lore.add(LoggerUtils.replaceColor("&c右键&f使用他建造各类建筑"));
+            lore.add(LoggerUtils.replaceColor("&f建造需要消耗大量的绿宝石"));
+            lore.add(LoggerUtils.replaceColor("&b赶紧带上你的兄弟们挖矿吧"));
+            ItemUtils.setLore(itemStack,lore);
+
+            // 初始化建筑蓝图
+            p.getInventory().addItem(itemStack);
+
+            // 铁镐头
+            ItemStack ironPickaxe = new ItemStack(Material.IRON_PICKAXE);
+            p.getInventory().addItem(ironPickaxe);
+
+            // 初始化玩家背包默认给的资源
+            ItemStack emerald = new ItemStack(Material.EMERALD);
+
+            int num = Entry.getInstance().getConfig().getInt("game.when-start-give-player");
+
+            if(num > 0){
+                emerald.setAmount(num);
+                p.getInventory().addItem(emerald);
+            }
+
+        }
+    }
+
+    /**
+     * 游戏结束
+     */
+    public void initPlayerStopping(Player p,List<COIScoreDetail> playerDetail){
+
+        // 先清空玩家背包
+        p.getInventory().clear();
+
+        ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
+        ItemUtils.rename(book,"&b本局战绩");
+
+        // 获取书的编辑器
+        BookMeta meta = (BookMeta) book.getItemMeta();
+
+        // 设置书的标题和作者
+        meta.setTitle("本局战绩");
+        meta.setAuthor(p.getName());
+
+        String records = "";
+
+        for(COIScoreDetail detail : playerDetail){
+            records = records + detail.toString() + "\n";
+        }
+
+        // 设置书的内容
+        meta.addPages(Component.text(LoggerUtils.replaceColor(records)));
+
+        // 将编辑器应用到书上
+        book.setItemMeta(meta);
+
+        // 将书放入玩家的物品栏中
+        p.getInventory().addItem(book);
+
     }
 
 

@@ -2,6 +2,7 @@ package com.mcylm.coi.realm.runnable;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIGameStatus;
+import com.mcylm.coi.realm.game.COIGame;
 import com.mcylm.coi.realm.model.COIPlayerScore;
 import com.mcylm.coi.realm.model.COIScoreDetail;
 import com.mcylm.coi.realm.runnable.api.GameTaskApi;
@@ -58,6 +59,9 @@ public class BasicGameTask implements GameTaskApi {
 
                         // 全部玩家传送到默认出生点
                         TeamUtils.tpAllPlayersToSpawner();
+
+                        // 初始化背包
+                        Entry.getGame().initPlayerGaming();
 
                         // 开始下一个游戏中进程
                         gaming();
@@ -176,6 +180,9 @@ public class BasicGameTask implements GameTaskApi {
                 LoggerUtils.sendMessage(detail.toString(),p);
             }
             LoggerUtils.sendMessage("------ 总计："+total,p);
+
+            // 生成本局游戏结算记录
+            Entry.getGame().initPlayerStopping(p,playerDetail);
         }
 
         // 游戏结算进程

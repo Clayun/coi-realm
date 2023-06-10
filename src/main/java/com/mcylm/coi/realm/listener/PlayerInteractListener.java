@@ -5,12 +5,15 @@ import com.mcylm.coi.realm.clipboard.PlayerClipboard;
 import com.mcylm.coi.realm.enums.COIServerMode;
 import com.mcylm.coi.realm.gui.BuildEditGUI;
 import com.mcylm.coi.realm.gui.BuilderGUI;
+import com.mcylm.coi.realm.gui.ChooseTeamGUI;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.data.metadata.BuildData;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.tools.npc.impl.COIMiner;
 import com.mcylm.coi.realm.tools.selection.Selector;
 import com.mcylm.coi.realm.utils.GUIUtils;
+import com.mcylm.coi.realm.utils.ItemUtils;
+import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -66,10 +69,17 @@ public class PlayerInteractListener implements Listener {
 
     }
 
-    /**
-     * 粘贴建筑
-     * @param event
-     */
+    @EventHandler
+    public void onChooseTeam(PlayerInteractEvent event) {
+        if (event.getHand().equals(EquipmentSlot.HAND)
+                && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.COMPASS
+                && ItemUtils.getName(event.getPlayer().getInventory().getItemInMainHand()).equals(LoggerUtils.replaceColor("&c选择队伍"))
+        ) {
+
+            // 选队伍
+            new ChooseTeamGUI(event.getPlayer()).open();
+        }
+    }
 
 
     /**
@@ -84,7 +94,9 @@ public class PlayerInteractListener implements Listener {
         //判断是右手，同时避免触发两次
         if (Action.RIGHT_CLICK_BLOCK == action && event.getHand().equals(EquipmentSlot.HAND)
                 //空手触发
-                && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.DIAMOND_PICKAXE) {
+                && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.BOOK
+                && ItemUtils.getName(event.getPlayer().getInventory().getItemInMainHand()).equals(LoggerUtils.replaceColor("&b建筑蓝图"))
+        ) {
 
             Block clickedBlock = event.getClickedBlock();
             Location location = clickedBlock.getLocation();
@@ -98,9 +110,6 @@ public class PlayerInteractListener implements Listener {
             } else {
 
                 Player player = event.getPlayer();
-
-//            COIMill building = new COIMill();
-//            building.build(location,player);
 
                 if (Selector.selectors.containsKey(player)) {
                     Selector.selectors.get(player).selectLocation(location);
