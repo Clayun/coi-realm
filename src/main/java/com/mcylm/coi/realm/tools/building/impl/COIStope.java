@@ -12,6 +12,7 @@ import com.mcylm.coi.realm.utils.GUIUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -129,28 +130,18 @@ public class COIStope extends COIBuilding {
         COIMinerCreator npcCreator = new COIMinerCreator(getChestsLocation());
         npcCreator.setInventory(inventory);
         inventory.addItem(new ItemStack(Material.IRON_PICKAXE));
-
+        npcCreator.setNpcType(EntityType.PILLAGER);
+        npcCreator.setDisguiseType(DisguiseType.PLAYER);
         npcCreator.setAggressive(false);
         npcCreator.setAlertRadius(5);
         npcCreator.setBreakBlockMaterials(breakBlockMaterials);
         npcCreator.setName("矿工");
         npcCreator.setLevel(1);
         npcCreator.setPickItemMaterials(pickItemMaterials);
-        npcCreator.setSkinName("Miner");
-        npcCreator.setSkinSignature("LwMy/g2xAdhfHErWkk6pMM7SnIa2ERQW5X64w1q+/eEW3aamwP/1//nBdUqlWDZb/bQ0zhsl" +
-                "/JmnnJ118ePKzS6p7Gs1Hbk70EVEkuGA2f5VUK4F868944GHGxZAhbSC766IMSGuUCiusRfxuXHsF8k0LqKWZbO+" +
-                "enG46hS+V/T81F7HvDm+rOOxpbwCByghLHcAwiKNQTDWzQD+tIkaUI8hHP2MF4RMzih4rMmD1AteAa3vKjNE5cKyk" +
-                "bRsRfwL6p6LQzOCCSB5aJe8eLOErCBVN7E0xBHVIpNm3CoEVf4IG/rvZf/pgx8g39gsD6E4Gdqw5OrgVSCj63nQrapF" +
-                "WXTNqvEz6PdLd6hiagqPtIzujvHaVKVoJFC34X+0SGG6N9APnFx4ATW0HSmKuGsgVhvA03w6x0uyHCchbcG6lVRDEiWsNx" +
-                "Wf11BFsOchFCqRyZK5hVLoSP3SWyBXTCNAHVhHzhVxl1EpGSpEZtB9kLWcl9XrLc3ykT16gy9p0WYH38HtwILVTmm88gXhh" +
-                "vTRl+hG+WDdZbk2VyUAmVyD0g9semGkn1v00in8SdjtMi+ATV2Ej0RTPgJJ/m/qwpWLQJF5ru/mWaXAq5UTqaCKFauEWNa" +
-                "6+Tr4AqNAOtrtQVgspk/N9tWDUdKuxY7FuU9GFrbBB7aTrRSQka7WQzeaKtA=");
-        npcCreator.setSkinTextures("eyJ0aW1lc3RhbXAiOjE1NzY1MDk3M" +
-                "Dc0MTcsInByb2ZpbGVJZCI6ImZkNjBmMzZmNTg2MTRmMTJiM2NkNDdjMmQ4NTUyOTlhI" +
-                "iwicHJvZmlsZU5hbWUiOiJSZWFkIiwic2lnbmF0dXJlUmVxdWlyZWQiOnRydWUsInRleHR1cmVzI" +
-                "jp7IlNLSU4iOnsidXJsIjoiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS83NDFlZ" +
-                "WQ5OTU5MGRkMGRlZjE0MjhiODJhMmE4OTA3OTczN2Q3ZjVhZDA4MTQ5MTVlZmY1ZDdmNjgyNTk2OWYzIn19fQ");
-
+        npcCreator.setFlagWatcherHandler(flagWatcher -> {
+            PlayerWatcher playerWatcher = (PlayerWatcher) flagWatcher;
+            playerWatcher.setSkin("miner");
+        });
         return npcCreator;
     }
 
@@ -175,7 +166,7 @@ public class COIStope extends COIBuilding {
 
         // 设置伪装
         npcCreator.setDisguiseType(DisguiseType.MINECART_CHEST);
-        npcCreator.setNpcType(EntityType.PIG);
+        npcCreator.setNpcType(EntityType.PILLAGER);
 
         npcCreator.setAggressive(false);
         npcCreator.setAlertRadius(5);

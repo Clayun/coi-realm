@@ -7,6 +7,7 @@ import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.runnable.NpcAITask;
 import com.mcylm.coi.realm.tools.data.metadata.EntityData;
 import com.mcylm.coi.realm.tools.npc.AI;
+import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.tools.trait.DisguiseTrait;
 import com.mcylm.coi.realm.utils.GUIUtils;
 import com.mcylm.coi.realm.utils.InventoryUtils;
@@ -20,6 +21,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.ai.PathStrategy;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.trait.VillagerProfession;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -1062,9 +1064,9 @@ public class COIEntity implements AI {
             npcCreator.setInventory(GUIUtils.createNpcInventory(3));
         }
 
-
         // 设置NPC的名称使用 Hologram
-        this.npc.setAlwaysUseNameHologram(false);
+        this.npc.setAlwaysUseNameHologram(true);
+        this.npc.data().setPersistent(NPC.Metadata.NAMEPLATE_VISIBLE, false);
 
         this.npc.data().set(NPC.Metadata.KEEP_CHUNK_LOADED, true);
         // 初始化NPC的皮
@@ -1091,6 +1093,7 @@ public class COIEntity implements AI {
             entity.setMetadata("entityData", new EntityData(getCoiNpc()));
 
             entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(MAX_HEALTH);
+
         }
     }
 

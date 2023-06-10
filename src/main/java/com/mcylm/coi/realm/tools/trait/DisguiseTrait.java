@@ -18,7 +18,6 @@ public class DisguiseTrait extends Trait {
         this.disguise = disguise;
         disguise();
     }
-
     public DisguiseTrait(){
         super("Disguise");
     }
@@ -46,6 +45,7 @@ public class DisguiseTrait extends Trait {
             appliedSkin = true;
             Entity entity = getNPC().getEntity();
             disguise.setEntity(entity);
+            disguise.setDynamicName(true);
             disguise.startDisguise();
         });
     }

@@ -15,6 +15,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 
@@ -129,13 +130,12 @@ public class COIMiner extends COIEntity {
 
                     if (!isBreaking) {
 
-                        Material restoreBlock = targetBlock.getType();
 
                         LivingEntity entity = (LivingEntity) getNpc().getEntity();
                         BlockBreaker.BlockBreakerConfiguration blockBreakerConfiguration = new BlockBreaker.BlockBreakerConfiguration();
                         blockBreakerConfiguration.radius(3);
                         blockBreakerConfiguration.item(entity.getEquipment().getItemInMainHand());
-                        Block finalTargetBlock = targetBlock;
+
                         blockBreakerConfiguration.callback(
                                 new BukkitRunnable() {
 
@@ -151,6 +151,10 @@ public class COIMiner extends COIEntity {
                             isBreaking = true;
                             TaskRunnable run = new TaskRunnable(breaker);
                             run.setTaskId(Bukkit.getScheduler().scheduleSyncRepeatingTask(Entry.getInstance(), run, 0, 1));
+                            // 挥动手作为动作动画
+                            ((LivingEntity) getNpc().getEntity()).swingMainHand();
+                            ((LivingEntity) getNpc().getEntity()).swingMainHand();
+                            ((LivingEntity) getNpc().getEntity()).swingMainHand();
                         }
                     }
 
@@ -158,8 +162,6 @@ public class COIMiner extends COIEntity {
 
                     if(canStand(targetBlock.getLocation())){
                         findPath(targetBlock.getLocation());
-                    }else{
-
                     }
                 }
             }
