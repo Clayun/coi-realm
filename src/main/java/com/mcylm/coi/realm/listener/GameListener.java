@@ -78,12 +78,12 @@ public class GameListener implements Listener {
 
         Player player = event.getPlayer();
         for (ItemStack item : player.getInventory().getContents()) {
-            if (item.getType() == Material.BOOK
+            if (item != null && item.getType() == Material.BOOK
                     && ItemUtils.getName(item).equals(LoggerUtils.replaceColor("&b建筑蓝图"))) {
                 event.getDrops().remove(item);
             }
 
-            if (item.getType() == Material.COMPASS
+            if (item != null && item.getType() == Material.COMPASS
                     && ItemUtils.getName(item).equals(LoggerUtils.replaceColor("&c选择队伍"))) {
                 event.getDrops().remove(item);
             }

@@ -1064,7 +1064,7 @@ public class COIEntity implements AI {
 
 
         // 设置NPC的名称使用 Hologram
-        this.npc.setAlwaysUseNameHologram(true);
+        this.npc.setAlwaysUseNameHologram(false);
 
         this.npc.data().set(NPC.Metadata.KEEP_CHUNK_LOADED, true);
         // 初始化NPC的皮
