@@ -51,6 +51,8 @@ public class COISoldier extends COIEntity implements Commandable {
     private AttackGoal goal = new PatrolGoal(this);
 
     public static void registerListener() {
+
+        // 监听反击相关动作
         Events.subscribe(EntityDamageByEntityEvent.class).handler(e -> {
             @Nullable COINpc npc = EntityData.getNpcByEntity(e.getEntity());
             Entity target = e.getDamager();
@@ -64,12 +66,14 @@ public class COISoldier extends COIEntity implements Commandable {
 
                 if (target instanceof LivingEntity livingEntity) {
                     if (livingEntity instanceof Player player && player.getGameMode() == GameMode.CREATIVE) {
+                        e.setCancelled(true);
                         return;
                     }
 
                     // 相同队伍的，不攻击
                     if(livingEntity instanceof Player player){
                         if(npc.getTeam() == TeamUtils.getTeamByPlayer(player)){
+                            e.setCancelled(true);
                             return;
                         }
                     }
@@ -77,6 +81,7 @@ public class COISoldier extends COIEntity implements Commandable {
                     // 两个NPC是相同队伍的，不攻击
                     if(TeamUtils.getNPCTeam(target) != null){
                         if(TeamUtils.getNPCTeam(target) == npc.getTeam()){
+                            e.setCancelled(true);
                             return;
                         }
                     }
@@ -88,6 +93,57 @@ public class COISoldier extends COIEntity implements Commandable {
             }
 
         });
+
+        // 监听被战士攻击之后的伤害处理（适用于原版AI的攻击）
+        Events.subscribe(EntityDamageByEntityEvent.class).handler(e -> {
+
+            // 攻击者
+            @Nullable COINpc npc = EntityData.getNpcByEntity(e.getDamager());
+
+            // 攻击者
+            Entity entity = e.getEntity();
+
+            // 如果是战士类型的
+            if (npc instanceof COISoldierCreator creator) {
+
+
+                if (entity instanceof LivingEntity livingEntity) {
+                    if (livingEntity instanceof Player player && player.getGameMode() == GameMode.CREATIVE) {
+                        e.setCancelled(true);
+                        return;
+                    }
+
+                    // 相同队伍的，不攻击
+                    if(livingEntity instanceof Player player){
+                        if(npc.getTeam() == TeamUtils.getTeamByPlayer(player)){
+                            e.setCancelled(true);
+                            return;
+                        }
+                    }
+
+                    // 两个NPC是相同队伍的，不攻击
+                    if(TeamUtils.getNPCTeam(entity) != null){
+                        if(TeamUtils.getNPCTeam(entity) == npc.getTeam()){
+                            e.setCancelled(true);
+                            return;
+                        }
+                    }
+
+
+                    // 对生物体直接产生伤害
+                    Random rand = new Random();
+
+                    // 在攻击伤害范围内，随机产生伤害
+                    double damage = rand.nextInt((int) ((npc.getMaxDamage() + 1) - npc.getMinDamage())) + npc.getMinDamage();
+
+                    // 直接赋值伤害
+                    e.setDamage(damage);
+
+                }
+            }
+
+        });
+
 
     }
     // 周围发现敌人，进入战斗模式

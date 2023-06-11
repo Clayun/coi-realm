@@ -139,13 +139,6 @@ public class GameListener implements Listener {
         if(team !=null){
             event.setRespawnLocation(team.getSpawner());
             p.teleport(team.getSpawner());
-
-            // 来一根铁镐子
-            if(Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
-                ItemStack ironPickaxe = new ItemStack(Material.IRON_PICKAXE);
-                p.getInventory().addItem(ironPickaxe);
-            }
-
         }
     }
 
@@ -183,18 +176,8 @@ public class GameListener implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
 
-        Player player = event.getPlayer();
-        for (ItemStack item : player.getInventory().getContents()) {
-            if (item != null && item.getType() == Material.BOOK
-                    && ItemUtils.getName(item).equals(LoggerUtils.replaceColor("&b建筑蓝图"))) {
-                event.getItemsToKeep().add(item);
-            }
-
-            if (item != null && item.getType() == Material.COMPASS
-                    && ItemUtils.getName(item).equals(LoggerUtils.replaceColor("&c选择队伍"))) {
-                event.getItemsToKeep().add(item);
-            }
-        }
+        // 保存物品栏
+        event.setKeepInventory(true);
     }
 
     @EventHandler
