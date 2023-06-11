@@ -19,6 +19,7 @@ import me.lucko.helper.scoreboard.ScoreboardObjective;
 import me.lucko.helper.scoreboard.ScoreboardProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scoreboard.DisplaySlot;
 
 import java.util.ArrayList;
@@ -89,6 +90,7 @@ public class COIScoreboard {
 
         Scoreboard sb = Services.load(ScoreboardProvider.class).getScoreboard();
 
+        // 游戏状态变更事件
         Events.subscribe(GameStatusEvent.class)
                 .handler(e -> {
                     // 游戏状态变更为游戏中的时候，给全体玩家上一个scoreboard
@@ -100,6 +102,21 @@ public class COIScoreboard {
 
                             updater.accept(p, obj);
                         }
+                    }
+
+                });
+
+        // 进入事件
+        Events.subscribe(PlayerJoinEvent.class)
+                .handler(e -> {
+                    // 玩家进入游戏的时候，上计分板
+                    if(Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
+
+                        Player p = e.getPlayer();
+                        ScoreboardObjective obj = sb.createPlayerObjective(p, "null", DisplaySlot.SIDEBAR);
+                        Metadata.provideForPlayer(p).put(SCOREBOARD_KEY, obj);
+
+                        updater.accept(p, obj);
                     }
 
                 });
