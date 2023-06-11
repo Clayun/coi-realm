@@ -54,6 +54,18 @@ public class BasicGameTask implements GameTaskApi {
                     count++;
 
                     if(count >= waitingTimer){
+
+                        for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
+
+                            Title.Times times = Title.Times.times(Ticks.duration(0L), Ticks.duration(70L), Ticks.duration(0L));
+
+                            Title title = Title.title(
+                                    Component.text(LoggerUtils.replaceColor("&c战斗开始！")),
+                                    Component.text(LoggerUtils.replaceColor("&f使用背包里的 &c建筑蓝图 &f来建造吧")),
+                                    times);
+                            p.showTitle(title);
+                        }
+
                         // 倒计时完成
                         // 获取全部没有选择队伍的玩家，按顺序自动匹配进去
                         TeamUtils.autoJoinTeam();
@@ -81,7 +93,6 @@ public class BasicGameTask implements GameTaskApi {
                             Title.Times times = Title.Times.times(Ticks.duration(0L), Ticks.duration(70L), Ticks.duration(0L));
 
                             Title title = Title.title(
-                                    // todo 颜色调整，放入配置文件中配置，倒计时秒数变成配置变量
                                     Component.text(LoggerUtils.replaceColor("&f"+countdown+" &c战斗准备中...")),
                                     Component.text(LoggerUtils.replaceColor("&f使用背包里的 &c指南针 &f来选择队伍吧")),
                                     times);
@@ -113,7 +124,7 @@ public class BasicGameTask implements GameTaskApi {
             int count = 0;
 
             BossBar bossBar = BossBar.bossBar(
-                    Component.text(LoggerUtils.replaceColor("&c战斗开始了，请快速获取战备物资，拆光他们！")),
+                    Component.text(LoggerUtils.replaceColor("&c战斗开始了，快速获取战备物资，击败他们")),
                     1,
                     BossBar.Color.RED,
                     BossBar.Overlay.NOTCHED_10);
@@ -218,8 +229,6 @@ public class BasicGameTask implements GameTaskApi {
                 // 倒计时的秒数
                 int countdown = stoppingTimer - count;
 
-
-
                 for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
 
                     if(countdown > 10){
@@ -234,9 +243,6 @@ public class BasicGameTask implements GameTaskApi {
 
                         // 公布游戏结果
                         Title title = Title.title(
-
-                                // todo 放入配置文件中配置，倒计时秒数变成配置变量
-
                                 Component.text(message),
                                 Component.text("奖励已结算，可以在左下角查看"),
                                 times);
@@ -248,8 +254,6 @@ public class BasicGameTask implements GameTaskApi {
 
                         // 倒计时最后10秒
                         Title title = Title.title(
-
-                                // todo 放入配置文件中配置，倒计时秒数变成配置变量
                                 Component.text(LoggerUtils.replaceColor("&f"+countdown+" &c即将结束...")),
                                 Component.text(LoggerUtils.replaceColor("&f奖励已结算，可以在&6左下角&f查看")),
                                 times);
@@ -260,6 +264,18 @@ public class BasicGameTask implements GameTaskApi {
                 }
 
                 if(count >= stoppingTimer){
+
+                    for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
+
+                        Title.Times times = Title.Times.times(Ticks.duration(0L), Ticks.duration(70L), Ticks.duration(0L));
+
+                        Title title = Title.title(
+                                Component.text(LoggerUtils.replaceColor("&c战斗结束！")),
+                                Component.text(LoggerUtils.replaceColor("&f即将传送回主服务器")),
+                                times);
+                        p.showTitle(title);
+                    }
+
                     // TODO 重置当前服务器
                     this.cancel();
                 }
