@@ -16,11 +16,19 @@ public class BuildData implements MetadataValue {
 
     @Nullable
     public static COIBuilding getBuildingByBlock(Block block) {
-        for (MetadataValue value : block.getMetadata("building")) {
-            if (value.asString().equals("BUILDING_DATA")) {
-                return ((BuildData) value).getBuilding();
+
+        try{
+            for (MetadataValue value : block.getMetadata("building")) {
+                if (value.asString().equals("BUILDING_DATA")) {
+                    return ((BuildData) value).getBuilding();
+                }
             }
+        }catch (Exception e){
+            // 如果BUILDING_DATA丢了，就返回null
+            return null;
         }
+
+
         return null;
     }
 

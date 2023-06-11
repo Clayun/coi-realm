@@ -3,6 +3,7 @@ package com.mcylm.coi.realm.runnable;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.tools.building.impl.COITurret;
+import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import org.apache.commons.lang.StringUtils;
@@ -14,6 +15,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -49,9 +51,6 @@ public class TurretTask {
 
         if(this.turret.getMuzzle() == null){
             LoggerUtils.debug("炮口方块位置不存在");
-
-            // 炮口位置不存在，就临时使用建筑点
-            this.turret.setMuzzle(this.turret.getLocation());
             return;
         }
 
@@ -62,6 +61,15 @@ public class TurretTask {
         l.setZ(l.getZ() + 0.5D);
         Entity enemy = getNearestEnemy(l, this.turret);
         if (enemy != null) {
+
+            // 扣除玩家背包里的资源
+            boolean b = deductionResources(this.turret.getAmmunitionConsumption());
+
+            if (!b) {
+                LoggerUtils.sendMessage("防御塔没弹药了，无法攻击当前入侵者！请尽快补充弹药", Bukkit.getPlayer(this.turret.getBuildPlayerName()));
+                return;
+            }
+
             double minDamage = this.turret.getMinDamage() * 100.0D;
             double maxDamage = this.turret.getMaxDamage() * 100.0D;
             double realDamage = getNumeroAleatorio((int)minDamage, (int)maxDamage) / 100.0D;
@@ -181,4 +189,59 @@ public class TurretTask {
     }
 
     private long getTicks() { return (long)(this.turret.getCoolDown() * 20.0D); }
+
+    public boolean deductionResources(int amount) {
+
+        String materialName = Entry.getInstance().getConfig().getString("game.building.material");
+        int playerHadResource = ItemUtils.getItemAmountFromInventory(this.turret.getInventory(),Material.getMaterial(materialName));
+
+        // 如果玩家手里的资源数量足够
+        if (playerHadResource >= amount) {
+
+            // 扣减物品
+            ItemStack[] contents =
+                    this.turret.getInventory().getContents();
+
+            // 剩余所需扣减资源数量
+            int deductionCount = amount;
+
+            // 资源类型
+            Material material = Material.getMaterial(materialName);
+            for (ItemStack itemStack : contents) {
+
+                if (itemStack == null) {
+                    continue;
+                }
+
+                // 是资源物品才扣减
+                if (itemStack.getType().equals(material)) {
+                    // 如果当前物品的堆叠数量大于所需资源，就只扣减数量
+                    if (itemStack.getAmount() > deductionCount) {
+                        itemStack.setAmount(itemStack.getAmount() - deductionCount);
+                        return true;
+                    }
+
+                    // 如果当前物品的堆叠数量等于所需资源，就删物品
+                    if (itemStack.getAmount() == deductionCount) {
+                        this.turret.getInventory().removeItem(itemStack);
+                        return true;
+                    }
+
+                    // 如果物品的堆叠数量小于所需资源，就删物品，同时计数
+                    if (itemStack.getAmount() < deductionCount) {
+                        // 减去当前物品的库存
+                        deductionCount = deductionCount - itemStack.getAmount();
+                        this.turret.getInventory().removeItem(itemStack);
+                    }
+                }
+
+
+            }
+
+        } else
+            return false;
+
+        return false;
+    }
+
 }

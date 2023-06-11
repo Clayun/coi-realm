@@ -157,7 +157,8 @@ public class COIBuilder implements Builder {
 
                                 if(block.getType().equals(Material.getMaterial(muzzleBlockTypeName))){
                                     // 如果匹配炮口方块
-                                    muzzleLocation = block.getLocation().clone();
+                                    Location cloneLocation = block.getLocation().clone();
+                                    muzzleLocation = cloneLocation;
                                 }
 
                                 BlockState state = block.getState();

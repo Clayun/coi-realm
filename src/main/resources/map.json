@@ -7,7 +7,7 @@
       "z": 184,
       "yaw": -117.74893,
       "world": "RTSv2",
-      "spawnChance": 0.8,
+      "spawnChance": 1,
       "resetTime": 60
     },
     {
@@ -17,7 +17,7 @@
       "z": 195,
       "yaw": -135.8981,
       "world": "RTSv2",
-      "spawnChance": 0.8,
+      "spawnChance": 1,
       "resetTime": 60
     },
     {
@@ -27,7 +27,7 @@
       "z": 109,
       "yaw": 69.75128,
       "world": "RTSv2",
-      "spawnChance": 0.8,
+      "spawnChance": 1,
       "resetTime": 60
     },
     {
@@ -37,7 +37,7 @@
       "z": 171,
       "yaw": 54.30241,
       "world": "RTSv2",
-      "spawnChance": 0.8,
+      "spawnChance": 1,
       "resetTime": 60
     },
     {
@@ -47,7 +47,7 @@
       "z": 201,
       "yaw": 133.0539,
       "world": "RTSv2",
-      "spawnChance": 0.8,
+      "spawnChance": 1,
       "resetTime": 60
     },
     {
@@ -57,7 +57,7 @@
       "z": 246,
       "yaw": -174.89682,
       "world": "RTSv2",
-      "spawnChance": 0.8,
+      "spawnChance": 1,
       "resetTime": 60
     },
     {
@@ -67,7 +67,7 @@
       "z": 365,
       "yaw": -1.195404,
       "world": "RTSv2",
-      "spawnChance": 0.8,
+      "spawnChance": 1,
       "resetTime": 60
     },
     {
@@ -77,7 +77,7 @@
       "z": 454,
       "yaw": -114.44754,
       "world": "RTSv2",
-      "spawnChance": 0.8,
+      "spawnChance": 1,
       "resetTime": 60
     },
     {
@@ -87,7 +87,7 @@
       "z": 432,
       "yaw": -122.99719,
       "world": "RTSv2",
-      "spawnChance": 0.8,
+      "spawnChance": 1,
       "resetTime": 60
     },
     {
@@ -97,7 +97,7 @@
       "z": 879,
       "yaw": -149.39581,
       "world": "RTSv2",
-      "spawnChance": 0.8,
+      "spawnChance": 1,
       "resetTime": 60
     },
     {
@@ -107,7 +107,7 @@
       "z": 917,
       "yaw": 117.45438,
       "world": "RTSv2",
-      "spawnChance": 0.8,
+      "spawnChance": 1,
       "resetTime": 60
     },
     {
@@ -117,7 +117,7 @@
       "z": 869,
       "yaw": -116.09387,
       "world": "RTSv2",
-      "spawnChance": 0.8,
+      "spawnChance": 1,
       "resetTime": 60
     },
     {
@@ -127,7 +127,7 @@
       "z": 805,
       "yaw": -97.04834,
       "world": "RTSv2",
-      "spawnChance": 0.8,
+      "spawnChance": 1,
       "resetTime": 60
     },
     {
@@ -137,7 +137,7 @@
       "z": 735,
       "yaw": -30.300049,
       "world": "RTSv2",
-      "spawnChance": 0.8,
+      "spawnChance": 1,
       "resetTime": 60
     },
     {
@@ -147,7 +147,7 @@
       "z": 837,
       "yaw": 62.5448,
       "world": "RTSv2",
-      "spawnChance": 0.8,
+      "spawnChance": 1,
       "resetTime": 60
     },
     {
@@ -157,7 +157,7 @@
       "z": 479,
       "yaw": -51.010254,
       "world": "RTSv2",
-      "spawnChance": 0.8,
+      "spawnChance": 1,
       "resetTime": 60
     },
     {
@@ -167,7 +167,7 @@
       "z": 507,
       "yaw": 64.34473,
       "world": "RTSv2",
-      "spawnChance": 0.8,
+      "spawnChance": 1,
       "resetTime": 60
     },
     {
@@ -177,7 +177,7 @@
       "z": 543,
       "yaw": 139.33813,
       "world": "RTSv2",
-      "spawnChance": 0.8,
+      "spawnChance": 1,
       "resetTime": 60
     },
     {
@@ -187,7 +187,7 @@
       "z": 147,
       "yaw": -22.366943,
       "world": "RTSv2",
-      "spawnChance": 0.8,
+      "spawnChance": 1,
       "resetTime": 60
     },
     {
@@ -197,7 +197,7 @@
       "z": 234,
       "yaw": -132.3247,
       "world": "RTSv2",
-      "spawnChance": 0.8,
+      "spawnChance": 1,
       "resetTime": 60
     },
     {
@@ -207,7 +207,447 @@
       "z": 268,
       "yaw": -103.67236,
       "world": "RTSv2",
-      "spawnChance": 0.8,
+      "spawnChance": 1,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 477,
+      "y": 50,
+      "z": 903,
+      "yaw": -98.09415,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 398,
+      "y": 50,
+      "z": 888,
+      "yaw": 31.656494,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 377,
+      "y": 50,
+      "z": 884,
+      "yaw": -81.14307,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 387,
+      "y": 50,
+      "z": 823,
+      "yaw": 172.3573,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 731,
+      "y": 50,
+      "z": 875,
+      "yaw": -65.54767,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 800,
+      "y": 50,
+      "z": 848,
+      "yaw": -89.399414,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 822,
+      "y": 50,
+      "z": 814,
+      "yaw": -34.2005,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 808,
+      "y": 49,
+      "z": 787,
+      "yaw": -52.648804,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 771,
+      "y": 49,
+      "z": 755,
+      "yaw": -92.69766,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 862,
+      "y": 50,
+      "z": 592,
+      "yaw": 55.352417,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 914,
+      "y": 50,
+      "z": 550,
+      "yaw": -166.19495,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 897,
+      "y": 50,
+      "z": 498,
+      "yaw": 134.85376,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 869,
+      "y": 50,
+      "z": 476,
+      "yaw": -2.8449707,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 844,
+      "y": 50,
+      "z": 491,
+      "yaw": -43.042725,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 858,
+      "y": 50,
+      "z": 192,
+      "yaw": 45.00769,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 920,
+      "y": 49,
+      "z": 173,
+      "yaw": -68.99487,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 945,
+      "y": 49,
+      "z": 205,
+      "yaw": -83.396484,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 946,
+      "y": 50,
+      "z": 246,
+      "yaw": -5.546692,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 930,
+      "y": 50,
+      "z": 260,
+      "yaw": -30.002441,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 873,
+      "y": 49,
+      "z": 164,
+      "yaw": 132.29382,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 625,
+      "y": 52,
+      "z": 104,
+      "yaw": 137.68665,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 649,
+      "y": 52,
+      "z": 97,
+      "yaw": 141.28674,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 691,
+      "y": 52,
+      "z": 142,
+      "yaw": 159.28516,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 657,
+      "y": 52,
+      "z": 187,
+      "yaw": -176.26428,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 665,
+      "y": 51,
+      "z": 120,
+      "yaw": -178.22205,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 610,
+      "y": 52,
+      "z": 232,
+      "yaw": 163.33093,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 452,
+      "y": 50,
+      "z": 165,
+      "yaw": 127.3302,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 412,
+      "y": 50,
+      "z": 136,
+      "yaw": -171.61975,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 420,
+      "y": 50,
+      "z": 142,
+      "yaw": -169.82092,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 384,
+      "y": 50,
+      "z": 150,
+      "yaw": 130.78064,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 353,
+      "y": 50,
+      "z": 180,
+      "yaw": 55.928345,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 155,
+      "y": 49,
+      "z": 328,
+      "yaw": 8.817871,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 187,
+      "y": 49,
+      "z": 330,
+      "yaw": 1.4660645,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 205,
+      "y": 49,
+      "z": 349,
+      "yaw": 25.316162,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 171,
+      "y": 50,
+      "z": 333,
+      "yaw": -6.3308105,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 132,
+      "y": 50,
+      "z": 338,
+      "yaw": -53.86328,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 128,
+      "y": 49,
+      "z": 337,
+      "yaw": -69.91016,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 392,
+      "y": 50,
+      "z": 825,
+      "yaw": 69.617676,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 381,
+      "y": 50,
+      "z": 850,
+      "yaw": 177.3169,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 423,
+      "y": 50,
+      "z": 903,
+      "yaw": -1.9328613,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 484,
+      "y": 50,
+      "z": 890,
+      "yaw": -102.12842,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 148,
+      "y": 49,
+      "z": 448,
+      "yaw": 81.66968,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 121,
+      "y": 49,
+      "z": 432,
+      "yaw": 7.56958,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 711,
+      "y": 50,
+      "z": 849,
+      "yaw": 67.586914,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
       "resetTime": 60
     }
   ]

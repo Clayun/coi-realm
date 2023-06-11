@@ -205,6 +205,9 @@ public abstract class COIBuilding implements Serializable {
 
                     Bukkit.getScheduler().runTask(Entry.getInstance(), () -> {
                         buildSuccess(location, player);
+                        if(muzzle != null){
+                            setMuzzle(muzzle);
+                        }
                     });
                     this.cancel();
 
@@ -285,11 +288,15 @@ public abstract class COIBuilding implements Serializable {
                     complete = coiPaster.isComplete();
                     muzzle = coiPaster.getMuzzle();
                     Bukkit.getScheduler().runTask(Entry.getInstance(), () -> {
-                        setMuzzle(coiPaster.getMuzzle());
+
                         buildSuccess(location, null);
                         if(isBase){
                             setTeamSpawnLocation(coiPaster.getSpawnLocation(),team);
                         }
+                        if(muzzle != null){
+                            setMuzzle(muzzle);
+                        }
+
                     });
                     this.cancel();
 

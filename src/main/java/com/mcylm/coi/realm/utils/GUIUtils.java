@@ -25,6 +25,12 @@ public class GUIUtils {
         Inventory inventory = Bukkit.createInventory(null, line * 9, "NPC");
         return inventory;
     }
+
+    public static Inventory createAmmoInventory(int line) {
+        Inventory inventory = Bukkit.createInventory(null, line * 9, "弹药库");
+        return inventory;
+    }
+
     public Inventory createGUI(HashMap<Integer, ItemStack> slots,
                                String invName) {
 

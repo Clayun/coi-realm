@@ -4,11 +4,13 @@ import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.runnable.TurretTask;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.config.BuildingConfig;
+import com.mcylm.coi.realm.utils.GUIUtils;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import lombok.Data;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
@@ -34,7 +36,15 @@ public class COITurret extends COIBuilding {
     private double coolDown;
     // 自动攻击 task
     private TurretTask turretCoolDown;
+
+    // 攻击半径
     private double radius;
+
+    // 弹药库
+    private Inventory inventory;
+
+    // 弹药消耗
+    private int ammunitionConsumption;
 
     public COITurret() {
         // TODO 这块要搬到配置文件里
@@ -54,6 +64,12 @@ public class COITurret extends COIBuilding {
         this.coolDown = 2;
         // 攻击半径，如果发射方块和目标之间有其他方块挡着，是不会触发攻击的
         this.radius = 30;
+        // 弹药库，如果里面有弹药，才能正常攻击，否则无法攻击
+        // 每次攻击消耗 1 颗绿宝石
+        // “大炮一响，黄金万两”
+        this.inventory = GUIUtils.createAmmoInventory(6);
+        // 每次攻击消耗的弹药
+        this.ammunitionConsumption = 1;
         // 默认等级为1
         setLevel(1);
         // 初始化NPC创建器
