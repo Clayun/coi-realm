@@ -189,9 +189,7 @@ Players will be transported to the headquarters of their respective teams and bo
 Example as shown in the figure:
 
 <div align="left">
-
-<img src="images/base. png" alt="headquarters">
-
+  <img src="images/base.png" alt="大本营">
 </div>
 
 
@@ -213,9 +211,7 @@ After selecting a building using the architectural blueprint, players can choose
 In this state, the construction of the building has not yet started, and the location can be changed freely by right-clicking on the ground, as shown in the figure:
 
 <div align="left">
-
-<img src="images/building. png" alt="under construction">
-
+  <img src="images/building.png" alt="建造中">
 </div>
 
 The required space for the building will be displayed using particles and falling block previews (the above image needs to be updated)
@@ -248,9 +244,7 @@ There are currently several types of buildings available for selection:
 1. Mine
 
 <div align="left">
-
-<img src="images/miner. png" alt="Mine">
-
+  <img src="images/miner.png" alt="矿场">
 </div>
 
 A mine is a resource collection building. After construction is completed, a miner will be generated,
@@ -264,9 +258,7 @@ The collected resources can be used to build new buildings or make equipment for
 2. Mill
 
 <div align="left">
-
-<img src="images/farmer. png" alt="mill">
-
+  <img src="images/farmer.png" alt="磨坊">
 </div>
 
 A mill is a food collection building. After construction, a farmer will be generated,
@@ -282,9 +274,7 @@ Please note that each NPC requires food to replenish energy, and the mill is a v
 3. Military Camp
 
 <div align="left">
-
-<img src="images/fighter. png" alt="Military Camp">
-
+  <img src="images/fighter.png" alt="军营">
 </div>
 
 Barracks are combat buildings that generate a warrior after construction,
@@ -298,9 +288,7 @@ Will automatically attack enemy units
 4. City Wall
 
 <div align="left">
-
-<img src="images/wall. png" alt="City Wall">
-
+  <img src="images/wall.png" alt="城墙">
 </div>
 
 The city wall is a defensive building that requires the construction of multiple city wall points to defend the building
@@ -312,9 +300,7 @@ Players need to select two points, and the city wall will automatically be conne
 5. City Gate
 
 <div align="left">
-
-<img src="images/door. png" alt="City Gate">
-
+  <img src="images/door.png" alt="城门">
 </div>
 
 As long as a player from their own team approaches the city gate, they can automatically open the door
@@ -325,7 +311,7 @@ As long as a player from their own team approaches the city gate, they can autom
 
 <div align="left">
 
-<img src="images/turret. png" alt="Defense Tower">
+<img src="images/turret.png" alt="Defense Tower">
 
 </div>
 
@@ -343,7 +329,7 @@ Each building has its own health, and if the health is attacked to 0, the buildi
 
 <div align="left">
 
-<img src="images/health. png" alt="Health">
+<img src="images/health.png" alt="Health">
 
 </div>
 
