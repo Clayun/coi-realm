@@ -135,7 +135,7 @@ public class COIMiner extends COIEntity {
                         LivingEntity entity = (LivingEntity) getNpc().getEntity();
                         BlockBreaker.BlockBreakerConfiguration blockBreakerConfiguration = new BlockBreaker.BlockBreakerConfiguration();
                         blockBreakerConfiguration.radius(3);
-                        blockBreakerConfiguration.item(entity.getEquipment().getItemInMainHand());
+                        blockBreakerConfiguration.item(new ItemStack(Material.IRON_PICKAXE));
 
                         blockBreakerConfiguration.callback(
                                 new BukkitRunnable() {
