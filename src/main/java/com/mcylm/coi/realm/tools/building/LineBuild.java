@@ -97,7 +97,7 @@ public abstract class LineBuild extends COIBuilding {
                 LoggerUtils.debug("build");
                 // 构造一个建造器
                 COIPaster coiPaster = new COIPaster(false, getType().getUnit(), getType().getInterval()
-                        , location.getWorld().getName(), point,null,null
+                        , location.getWorld().getName(), point,null
                         , finalStructure.clone(), false, TeamUtils.getTeamByPlayer(player).getType().getBlockColor()
                         , getNpcCreators(), ((block, blockToPlace, type) -> {
                     getBlocks().add(block);
@@ -222,7 +222,7 @@ public abstract class LineBuild extends COIBuilding {
                 LoggerUtils.debug("build");
                 // 构造一个建造器
                 COIPaster coiPaster = new COIPaster(false, getType().getUnit(), getType().getInterval()
-                        , location.getWorld().getName(), point,null,null
+                        , location.getWorld().getName(), point,null
                         , finalStructure.clone(), false, TeamUtils.getTeamByPlayer(player).getType().getBlockColor()
                         , getNpcCreators(), ((block, blockToPlace, type) -> {
                     getBlocks().add(block);

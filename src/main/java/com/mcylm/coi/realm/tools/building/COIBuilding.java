@@ -21,18 +21,13 @@ import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings;
 import me.filoghost.holographicdisplays.api.hologram.line.TextHologramLine;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -179,7 +174,7 @@ public abstract class COIBuilding implements Serializable {
         COIBuilding building = this;
         // 构造一个建造器
         COIPaster coiPaster = new COIPaster(false, getType().getUnit(), getType().getInterval()
-                , location.getWorld().getName(), location,null,null
+                , location.getWorld().getName(), location,null
                 , structure, false, TeamUtils.getTeamByPlayer(player).getType().getBlockColor()
                 , getNpcCreators(), ((block, blockToPlace, type) -> {
             blocks.add(block);
@@ -201,13 +196,9 @@ public abstract class COIBuilding implements Serializable {
                 if (coiPaster.isComplete()) {
                     // 监听建造状态
                     complete = coiPaster.isComplete();
-                    muzzle = coiPaster.getMuzzle();
 
                     Bukkit.getScheduler().runTask(Entry.getInstance(), () -> {
                         buildSuccess(location, player);
-                        if(muzzle != null){
-                            setMuzzle(muzzle);
-                        }
                     });
                     this.cancel();
 
@@ -264,7 +255,7 @@ public abstract class COIBuilding implements Serializable {
         COIBuilding building = this;
         // 构造一个建造器
         COIPaster coiPaster = new COIPaster(false, getType().getUnit(), getType().getInterval()
-                , location.getWorld().getName(), location,null,null
+                , location.getWorld().getName(), location,null
                 , structure, false, team.getType().getBlockColor()
                 , getNpcCreators(), ((block, blockToPlace, type) -> {
             blocks.add(block);
@@ -286,15 +277,11 @@ public abstract class COIBuilding implements Serializable {
                 if (coiPaster.isComplete()) {
                     // 监听建造状态
                     complete = coiPaster.isComplete();
-                    muzzle = coiPaster.getMuzzle();
                     Bukkit.getScheduler().runTask(Entry.getInstance(), () -> {
 
                         buildSuccess(location, null);
                         if(isBase){
                             setTeamSpawnLocation(coiPaster.getSpawnLocation(),team);
-                        }
-                        if(muzzle != null){
-                            setMuzzle(muzzle);
                         }
 
                     });
@@ -315,6 +302,7 @@ public abstract class COIBuilding implements Serializable {
 
     public void buildSuccess(Location location, Player player) {
         // 建筑成功可以放个烟花
+        spawnFirework(location);
         // 玩家新增建造奖励
         getTeam().addScore(COIScoreType.BUILD,player);
     }
@@ -374,7 +362,7 @@ public abstract class COIBuilding implements Serializable {
         COIBuilding building = this;
         // 构造一个建造器
         COIPaster coiPaster = new COIPaster(false, getType().getUnit(), getType().getInterval()
-                , location.getWorld().getName(), location,null,null
+                , location.getWorld().getName(), location,null
                 , structure, false, getTeam().getType().getBlockColor()
                 , npcCreators, ((block, blockToPlace, type) -> {
             getBlocks().add(block);
@@ -468,6 +456,68 @@ public abstract class COIBuilding implements Serializable {
 
         return needBuildBlocks;
     }
+
+    /**
+     * 找指定的方块位置
+     * @param material
+     * @return
+     */
+    public Location getBlockLocationByMaterial(String material) {
+
+        String structureName = getStructureByLevel();
+
+        if (structureName == null) {
+            return null;
+        }
+        // 实例化建筑结构
+        COIStructure structure = Entry.getBuilder().getStructureByFile(structureName);
+
+        // 设置名称
+        structure.setName(getType().getName());
+
+        structure = prepareStructure(structure, location.clone());
+
+        // 全部待建造的方块
+        List<COIBlock> allBlocks = structure.getBlocks();
+
+        // 建筑基点
+        Location basicLocation = getLocation();
+
+        // 根据建筑基点设置每个方块的真实坐标
+        for (COIBlock coiBlock : allBlocks) {
+
+            COIBlock newBlock = new COIBlock();
+            newBlock.setX(coiBlock.getX() + basicLocation.getBlockX());
+            newBlock.setY(coiBlock.getY() + basicLocation.getBlockY());
+            newBlock.setZ(coiBlock.getZ() + basicLocation.getBlockZ());
+            newBlock.setBlockData(coiBlock.getBlockData());
+            newBlock.setMaterial(coiBlock.getMaterial());
+
+            if (material.equals(newBlock.getMaterial())) {
+                return new Location(location.getWorld(),newBlock.getX(),newBlock.getY(),newBlock.getZ());
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * 放个烟花
+     * @param location
+     */
+    public void spawnFirework(Location location){
+        // 检测到就放个烟花
+        FireworkEffect effect = FireworkEffect.builder()
+                .withColor(getTeam().getType().getLeatherColor())
+                .with(FireworkEffect.Type.BALL_LARGE)
+                .build();
+        Firework firework = (Firework) location.getWorld().spawn(location, Firework.class);
+        FireworkMeta meta = firework.getFireworkMeta();
+        meta.addEffect(effect);
+        meta.setPower(1);
+        firework.setFireworkMeta(meta);
+    }
+
 
     // 找到箱子的位置
     protected List<Location> getChestsLocation(List<COIBlock> blocks) {
@@ -616,6 +666,28 @@ public abstract class COIBuilding implements Serializable {
         } else {
             getHealth().addAndGet(-damage);
         }
+        for (Entity e : location.getNearbyEntities(30, 20, 20)) {
+            if (e instanceof Player p) {
+                displayHealth(p);
+            }
+        }
+    }
+
+    /**
+     * 修复建筑血量
+     * @param health
+     */
+    public void repair(int health) {
+        if (!isComplete()) {
+            return;
+        }
+
+        if (health >= getMaxHealth()) {
+            getHealth().set(getMaxHealth());
+        } else {
+            getHealth().addAndGet(health);
+        }
+
         for (Entity e : location.getNearbyEntities(30, 20, 20)) {
             if (e instanceof Player p) {
                 displayHealth(p);

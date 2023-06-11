@@ -76,11 +76,19 @@ public class COIBuildingType {
     public static final COIBuildingType TURRET_NORMAL = new COIBuildingType(
             "TURRET",
             "基础防御炮塔",
-            Material.END_CRYSTAL,
+            Material.REDSTONE,
             """
             防御炮塔会自动检测周围的地方单位,并自动攻击.
             小提示：看到敌方防御塔,可以尝试躲找个掩体,
             在掩体后面是不会被防御塔攻击的哦""",
+            5,
+            5L);
+    public static final COIBuildingType TURRET_REPAIR = new COIBuildingType(
+            "REPAIR",
+            "维修塔",
+            Material.NETHER_STAR,
+            """
+            自动给范围内友方的建筑,NPC,玩家回血""",
             5,
             5L);
 

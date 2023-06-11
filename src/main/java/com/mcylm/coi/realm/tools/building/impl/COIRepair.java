@@ -1,23 +1,23 @@
 package com.mcylm.coi.realm.tools.building.impl;
 
 import com.mcylm.coi.realm.Entry;
+import com.mcylm.coi.realm.runnable.RepairTask;
 import com.mcylm.coi.realm.runnable.TurretTask;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.config.BuildingConfig;
 import com.mcylm.coi.realm.utils.GUIUtils;
-import com.mcylm.coi.realm.utils.ItemUtils;
 import lombok.Data;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 
 @Data
-public class COITurret extends COIBuilding {
+public class COIRepair extends COIBuilding {
 
     // 攻击敌人可以附加给敌人的负面BUFF，
     // 如果是对己方的增益类塔，可以设置正面BUFF
@@ -35,7 +35,7 @@ public class COITurret extends COIBuilding {
     // 每次攻击的之间的间隔时间（秒）
     private double coolDown;
     // 自动攻击 task
-    private TurretTask turretCoolDown;
+    private RepairTask turretCoolDown;
 
     // 攻击半径
     private double radius;
@@ -46,10 +46,7 @@ public class COITurret extends COIBuilding {
     // 弹药消耗
     private int ammunitionConsumption;
 
-    // 炮口位置
-    private Location muzzle;
-
-    public COITurret() {
+    public COIRepair() {
         // TODO 这块要搬到配置文件里
         // BUFF 是 effect
         this.buff = null;
@@ -57,12 +54,12 @@ public class COITurret extends COIBuilding {
         this.particle = "REDSTONE";
         // 粒子的大小
         this.particleSize = 1;
-        // 最小伤害
-        this.minDamage = 3d;
+        // 最小伤害（回血数量）
+        this.minDamage = 4d;
         // 最大伤害
-        this.maxDamage = 6d;
+        this.maxDamage = 8d;
         // 击退距离
-        this.repulsionDistance = 2d;
+        this.repulsionDistance = 0d;
         // 每次攻击的间隔时间
         this.coolDown = 2;
         // 攻击半径，如果发射方块和目标之间有其他方块挡着，是不会触发攻击的
@@ -96,9 +93,8 @@ public class COITurret extends COIBuilding {
         super.buildSuccess(location, player);
         // 建造完成就开启自动检测周围敌方单位并攻击
         // 自动攻击Task
-        this.turretCoolDown = new TurretTask(this);
-        this.turretCoolDown.action();
-
+        turretCoolDown = new RepairTask(this);
+        turretCoolDown.action();
     }
 
     @Override
@@ -133,7 +129,7 @@ public class COITurret extends COIBuilding {
      * @param core
      * @param turret
      */
-    public static void animation(Entity enemy, Location core, COITurret turret){
+    public static void animation(Entity enemy, Location core, COIRepair turret){
 
         double distance = enemy.getLocation().distance(core);
 
@@ -150,13 +146,41 @@ public class COITurret extends COIBuilding {
 
         for (; length < distance; p2.add(vector)) {
             actual = new Location(core.getWorld(), p2.getX(), p2.getY(), p2.getZ());
-            generateParticles(turret.getParticle(), actual, 0.0F, 0.0F, 0.0F, turret.getTeam().getType().getLeatherColor(), 1,turret.getParticleSize());
+            generateParticles(turret.getParticle(), actual, 0.0F, 0.0F, 0.0F, Color.BLUE, 1,turret.getParticleSize());
             length += 0.25D;
         }
         Vector nuevoVector = vector.clone().setY(vector.getY() + 0.2D);
         // 击退距离
         nuevoVector.multiply(turret.getRepulsionDistance());
         enemy.setVelocity(nuevoVector);
+    }
+
+    /**
+     * 直接连线两个BLOCK
+     * @param enemy
+     * @param core
+     * @param turret
+     */
+    public static void animationBlock(Location enemy, Location core, COIRepair turret){
+
+        double distance = enemy.distance(core);
+
+        Vector p1 = enemy.toVector();
+        p1.setY(p1.getY() + 1.25D);
+
+        Vector p2 = core.toVector();
+        Vector vector = p1.clone().subtract(p2).normalize().multiply(0.25D);
+        double length = 0.0D;
+
+        Location actual = new Location(core.getWorld(), p2.getX(), p2.getY(), p2.getZ());
+
+        core.getWorld().playSound(core, Sound.valueOf("BLOCK_FIRE_EXTINGUISH"), 1, 1f);
+
+        for (; length < distance; p2.add(vector)) {
+            actual = new Location(core.getWorld(), p2.getX(), p2.getY(), p2.getZ());
+            generateParticles(turret.getParticle(), actual, 0.0F, 0.0F, 0.0F, Color.BLUE, 1,turret.getParticleSize());
+            length += 0.25D;
+        }
     }
 
     /**

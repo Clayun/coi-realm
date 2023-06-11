@@ -2,8 +2,14 @@ package com.mcylm.coi.realm.runnable;
 
 
 import com.mcylm.coi.realm.Entry;
+import com.mcylm.coi.realm.enums.COIBuildingType;
+import com.mcylm.coi.realm.tools.attack.target.impl.BuildingTarget;
+import com.mcylm.coi.realm.tools.building.COIBuilding;
+import com.mcylm.coi.realm.tools.building.impl.COIRepair;
 import com.mcylm.coi.realm.tools.building.impl.COITurret;
+import com.mcylm.coi.realm.tools.data.metadata.BuildData;
 import com.mcylm.coi.realm.utils.ItemUtils;
+import com.mcylm.coi.realm.utils.LocationUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import org.apache.commons.lang.StringUtils;
@@ -23,15 +29,15 @@ import org.bukkit.util.Vector;
 import java.util.Collection;
 import java.util.Random;
 
-public class TurretTask {
+public class RepairTask {
 
     private int taskId;
-    private COITurret turret;
+    private COIRepair turret;
 
     // 炮口位置
     private Location muzzle;
 
-    public TurretTask(COITurret turret) {
+    public RepairTask(COIRepair turret) {
         this.turret = turret;
     }
 
@@ -63,14 +69,16 @@ public class TurretTask {
         l.setY(l.getY() + 0.5D);
         l.setX(l.getX() + 0.5D);
         l.setZ(l.getZ() + 0.5D);
-        Entity enemy = getNearestEnemy(l, this.turret);
-        if (enemy != null) {
+        Entity member = getNearestFriendly(l, this.turret);
+
+        // 优先给NPC回血
+        if (member != null) {
 
             // 扣除玩家背包里的资源
             boolean b = deductionResources(this.turret.getAmmunitionConsumption());
 
             if (!b) {
-                LoggerUtils.sendMessage("防御塔没弹药了，无法攻击当前入侵者！请尽快补充弹药", Bukkit.getPlayer(this.turret.getBuildPlayerName()));
+                LoggerUtils.sendMessage("防御塔没弹药了，无法给友方单位回血！请尽快补充弹药", Bukkit.getPlayer(this.turret.getBuildPlayerName()));
                 return;
             }
 
@@ -78,10 +86,16 @@ public class TurretTask {
             double maxDamage = this.turret.getMaxDamage() * 100.0D;
             double realDamage = getNumeroAleatorio((int)minDamage, (int)maxDamage) / 100.0D;
 
-            turret.animation(enemy, l,this.turret);
-//            enemigo.setMetadata("TurretDamage", new FixedMetadataValue(Entry.getInstance(), String.valueOf(this.turret.getOwner()) + ";" + this.turret.getTipo()));
-            ((LivingEntity)enemy).damage(realDamage);
-            ((LivingEntity)enemy).setNoDamageTicks(0);
+            COIRepair.animation(member, l,this.turret);
+
+            double v = ((LivingEntity) member).getHealth() + realDamage;
+
+            if(v > 20){
+                v = 20;
+            }
+
+            ((LivingEntity)member).setHealth(v);
+            ((LivingEntity)member).setNoDamageTicks(0);
             if(StringUtils.isNotBlank(this.turret.getBuff())){
 
                 String buff = this.turret.getBuff();
@@ -94,22 +108,45 @@ public class TurretTask {
                     Integer amplifier = Integer.valueOf(buffConfig[2]);
 
                     PotionEffect potionEffect = new PotionEffect(PotionEffectType.getByName(type),duration,amplifier);
-                    ((Player) enemy).addPotionEffect(potionEffect);
+                    ((Player) member).addPotionEffect(potionEffect);
                 }
             }
 
-//            Player player = (Player) enemigo;
-//            LoggerUtils.sendMessage("&6受到&b"+this.turret.getName()+"&c攻击造成 &b"+realDamage+" &c点真实伤害",player);
+        }else{
+            // 没有NPC或者玩家，就找建筑回血
+            BuildingTarget friendlyBuilding = getFriendlyBuilding(l, this.turret);
+
+            if(friendlyBuilding != null){
+
+                // 扣除玩家背包里的资源
+                boolean b = deductionResources(this.turret.getAmmunitionConsumption());
+
+                if (!b) {
+                    LoggerUtils.sendMessage("防御塔没弹药了，无法给友方单位回血！请尽快补充弹药", Bukkit.getPlayer(this.turret.getBuildPlayerName()));
+                    return;
+                }
+
+                // 建筑存在，就给建筑回血
+                double minDamage = this.turret.getMinDamage() * 100.0D;
+                double maxDamage = this.turret.getMaxDamage() * 100.0D;
+                double realDamage = getNumeroAleatorio((int)minDamage, (int)maxDamage) / 100.0D;
+
+                friendlyBuilding.getBuilding().repair((int)realDamage);
+
+                COIRepair.animationBlock(friendlyBuilding.getTargetLocation(), l,this.turret);
+
+
+            }
         }
     }
 
     /**
-     * 获取最近的敌人
+     * 获取最近的友方单位（NPC，玩家）
      * @param lOriginal
      * @param torreta
      * @return
      */
-    private static Entity getNearestEnemy(Location lOriginal, COITurret torreta) {
+    private static Entity getNearestFriendly(Location lOriginal, COIRepair torreta) {
         double radio = torreta.getRadius();
         Entity closest = null;
         double closestDist = 100.0D;
@@ -119,46 +156,78 @@ public class TurretTask {
             if (e != null && !e.isDead()) {
                 // 攻击权限
                 boolean attackPermission = false;
+                Double health = null;
                 if (e.getType().equals(EntityType.PLAYER)) {
-                    Player p = (Player)e;
+                    Player p = (Player) e;
 
                     // 先将实体当作玩家判断是否是本小队的
-                    if(!TeamUtils.inTeam(p.getName(),torreta.getTeam())){
-                        // 非小队内成员，同时非所属人
+                    if (TeamUtils.inTeam(p.getName(), torreta.getTeam())) {
+                        // 小队内成员，同时非所属人
                         // 就设置为攻击目标
                         attackPermission = true;
+                        health = p.getHealth();
                     }
 
-                    if(attackPermission){
+                    if (!attackPermission) {
                         // 如果实体作为玩家非本校对，就把他再当作NPC去判断
-                        if(TeamUtils.checkNPCInTeam(e,torreta.getTeam())){
-                            // 是本小队的NPC，就取消锁定攻击
-                            attackPermission = false;
-                            LoggerUtils.debug(e.getName()+"是本小队的NPC，取消锁定攻击");
+                        if (!TeamUtils.checkNPCInTeam(e, torreta.getTeam())) {
+                            // 是本小队的NPC，就锁定攻击
+                            attackPermission = true;
+                            LoggerUtils.debug(e.getName() + "是本小队的NPC，锁定回血");
+                            health = p.getHealth();
                         }
                     }
 
-                }else if(e.getType().equals(EntityType.ZOMBIE)
-                    || e.getType().equals(EntityType.SKELETON)
-                    || e.getType().equals(EntityType.SPIDER)
-                    || e.getType().equals(EntityType.CREEPER)){
-                    // 自然生物类的，也可以直接挂上攻击目标
-                    attackPermission = true;
+                }else if(e instanceof LivingEntity livingEntity){
+                    if (!TeamUtils.checkNPCInTeam(e, torreta.getTeam())) {
+                        // 是本小队的NPC，就锁定攻击
+                        attackPermission = true;
+                        LoggerUtils.debug(e.getName() + "是本小队的NPC，锁定回血");
+                        health = livingEntity.getHealth();
+                    }
+                }
+
+                if(attackPermission){
+                    // 血量必须小于20
+                    if(health >= 20){
+                        attackPermission = false;
+                    }
                 }
 
                 if (attackPermission) {
-                    // 如果是攻击目标，就开打
+
+                    // 如果是目标，就开始
                     Location l = e.getLocation();
                     if (l.distance(lOriginal) < closestDist &&
                             !lockTarget(l, lOriginal)) {
                         closest = e;
                         closestDist = l.distance(lOriginal);
                     }
+
                 }
             }
         }
 
         return closest;
+    }
+
+    /**
+     * 获取一个最近的有方建筑
+     * @param turret
+     * @param repair
+     * @return
+     */
+    private static BuildingTarget getFriendlyBuilding(Location turret,COIRepair repair){
+        for (Block b : LocationUtils.selectionRadiusByDistance(turret.getBlock(), (int)repair.getRadius(), (int)repair.getRadius())) {
+            COIBuilding building = BuildData.getBuildingByBlock(b);
+            if (building != null && building.getTeam() == repair.getTeam()
+                && building.getHealth().get() < building.getMaxHealth()) {
+                // 血量不满的
+                return new BuildingTarget(building, building.getNearestBlock(turret).getLocation());
+            }
+        }
+
+        return null;
     }
 
     /**

@@ -67,7 +67,7 @@ public class GameListener implements Listener {
 
             if(p != null && p.isOnline()){
 
-                String message = "&c注意，您的 "+event.getBuilding().getType().getName()+" 正在被"+attacker+"攻击！";
+                String message = "&c注意，您的 &6"+event.getBuilding().getType().getName()+" &c正在被 "+attacker+" 攻击！";
 
                 // 基地被攻击
                 if(event.getBuilding().getType().equals(COIBuildingType.BASE)){
@@ -104,7 +104,7 @@ public class GameListener implements Listener {
 
             if(p != null && p.isOnline()){
 
-                String message = "&c注意，您的 "+event.getBuilding().getType().getName()+" 已被拆除！";
+                String message = "&c注意，您的 &6"+event.getBuilding().getType().getName()+" &c已被拆除！";
 
                 // 基地被攻击
                 if(event.getBuilding().getType().equals(COIBuildingType.BASE)){
@@ -112,7 +112,7 @@ public class GameListener implements Listener {
                     Title title = Title.title(
 
                             Component.text(LoggerUtils.replaceColor("&c注意！")),
-                            Component.text(LoggerUtils.replaceColor("&f您队伍的"+event.getBuilding().getType().getName()+"已被拆除！")),
+                            Component.text(LoggerUtils.replaceColor("&f您队伍的 &6"+event.getBuilding().getType().getName()+" &c已被拆除！")),
                             Title.DEFAULT_TIMES);
                     p.showTitle(title);
                     // 普通消息
@@ -169,12 +169,12 @@ public class GameListener implements Listener {
         for (ItemStack item : player.getInventory().getContents()) {
             if (item != null && item.getType() == Material.BOOK
                     && ItemUtils.getName(item).equals(LoggerUtils.replaceColor("&b建筑蓝图"))) {
-                event.getDrops().remove(item);
+                event.getItemsToKeep().add(item);
             }
 
             if (item != null && item.getType() == Material.COMPASS
                     && ItemUtils.getName(item).equals(LoggerUtils.replaceColor("&c选择队伍"))) {
-                event.getDrops().remove(item);
+                event.getItemsToKeep().add(item);
             }
         }
     }

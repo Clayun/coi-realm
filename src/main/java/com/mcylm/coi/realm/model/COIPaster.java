@@ -31,9 +31,6 @@ public class COIPaster {
     // 建筑基点位置
     private Location spawnLocation;
 
-    // 防御塔类建筑的发射方块位置
-    private Location muzzle;
-
     // 建筑结构体
     private COIStructure structure;
 
@@ -52,14 +49,13 @@ public class COIPaster {
     // 方块替换的条件
     private BlockPlaceCondition condition;
 
-    public COIPaster(boolean complete, int unit, long interval, String worldName, Location location, Location spawnLocation, Location muzzle, COIStructure structure, boolean withAir, Material blockColor, List<COINpc> npcCreators, BlockPlaceHandler handler) {
+    public COIPaster(boolean complete, int unit, long interval, String worldName, Location location, Location spawnLocation, COIStructure structure, boolean withAir, Material blockColor, List<COINpc> npcCreators, BlockPlaceHandler handler) {
         this.complete = complete;
         this.unit = unit;
         this.interval = interval;
         this.worldName = worldName;
         this.location = location;
         this.spawnLocation = spawnLocation;
-        this.muzzle = muzzle;
         this.structure = structure;
         this.withAir = withAir;
         this.blockColor = blockColor;

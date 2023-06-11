@@ -237,6 +237,7 @@ public class Entry extends ExtendedJavaPlugin {
 
         // 防御塔系列
         buildingManager.registerBuilding(COIBuildingType.TURRET_NORMAL, COITurret.class);
+        buildingManager.registerBuilding(COIBuildingType.TURRET_REPAIR, COIRepair.class);
 
         // 怪物系列
         buildingManager.registerBuilding(COIBuildingType.MONSTER_BASE, COIMonsterBase.class);

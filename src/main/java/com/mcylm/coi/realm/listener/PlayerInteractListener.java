@@ -8,6 +8,7 @@ import com.mcylm.coi.realm.gui.BuildEditGUI;
 import com.mcylm.coi.realm.gui.BuilderGUI;
 import com.mcylm.coi.realm.gui.ChooseTeamGUI;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
+import com.mcylm.coi.realm.tools.building.impl.COIRepair;
 import com.mcylm.coi.realm.tools.building.impl.COITurret;
 import com.mcylm.coi.realm.tools.data.metadata.BuildData;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
@@ -126,9 +127,13 @@ public class PlayerInteractListener implements Listener {
             if (building != null) {
                 building.displayHealth(event.getPlayer());
 
-                if(building.getType().equals(COIBuildingType.TURRET_NORMAL)){
-                    // 如果是防御塔，就打开防御塔的弹药库GUI
+                if(building.getType().equals(COIBuildingType.TURRET_NORMAL)
+                    || building.getType().equals(COIBuildingType.TURRET_REPAIR)
+                ){
+                    // 如果是塔类型，就打开该塔的弹药库GUI
                     if(building instanceof COITurret turret){
+                        event.getPlayer().openInventory(turret.getInventory());
+                    }else if(building instanceof COIRepair turret){
                         event.getPlayer().openInventory(turret.getInventory());
                     }
                 }

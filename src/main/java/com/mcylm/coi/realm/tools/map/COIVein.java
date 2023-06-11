@@ -53,7 +53,7 @@ public class COIVein {
     public void placeVein(Location location) {
         COIStructure structure = Entry.getBuilder().getStructureByFile(structureName);
         structure.rotate(Rotation.fromDegrees(Math.round(yaw / 90) * 90));
-        Entry.getBuilder().pasteStructureWithoutBuilding(new COIPaster(false, 5, 5, world, location, null, null , structure, false, Material.STONE, List.of(), ((block, blockToPlace, material) -> material)), null);
+        Entry.getBuilder().pasteStructureWithoutBuilding(new COIPaster(false, 5, 5, world, location, null , structure, false, Material.STONE, List.of(), ((block, blockToPlace, material) -> material)), null);
     }
 
 
