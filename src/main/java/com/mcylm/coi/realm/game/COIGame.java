@@ -24,6 +24,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
 
@@ -279,6 +280,10 @@ public class COIGame {
 
         // 铁镐头
         ItemStack ironPickaxe = new ItemStack(Material.IRON_PICKAXE);
+        ItemMeta meta = ironPickaxe.getItemMeta();
+        // 一把无限耐久度的镐子
+        meta.setUnbreakable(true);
+        ironPickaxe.setItemMeta(meta);
         p.getInventory().addItem(ironPickaxe);
 
         // 面包

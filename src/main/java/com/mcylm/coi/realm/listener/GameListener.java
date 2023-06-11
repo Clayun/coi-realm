@@ -34,6 +34,8 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -156,6 +158,18 @@ public class GameListener implements Listener {
             TeamUtils.tpSpawner(p);
             // 初始化玩家背包
             Entry.getGame().initPlayerGaming(p);
+        }
+    }
+
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent event) {
+
+        // 默认建筑蓝图是第一格，禁止移动
+        if (event.getSlot() == 0 && event.getInventory().getType() == InventoryType.PLAYER) {
+            if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.BOOK
+                    && ItemUtils.getName(event.getCurrentItem()).equals(LoggerUtils.replaceColor("&b建筑蓝图"))) {
+                event.setCancelled(true);
+            }
         }
     }
 
