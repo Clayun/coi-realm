@@ -78,7 +78,7 @@ public class RepairTask {
             boolean b = deductionResources(this.turret.getAmmunitionConsumption());
 
             if (!b) {
-                LoggerUtils.sendMessage("防御塔没弹药了，无法给友方单位回血！请尽快补充弹药", Bukkit.getPlayer(this.turret.getBuildPlayerName()));
+                LoggerUtils.sendActionbar(Bukkit.getPlayer(this.turret.getBuildPlayerName()),"防御塔没弹药了，无法给友方单位回血！请尽快补充弹药");
                 return;
             }
 
@@ -122,7 +122,7 @@ public class RepairTask {
                 boolean b = deductionResources(this.turret.getAmmunitionConsumption());
 
                 if (!b) {
-                    LoggerUtils.sendMessage("防御塔没弹药了，无法给友方单位回血！请尽快补充弹药", Bukkit.getPlayer(this.turret.getBuildPlayerName()));
+                    LoggerUtils.sendActionbar(Bukkit.getPlayer(this.turret.getBuildPlayerName()),"防御塔没弹药了，无法给友方单位回血！请尽快补充弹药");
                     return;
                 }
 

@@ -218,7 +218,7 @@ public class COITeam implements Team {
         getScoreRecords().add(coiScore);
 
         // 提示信息
-        LoggerUtils.sendMessage(coiScore.toString(),player);
+        LoggerUtils.sendActionbar(coiScore.toString(),player);
 
     }
 

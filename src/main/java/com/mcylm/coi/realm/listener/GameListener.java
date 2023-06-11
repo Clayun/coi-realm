@@ -36,6 +36,7 @@ import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -79,11 +80,11 @@ public class GameListener implements Listener {
                             Title.DEFAULT_TIMES);
                     p.showTitle(title);
                     // 普通消息
-                    LoggerUtils.sendMessage(LoggerUtils.replaceColor(message),p);
+                    LoggerUtils.sendActionbar(LoggerUtils.replaceColor(message),p);
                 }else{
                     // 普通建筑被攻击
                     p.sendActionBar(Component.text(LoggerUtils.replaceColor(message)));
-                    LoggerUtils.sendMessage(LoggerUtils.replaceColor(message),p);
+//                    LoggerUtils.sendMessage(LoggerUtils.replaceColor(message),p);
                 }
 
 
@@ -145,6 +146,23 @@ public class GameListener implements Listener {
                 p.getInventory().addItem(ironPickaxe);
             }
 
+        }
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event){
+
+        Player p = event.getPlayer();
+        COITeam team = TeamUtils.getTeamByPlayer(p);
+
+        // 游戏中进来的话，就要初始化信息了
+        if(team == null && Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
+            // 自动加入队伍
+            TeamUtils.autoJoinTeam(p);
+            // 传送到小队复活点
+            TeamUtils.tpSpawner(p);
+            // 初始化玩家背包
+            Entry.getGame().initPlayerGaming(p);
         }
     }
 

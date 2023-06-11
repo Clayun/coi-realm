@@ -257,44 +257,48 @@ public class COIGame {
     public void initPlayerGaming(){
 
         for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
-            // 先清空玩家背包
-            p.getInventory().clear();
-
-            ItemStack itemStack = new ItemStack(Material.BOOK);
-            ItemUtils.rename(itemStack,"&b建筑蓝图");
-            List<String> lore = new ArrayList<>();
-            lore.add(LoggerUtils.replaceColor("&f游戏必不可少的建筑蓝图"));
-            lore.add(LoggerUtils.replaceColor("&c右键&f使用他建造各类建筑"));
-            lore.add(LoggerUtils.replaceColor("&f建造需要消耗大量的绿宝石"));
-            lore.add(LoggerUtils.replaceColor("&b赶紧带上你的兄弟们挖矿吧"));
-            ItemUtils.setLore(itemStack,lore);
-
-            // 初始化建筑蓝图
-            p.getInventory().addItem(itemStack);
-
-            // 铁镐头
-            ItemStack ironPickaxe = new ItemStack(Material.IRON_PICKAXE);
-            p.getInventory().addItem(ironPickaxe);
-
-            // 面包
-            ItemStack bread = new ItemStack(Material.BREAD);
-            bread.setAmount(32);
-            p.getInventory().addItem(bread);
-
-            // 初始化玩家背包默认给的资源
-            ItemStack emerald = new ItemStack(Material.EMERALD);
-
-            int num = Entry.getInstance().getConfig().getInt("game.when-start-give-player");
-
-            if(num > 0){
-                emerald.setAmount(num);
-                p.getInventory().addItem(emerald);
-            }
-
-            // 设置玩家的计分板
-            p.setScoreboard(Entry.getInstance().getScoreboard());
-
+            initPlayerGaming(p);
         }
+    }
+
+    public void initPlayerGaming(Player p){
+        // 先清空玩家背包
+        p.getInventory().clear();
+
+        ItemStack itemStack = new ItemStack(Material.BOOK);
+        ItemUtils.rename(itemStack,"&b建筑蓝图");
+        List<String> lore = new ArrayList<>();
+        lore.add(LoggerUtils.replaceColor("&f游戏必不可少的建筑蓝图"));
+        lore.add(LoggerUtils.replaceColor("&c右键&f使用他建造各类建筑"));
+        lore.add(LoggerUtils.replaceColor("&f建造需要消耗大量的绿宝石"));
+        lore.add(LoggerUtils.replaceColor("&b赶紧带上你的兄弟们挖矿吧"));
+        ItemUtils.setLore(itemStack,lore);
+
+        // 初始化建筑蓝图
+        p.getInventory().addItem(itemStack);
+
+        // 铁镐头
+        ItemStack ironPickaxe = new ItemStack(Material.IRON_PICKAXE);
+        p.getInventory().addItem(ironPickaxe);
+
+        // 面包
+        ItemStack bread = new ItemStack(Material.BREAD);
+        bread.setAmount(32);
+        p.getInventory().addItem(bread);
+
+        // 初始化玩家背包默认给的资源
+        ItemStack emerald = new ItemStack(Material.EMERALD);
+
+        int num = Entry.getInstance().getConfig().getInt("game.when-start-give-player");
+
+        if(num > 0){
+            emerald.setAmount(num);
+            p.getInventory().addItem(emerald);
+        }
+
+        // 设置玩家的计分板
+        p.setScoreboard(Entry.getInstance().getScoreboard());
+
     }
 
     /**

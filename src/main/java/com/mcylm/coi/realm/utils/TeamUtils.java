@@ -9,6 +9,7 @@ import com.mcylm.coi.realm.tools.data.metadata.EntityData;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.title.Title;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -304,7 +305,41 @@ public class TeamUtils {
                 // 替玩家加入小队
                 minPlayersTeam.join(p);
 
+                Title title = Title.title(
+                        Component.text(LoggerUtils.replaceColor("&a您被匹配至 "+minPlayersTeam.getType().getColor()+minPlayersTeam.getType().getName()+"")),
+                        Component.text(LoggerUtils.replaceColor("&f使用背包里的 &c建筑蓝图 &f开始游戏吧")),
+                        Title.DEFAULT_TIMES);
+                p.showTitle(title);
+
             }
+        }
+
+    }
+
+    public static void autoJoinTeam(Player p){
+
+        COITeam team = TeamUtils.getTeamByPlayer(p);
+
+        if(team == null){
+            // 玩家没选择队伍
+            // 自动选择一个人数最少的队伍丢进去
+            COITeam minPlayersTeam = TeamUtils.getMinPlayersTeam();
+
+            if(minPlayersTeam == null){
+                // 全都满了，直接给当前玩家踢了吧
+                p.kick(Component.text("当前服务器已满，请更换服务器后重试"), PlayerKickEvent.Cause.KICK_COMMAND);
+                return;
+            }
+
+            // 替玩家加入小队
+            minPlayersTeam.join(p);
+
+            Title title = Title.title(
+                    Component.text(LoggerUtils.replaceColor("&a您被匹配至 "+minPlayersTeam.getType().getColor()+minPlayersTeam.getType().getName()+"")),
+                    Component.text(LoggerUtils.replaceColor("&f使用背包里的 &c建筑蓝图 &f开始游戏吧")),
+                    Title.DEFAULT_TIMES);
+            p.showTitle(title);
+
         }
 
     }

@@ -66,6 +66,10 @@ public class LoggerUtils {
 
     }
 
+    public static void sendActionbar( String message,Player player) {
+        sendActionbar(player,message);
+    }
+
     public static void broadcastMessage(String message){
         Bukkit.broadcastMessage(replaceColor(message));
     }

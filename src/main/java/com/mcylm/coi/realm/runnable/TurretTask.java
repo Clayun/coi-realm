@@ -70,7 +70,7 @@ public class TurretTask {
             boolean b = deductionResources(this.turret.getAmmunitionConsumption());
 
             if (!b) {
-                LoggerUtils.sendMessage("防御塔没弹药了，无法攻击当前入侵者！请尽快补充弹药", Bukkit.getPlayer(this.turret.getBuildPlayerName()));
+                LoggerUtils.sendActionbar(Bukkit.getPlayer(this.turret.getBuildPlayerName()),"防御塔没弹药了，无法攻击当前入侵者！请尽快补充弹药");
                 return;
             }
 
