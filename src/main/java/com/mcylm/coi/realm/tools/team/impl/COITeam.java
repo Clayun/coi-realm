@@ -40,6 +40,9 @@ public class COITeam implements Team {
     // Players list (only name)
     private List<String> players;
 
+    // 失败后的记录
+    private List<String> playersCache;
+
     // 默认出生点
     private Location spawner;
 
@@ -74,6 +77,7 @@ public class COITeam implements Team {
         // 初始化本小队的计分板
         registerScoreboardTeam();
         this.players = new ArrayList<>();
+        this.playersCache = new ArrayList<>();
         this.foodChests = new ArrayList<>();
         this.resourcesChests = new ArrayList<>();
         this.finishedBuildings = new ArrayList<>();
@@ -258,13 +262,31 @@ public class COITeam implements Team {
         // 设为失败
         setDefeat(true);
 
-        if(player == null && team == null){
-            // 两个都是null
+        if(player == null || team == null){
+            // 不存在
         }else{
-            // TODO 失败后的处理
-            // 被玩家或者玩家的随从NPC干掉了
-            // 整队在怪物队伍复活
-            // 如果怪物队伍被拆了，则直接失败
+            // 击败小队奖励埋点
+            team.addScore(COIScoreType.BEAT_TEAM,player);
+        }
+
+        // 被玩家或者玩家的随从NPC干掉了
+        // 整队在怪物队伍复活
+        // 如果怪物队伍被拆了，则直接失败
+
+        // 全员转移到怪物队伍
+        setPlayersCache(getPlayers());
+        TeamUtils.getMonsterTeam().getPlayers().addAll(getPlayers());
+        setPlayers(new ArrayList<>());
+
+        // 清理背包并传送到新的出生点
+        for(String playerName : getPlayersCache()){
+            Player defeatPlayer = Bukkit.getPlayer(playerName);
+            if(defeatPlayer != null){
+                defeatPlayer.getInventory().clear();
+                if(defeatPlayer.isOnline()){
+                    defeatPlayer.teleport(TeamUtils.getMonsterTeam().getSpawner());
+                }
+            }
         }
     }
 

@@ -145,7 +145,12 @@ public class COIGame {
         List<COIPlayerScore> results = new ArrayList<>();
 
         for(COITeam team : getTeams()){
+
             List<String> players = team.getPlayers();
+
+            if(team.isDefeat()){
+                players = team.getPlayersCache();
+            }
 
             for(String player : players){
 
