@@ -40,8 +40,8 @@ public class COIMill extends COIBuilding {
 
         return new BuildingConfig()
                 .setStructures(getBuildingLevelStructure())
-                .setMaxLevel(2)
-                .setConsume(100);
+                .setMaxLevel(3)
+                .setConsume(32);
     }
 
     @Override
@@ -128,6 +128,7 @@ public class COIMill extends COIBuilding {
     private void initStructure() {
         getBuildingLevelStructure().put(1, "mofang1.structure");
         getBuildingLevelStructure().put(2, "mofang2.structure");
+        getBuildingLevelStructure().put(3, "mofang2.structure");
     }
 
     @Override

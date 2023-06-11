@@ -87,7 +87,7 @@ public class COITurret extends COIBuilding {
     public BuildingConfig getDefaultConfig() {
         return new BuildingConfig()
                 .setMaxLevel(2)
-                .setConsume(64)
+                .setConsume(256)
                 .setStructures(getBuildingLevelStructure());
     }
 

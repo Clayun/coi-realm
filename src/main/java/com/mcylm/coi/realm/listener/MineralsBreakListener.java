@@ -18,6 +18,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
@@ -42,11 +43,8 @@ public class MineralsBreakListener implements Listener {
         if(Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
             // 如果是游戏中
 
-            // 本方法处理的是玩家挖矿的逻辑,NPC挖矿的逻辑在NPC类里
             if(null != TeamUtils.getTeamByPlayer(event.getPlayer())){
                 List<String> blockMaterials = Entry.getInstance().getConfig().getStringList("miner.breaks");
-                // 方块复活时间
-                int restoreTimer = Entry.getInstance().getConfig().getInt("game.mineral-restore-timer");
 
                 if(!blockMaterials.isEmpty()){
 
@@ -64,6 +62,17 @@ public class MineralsBreakListener implements Listener {
                             if(team != null){
                                 team.addScore(COIScoreType.GOOD_MINER,event.getPlayer());
                             }
+
+                            String dropMaterial = Entry.getInstance().getConfig().getString("game.building.material");
+
+                            ItemStack item = new ItemStack(Material.getMaterial(dropMaterial));
+                            // 正常5个，自然掉落1个，这4个
+                            item.setAmount(4);
+
+                            // 设置掉落
+                            event.getBlock().getLocation().getWorld()
+                                    .dropItem(event.getBlock().getLocation(),
+                                            item);
 
                         }
 
