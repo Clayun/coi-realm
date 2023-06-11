@@ -102,6 +102,18 @@ public class BasicGameTask implements GameTaskApi {
                 }else{
                     // 不满足最小人数，倒计时重置
                     count = 0;
+
+                    for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
+
+                        Title.Times times = Title.Times.times(Ticks.duration(0L), Ticks.duration(70L), Ticks.duration(0L));
+
+                        Title title = Title.title(
+                                Component.text(LoggerUtils.replaceColor("&f"+size+"&7 / "+minPlayers+" &c即将开始！")),
+                                Component.text(LoggerUtils.replaceColor("&f使用背包里的 &c指南针 &f来选择队伍吧")),
+                                times);
+                        p.showTitle(title);
+                    }
+
                 }
 
             }
