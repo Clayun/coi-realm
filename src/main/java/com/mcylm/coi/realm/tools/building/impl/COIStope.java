@@ -160,7 +160,7 @@ public class COIStope extends COIBuilding {
         npcCreator.setPickItemMaterials(pickItemMaterials);
         npcCreator.setFlagWatcherHandler(flagWatcher -> {
             PlayerWatcher playerWatcher = (PlayerWatcher) flagWatcher;
-            playerWatcher.setSkin("miner");
+            playerWatcher.setSkin("TMSG4mes");
         });
         return npcCreator;
     }

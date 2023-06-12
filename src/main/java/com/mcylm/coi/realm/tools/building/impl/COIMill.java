@@ -119,7 +119,7 @@ public class COIMill extends COIBuilding {
 
         npcCreator.setFlagWatcherHandler(flagWatcher -> {
             PlayerWatcher playerWatcher = (PlayerWatcher) flagWatcher;
-            playerWatcher.setSkin("farmer");
+            playerWatcher.setSkin("ELPepeThePan");
         });
 
         return npcCreator;

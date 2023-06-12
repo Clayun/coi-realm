@@ -123,7 +123,7 @@ public class COICamp extends COIBuilding {
 
         npcCreator.setFlagWatcherHandler(flagWatcher -> {
             PlayerWatcher playerWatcher = (PlayerWatcher) flagWatcher;
-            playerWatcher.setSkin("solider");
+            playerWatcher.setSkin("greatapedude");
         });
 
 
