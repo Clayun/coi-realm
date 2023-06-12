@@ -4,6 +4,7 @@ import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.clipboard.PlayerClipboard;
 import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COIServerMode;
+import com.mcylm.coi.realm.events.BuildingTouchEvent;
 import com.mcylm.coi.realm.gui.BuildEditGUI;
 import com.mcylm.coi.realm.gui.BuilderGUI;
 import com.mcylm.coi.realm.gui.ChooseTeamGUI;
@@ -18,6 +19,7 @@ import com.mcylm.coi.realm.utils.GUIUtils;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -125,18 +127,11 @@ public class PlayerInteractListener implements Listener {
         if (event.getClickedBlock() != null) {
             @Nullable COIBuilding building = BuildData.getBuildingByBlock(event.getClickedBlock());
             if (building != null) {
-                building.displayHealth(event.getPlayer());
+                // 触发建筑按钮事件
+                BuildingTouchEvent touchEvent = new BuildingTouchEvent(building,event.getPlayer());
+                Bukkit.getServer().getPluginManager().callEvent(touchEvent);
 
-                if(building.getType().equals(COIBuildingType.TURRET_NORMAL)
-                    || building.getType().equals(COIBuildingType.TURRET_REPAIR)
-                ){
-                    // 如果是塔类型，就打开该塔的弹药库GUI
-                    if(building instanceof COITurret turret){
-                        event.getPlayer().openInventory(turret.getInventory());
-                    }else if(building instanceof COIRepair turret){
-                        event.getPlayer().openInventory(turret.getInventory());
-                    }
-                }
+                // 原本的事件监听转移到了GameListener
             }
         }
 

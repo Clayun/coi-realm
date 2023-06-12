@@ -2,6 +2,7 @@ package com.mcylm.coi.realm.gui;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIGameStatus;
+import com.mcylm.coi.realm.enums.COIUnlockType;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.LineBuild;
 import com.mcylm.coi.realm.tools.selection.AreaSelector;
@@ -60,35 +61,56 @@ public class BuilderGUI {
             for (COIBuilding building : Entry.getInstance().getBuildingManager().getAllBuildingTemplates()) {
 
                 if(building.getConfig().isShowInMenu()){
-                    items.add(ItemStackBuilder.of(building.getType().getItemType())
-                            .name(building.getType().getName())
-                            .amount(getBuildingNum(team.getBuildingByType(building.getType())))
-                            .lore("")
-                            .lore("&f> &a已造数量： &c" + team.getBuildingByType(building.getType()).size())
-                            .lore("&f> &a所需耗材： &c" + building.getConsume())
-                            .lore("&f> &a拥有材料： &c" + building.getPlayerHadResource(p))
-                            .lore("&f> &a介绍：")
-                            .lore(autoLineFeed(building.getType().getIntroduce()))
-                            .lore("")
-                            .lore("&f> &a&l点击进行建造")
-                            .build(() -> {
-                                // 点击时触发下面的方法
-                                // TODO 封装建造方法
 
-                                building.setTeam(team);
-                                // building.build(location,getPlayer());
-                                if (building.getStructureByLevel() != null) {
-                                    if (building instanceof LineBuild lineBuild) {
-                                        new LineSelector(p, lineBuild, location);
+                    // 判断是否达到解锁条件
+                    if(COIUnlockType.checkUnlock(team,building.getType())){
+                        items.add(ItemStackBuilder.of(building.getType().getItemType())
+                                .name(building.getType().getName())
+                                .amount(getBuildingNum(team.getBuildingByType(building.getType())))
+                                .lore("")
+                                .lore("&f> &a已造数量： &c" + team.getBuildingByType(building.getType()).size())
+                                .lore("&f> &a所需耗材： &c" + building.getConsume())
+                                .lore("&f> &a拥有材料： &c" + building.getPlayerHadResource(p))
+                                .lore("&f> &a介绍：")
+                                .lore(autoLineFeed(building.getType().getIntroduce()))
+                                .lore("")
+                                .lore("&f> &a&l点击进行建造")
+                                .build(() -> {
+                                    // 点击时触发下面的方法
+                                    // TODO 封装建造方法
+
+                                    building.setTeam(team);
+                                    // building.build(location,getPlayer());
+                                    if (building.getStructureByLevel() != null) {
+                                        if (building instanceof LineBuild lineBuild) {
+                                            new LineSelector(p, lineBuild, location);
+                                        } else {
+                                            new AreaSelector(p, building, location);
+                                        }
                                     } else {
-                                        new AreaSelector(p, building, location);
+                                        building.build(location, p);
                                     }
-                                } else {
-                                    building.build(location, p);
-                                }
 
-                                paginatedGui.close();
-                            }));
+                                    paginatedGui.close();
+                                }));
+                    }else{
+                        // 不满足解锁条件
+                        COIUnlockType unlockItem = COIUnlockType.getUnlockItem(building.getType());
+
+                        if(unlockItem != null){
+                            items.add(ItemStackBuilder.of(unlockItem.getItemType())
+                                    .name(unlockItem.getName())
+                                    .amount(1)
+                                    .lore("")
+                                    .lore("&f> &a解锁条件：")
+                                    .lore(autoLineFeed(unlockItem.getIntroduce()))
+                                    .lore("")
+                                    .lore("&f> &a&l快去解锁吧")
+                                    .build(paginatedGui::close));
+                        }
+
+                    }
+
                 }
 
             }

@@ -6,9 +6,12 @@ import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
 import me.lucko.helper.menu.scheme.MenuPopulator;
 import me.lucko.helper.menu.scheme.MenuScheme;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 
 public class BuildEditGUI extends Gui {
 
@@ -35,33 +38,64 @@ public class BuildEditGUI extends Gui {
 
             // 显示在GUI的才算
             if(building.getConfig().isShowInMenu()){
-                populator.accept(ItemStackBuilder.of(Material.BARRIER)
-                        .name("&c拆除")
-                        .lore("")
-                        .lore("&f> &a返还资源： &c"+ building.getDestroyReturn())
-                        .build(() -> {
-                            if (!building.isComplete()) {
-                                LoggerUtils.sendMessage("&c建筑仍在建造中", getPlayer());
-                                return;
-                            }
-                            if (!building.isAlive()) {
-                                LoggerUtils.sendMessage("&c建筑已被拆毁", getPlayer());
-                                return;
-                            }
-                            building.destroy(true);
-                            int returnResource = building.getDestroyReturn();
-                            int group = returnResource / 64;
-                            int amount = returnResource % 64;
-                            Material material = building.getResourceType();
-                            for (int i = 0; i < group; i++) {
-                                getPlayer().getWorld().dropItemNaturally(getPlayer().getLocation(), new ItemStack(material, 64));
-                            }
 
-                            getPlayer().getWorld().dropItemNaturally(getPlayer().getLocation(), new ItemStack(material, amount));
-                            close();
-                        })
+                if(building.getBuildPlayerName() != null
+                    && building.getBuildPlayerName().equals(getPlayer().getName())){
+                    // 建筑是当前玩家建造的，才允许拆除
 
-                );
+                    populator.accept(ItemStackBuilder.of(Material.BARRIER)
+                            .name("&c拆除")
+                            .lore("")
+                            .lore("&f> &a返还资源： &c"+ building.getDestroyReturn())
+                            .lore("&f> &a建筑等级： &b"+building.getLevel() )
+                            .lore("&f> &a当前血量： &f"+ building.getHealth())
+                            .build(() -> {
+                                if (!building.isComplete()) {
+                                    LoggerUtils.sendMessage("&c建筑仍在建造中", getPlayer());
+                                    return;
+                                }
+                                if (!building.isAlive()) {
+                                    LoggerUtils.sendMessage("&c建筑已被拆毁", getPlayer());
+                                    return;
+                                }
+                                building.destroy(true);
+                                int returnResource = building.getDestroyReturn();
+                                int group = returnResource / 64;
+                                int amount = returnResource % 64;
+                                Material material = building.getResourceType();
+                                for (int i = 0; i < group; i++) {
+                                    getPlayer().getWorld().dropItemNaturally(getPlayer().getLocation(), new ItemStack(material, 64));
+                                }
+
+                                getPlayer().getWorld().dropItemNaturally(getPlayer().getLocation(), new ItemStack(material, amount));
+                                close();
+                            })
+
+                    );
+                }else{
+                    // 非建筑所属人点开显示
+
+                    ItemStack head = new ItemStack(Material.PLAYER_HEAD);
+                    // 获取头颅的 SkullMeta
+                    SkullMeta meta = (SkullMeta) head.getItemMeta();
+
+                    // 设置头颅的皮肤为玩家的皮肤
+                    OfflinePlayer player = Bukkit.getOfflinePlayer(building.getBuildPlayerName());
+                    meta.setOwningPlayer(player);
+
+                    // 将修改后的 SkullMeta 应用到头颅 ItemStack 上
+                    head.setItemMeta(meta);
+
+                    populator.accept(ItemStackBuilder.of(head)
+                            .name("&a"+building.getBuildPlayerName())
+                            .lore("")
+                            .lore("&f> &a建筑等级： &b"+building.getLevel() )
+                            .lore("&f> &a当前血量： &f"+ building.getHealth())
+                            .build(this::close)
+                    );
+
+                }
+
             }
 
 

@@ -48,6 +48,10 @@ public class COINpc implements Serializable {
     // 所属建筑
     private COIBuilding building;
 
+    // 所属建筑等级达到多少允许该NPC出现
+    // 默认为 1
+    private int requiredBuildingLevel = 1;
+
     // 皮肤相关参数
     private String skinTextures;
     private String skinName;
@@ -147,10 +151,11 @@ public class COINpc implements Serializable {
     }};
 
     public void remove() {
-        setCanRespawn(false);
-        npc.despawn();
-        npc.remove();
-
+        if(npc != null){
+            setCanRespawn(false);
+            npc.despawn();
+            npc.remove();
+        }
     }
 
     public void upgrade() {

@@ -58,7 +58,38 @@ public class COIStope extends COIBuilding {
         for (COINpc creator : getNpcCreators()) {
             // 如果建筑建造完成，NPC就初始化
             if (isComplete()) {
-                
+
+                // 必须是符合建筑等级的要求的
+                if(creator.getRequiredBuildingLevel() == getLevel()){
+                    if(creator instanceof COIMinerCreator){
+                        COIMinerCreator npcCreator = (COIMinerCreator) creator;
+                        // 设置箱子
+                        npcCreator.setChestsLocation(getChestsLocation());
+                        COIMiner worker = new COIMiner(npcCreator);
+                        worker.spawn(creator.getSpawnLocation());
+
+                    }else if(creator instanceof COICartCreator){
+                        COICartCreator npcCreator = (COICartCreator) creator;
+                        npcCreator.setChestsLocation(getChestsLocation());
+                        npcCreator.setToSaveResourcesLocations(getTeam().getResourcesChests());
+                        COICart worker = new COICart(npcCreator);
+                        worker.spawn(creator.getSpawnLocation());
+                    }
+                }
+            }
+        }
+
+
+
+    }
+
+    @Override
+    public void upgradeBuildSuccess() {
+        super.upgradeBuildSuccess();
+        for (COINpc creator : getNpcCreators()) {
+
+            // 判断是否符合NPC生成条件
+            if(creator.getRequiredBuildingLevel() == getLevel()){
                 if(creator instanceof COIMinerCreator){
                     COIMinerCreator npcCreator = (COIMinerCreator) creator;
                     // 设置箱子
@@ -73,28 +104,17 @@ public class COIStope extends COIBuilding {
                     COICart worker = new COICart(npcCreator);
                     worker.spawn(creator.getSpawnLocation());
                 }
+            }else{
+                if(creator instanceof COIMinerCreator){
+                    // 设置箱子
+                    COIMinerCreator npcCreator = (COIMinerCreator) creator;
+                    npcCreator.setChestsLocation(getChestsLocation());
+
+                }else if(creator instanceof COICartCreator){
+                    COICartCreator npcCreator = (COICartCreator) creator;
+                    npcCreator.setChestsLocation(getChestsLocation());
+                }
             }
-        }
-
-
-
-    }
-
-    @Override
-    public void upgradeBuildSuccess() {
-        super.upgradeBuildSuccess();
-        for (COINpc creator : getNpcCreators()) {
-
-            if(creator instanceof COIMinerCreator){
-                // 设置箱子
-                COIMinerCreator npcCreator = (COIMinerCreator) creator;
-                npcCreator.setChestsLocation(getChestsLocation());
-
-            }else if(creator instanceof COICartCreator){
-                COICartCreator npcCreator = (COICartCreator) creator;
-                npcCreator.setChestsLocation(getChestsLocation());
-            }
-
 
         }
     }
@@ -167,6 +187,8 @@ public class COIStope extends COIBuilding {
         // 设置伪装
         npcCreator.setDisguiseType(DisguiseType.MINECART_CHEST);
         npcCreator.setNpcType(EntityType.PILLAGER);
+        // 建筑2级之后再出生
+        npcCreator.setRequiredBuildingLevel(2);
 
         npcCreator.setAggressive(false);
         npcCreator.setAlertRadius(5);

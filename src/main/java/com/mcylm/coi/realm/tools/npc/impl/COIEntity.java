@@ -3,6 +3,7 @@ package com.mcylm.coi.realm.tools.npc.impl;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.mcylm.coi.realm.Entry;
+import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.runnable.NpcAITask;
 import com.mcylm.coi.realm.tools.data.metadata.EntityData;
@@ -452,12 +453,9 @@ public class COIEntity implements AI {
 
         if (foodChests == null
                 || foodChests.isEmpty()) {
-//            LoggerUtils.debug("食物箱子不存在");
-            // 食物箱子不存在，就直接原地摆烂
-            if (getNpc().getEntity() instanceof Player) {
-                say("肚子好饿！附近都没有吃的了");
-            }
-
+            // 食物箱子不存在，就回到出生点
+            findPath(getCoiNpc().getSpawnLocation());
+            say("&f指挥官为什么没有建造&b"+ COIBuildingType.MILL.getName() +"&f，我要饿死了");
             return;
         }
 
@@ -489,10 +487,9 @@ public class COIEntity implements AI {
 
         if (distance > FOOD_CHEST_MAX_DISTANCE) {
             // 如果食品箱子的距离大于 最大寻找的距离
-            // 直接原地摆烂
-            if (getNpc().getEntity() instanceof Player) {
-                say("肚子好饿！附近都没有吃的了");
-            }
+            // 先尝试回到出生点
+            findPath(getCoiNpc().getSpawnLocation());
+            say("好饿！好饿啊！");
             return;
         }
 
@@ -1111,6 +1108,10 @@ public class COIEntity implements AI {
             int i = 0;
             @Override
             public void run() {
+
+                if(getNpc() == null || getNpc().getEntity() == null){
+                    this.cancel();
+                }
 
                 i++;
                 // 挥动手

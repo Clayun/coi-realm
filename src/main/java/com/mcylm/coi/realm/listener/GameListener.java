@@ -7,8 +7,11 @@ import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COIServerMode;
 import com.mcylm.coi.realm.events.BuildingDamagedEvent;
 import com.mcylm.coi.realm.events.BuildingDestroyedEvent;
+import com.mcylm.coi.realm.events.BuildingTouchEvent;
 import com.mcylm.coi.realm.tools.attack.target.impl.BuildingTarget;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
+import com.mcylm.coi.realm.tools.building.impl.COIRepair;
+import com.mcylm.coi.realm.tools.building.impl.COITurret;
 import com.mcylm.coi.realm.tools.data.metadata.BuildData;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.ItemUtils;
@@ -172,6 +175,24 @@ public class GameListener implements Listener {
         if (item.getType() == Material.COMPASS
                 && ItemUtils.getName(item).equals(LoggerUtils.replaceColor("&c选择队伍"))) {
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onBuildingTouch(BuildingTouchEvent event) {
+
+        COIBuilding building = event.getBuilding();
+        building.displayHealth(event.getPlayer());
+
+        if(building.getType().equals(COIBuildingType.TURRET_NORMAL)
+                || building.getType().equals(COIBuildingType.TURRET_REPAIR)
+        ){
+            // 如果是塔类型，就打开该塔的弹药库GUI
+            if(building instanceof COITurret turret){
+                event.getPlayer().openInventory(turret.getInventory());
+            }else if(building instanceof COIRepair turret){
+                event.getPlayer().openInventory(turret.getInventory());
+            }
         }
     }
 
