@@ -91,9 +91,10 @@ public class BuilderGUI{
 
                 if(building.getConfig().isShowInMenu()){
 
+                    ItemStack item = building.getType().getItemType();
                     // 判断是否达到解锁条件
                     if(COIUnlockType.checkUnlock(team,building.getType())){
-                        items.add(ItemStackBuilder.of(building.getType().getItemType())
+                        items.add(ItemStackBuilder.of(item.clone())
                                 .name(building.getType().getName())
                                 .amount(getBuildingNum(team.getBuildingByType(building.getType())))
                                 .lore("")
