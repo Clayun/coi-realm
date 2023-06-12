@@ -47,7 +47,7 @@ public class COIStope extends COIBuilding {
     public BuildingConfig getDefaultConfig() {
         return new BuildingConfig()
                 .setMaxLevel(3)
-                .setConsume(16)
+                .setConsume(64)
                 .setStructures(getBuildingLevelStructure());
     }
 

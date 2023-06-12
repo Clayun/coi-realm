@@ -162,18 +162,6 @@ public class GameListener implements Listener {
     }
 
     @EventHandler
-    public void onInventoryClick(InventoryClickEvent event) {
-
-        // 默认建筑蓝图是第一格，禁止移动
-        if (event.getSlot() == 0 && event.getInventory().getType() == InventoryType.PLAYER) {
-            if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.BOOK
-                    && ItemUtils.getName(event.getCurrentItem()).equals(LoggerUtils.replaceColor("&b建筑蓝图"))) {
-                event.setCancelled(true);
-            }
-        }
-    }
-
-    @EventHandler
     public void onPlayerDropItem(PlayerDropItemEvent event) {
         ItemStack item = event.getItemDrop().getItemStack();
         if (item.getType() == Material.BOOK
@@ -192,6 +180,8 @@ public class GameListener implements Listener {
 
         // 保存物品栏
         event.setKeepInventory(true);
+        // 禁用掉落
+        event.getDrops().clear();
     }
 
     @EventHandler

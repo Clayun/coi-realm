@@ -29,7 +29,7 @@ public class COIBase extends COIBuilding {
                 .setStructures(getBuildingLevelStructure())
                 .setMaxLevel(10)
                 .setShowInMenu(false)
-                .setConsume(200);
+                .setConsume(256);
     }
 
     @Override
