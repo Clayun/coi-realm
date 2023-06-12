@@ -21,7 +21,7 @@ public class ChooseTeamGUI extends Gui {
             .mask("000000000");
 
     public ChooseTeamGUI(Player player) {
-        super(player, 5, "&a&l请选择你的小队");
+        super(player, 5, "&c&l请选择你的小队");
     }
 
     @Override

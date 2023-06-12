@@ -32,7 +32,6 @@ public class BuildEditGUI extends Gui {
 
         if (isFirstDraw()) {
 
-
             // 放置按钮
             MenuPopulator populator = BUTTONS.newPopulator(this);
 

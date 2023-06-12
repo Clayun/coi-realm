@@ -88,7 +88,16 @@ public class COIBuildingType {
             "维修塔",
             Material.NETHER_STAR,
             """
-            自动给范围内友方的建筑,NPC,玩家回血""",
+            自动给范围内友方单位回血""",
+            5,
+            5L);
+
+    public static final COIBuildingType FORGE = new COIBuildingType(
+            "FORGE",
+            "铁匠铺",
+            Material.ANVIL,
+            """
+            自动给友方的战士以及玩家打造装备""",
             5,
             5L);
 

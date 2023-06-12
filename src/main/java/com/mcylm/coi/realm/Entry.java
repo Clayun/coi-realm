@@ -234,6 +234,7 @@ public class Entry extends ExtendedJavaPlugin {
         buildingManager.registerBuilding(COIBuildingType.MILITARY_CAMP, COICamp.class);
         buildingManager.registerBuilding(COIBuildingType.WALL_NORMAL, COIWall.class);
         buildingManager.registerBuilding(COIBuildingType.DOOR_NORMAL, COIDoor.class);
+        buildingManager.registerBuilding(COIBuildingType.FORGE, COIForge.class);
 
         // 防御塔系列
         buildingManager.registerBuilding(COIBuildingType.TURRET_NORMAL, COITurret.class);

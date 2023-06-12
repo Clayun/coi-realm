@@ -356,6 +356,37 @@ public class COITeam implements Team {
     }
 
     /**
+     * 获取公共绿宝石资源总数
+     * @return
+     */
+    public int getPublicEmerald(){
+        int count = 0;
+
+        String material = Entry.getInstance().getConfig().getString("game.building.material");
+
+        // 先计算箱子里存了多少个
+        for(COIBuilding building : getFinishedBuildings()){
+
+            if(building.getType().equals(COIBuildingType.BASE)){
+                // 仅限于大本营的箱子才算做公共绿宝石资源
+                if(!building.getChestsLocation().isEmpty()){
+                    // 总存储箱子
+                    for(Location loc : building.getChestsLocation()){
+
+                        int num = ItemUtils.getItemAmountFromContainer(loc, Material.getMaterial(material));
+                        count = count + num;
+                    }
+                }
+
+                return count;
+            }
+
+        }
+
+        return count;
+    }
+
+    /**
      * 获取团队总人口
      * @return
      */

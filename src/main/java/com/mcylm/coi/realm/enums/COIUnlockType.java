@@ -2,9 +2,11 @@ package com.mcylm.coi.realm.enums;
 
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
+import com.mcylm.coi.realm.utils.SkullUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
@@ -19,9 +21,9 @@ public enum COIUnlockType {
     LOCK_MILL(
         "LOCK_MILL",
         "&c尚未解锁 &b磨坊",
-        Material.BARRIER,
+        SkullUtils.createPlayerHead(COIHeadType.LOCK_CHEST.getTextures()),
         """
-        建造一个矿场后解锁""",
+        建造1个矿场后解锁""",
         COIBuildingType.MILL,
         COIBuildingType.STOPE,
         1,
@@ -32,7 +34,7 @@ public enum COIUnlockType {
     LOCK_CAMP(
             "LOCK_CAMP",
             "&c尚未解锁 &b军营",
-            Material.BARRIER,
+            SkullUtils.createPlayerHead(COIHeadType.LOCK_CHEST.getTextures()),
             """
             建造5个矿场后解锁""",
             COIBuildingType.MILITARY_CAMP,
@@ -45,9 +47,9 @@ public enum COIUnlockType {
     LOCK_WALL(
             "LOCK_WALL",
             "&c尚未解锁 &b城墙",
-            Material.BARRIER,
+            SkullUtils.createPlayerHead(COIHeadType.LOCK_CHEST.getTextures()),
             """
-            基地升级到2级解锁""",
+            升级基地到2级解锁""",
             COIBuildingType.WALL_NORMAL,
             COIBuildingType.BASE,
             1,
@@ -58,9 +60,9 @@ public enum COIUnlockType {
     LOCK_DOOR(
             "LOCK_DOOR",
             "&c尚未解锁 &b城门",
-            Material.BARRIER,
+            SkullUtils.createPlayerHead(COIHeadType.LOCK_CHEST.getTextures()),
             """
-            基地升级到2级解锁""",
+            升级基地到2级解锁""",
             COIBuildingType.DOOR_NORMAL,
             COIBuildingType.BASE,
             1,
@@ -71,9 +73,9 @@ public enum COIUnlockType {
     LOCK_TURRET(
             "LOCK_TURRET",
             "&c尚未解锁 &b基础防御塔",
-            Material.BARRIER,
+            SkullUtils.createPlayerHead(COIHeadType.LOCK_CHEST.getTextures()),
             """
-            任意矿场升级到2级，并且拥有3个矿场后解锁""",
+            任意1个矿场升级到2级,并且拥有3个矿场后解锁""",
             COIBuildingType.TURRET_NORMAL,
             COIBuildingType.STOPE,
             3,
@@ -84,13 +86,26 @@ public enum COIUnlockType {
     LOCK_REPAIR(
             "LOCK_REPAIR",
             "&c尚未解锁 &b修复塔",
-            Material.BARRIER,
+            SkullUtils.createPlayerHead(COIHeadType.LOCK_CHEST.getTextures()),
             """
-            任意矿场升级到3级后解锁，并且拥有5个矿场后解锁""",
+            任意1个矿场升级到3级,并且拥有5个矿场后解锁""",
             COIBuildingType.TURRET_REPAIR,
             COIBuildingType.STOPE,
             5,
             3
+    ),
+
+    // 铁匠铺
+    LOCK_FORGE(
+            "LOCK_REPAIR",
+            "&c尚未解锁 &b铁匠铺",
+            SkullUtils.createPlayerHead(COIHeadType.LOCK_CHEST.getTextures()),
+            """
+            升级基地到5级解锁""",
+            COIBuildingType.FORGE,
+            COIBuildingType.BASE,
+            1,
+            5
     ),
 
     ;
@@ -101,7 +116,7 @@ public enum COIUnlockType {
     // 未解锁时显示的名称 name
     private String name;
     // GUI显示的材质
-    private Material itemType;
+    private ItemStack itemType;
     // 解锁条件介绍
     private String introduce;
     // 待解锁的建筑类型

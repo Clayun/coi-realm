@@ -54,15 +54,13 @@ public class COIScoreboard {
             List<String> str = new ArrayList<>();
 
             str.add("&f<&aLV."+baseLevel+"&f> "+team.getType().getColor()+team.getType().getName());
-            str.add("&e团队战分 &f"+team.getScore());
+            str.add("&e团队战分&7(奖励) &f"+team.getScore());
             str.add("&b♚ 团队资源 &7资产明细");
-            str.add("&a● &a绿宝石 &f"+team.getTotalEmerald());
+            str.add("&a● &a绿宝石 &f"+team.getPublicEmerald());
             str.add("&e● &a建筑数量 &f"+team.getFinishedBuildings().size());
             str.add("&d● &a总人口 &f"+team.getTotalPeople());
             str.add("&b♚ 战局状态 &7基地状态");
             str.add("");
-
-
 
             List<COITeam> teams = Entry.getGame().getTeams();
 

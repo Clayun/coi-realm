@@ -11,11 +11,16 @@ import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import me.lucko.helper.item.ItemStackBuilder;
+import me.lucko.helper.menu.Gui;
 import me.lucko.helper.menu.Item;
 import me.lucko.helper.menu.paginated.PaginatedGuiBuilder;
+import me.lucko.helper.menu.scheme.MenuScheme;
+import me.lucko.helper.menu.scheme.StandardSchemeMappings;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,11 +33,33 @@ import java.util.List;
  * Player can choose building here,
  * and pick a place to build.
  */
-public class BuilderGUI {
+public class BuilderGUI{
 
     // 建造的位置
     private Location location;
 
+    public static final List<Integer> ITEM_SLOTS = new MenuScheme()
+            .mask("000000000")
+            .mask("001111100")
+            .mask("011111110")
+            .mask("011111110")
+            .mask("001111100")
+            .mask("000101000")
+            .getMaskedIndexesImmutable();
+
+    public static final MenuScheme SCHEME = new MenuScheme(StandardSchemeMappings.STAINED_GLASS)
+            .mask("111111111")
+            .mask("110000011")
+            .mask("100000001")
+            .mask("100000001")
+            .mask("110000011")
+            .mask("111010111")
+            .scheme(0, 0, 0, 0, 0, 0, 0, 0, 0)
+            .scheme(0, 0, 0, 0)
+            .scheme(0, 0)
+            .scheme(0, 0)
+            .scheme(0, 0, 0, 0)
+            .scheme(0, 0, 0, 0, 0, 0, 0);
 
     public BuilderGUI(Player p, Location loc) {
 
@@ -51,10 +78,12 @@ public class BuilderGUI {
         PaginatedGuiBuilder builder = PaginatedGuiBuilder.create();
 
         builder.title("&b&l选择你要的建筑");
-        builder.previousPageSlot(44);
-        builder.nextPageSlot(53);
+        builder.previousPageSlot(49);
+        builder.nextPageSlot(51);
         builder.nextPageItem((pageInfo) -> ItemStackBuilder.of(Material.ARROW).name("&a下一页").build());
         builder.previousPageItem((pageInfo) -> ItemStackBuilder.of(Material.ARROW).name("&a上一页").build());
+        builder.scheme(SCHEME);
+        builder.itemSlots(ITEM_SLOTS);
 
         builder.build(p, paginatedGui -> {
             List<Item> items = new ArrayList<>();
@@ -68,7 +97,7 @@ public class BuilderGUI {
                                 .name(building.getType().getName())
                                 .amount(getBuildingNum(team.getBuildingByType(building.getType())))
                                 .lore("")
-                                .lore("&f> &a可造数量： &c" + team.getBuildingByType(building.getType()).size() +" &7/ "+building.getMaxBuild())
+                                .lore("&f> &a可造数量： &c" + team.getBuildingByType(building.getType()).size() +"&7/"+building.getMaxBuild())
                                 .lore("&f> &a所需耗材： &c" + building.getConsume())
                                 .lore("&f> &a拥有材料： &c" + building.getPlayerHadResource(p))
                                 .lore("&f> &a介绍：")
@@ -103,8 +132,10 @@ public class BuilderGUI {
                         // 不满足解锁条件
                         COIUnlockType unlockItem = COIUnlockType.getUnlockItem(building.getType());
 
+                        ItemStack itemType = unlockItem.getItemType();
+
                         if(unlockItem != null){
-                            items.add(ItemStackBuilder.of(unlockItem.getItemType())
+                            items.add(ItemStackBuilder.of(itemType.clone())
                                     .name(unlockItem.getName())
                                     .amount(1)
                                     .lore("")
