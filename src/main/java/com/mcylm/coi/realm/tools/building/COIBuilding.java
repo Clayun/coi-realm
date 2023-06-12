@@ -93,6 +93,9 @@ public abstract class COIBuilding implements Serializable {
     // 最高等级
     protected Integer maxLevel = 1;
 
+    // 最大建筑数量
+    protected Integer maxBuild = 1;
+
     // 建筑等级对照建筑结构表
     // key为等级，value是建筑结构文件名称
     protected Map<Integer, String> buildingLevelStructure = new HashMap<>();
@@ -890,6 +893,7 @@ public abstract class COIBuilding implements Serializable {
     protected void applyConfig() {
         consume = config.getConsume();
         maxLevel = config.getMaxLevel();
+        maxBuild = config.getMaxBuild();
         setBuildingLevelStructure(config.getStructures());
     }
 

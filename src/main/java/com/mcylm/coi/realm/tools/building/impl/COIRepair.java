@@ -84,6 +84,7 @@ public class COIRepair extends COIBuilding {
     public BuildingConfig getDefaultConfig() {
         return new BuildingConfig()
                 .setMaxLevel(2)
+                .setMaxBuild(10)
                 .setConsume(512)
                 .setStructures(getBuildingLevelStructure());
     }

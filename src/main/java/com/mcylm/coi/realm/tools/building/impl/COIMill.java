@@ -41,6 +41,7 @@ public class COIMill extends COIBuilding {
         return new BuildingConfig()
                 .setStructures(getBuildingLevelStructure())
                 .setMaxLevel(3)
+                .setMaxBuild(20)
                 .setConsume(64);
     }
 

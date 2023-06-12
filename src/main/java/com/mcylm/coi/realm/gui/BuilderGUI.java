@@ -68,7 +68,7 @@ public class BuilderGUI {
                                 .name(building.getType().getName())
                                 .amount(getBuildingNum(team.getBuildingByType(building.getType())))
                                 .lore("")
-                                .lore("&f> &a已造数量： &c" + team.getBuildingByType(building.getType()).size())
+                                .lore("&f> &a可造数量： &c" + team.getBuildingByType(building.getType()).size() +" &7/ "+building.getMaxBuild())
                                 .lore("&f> &a所需耗材： &c" + building.getConsume())
                                 .lore("&f> &a拥有材料： &c" + building.getPlayerHadResource(p))
                                 .lore("&f> &a介绍：")
@@ -77,21 +77,27 @@ public class BuilderGUI {
                                 .lore("&f> &a&l点击进行建造")
                                 .build(() -> {
                                     // 点击时触发下面的方法
-                                    // TODO 封装建造方法
 
-                                    building.setTeam(team);
-                                    // building.build(location,getPlayer());
-                                    if (building.getStructureByLevel() != null) {
-                                        if (building instanceof LineBuild lineBuild) {
-                                            new LineSelector(p, lineBuild, location);
+                                    if(team.getBuildingByType(building.getType()).size() < building.getMaxBuild()){
+                                        // 建造数量没有满的时候，可以建造
+                                        building.setTeam(team);
+                                        // building.build(location,getPlayer());
+                                        if (building.getStructureByLevel() != null) {
+                                            if (building instanceof LineBuild lineBuild) {
+                                                new LineSelector(p, lineBuild, location);
+                                            } else {
+                                                new AreaSelector(p, building, location);
+                                            }
                                         } else {
-                                            new AreaSelector(p, building, location);
+                                            building.build(location, p);
                                         }
-                                    } else {
-                                        building.build(location, p);
+
+                                        paginatedGui.close();
+                                    }else{
+                                        paginatedGui.close();
+                                        LoggerUtils.sendMessage("&c当前建筑数量已到最大限制！",p);
                                     }
 
-                                    paginatedGui.close();
                                 }));
                     }else{
                         // 不满足解锁条件
@@ -148,7 +154,7 @@ public class BuilderGUI {
             return Collections.emptyList();
         }
 
-        int maxLineLength = 10;
+        int maxLineLength = 12;
         List<String> lines = new ArrayList<>();
         int length = introduce.length();
         int count = length / maxLineLength;
