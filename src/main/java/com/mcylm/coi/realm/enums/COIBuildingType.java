@@ -28,9 +28,7 @@ public class COIBuildingType {
             "磨坊",
             SkullUtils.createPlayerHead(COIHeadType.FARMER.getTextures()),
             """
-            磨坊是食物收集类建筑.建造完成后会生成一个农民,
-            农民会全自动种植小麦并使用骨粉催熟,当小麦成熟后
-            农民会将其采集并制作成面包并放入磨坊的箱子中.
+            磨坊是食物收集类建筑.全自动生产面包到箱子中.
             请注意:每个NPC都需要食物补充能量,磨坊的是非常重要的建筑""",
             5,
             5L);
@@ -40,8 +38,7 @@ public class COIBuildingType {
             "矿场",
             SkullUtils.createPlayerHead(COIHeadType.MINER.getTextures()),
             """
-            矿场是资源收集类建筑.建造完成后会生成一个矿工,
-            矿工会全自动收集矿物,并存入矿场的箱子中,
+            矿场是资源收集类建筑.全自动生产绿宝石到箱子中
             收集的资源可用于建造新的建筑,或者给战士制作装备.""",
             5,
             5L);
@@ -99,7 +96,8 @@ public class COIBuildingType {
             "铁匠铺",
             new ItemStack(Material.ANVIL),
             """
-            自动给友方的战士以及玩家打造装备""",
+            自动给友方的战士以及玩家打造装备,
+            建筑升级，装备也会升级""",
             5,
             5L);
 
