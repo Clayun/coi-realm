@@ -10,10 +10,7 @@ import com.mcylm.coi.realm.tools.data.metadata.EntityData;
 import com.mcylm.coi.realm.tools.npc.AI;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.tools.trait.DisguiseTrait;
-import com.mcylm.coi.realm.utils.GUIUtils;
-import com.mcylm.coi.realm.utils.InventoryUtils;
-import com.mcylm.coi.realm.utils.ItemUtils;
-import com.mcylm.coi.realm.utils.LoggerUtils;
+import com.mcylm.coi.realm.utils.*;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings;
@@ -604,7 +601,6 @@ public class COIEntity implements AI {
 
     /**
      * 穿衣服
-     * todo 需要优化选择更好的物品装备
      */
     @Override
     public void wearClothes() {
@@ -622,14 +618,7 @@ public class COIEntity implements AI {
             ItemStack itemStack = iterator.next();
             //头盔
             if (itemStack == null) continue;
-            if (itemStack.getType() == Material.CHAINMAIL_HELMET
-                    || itemStack.getType() == Material.DIAMOND_HELMET
-                    || itemStack.getType() == Material.GOLDEN_HELMET
-                    || itemStack.getType() == Material.IRON_HELMET
-                    || itemStack.getType() == Material.LEATHER_HELMET
-                    || itemStack.getType() == Material.NETHERITE_HELMET
-                    || itemStack.getType() == Material.TURTLE_HELMET
-            ) {
+            if (WearUtils.canWearOnHead(itemStack)) {
                 if (itemStack.getType().equals(Material.LEATHER_HELMET)) {
                     // 皮革的，就换成小队颜色
                     if (getCoiNpc().getTeam().getType().getLeatherColor() != null) {
@@ -638,19 +627,11 @@ public class COIEntity implements AI {
                 }
                 entity.getEquipment().setHelmet(itemStack);
                 backpack.remove(itemStack);
-                LoggerUtils.debug("NPC穿上了头盔");
-                say("这可是个好东西啊，脑袋保住了");
                 continue;
             }
 
             //胸甲
-            if (itemStack.getType() == Material.CHAINMAIL_CHESTPLATE
-                    || itemStack.getType() == Material.DIAMOND_CHESTPLATE
-                    || itemStack.getType() == Material.GOLDEN_CHESTPLATE
-                    || itemStack.getType() == Material.IRON_CHESTPLATE
-                    || itemStack.getType() == Material.LEATHER_CHESTPLATE
-                    || itemStack.getType() == Material.NETHERITE_CHESTPLATE
-            ) {
+            if (WearUtils.canWearOnBody(itemStack)) {
 
                 if (itemStack.getType().equals(Material.LEATHER_CHESTPLATE)) {
                     // 皮革的，就换成小队颜色
@@ -660,19 +641,11 @@ public class COIEntity implements AI {
                 }
                 entity.getEquipment().setChestplate(itemStack);
                 backpack.remove(itemStack);
-                LoggerUtils.debug("NPC穿上了胸甲");
-                say("这是什么宝贝，胸罩么");
                 continue;
             }
 
             //裤子
-            if (itemStack.getType() == Material.LEATHER_LEGGINGS
-                    || itemStack.getType() == Material.CHAINMAIL_LEGGINGS
-                    || itemStack.getType() == Material.DIAMOND_LEGGINGS
-                    || itemStack.getType() == Material.GOLDEN_LEGGINGS
-                    || itemStack.getType() == Material.IRON_LEGGINGS
-                    || itemStack.getType() == Material.NETHERITE_LEGGINGS
-            ) {
+            if (WearUtils.canWearOnLegs(itemStack)) {
 
                 if (itemStack.getType().equals(Material.LEATHER_LEGGINGS)) {
                     // 皮革的，就换成小队颜色
@@ -682,19 +655,11 @@ public class COIEntity implements AI {
                 }
                 entity.getEquipment().setLeggings(itemStack);
                 backpack.remove(itemStack);
-                LoggerUtils.debug("NPC穿上了裤子");
-                say("这难道就是皇帝的丝袜么");
                 continue;
             }
 
             //靴子
-            if (itemStack.getType() == Material.CHAINMAIL_BOOTS
-                    || itemStack.getType() == Material.DIAMOND_BOOTS
-                    || itemStack.getType() == Material.GOLDEN_BOOTS
-                    || itemStack.getType() == Material.IRON_BOOTS
-                    || itemStack.getType() == Material.LEATHER_BOOTS
-                    || itemStack.getType() == Material.NETHERITE_BOOTS
-            ) {
+            if (WearUtils.canWearOnFeet(itemStack)) {
 
                 if (itemStack.getType().equals(Material.LEATHER_BOOTS)) {
                     // 皮革的，就换成小队颜色
@@ -705,8 +670,6 @@ public class COIEntity implements AI {
 
                 entity.getEquipment().setBoots(itemStack);
                 backpack.remove(itemStack);
-                LoggerUtils.debug("NPC穿上了鞋");
-                say("英雄不能没有切尔西！");
                 continue;
             }
 
@@ -741,7 +704,7 @@ public class COIEntity implements AI {
                     || itemStack.getType() == Material.WOODEN_HOE
                     // 弩
                     || itemStack.getType() == Material.CROSSBOW
-                    //Bow
+                    // Bow
                     || itemStack.getType() == Material.BOW
             ) {
                 if (entity.getEquipment().getItemInMainHand().getType().equals(Material.AIR)) {
@@ -875,6 +838,35 @@ public class COIEntity implements AI {
     }
 
     /**
+     * 看向最近的玩家
+     */
+    public void lookNearestPlayer(){
+
+        if(!isAlive()){
+            return;
+        }
+
+        Entity entityNearest = null;
+        double distance = 999999;
+
+        List<Entity> nearbyEntities = getNpc().getEntity().getNearbyEntities(5, 0, 5);
+
+        for(Entity entity : nearbyEntities){
+            if(entity instanceof LivingEntity){
+
+                if(entity.getLocation().distance(npc.getEntity().getLocation()) < distance){
+                    entityNearest = entity;
+                    distance = entity.getLocation().distance(npc.getEntity().getLocation());
+                }
+            }
+        }
+
+        if(entityNearest != null){
+            npc.faceLocation(entityNearest.getLocation());
+        }
+    }
+
+    /**
      * 生成NPC
      */
     @Override
@@ -890,7 +882,10 @@ public class COIEntity implements AI {
 
         initDisguise();
 
-        npc.spawn(location);
+        Location center = location.clone();
+        center.setX(center.getX() + 0.5);
+        center.setZ(center.getZ() + 0.5);
+        npc.spawn(center);
 
         // 恢复血量和饱食度
         initEntityStatus();

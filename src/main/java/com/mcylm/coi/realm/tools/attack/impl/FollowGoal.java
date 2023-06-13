@@ -25,6 +25,9 @@ public class FollowGoal extends SimpleGoal {
     // 每次投喂多少个
     private int feedNum = 2;
 
+    // 2秒扣一次，避免给旋了
+    private int skipFeedAction = 0;
+
     @Override
     public void tick() {
         Commandable npc = getExecutor();
@@ -38,16 +41,26 @@ public class FollowGoal extends SimpleGoal {
         if (npc instanceof COIEntity entity) {
             if (entity.isAlive() && entity.getHunger() < keepHunger) {
                 if (npc.getCommander() instanceof Player player) {
-                    @NotNull HashMap<Integer, ItemStack> extra = player.getInventory().removeItem(new ItemStack(Material.BREAD, feedNum));
-                    if (extra.isEmpty()) {
-                        entity.addItemToInventory(new ItemStack(Material.BREAD, feedNum));
-                    } else {
-                        extra.values().forEach(item -> {
-                            if (feedNum - item.getAmount() > 0) {
-                                entity.addItemToInventory(new ItemStack(Material.BREAD, feedNum - item.getAmount()));
-                            }
-                        });
+
+                    if(skipFeedAction == 40){
+                        skipFeedAction = 0;
                     }
+
+                    if(skipFeedAction == 0){
+                        @NotNull HashMap<Integer, ItemStack> extra = player.getInventory().removeItem(new ItemStack(Material.BREAD, feedNum));
+                        if (extra.isEmpty()) {
+                            entity.addItemToInventory(new ItemStack(Material.BREAD, feedNum));
+                        } else {
+                            extra.values().forEach(item -> {
+                                if (feedNum - item.getAmount() > 0) {
+                                    entity.addItemToInventory(new ItemStack(Material.BREAD, feedNum - item.getAmount()));
+                                }
+                            });
+                        }
+                    }
+
+                    skipFeedAction++;
+
                 }
             }
         }

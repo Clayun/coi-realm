@@ -166,12 +166,7 @@ public class Entry extends ExtendedJavaPlugin {
         }
 
         // 删除NPC
-        Iterator<NPC> iterator = CitizensAPI.getNPCRegistry().iterator();
-        while (iterator.hasNext()) {
-            NPC npc = iterator.next();
-            npc.destroy();
-            iterator.remove();
-        }
+        CitizensAPI.getNPCRegistry().deregisterAll();
 
     }
 

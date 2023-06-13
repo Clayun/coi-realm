@@ -1,5 +1,7 @@
 package com.mcylm.coi.realm.tools.building.impl;
 
+import com.mcylm.coi.realm.Entry;
+import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.config.BuildingConfig;
@@ -8,6 +10,7 @@ import com.mcylm.coi.realm.tools.npc.COISmithCreator;
 import com.mcylm.coi.realm.tools.npc.impl.COIFarmer;
 import com.mcylm.coi.realm.tools.npc.impl.COISmith;
 import com.mcylm.coi.realm.utils.GUIUtils;
+import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
@@ -17,6 +20,8 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashSet;
 import java.util.List;
@@ -27,6 +32,7 @@ import java.util.Set;
  */
 public class COIForge extends COIBuilding {
 
+    private BukkitTask task;
     public COIForge() {
         // 默认等级为1
         setLevel(1);
@@ -60,6 +66,63 @@ public class COIForge extends COIBuilding {
                 smith.spawn(creator.getSpawnLocation());
             }
         }
+
+        LoggerUtils.debug("开始打造装备");
+        task = new BukkitRunnable() {
+            @Override
+            public void run() {
+                buildEquipment();
+            }
+        }.runTaskTimerAsynchronously(Entry.getInstance(), 0, 20 * 10);
+
+
+    }
+
+    /**
+     * 给每个NPC都来一套装备
+     */
+    private void buildEquipment(){
+        int level = getLevel();
+
+        if(!isComplete()){
+            // 未完成升级的时候按照之前的来
+            level = level - 1;
+        }
+
+        // 获取全部战士
+        for (COIBuilding finishedBuilding : getTeam().getFinishedBuildings()) {
+            if(finishedBuilding.getType().equals(COIBuildingType.MILITARY_CAMP)){
+                List<COINpc> npcCreators = finishedBuilding.getNpcCreators();
+
+                for(COINpc npc : npcCreators){
+
+                    if(level == 1){
+                        // 给所有战士穿甲
+                        npc.getInventory().addItem(new ItemStack(Material.LEATHER_HELMET));
+                        npc.getInventory().addItem(new ItemStack(Material.LEATHER_CHESTPLATE));
+                        npc.getInventory().addItem(new ItemStack(Material.LEATHER_LEGGINGS));
+                        npc.getInventory().addItem(new ItemStack(Material.LEATHER_BOOTS));
+                    }else if(level == 2){
+                        npc.getInventory().addItem(new ItemStack(Material.IRON_HELMET));
+                        npc.getInventory().addItem(new ItemStack(Material.IRON_CHESTPLATE));
+                        npc.getInventory().addItem(new ItemStack(Material.IRON_LEGGINGS));
+                        npc.getInventory().addItem(new ItemStack(Material.IRON_BOOTS));
+                    }else if(level == 3){
+                        npc.getInventory().addItem(new ItemStack(Material.DIAMOND_HELMET));
+                        npc.getInventory().addItem(new ItemStack(Material.DIAMOND_CHESTPLATE));
+                        npc.getInventory().addItem(new ItemStack(Material.DIAMOND_LEGGINGS));
+                        npc.getInventory().addItem(new ItemStack(Material.DIAMOND_BOOTS));
+                    }else if(level == 4){
+                        npc.getInventory().addItem(new ItemStack(Material.NETHERITE_HELMET));
+                        npc.getInventory().addItem(new ItemStack(Material.NETHERITE_CHESTPLATE));
+                        npc.getInventory().addItem(new ItemStack(Material.NETHERITE_LEGGINGS));
+                        npc.getInventory().addItem(new ItemStack(Material.NETHERITE_BOOTS));
+                    }
+
+                }
+            }
+        }
+
     }
 
 
@@ -68,8 +131,15 @@ public class COIForge extends COIBuilding {
     @Override
     public void upgradeBuildSuccess() {
         super.upgradeBuildSuccess();
+    }
 
-        // 给小队成员，NPC全部新套装
+    @Override
+    public void destroy(boolean effect) {
+        super.destroy(effect);
+
+        if(task != null){
+            task.cancel();
+        }
     }
 
 

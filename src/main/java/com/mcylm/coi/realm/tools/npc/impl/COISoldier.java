@@ -84,6 +84,14 @@ public class COISoldier extends COIEntity implements Commandable {
                 }
             }
 
+            // 玩家打的也不设为目标
+            if(e.getDamager() instanceof Player player){
+                if(TeamUtils.getNPCTeam(entity) != null && TeamUtils.getNPCTeam(entity) == TeamUtils.getTeamByPlayer(player)){
+                    // 伤害要生效
+                    return;
+                }
+            }
+
             // 两个NPC是相同队伍的，不攻击
             if(TeamUtils.getNPCTeam(entity) != null){
                 if(npc != null && TeamUtils.getNPCTeam(entity) == npc.getTeam()){

@@ -43,6 +43,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -135,6 +136,11 @@ public class GameListener implements Listener {
 
         }
 
+    }
+
+    @EventHandler
+    public void onWeatherChange(WeatherChangeEvent event){
+        event.setCancelled(true);
     }
 
     @EventHandler
