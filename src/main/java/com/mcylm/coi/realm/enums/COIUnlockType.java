@@ -1,5 +1,6 @@
 package com.mcylm.coi.realm.enums;
 
+import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.SkullUtils;
@@ -143,6 +144,14 @@ public enum COIUnlockType {
      * @return
      */
     public static boolean checkUnlock(COITeam team,COIBuildingType type){
+
+        // 是否开启解锁功能
+        boolean openLock = Entry.getInstance().getConfig().getBoolean("game.building.lock");
+
+        if(!openLock){
+            return true;
+        }
+
         COIUnlockType[] values = COIUnlockType.values();
 
         for(COIUnlockType unlockType : values){

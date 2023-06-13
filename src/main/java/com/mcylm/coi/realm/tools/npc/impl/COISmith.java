@@ -35,6 +35,25 @@ public class COISmith extends COIEntity {
         super(npcCreator);
     }
 
+    private void buildEquipment(){
+        int level = getCoiNpc().getBuilding().getLevel();
+
+        if(level == 1){
+            // 给所有战士穿甲
+
+        }
+
+    }
+
+    /**
+     * 给某个NPC穿衣服
+     * @param npc
+     * @param armors
+     */
+    private void putArmor(COINpc npc,List<ItemStack> armors){
+
+    }
+
     @Override
     public void move(){
         super.move();

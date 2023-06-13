@@ -78,7 +78,7 @@ public class COIBuildingType {
     public static final COIBuildingType TURRET_NORMAL = new COIBuildingType(
             "TURRET",
             "基础防御炮塔",
-            SkullUtils.createPlayerHead(COIHeadType.ENERGY_CORE.getTextures()),
+            SkullUtils.createPlayerHead(COIHeadType.KILL.getTextures()),
             """
             防御炮塔会自动检测周围的地方单位,并自动攻击.
             小提示：看到敌方防御塔,可以尝试躲找个掩体,
@@ -88,7 +88,7 @@ public class COIBuildingType {
     public static final COIBuildingType TURRET_REPAIR = new COIBuildingType(
             "REPAIR",
             "维修塔",
-            SkullUtils.createPlayerHead(COIHeadType.ENERGY_CORE2.getTextures()),
+            SkullUtils.createPlayerHead(COIHeadType.REPAIR.getTextures()),
             """
             自动给范围内友方单位回血""",
             5,

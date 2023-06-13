@@ -21,6 +21,8 @@ game:
   building:
     # 建筑材料，建议和矿工挖掘捡起的某样物资一致
     material: 'EMERALD'
+    # 是否开启建筑解锁功能
+    lock: false
   # 游戏开始时，给玩家的一定的数量
   when-start-give-player: 64
   # 防御塔相关的配置

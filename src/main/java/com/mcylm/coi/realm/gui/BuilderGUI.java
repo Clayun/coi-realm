@@ -38,29 +38,6 @@ public class BuilderGUI{
     // 建造的位置
     private Location location;
 
-    public static final List<Integer> ITEM_SLOTS = new MenuScheme()
-            .mask("000000000")
-            .mask("001111100")
-            .mask("011111110")
-            .mask("011111110")
-            .mask("001111100")
-            .mask("000101000")
-            .getMaskedIndexesImmutable();
-
-    public static final MenuScheme SCHEME = new MenuScheme(StandardSchemeMappings.STAINED_GLASS)
-            .mask("111111111")
-            .mask("110000011")
-            .mask("100000001")
-            .mask("100000001")
-            .mask("110000011")
-            .mask("111010111")
-            .scheme(0, 0, 0, 0, 0, 0, 0, 0, 0)
-            .scheme(0, 0, 0, 0)
-            .scheme(0, 0)
-            .scheme(0, 0)
-            .scheme(0, 0, 0, 0)
-            .scheme(0, 0, 0, 0, 0, 0, 0);
-
     public BuilderGUI(Player p, Location loc) {
 
         this.location = loc;
@@ -82,8 +59,6 @@ public class BuilderGUI{
         builder.nextPageSlot(51);
         builder.nextPageItem((pageInfo) -> ItemStackBuilder.of(Material.ARROW).name("&a下一页").build());
         builder.previousPageItem((pageInfo) -> ItemStackBuilder.of(Material.ARROW).name("&a上一页").build());
-        builder.scheme(SCHEME);
-        builder.itemSlots(ITEM_SLOTS);
 
         builder.build(p, paginatedGui -> {
             List<Item> items = new ArrayList<>();
