@@ -76,43 +76,37 @@ public class COISoldier extends COIEntity implements Commandable {
             // 被攻击者
             Entity entity = e.getEntity();
 
-            // 如果是战士类型的
-            if (npc instanceof COISoldierCreator) {
+            // 相同队伍的，不攻击
+            if(entity instanceof Player player){
+                if(npc != null && npc.getTeam() == TeamUtils.getTeamByPlayer(player)){
+                    e.setCancelled(true);
+                    return;
+                }
+            }
 
+            // 两个NPC是相同队伍的，不攻击
+            if(TeamUtils.getNPCTeam(entity) != null){
+                if(npc != null && TeamUtils.getNPCTeam(entity) == npc.getTeam()){
+                    e.setCancelled(true);
+                    return;
+                }
+            }
 
-                if (entity instanceof LivingEntity livingEntity) {
+            if(npc != null){
+                // 在攻击伤害范围内，随机产生伤害
+                double damage = DamageUtils.getRandomDamage(npc);
+                // 直接赋值伤害
+                e.setDamage(damage);
+                ((LivingEntity) entity).damage(damage);
+                LoggerUtils.debug("远程伤害："+damage);
+            }
 
-                    // 相同队伍的，不攻击
-                    if(livingEntity instanceof Player player){
-                        if(npc.getTeam() == TeamUtils.getTeamByPlayer(player)){
-                            LoggerUtils.debug("相同队伍，禁伤");
-                            e.setCancelled(true);
-                            return;
-                        }
-                    }
-
-                    // 两个NPC是相同队伍的，不攻击
-                    if(TeamUtils.getNPCTeam(entity) != null){
-                        if(TeamUtils.getNPCTeam(entity) == npc.getTeam()){
-                            LoggerUtils.debug("相同队伍，禁伤");
-                            e.setCancelled(true);
-                            return;
-                        }
-                    }
-
-                    // 在攻击伤害范围内，随机产生伤害
-                    double damage = DamageUtils.getRandomDamage(npc);
-                    // 直接赋值伤害
-                    livingEntity.damage(damage);
-                    // 将攻击者设置为目标
-                    @Nullable COINpc victim = EntityData.getNpcByEntity(e.getEntity());
-                    if(victim != null){
-                        if(victim instanceof COISoldierCreator soldier
-                            && target instanceof LivingEntity perpetrator){
-                            ((COISoldier) soldier.getNpc()).setTarget(new EntityTarget(perpetrator, 8));
-                        }
-                    }
-
+            // 将攻击者设置为目标
+            @Nullable COINpc victim = EntityData.getNpcByEntity(e.getEntity());
+            if(victim != null){
+                if(victim instanceof COISoldierCreator soldier
+                        && target instanceof LivingEntity perpetrator){
+                    ((COISoldier) soldier.getNpc()).setTarget(new EntityTarget(perpetrator, 8));
                 }
             }
 
@@ -171,7 +165,7 @@ public class COISoldier extends COIEntity implements Commandable {
                 // 挥动手
                 ((LivingEntity) getNpc().getEntity()).swingMainHand();
                 damage(target, damage, target.getTargetLocation());
-//                ((LivingEntity)target).damage(damage);
+
 
             }
             findPath(target.getTargetLocation());
@@ -299,9 +293,10 @@ public class COISoldier extends COIEntity implements Commandable {
     public void damage(Target target, double damage, Location attackLocation) {
 
         // 先判断是否是生物
-        if (target instanceof LivingEntity) {
+        if (target.getType() == TargetType.ENTITY) {
             EntityTarget entityTarget = (EntityTarget) target;
             entityTarget.getEntity().damage(damage);
+            entityTarget.getEntity().setNoDamageTicks(0);
         } else if (target.getType() == TargetType.BUILDING) {
             BuildingTarget buildingTarget = (BuildingTarget) target;
             buildingTarget.getBuilding().damage(getNpc().getEntity(), (int) damage, attackLocation.getBlock());

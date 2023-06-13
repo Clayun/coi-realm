@@ -171,7 +171,6 @@ public class Entry extends ExtendedJavaPlugin {
         pluginManager.registerEvents(new MineralsBreakListener(), this);
         // AI事件监听器
         COISoldier.registerListener();
-        COIMonster.registerListener();
 
         Events.subscribe(PlayerJoinEvent.class)
                 .handler(e -> {
@@ -184,6 +183,7 @@ public class Entry extends ExtendedJavaPlugin {
         Events.subscribe(ProjectileHitEvent.class)
                 .handler(e -> {
                     if (e.getHitEntity() != null && e.getHitEntity().hasMetadata("preview_block")) {
+                        LoggerUtils.debug("ProjectileHitEvent");
                         e.setCancelled(true);
                     }
         });

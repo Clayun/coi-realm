@@ -96,7 +96,7 @@ public class COITeam implements Team {
         org.bukkit.scoreboard.Team team = Entry.getInstance().getScoreboard().getTeam(getType().getCode());
         if (team == null) {
             team = Entry.getInstance().getScoreboard().registerNewTeam(getType().getCode());
-            team.setAllowFriendlyFire(true);
+            team.setAllowFriendlyFire(false);
         }
     }
 
