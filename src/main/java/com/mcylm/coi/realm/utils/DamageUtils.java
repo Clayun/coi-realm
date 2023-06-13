@@ -15,7 +15,6 @@ public class DamageUtils {
         // 在攻击伤害范围内，随机产生伤害
         double damage = rand.nextInt((int) ((npc.getMaxDamage() + 1) - npc.getMinDamage())) + npc.getMinDamage();
 
-
         return damage;
     }
 

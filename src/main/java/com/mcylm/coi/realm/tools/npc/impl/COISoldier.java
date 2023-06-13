@@ -103,7 +103,7 @@ public class COISoldier extends COIEntity implements Commandable {
                     // 在攻击伤害范围内，随机产生伤害
                     double damage = DamageUtils.getRandomDamage(npc);
                     // 直接赋值伤害
-                    e.setDamage(damage);
+                    livingEntity.damage(damage);
                     // 将攻击者设置为目标
                     @Nullable COINpc victim = EntityData.getNpcByEntity(e.getEntity());
                     if(victim != null){
@@ -139,12 +139,8 @@ public class COISoldier extends COIEntity implements Commandable {
     private void meleeAttackTarget() {
         if (target == null) return;
 
-        // 对生物体直接产生伤害
-        Random rand = new Random();
-
-
         // 在攻击伤害范围内，随机产生伤害
-        double damage = rand.nextInt((int) ((getCoiNpc().getMaxDamage() + 1) - getCoiNpc().getMinDamage())) + getCoiNpc().getMinDamage();
+        double damage = DamageUtils.getRandomDamage(getCoiNpc());
 
         if (getLocation() == null) {
             return;
@@ -175,6 +171,7 @@ public class COISoldier extends COIEntity implements Commandable {
                 // 挥动手
                 ((LivingEntity) getNpc().getEntity()).swingMainHand();
                 damage(target, damage, target.getTargetLocation());
+//                ((LivingEntity)target).damage(damage);
 
             }
             findPath(target.getTargetLocation());
@@ -304,7 +301,7 @@ public class COISoldier extends COIEntity implements Commandable {
         // 先判断是否是生物
         if (target instanceof LivingEntity) {
             EntityTarget entityTarget = (EntityTarget) target;
-            entityTarget.getEntity().damage(damage, getNpc().getEntity());
+            entityTarget.getEntity().damage(damage);
         } else if (target.getType() == TargetType.BUILDING) {
             BuildingTarget buildingTarget = (BuildingTarget) target;
             buildingTarget.getBuilding().damage(getNpc().getEntity(), (int) damage, attackLocation.getBlock());
