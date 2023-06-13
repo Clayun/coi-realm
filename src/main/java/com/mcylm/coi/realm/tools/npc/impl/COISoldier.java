@@ -14,6 +14,7 @@ import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.data.metadata.BuildData;
 import com.mcylm.coi.realm.tools.data.metadata.EntityData;
 import com.mcylm.coi.realm.tools.npc.COISoldierCreator;
+import com.mcylm.coi.realm.utils.DamageUtils;
 import com.mcylm.coi.realm.utils.LocationUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
@@ -52,70 +53,39 @@ public class COISoldier extends COIEntity implements Commandable {
 
     public static void registerListener() {
 
-        // 监听反击相关动作
-        Events.subscribe(EntityDamageByEntityEvent.class).handler(e -> {
-            @Nullable COINpc npc = EntityData.getNpcByEntity(e.getEntity());
-            Entity target = e.getDamager();
-            if (npc instanceof COISoldierCreator creator) {
-
-                if (e.getDamager() instanceof Projectile projectile) {
-                    if (projectile.getShooter() instanceof LivingEntity s) {
-                        target = s;
-                    }
-                }
-
-                if (target instanceof LivingEntity livingEntity) {
-                    if (livingEntity instanceof Player player && player.getGameMode() == GameMode.CREATIVE) {
-                        e.setCancelled(true);
-                        return;
-                    }
-
-                    // 相同队伍的，不攻击
-                    if(livingEntity instanceof Player player){
-                        if(npc.getTeam() == TeamUtils.getTeamByPlayer(player)){
-                            e.setCancelled(true);
-                            return;
-                        }
-                    }
-
-                    // 两个NPC是相同队伍的，不攻击
-                    if(TeamUtils.getNPCTeam(target) != null){
-                        if(TeamUtils.getNPCTeam(target) == npc.getTeam()){
-                            e.setCancelled(true);
-                            return;
-                        }
-                    }
-
-
-                    ((COISoldier) creator.getNpc()).setTarget(new EntityTarget(livingEntity, 8));
-
-                }
-            }
-
-        });
-
         // 监听被战士攻击之后的伤害处理（适用于原版AI的攻击）
         Events.subscribe(EntityDamageByEntityEvent.class).handler(e -> {
 
-            // 攻击者
+            // 需要反击的目标
+            Entity target = e.getDamager();
+
             @Nullable COINpc npc = EntityData.getNpcByEntity(e.getDamager());
 
-            // 攻击者
+            // 先判断是否是远程攻击
+
+            if (e.getDamager() instanceof Projectile projectile) {
+                if (projectile.getShooter() instanceof LivingEntity s) {
+                    // 判断是远程攻击
+                    npc = EntityData.getNpcByEntity(s);
+                    // 先将该NPC设定为反击目标
+                    target = s;
+                }
+            }
+
+
+            // 被攻击者
             Entity entity = e.getEntity();
 
             // 如果是战士类型的
-            if (npc instanceof COISoldierCreator creator) {
+            if (npc instanceof COISoldierCreator) {
 
 
                 if (entity instanceof LivingEntity livingEntity) {
-                    if (livingEntity instanceof Player player && player.getGameMode() == GameMode.CREATIVE) {
-                        e.setCancelled(true);
-                        return;
-                    }
 
                     // 相同队伍的，不攻击
                     if(livingEntity instanceof Player player){
                         if(npc.getTeam() == TeamUtils.getTeamByPlayer(player)){
+                            LoggerUtils.debug("相同队伍，禁伤");
                             e.setCancelled(true);
                             return;
                         }
@@ -124,23 +94,28 @@ public class COISoldier extends COIEntity implements Commandable {
                     // 两个NPC是相同队伍的，不攻击
                     if(TeamUtils.getNPCTeam(entity) != null){
                         if(TeamUtils.getNPCTeam(entity) == npc.getTeam()){
+                            LoggerUtils.debug("相同队伍，禁伤");
                             e.setCancelled(true);
                             return;
                         }
                     }
 
-
-                    // 对生物体直接产生伤害
-                    Random rand = new Random();
-
                     // 在攻击伤害范围内，随机产生伤害
-                    double damage = rand.nextInt((int) ((npc.getMaxDamage() + 1) - npc.getMinDamage())) + npc.getMinDamage();
-
+                    double damage = DamageUtils.getRandomDamage(npc);
                     // 直接赋值伤害
                     e.setDamage(damage);
+                    // 将攻击者设置为目标
+                    @Nullable COINpc victim = EntityData.getNpcByEntity(e.getEntity());
+                    if(victim != null){
+                        if(victim instanceof COISoldierCreator soldier
+                            && target instanceof LivingEntity perpetrator){
+                            ((COISoldier) soldier.getNpc()).setTarget(new EntityTarget(perpetrator, 8));
+                        }
+                    }
 
                 }
             }
+
 
         });
 
@@ -182,7 +157,6 @@ public class COISoldier extends COIEntity implements Commandable {
                 ((LivingEntity) getNpc().getEntity()).swingMainHand();
                 building.damage(getNpc().getEntity(), (int) damage, b);
                 b.getWorld().playEffect(b.getLocation(), Effect.STEP_SOUND,1);
-
                 break;
             }
         }
@@ -326,7 +300,9 @@ public class COISoldier extends COIEntity implements Commandable {
 
     @Override
     public void damage(Target target, double damage, Location attackLocation) {
-        if (target.getType() == TargetType.ENTITY) {
+
+        // 先判断是否是生物
+        if (target instanceof LivingEntity) {
             EntityTarget entityTarget = (EntityTarget) target;
             entityTarget.getEntity().damage(damage, getNpc().getEntity());
         } else if (target.getType() == TargetType.BUILDING) {
