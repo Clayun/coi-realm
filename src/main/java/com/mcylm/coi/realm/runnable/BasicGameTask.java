@@ -182,8 +182,11 @@ public class BasicGameTask implements GameTaskApi {
                         }
                     }
 
-
-
+                    // 检查游戏是否结束
+                    if(Entry.getGame().checkGameComplete()){
+                        // 下一秒进入结算回合
+                        count = gamingTimer;
+                    }
                 }
 
             }

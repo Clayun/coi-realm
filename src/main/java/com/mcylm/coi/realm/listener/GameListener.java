@@ -123,6 +123,7 @@ public class GameListener implements Listener {
                     p.showTitle(title);
                     // 普通消息
                     LoggerUtils.sendMessage(LoggerUtils.replaceColor(message),p);
+
                 }else{
                     // 普通建筑被攻击
                     p.sendActionBar(Component.text(LoggerUtils.replaceColor(message)));

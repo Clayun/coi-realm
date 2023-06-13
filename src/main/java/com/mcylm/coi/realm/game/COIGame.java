@@ -341,6 +341,28 @@ public class COIGame {
 
     }
 
+    /**
+     * 检查游戏是否结束
+     * @return
+     */
+    public boolean checkGameComplete(){
+
+        int aliveTeam = 0;
+        for(COITeam team : getTeams()){
+            if(!team.getType().equals(COITeamType.MONSTER)){
+                if(!team.isDefeat()){
+                    aliveTeam ++;
+                }
+            }
+        }
+
+        if(aliveTeam <= 1){
+            return true;
+        }
+
+        return false;
+    }
+
 
 
 }

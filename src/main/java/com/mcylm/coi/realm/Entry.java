@@ -23,11 +23,15 @@ import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
 import com.mcylm.coi.realm.tools.npc.impl.monster.COIMonster;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.LoggerUtils;
+import com.mcylm.coi.realm.utils.MapUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Getter;
 import me.lucko.helper.Events;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
 import net.kyori.adventure.text.Component;
+import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -46,6 +50,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class Entry extends ExtendedJavaPlugin {
@@ -96,8 +101,6 @@ public class Entry extends ExtendedJavaPlugin {
 
     @Override
     protected void enable() {
-
-
         instance = this;
         builder = new COIBuilder();
         NPC_FOODS = new ArrayList<>();
@@ -161,6 +164,15 @@ public class Entry extends ExtendedJavaPlugin {
         for (Player p : getServer().getOnlinePlayers()) {
             p.kick(Component.text("服务器重载中,请稍后重连"));
         }
+
+        // 删除NPC
+        Iterator<NPC> iterator = CitizensAPI.getNPCRegistry().iterator();
+        while (iterator.hasNext()) {
+            NPC npc = iterator.next();
+            npc.destroy();
+            iterator.remove();
+        }
+
     }
 
     private void registerEventListeners() {
@@ -284,5 +296,42 @@ public class Entry extends ExtendedJavaPlugin {
             throw new RuntimeException(e);
         }
 
+    }
+
+    /**
+     * 重置小游戏地图
+     * 无法实现，没有主目录的权限
+     */
+    @Deprecated
+    private void resetMap(){
+
+        String worldDirName = getConfig().getString("game.spawn-world");
+        String zipName = getConfig().getString("game.world-zip");
+
+        if(worldDirName == null || zipName == null){
+            return;
+        }
+        // 先删除原本的地图
+        deleteMapFolder(worldDirName);
+
+        // 解压地图
+        try {
+            MapUtils.extractMap(
+                    new File(getServer().getWorldContainer().getParentFile(), zipName),
+                    new File(getServer().getWorldContainer().getParentFile(), worldDirName));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void deleteMapFolder(String name) {
+        File folder = new File(getServer().getWorldContainer().getParentFile(), name);
+        if (folder.exists()) {
+            try {
+                FileUtils.deleteDirectory(folder);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
