@@ -96,8 +96,9 @@ public enum COIBuildingType {
             "铁匠铺",
             new ItemStack(Material.ANVIL),
             """
-            自动给友方的战士以及玩家打造装备,
-            建筑升级，装备也会升级""",
+            自动给友方的战士打造装备,
+            建筑升级，装备也会跟着升级.
+            蹲下对着NPC按下右键可以购买道具""",
             5,
             5L),
 

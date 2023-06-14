@@ -9,6 +9,7 @@ import com.mcylm.coi.realm.tools.building.LineBuild;
 import com.mcylm.coi.realm.tools.selection.AreaSelector;
 import com.mcylm.coi.realm.tools.selection.LineSelector;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
+import com.mcylm.coi.realm.utils.GUIUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import me.lucko.helper.item.ItemStackBuilder;
@@ -79,7 +80,7 @@ public class BuilderGUI{
                                 .lore("&f> &a所需耗材： &c" + building.getConsume())
                                 .lore("&f> &a拥有材料： &c" + building.getPlayerHadResource(p))
                                 .lore("&f> &a介绍：")
-                                .lore(autoLineFeed(building.getType().getIntroduce()))
+                                .lore(GUIUtils.autoLineFeed(building.getType().getIntroduce()))
                                 .lore("")
                                 .lore("&f> &a&l点击进行建造")
                                 .build(() -> {
@@ -118,7 +119,7 @@ public class BuilderGUI{
                                     .amount(1)
                                     .lore("")
                                     .lore("&f> &a解锁条件：")
-                                    .lore(autoLineFeed(unlockItem.getIntroduce()))
+                                    .lore(GUIUtils.autoLineFeed(unlockItem.getIntroduce()))
                                     .lore("")
                                     .lore("&f> &a&l快去解锁吧")
                                     .build(paginatedGui::close));
@@ -171,33 +172,5 @@ public class BuilderGUI{
             return 1;
         }
         return buildings.size();
-    }
-
-    /**
-     * 介绍自动换行
-     *
-     * @param introduce
-     * @return
-     */
-    private List<String> autoLineFeed(String introduce) {
-        if (introduce == null || introduce.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        int maxLineLength = 12;
-        List<String> lines = new ArrayList<>();
-        int length = introduce.length();
-        int count = length / maxLineLength;
-        if (length % maxLineLength != 0) {
-            count++;
-        }
-
-        for (int i = 0; i < count; i++) {
-            int start = i * maxLineLength;
-            int end = Math.min(start + maxLineLength, length);
-            lines.add("  &6" +introduce.substring(start, end));
-        }
-
-        return lines;
     }
 }

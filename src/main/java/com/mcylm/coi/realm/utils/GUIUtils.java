@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -132,6 +133,34 @@ public class GUIUtils {
         }
 
         return stringBuilder.toString();
+    }
+
+    /**
+     * 介绍自动换行
+     *
+     * @param introduce
+     * @return
+     */
+    public static List<String> autoLineFeed(String introduce) {
+        if (introduce == null || introduce.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        int maxLineLength = 12;
+        List<String> lines = new ArrayList<>();
+        int length = introduce.length();
+        int count = length / maxLineLength;
+        if (length % maxLineLength != 0) {
+            count++;
+        }
+
+        for (int i = 0; i < count; i++) {
+            int start = i * maxLineLength;
+            int end = Math.min(start + maxLineLength, length);
+            lines.add("  &6" +introduce.substring(start, end));
+        }
+
+        return lines;
     }
 
 }

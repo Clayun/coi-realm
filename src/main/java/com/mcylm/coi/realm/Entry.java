@@ -9,6 +9,7 @@ import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COIServerMode;
 import com.mcylm.coi.realm.game.COIGame;
+import com.mcylm.coi.realm.gui.ForgeGUI;
 import com.mcylm.coi.realm.listener.GameListener;
 import com.mcylm.coi.realm.listener.MineralsBreakListener;
 import com.mcylm.coi.realm.listener.PlayerInteractListener;
@@ -214,9 +215,18 @@ public class Entry extends ExtendedJavaPlugin {
                     return false;
                 })
                 .handler(e -> {
-                    Inventory inv = EntityData.getNpcByEntity(e.getRightClicked()).getInventory();
 
-                    e.getPlayer().openInventory(inv);
+                    COINpc npcByEntity = EntityData.getNpcByEntity(e.getRightClicked());
+
+                    Inventory inv = npcByEntity.getInventory();
+
+                    if(npcByEntity.getBuilding().getType().equals(COIBuildingType.FORGE)){
+                        // 铁匠铺打开另一个GUI
+                        new ForgeGUI(e.getPlayer(),npcByEntity.getBuilding());
+                    }else{
+                        e.getPlayer().openInventory(inv);
+                    }
+
                     if (inv != null) {
                         new BukkitRunnable() {
                             @Override

@@ -24,12 +24,6 @@ public class COIPlayer {
     @Getter
     private Set<Commandable>selectedNpcs = new HashSet<>();
 
-    // 复活读秒
-    @Setter
-    @Getter
-    private int deathRebirthTimer = 0;
-
-
     // 死亡次数
     @Setter
     @Getter
@@ -66,6 +60,9 @@ public class COIPlayer {
         if(deathCount >= 10){
             return 10;
         }else{
+            if(deathCount < 5){
+                return 5;
+            }
             return deathCount;
         }
 
