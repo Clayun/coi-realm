@@ -6,6 +6,7 @@ import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COITeamType;
 import com.mcylm.coi.realm.events.GameStatusEvent;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
+import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Data;
 import me.lucko.helper.Events;
@@ -59,7 +60,7 @@ public class COIScoreboard {
             str.add("&a● &a绿宝石 &f"+team.getPublicEmerald());
             str.add("&e● &a建筑数量 &f"+team.getFinishedBuildings().size());
             str.add("&d● &a总人口 &f"+team.getTotalPeople());
-            str.add("&b♚ 战局状态 &7基地状态");
+            str.add("&b♚ 战局状态 &7血量/积分");
             str.add("");
 
             List<COITeam> teams = Entry.getGame().getTeams();
@@ -72,9 +73,9 @@ public class COIScoreboard {
 
                 COIBuilding base = coiTeam.getBase();
                 if(base != null){
-                    str.add("&a● "+coiTeam.getType().getColor() + coiTeam.getType().getName()+" &f"+base.getHealth()+"&7/"+base.getMaxHealth());
+                    str.add("&a● "+coiTeam.getType().getColor() + coiTeam.getType().getName()+" &f"+base.getHealth()+"&7/"+coiTeam.getScore());
                 }else{
-                    str.add("&7● "+coiTeam.getType().getColor() + coiTeam.getType().getName()+" &7已被摧毁");
+                    str.add("&7● "+coiTeam.getType().getColor() + coiTeam.getType().getName()+" &c已被摧毁");
                 }
             }
 
@@ -84,6 +85,9 @@ public class COIScoreboard {
             // TODO 标题自动闪动颜色
             obj.setDisplayName("&6&l岛屿冲突");
             obj.applyLines(str);
+
+            // 设置玩家名字颜色
+            p.setDisplayName(LoggerUtils.replaceColor(team.getType().getColor() + p.getName()));
         };
 
         Scoreboard sb = Services.load(ScoreboardProvider.class).getScoreboard();

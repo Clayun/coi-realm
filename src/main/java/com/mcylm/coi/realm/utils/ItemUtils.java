@@ -1,5 +1,6 @@
 package com.mcylm.coi.realm.utils;
 
+import com.mcylm.coi.realm.Entry;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Color;
@@ -261,5 +262,65 @@ public class ItemUtils {
         LeatherArmorMeta meta = (LeatherArmorMeta)item.getItemMeta();
         meta.setColor(color);
         item.setItemMeta(meta);
+    }
+
+    /**
+     * 扣减资源
+     * @param amount
+     * @param inventory
+     * @return
+     */
+    public static int deductionResources(int amount,Inventory inventory) {
+
+        String materialName = Entry.getInstance().getConfig().getString("game.building.material");
+        int playerHadResource = ItemUtils.getItemAmountFromInventory(inventory,Material.getMaterial(materialName));
+
+        // 如果玩家手里的资源数量足够
+        if (playerHadResource >= amount) {
+
+            // 扣减物品
+            ItemStack[] contents =
+                    inventory.getContents();
+
+            // 剩余所需扣减资源数量
+            int deductionCount = amount;
+
+            // 资源类型
+            Material material = Material.getMaterial(materialName);
+            for (ItemStack itemStack : contents) {
+
+                if (itemStack == null) {
+                    continue;
+                }
+
+                // 是资源物品才扣减
+                if (itemStack.getType().equals(material)) {
+                    // 如果当前物品的堆叠数量大于所需资源，就只扣减数量
+                    if (itemStack.getAmount() > deductionCount) {
+                        itemStack.setAmount(itemStack.getAmount() - deductionCount);
+                        return deductionCount;
+                    }
+
+                    // 如果当前物品的堆叠数量等于所需资源，就删物品
+                    if (itemStack.getAmount() == deductionCount) {
+                        inventory.removeItem(itemStack);
+                        return deductionCount;
+                    }
+
+                    // 如果物品的堆叠数量小于所需资源，就删物品，同时计数
+                    if (itemStack.getAmount() < deductionCount) {
+                        // 减去当前物品的库存
+                        deductionCount = deductionCount - itemStack.getAmount();
+                        inventory.removeItem(itemStack);
+                    }
+                }
+
+
+            }
+
+        } else
+            return 0;
+
+        return 0;
     }
 }

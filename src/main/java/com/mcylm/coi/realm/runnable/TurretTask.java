@@ -123,7 +123,7 @@ public class TurretTask {
                     Player p = (Player)e;
 
                     // 先将实体当作玩家判断是否是本小队的
-                    if(!TeamUtils.inTeam(p.getName(),torreta.getTeam())){
+                    if(TeamUtils.getTeamByPlayer(p) != torreta.getTeam()){
                         // 非小队内成员，同时非所属人
                         // 就设置为攻击目标
                         attackPermission = true;
@@ -138,12 +138,6 @@ public class TurretTask {
                         }
                     }
 
-                }else if(e.getType().equals(EntityType.ZOMBIE)
-                    || e.getType().equals(EntityType.SKELETON)
-                    || e.getType().equals(EntityType.SPIDER)
-                    || e.getType().equals(EntityType.CREEPER)){
-                    // 自然生物类的，也可以直接挂上攻击目标
-                    attackPermission = true;
                 }
 
                 if (attackPermission) {

@@ -98,6 +98,37 @@ public class GameListener implements Listener {
 
         }
 
+        // 处理防御塔掉落子弹
+        int drops = 0;
+        COIBuilding building = event.getBuilding();
+
+        if(building instanceof COITurret turret){
+            int i = ItemUtils.deductionResources(drops, turret.getInventory());
+            if(i > 0){
+                String materialName = Entry.getInstance().getConfig().getString("game.building.material");
+
+                // 掉落的东西
+                ItemStack itemStack = new ItemStack(Material.getMaterial(materialName));
+                itemStack.setAmount(i);
+
+                event.getAttackedBlock().getLocation().getWorld()
+                        .dropItem(event.getAttackedBlock().getLocation(),itemStack);
+            }
+
+        }else if(building instanceof COIRepair turret){
+            int i = ItemUtils.deductionResources(drops, turret.getInventory());
+            if(i > 0){
+                String materialName = Entry.getInstance().getConfig().getString("game.building.material");
+
+                // 掉落的东西
+                ItemStack itemStack = new ItemStack(Material.getMaterial(materialName));
+                itemStack.setAmount(i);
+
+                event.getAttackedBlock().getLocation().getWorld()
+                        .dropItem(event.getAttackedBlock().getLocation(),itemStack);
+            }
+        }
+
     }
 
     @EventHandler
@@ -136,6 +167,20 @@ public class GameListener implements Listener {
 
         }
 
+    }
+
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent event){
+
+        Player player = event.getPlayer();
+
+        Block block = event.getBlock();
+        COIBuilding building = BuildData.getBuildingByBlock(block);
+        if (building != null && building.getTeam() != TeamUtils.getTeamByPlayer(player)) {
+            building.damage(player,10,block);
+
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler
@@ -183,6 +228,11 @@ public class GameListener implements Listener {
                 && ItemUtils.getName(item).equals(LoggerUtils.replaceColor("&c选择队伍"))) {
             event.setCancelled(true);
         }
+
+        if (item.getType() == Material.IRON_PICKAXE
+                || item.getType() == Material.DIAMOND_PICKAXE) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler
@@ -195,21 +245,41 @@ public class GameListener implements Listener {
                 || building.getType().equals(COIBuildingType.TURRET_REPAIR)
         ){
             // 如果是塔类型，就打开该塔的弹药库GUI
-            if(building instanceof COITurret turret){
-                event.getPlayer().openInventory(turret.getInventory());
-            }else if(building instanceof COIRepair turret){
-                event.getPlayer().openInventory(turret.getInventory());
+            // 仅限本小队才允许
+            if(building.getTeam() == TeamUtils.getTeamByPlayer(event.getPlayer())){
+                if(building instanceof COITurret turret){
+                    event.getPlayer().openInventory(turret.getInventory());
+                }else if(building instanceof COIRepair turret){
+                    event.getPlayer().openInventory(turret.getInventory());
+                }
             }
+
         }
     }
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
 
-        // 保存物品栏
-        event.setKeepInventory(true);
-        // 禁用掉落
-        event.getDrops().clear();
+        // 禁用部分物品掉落
+        for(ItemStack item : event.getDrops()){
+            if (item.getType() == Material.BOOK
+                    && ItemUtils.getName(item).equals(LoggerUtils.replaceColor("&b建筑蓝图"))) {
+                event.getDrops().remove(item);
+                event.getItemsToKeep().add(item);
+            }
+
+            if (item.getType() == Material.COMPASS
+                    && ItemUtils.getName(item).equals(LoggerUtils.replaceColor("&c选择队伍"))) {
+                event.getDrops().remove(item);
+                event.getItemsToKeep().add(item);
+            }
+
+            if (item.getType() == Material.IRON_PICKAXE
+                    || item.getType() == Material.DIAMOND_PICKAXE) {
+                event.getDrops().remove(item);
+                event.getItemsToKeep().add(item);
+            }
+        }
     }
 
     @EventHandler

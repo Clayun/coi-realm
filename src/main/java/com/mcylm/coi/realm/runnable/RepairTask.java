@@ -160,26 +160,26 @@ public class RepairTask {
                 if (e.getType().equals(EntityType.PLAYER)) {
                     Player p = (Player) e;
 
-                    // 先将实体当作玩家判断是否是本小队的
-                    if (TeamUtils.inTeam(p.getName(), torreta.getTeam())) {
-                        // 小队内成员，同时非所属人
-                        // 就设置为攻击目标
+                    // 如果实体作为玩家非本校对，就把他再当作NPC去判断
+                    if (TeamUtils.checkNPCInTeam(e, torreta.getTeam())) {
+                        // 是本小队的NPC，就锁定攻击
                         attackPermission = true;
+                        LoggerUtils.debug(e.getName() + "是本小队的NPC，锁定回血");
                         health = p.getHealth();
                     }
 
                     if (!attackPermission) {
-                        // 如果实体作为玩家非本校对，就把他再当作NPC去判断
-                        if (!TeamUtils.checkNPCInTeam(e, torreta.getTeam())) {
-                            // 是本小队的NPC，就锁定攻击
+                        // 先将实体当作玩家判断是否是本小队的
+                        if (TeamUtils.getTeamByPlayer(p) == torreta.getTeam()) {
+                            // 小队内成员
+                            // 就设置为回血目标
                             attackPermission = true;
-                            LoggerUtils.debug(e.getName() + "是本小队的NPC，锁定回血");
                             health = p.getHealth();
                         }
                     }
 
                 }else if(e instanceof LivingEntity livingEntity){
-                    if (!TeamUtils.checkNPCInTeam(e, torreta.getTeam())) {
+                    if (TeamUtils.checkNPCInTeam(e, torreta.getTeam())) {
                         // 是本小队的NPC，就锁定攻击
                         attackPermission = true;
                         LoggerUtils.debug(e.getName() + "是本小队的NPC，锁定回血");

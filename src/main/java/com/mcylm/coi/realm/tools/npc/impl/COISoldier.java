@@ -274,7 +274,7 @@ public class COISoldier extends COIEntity implements Commandable {
                 targetFuture = CompletableFuture.supplyAsync(() -> {
                     for (Block b : LocationUtils.selectionRadiusByDistance(getLocation().getBlock(), finalRadius, finalRadius)) {
                         COIBuilding building = BuildData.getBuildingByBlock(b);
-                        if (building != null && building.getTeam() != getCoiNpc().getTeam() && building.getType() != COIBuildingType.WALL_NORMAL) {
+                        if (building != null && building.getTeam() != getCoiNpc().getTeam()) {
                             return new BuildingTarget(building, building.getNearestBlock(getLocation()).getLocation());
                         }
                     }

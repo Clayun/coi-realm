@@ -27,7 +27,7 @@ public class WearUtils {
                 || material == Material.IRON_CHESTPLATE
                 || material == Material.GOLDEN_CHESTPLATE
                 || material == Material.DIAMOND_CHESTPLATE
-                || material == Material.ELYTRA;
+                || material == Material.NETHERITE_CHESTPLATE;
     }
 
     // 判断物品是否可以穿在腿上
@@ -40,7 +40,9 @@ public class WearUtils {
                 || material == Material.CHAINMAIL_LEGGINGS
                 || material == Material.IRON_LEGGINGS
                 || material == Material.GOLDEN_LEGGINGS
-                || material == Material.DIAMOND_LEGGINGS;
+                || material == Material.DIAMOND_LEGGINGS
+                || material == Material.NETHERITE_LEGGINGS
+                ;
     }
 
     // 判断物品是否可以穿在脚上
@@ -53,7 +55,9 @@ public class WearUtils {
                 || material == Material.CHAINMAIL_BOOTS
                 || material == Material.IRON_BOOTS
                 || material == Material.GOLDEN_BOOTS
-                || material == Material.DIAMOND_BOOTS;
+                || material == Material.DIAMOND_BOOTS
+                || material == Material.NETHERITE_BOOTS
+                ;
     }
 
 }

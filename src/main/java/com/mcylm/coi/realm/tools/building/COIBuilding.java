@@ -657,7 +657,7 @@ public abstract class COIBuilding implements Serializable {
         }
 
         // 触发事件
-        BuildingDamagedEvent event = new BuildingDamagedEvent(this,attacker);
+        BuildingDamagedEvent event = new BuildingDamagedEvent(this,attackBlock,attacker);
         Bukkit.getServer().getPluginManager().callEvent(event);
 
         if (damage >= getHealth().get()) {
@@ -688,7 +688,7 @@ public abstract class COIBuilding implements Serializable {
         if (health >= getMaxHealth()) {
             getHealth().set(getMaxHealth());
         } else {
-            getHealth().addAndGet(health);
+            getHealth().getAndAdd(health);
         }
 
         for (Entity e : location.getNearbyEntities(30, 20, 20)) {

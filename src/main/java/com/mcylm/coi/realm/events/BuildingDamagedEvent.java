@@ -3,6 +3,7 @@ package com.mcylm.coi.realm.events;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Event;
@@ -16,6 +17,9 @@ public class BuildingDamagedEvent extends Event {
 
     // 被攻击的建筑
     private COIBuilding building;
+
+    // 被攻击的方块
+    private Block attackedBlock;
 
     // 攻击者
     private Entity entity;

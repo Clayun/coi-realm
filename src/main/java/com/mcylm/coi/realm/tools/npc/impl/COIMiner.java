@@ -132,10 +132,11 @@ public class COIMiner extends COIEntity {
                         // 挥动手作为动作动画
                         swingMainHand(1);
 
-                        LivingEntity entity = (LivingEntity) getNpc().getEntity();
                         BlockBreaker.BlockBreakerConfiguration blockBreakerConfiguration = new BlockBreaker.BlockBreakerConfiguration();
                         blockBreakerConfiguration.radius(3);
                         blockBreakerConfiguration.item(new ItemStack(Material.IRON_PICKAXE));
+
+                        Location loc = targetBlock.getLocation();
 
                         blockBreakerConfiguration.callback(
                                 new BukkitRunnable() {
@@ -145,6 +146,14 @@ public class COIMiner extends COIEntity {
                                         // 拆除完成
                                         isBreaking = false;
 
+                                        String material = Entry.getInstance().getConfig().getString("game.building.material");
+
+                                        int level = getCoiNpc().getBuilding().getLevel();
+                                        int num = level * 10;
+
+                                        ItemStack itemStack = new ItemStack(Material.getMaterial(material));
+                                        itemStack.setAmount(num);
+                                        loc.getWorld().dropItem(loc,itemStack);
                                     }
                                 }
                         );
