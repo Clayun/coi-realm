@@ -225,6 +225,11 @@ public class GameListener implements Listener {
     }
 
     private void waitDeath(Player p){
+
+        if(!p.isOnline()){
+            return;
+        }
+
         COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(p);
 
         if(coiPlayer.isDeath()){
