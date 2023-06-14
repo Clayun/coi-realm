@@ -223,10 +223,12 @@ public class COIRepair extends COIBuilding {
 
     private void upgrade(){
         // 最小伤害
-        this.minDamage = this.minDamage + level;
+        this.minDamage = this.minDamage + 1;
         // 最大伤害
-        this.maxDamage = this.maxDamage + level;
+        this.maxDamage = this.maxDamage + 1;
         // 每次攻击的间隔时间
-        this.coolDown = this.coolDown - level;
+        this.coolDown = this.coolDown - 1;
+        // 弹药消耗增大
+        this.ammunitionConsumption = this.ammunitionConsumption + 1;
     }
 }

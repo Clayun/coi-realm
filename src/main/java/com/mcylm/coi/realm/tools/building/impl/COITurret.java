@@ -202,12 +202,14 @@ public class COITurret extends COIBuilding {
      */
     private void upgrade(){
         // 最小伤害
-        this.minDamage = this.minDamage + level;
+        this.minDamage = this.minDamage + 1;
         // 最大伤害
-        this.maxDamage = this.maxDamage + level;
+        this.maxDamage = this.maxDamage + 1;
         // 击退距离
-        this.repulsionDistance = this.repulsionDistance + level;
+        this.repulsionDistance = this.repulsionDistance + 1;
         // 每次攻击的间隔时间
-        this.coolDown = this.coolDown - level;
+        this.coolDown = this.coolDown - 1;
+        // 攻击消耗增大
+        this.ammunitionConsumption = this.ammunitionConsumption + 1;
     }
 }
