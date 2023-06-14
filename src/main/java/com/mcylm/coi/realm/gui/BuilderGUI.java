@@ -1,6 +1,7 @@
 package com.mcylm.coi.realm.gui;
 
 import com.mcylm.coi.realm.Entry;
+import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COIUnlockType;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
@@ -69,11 +70,12 @@ public class BuilderGUI{
                     ItemStack item = building.getType().getItemType();
                     // 判断是否达到解锁条件
                     if(COIUnlockType.checkUnlock(team,building.getType())){
+
                         items.add(ItemStackBuilder.of(item.clone())
                                 .name(building.getType().getName())
                                 .amount(getBuildingNum(team.getBuildingByType(building.getType())))
                                 .lore("")
-                                .lore("&f> &a可造数量： &c" + team.getBuildingByType(building.getType()).size() +"&7/"+building.getMaxBuild())
+                                .lore("&f> &a可造数量： &c" + team.getBuildingByType(building.getType()).size() +"&7/"+getMaxBuild(building,team))
                                 .lore("&f> &a所需耗材： &c" + building.getConsume())
                                 .lore("&f> &a拥有材料： &c" + building.getPlayerHadResource(p))
                                 .lore("&f> &a介绍：")
@@ -83,7 +85,7 @@ public class BuilderGUI{
                                 .build(() -> {
                                     // 点击时触发下面的方法
 
-                                    if(team.getBuildingByType(building.getType()).size() < building.getMaxBuild()){
+                                    if(team.getBuildingByType(building.getType()).size() < getMaxBuild(building,team)){
                                         // 建造数量没有满的时候，可以建造
                                         building.setTeam(team);
                                         // building.build(location,getPlayer());
@@ -133,6 +135,27 @@ public class BuilderGUI{
 
 
 
+    }
+
+    /**
+     * 获取建筑最大建造数量
+     * @param building
+     * @param team
+     * @return
+     */
+    private int getMaxBuild(COIBuilding building,COITeam team){
+        Integer maxBuild = building.getMaxBuild();
+
+        if(building.getType().equals(COIBuildingType.TURRET_NORMAL)){
+            int level = team.getBase().getLevel();
+
+            // 防御塔最大建造数量
+            if(level <= maxBuild){
+                maxBuild = level;
+            }
+        }
+
+        return maxBuild;
     }
 
     /**

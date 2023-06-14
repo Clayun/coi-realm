@@ -98,6 +98,22 @@ public class COIGame {
     }
 
     /**
+     * 获取COI玩家数据
+     * @param p
+     * @return
+     */
+    public COIPlayer getCOIPlayer(Player p){
+        COIPlayer coiPlayer = coiPlayers.get(p);
+
+        if(coiPlayer == null){
+            coiPlayer = new COIPlayer(p);
+            coiPlayers.put(p,coiPlayer);
+        }
+
+        return coiPlayer;
+    }
+
+    /**
      * 获取获得胜利的队伍
      * @return
      */

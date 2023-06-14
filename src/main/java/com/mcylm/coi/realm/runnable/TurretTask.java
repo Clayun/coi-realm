@@ -7,10 +7,7 @@ import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.FireworkEffect;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
@@ -123,7 +120,9 @@ public class TurretTask {
                     Player p = (Player)e;
 
                     // 先将实体当作玩家判断是否是本小队的
-                    if(TeamUtils.getTeamByPlayer(p) != torreta.getTeam()){
+                    // 同时将观察者剔除
+                    if(TeamUtils.getTeamByPlayer(p) != torreta.getTeam()
+                        && p.getGameMode() != GameMode.SPECTATOR){
                         // 非小队内成员，同时非所属人
                         // 就设置为攻击目标
                         attackPermission = true;
@@ -137,8 +136,9 @@ public class TurretTask {
                             LoggerUtils.debug(e.getName()+"是本小队的NPC，取消锁定攻击");
                         }
                     }
-
                 }
+
+
 
                 if (attackPermission) {
                     // 如果是攻击目标，就开打

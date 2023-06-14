@@ -8,6 +8,7 @@ import com.mcylm.coi.realm.enums.COIServerMode;
 import com.mcylm.coi.realm.events.BuildingDamagedEvent;
 import com.mcylm.coi.realm.events.BuildingDestroyedEvent;
 import com.mcylm.coi.realm.events.BuildingTouchEvent;
+import com.mcylm.coi.realm.player.COIPlayer;
 import com.mcylm.coi.realm.tools.attack.target.impl.BuildingTarget;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.impl.COIRepair;
@@ -22,6 +23,7 @@ import me.lucko.helper.Events;
 import net.citizensnpcs.api.CitizensAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -213,7 +215,60 @@ public class GameListener implements Listener {
             TeamUtils.tpSpawner(p);
             // 初始化玩家背包
             Entry.getGame().initPlayerGaming(p);
+        }else{
+            // 玩家已经加入了小队，要判断是否复活了
+            // 死亡记录
+            COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(event.getPlayer());
+
+            // 获取死亡倒计时
+            int resurrectionCountdown = coiPlayer.getResurrectionCountdown();
+
+            // 传送到地狱小黑屋
+            Location clone = event.getPlayer().getLocation().clone();
+            clone.setY(-1000);
+            event.getPlayer().setNoDamageTicks(999);
+            event.getPlayer().teleport(clone);
+
+            new BukkitRunnable(){
+
+                int count = 0;
+                @Override
+                public void run() {
+                    count++;
+                    if(count == resurrectionCountdown){
+
+                        // 传送回出生点
+                        COITeam team = TeamUtils.getTeamByPlayer(event.getPlayer());
+                        event.getPlayer().teleport(team.getSpawner());
+                        // 取消无敌
+                        event.getPlayer().setNoDamageTicks(0);
+                        cancel();
+                    }else{
+                        int countDown = resurrectionCountdown - count;
+
+                        // TITLE
+                        Title.Times times = Title.Times.times(Ticks.duration(0L), Ticks.duration(70L), Ticks.duration(0L));
+
+                        Title title = Title.title(
+                                Component.text(LoggerUtils.replaceColor("&f"+countDown+" &c马上复活！")),
+                                Component.text(LoggerUtils.replaceColor("&f失败乃兵家常事，少侠不必气馁！")),
+                                times);
+
+                        if(event.getPlayer().isOnline()){
+                            event.getPlayer().showTitle(title);
+                        }else{
+                            // 离线了就关闭进程
+                            cancel();
+                        }
+
+                    }
+
+
+
+                }
+            }.runTaskTimerAsynchronously(Entry.getInstance(),0,20);
         }
+
     }
 
     @EventHandler
@@ -260,26 +315,68 @@ public class GameListener implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
 
-        // 禁用部分物品掉落
+        String material = Entry.getInstance().getConfig().getString("game.building.material");
+
+        // 仅掉落绿宝石，其他的都保留
         for(ItemStack item : event.getDrops()){
-            if (item.getType() == Material.BOOK
-                    && ItemUtils.getName(item).equals(LoggerUtils.replaceColor("&b建筑蓝图"))) {
-                event.getDrops().remove(item);
-                event.getItemsToKeep().add(item);
-            }
-
-            if (item.getType() == Material.COMPASS
-                    && ItemUtils.getName(item).equals(LoggerUtils.replaceColor("&c选择队伍"))) {
-                event.getDrops().remove(item);
-                event.getItemsToKeep().add(item);
-            }
-
-            if (item.getType() == Material.IRON_PICKAXE
-                    || item.getType() == Material.DIAMOND_PICKAXE) {
+            if (item.getType() != Material.getMaterial(material)) {
                 event.getDrops().remove(item);
                 event.getItemsToKeep().add(item);
             }
         }
+
+        // 死亡记录
+        COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(event.getPlayer());
+        coiPlayer.setDeathCount(coiPlayer.getDeathCount() + 1);
+        coiPlayer.setDeath(true);
+
+        // 获取死亡倒计时
+        int resurrectionCountdown = coiPlayer.getResurrectionCountdown();
+
+        // 传送到地狱小黑屋
+        Location clone = event.getPlayer().getLocation().clone();
+        clone.setY(-1000);
+        event.getPlayer().setNoDamageTicks(999);
+        event.getPlayer().teleport(clone);
+        
+        new BukkitRunnable(){
+
+            int count = 0;
+            @Override
+            public void run() {
+                count++;
+                if(count == resurrectionCountdown){
+
+                    // 传送回出生点
+                    COITeam team = TeamUtils.getTeamByPlayer(event.getPlayer());
+                    event.getPlayer().teleport(team.getSpawner());
+                    // 取消无敌
+                    event.getPlayer().setNoDamageTicks(0);
+                    cancel();
+                }else{
+                    int countDown = resurrectionCountdown - count;
+
+                    // TITLE
+                    Title.Times times = Title.Times.times(Ticks.duration(0L), Ticks.duration(70L), Ticks.duration(0L));
+
+                    Title title = Title.title(
+                            Component.text(LoggerUtils.replaceColor("&f"+countDown+" &c马上复活！")),
+                            Component.text(LoggerUtils.replaceColor("&f失败乃兵家常事，少侠不必气馁！")),
+                            times);
+
+                    if(event.getPlayer().isOnline()){
+                        event.getPlayer().showTitle(title);
+                    }else{
+                        // 离线了就关闭进程
+                        cancel();
+                    }
+
+                }
+                
+                
+                
+            }
+        }.runTaskTimerAsynchronously(Entry.getInstance(),0,20);
     }
 
     @EventHandler

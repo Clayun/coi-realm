@@ -56,11 +56,11 @@ public class COIScoreboard {
 
             str.add("&f<&aLV."+baseLevel+"&f> "+team.getType().getColor()+team.getType().getName());
             str.add("&e团队战分&7(奖励) &f"+team.getScore());
-            str.add("&b♚ 团队资源 &7资产明细");
+            str.add("&b♚ 团队资源 &7资产");
             str.add("&a● &a绿宝石 &f"+team.getPublicEmerald());
             str.add("&e● &a建筑数量 &f"+team.getFinishedBuildings().size());
             str.add("&d● &a总人口 &f"+team.getTotalPeople());
-            str.add("&b♚ 战局状态 &7血量/积分");
+            str.add("&b♚ 战局状态 &7基地/积分");
             str.add("");
 
             List<COITeam> teams = Entry.getGame().getTeams();
@@ -73,9 +73,9 @@ public class COIScoreboard {
 
                 COIBuilding base = coiTeam.getBase();
                 if(base != null){
-                    str.add("&a● "+coiTeam.getType().getColor() + coiTeam.getType().getName()+" &f"+base.getHealth()+"&7/"+coiTeam.getScore());
+                    str.add("&a● "+coiTeam.getType().getColor() + coiTeam.getType().getName()+" &f"+base.getHealth()+"&e/"+coiTeam.getScore());
                 }else{
-                    str.add("&7● "+coiTeam.getType().getColor() + coiTeam.getType().getName()+" &c已被摧毁");
+                    str.add("&7● "+coiTeam.getType().getColor() + coiTeam.getType().getName()+" &7&m已被摧毁");
                 }
             }
 
