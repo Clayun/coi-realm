@@ -62,9 +62,9 @@ public class COITurret extends COIBuilding {
         // 最大伤害
         this.maxDamage = 6d;
         // 击退距离
-        this.repulsionDistance = 2d;
+        this.repulsionDistance = 0d;
         // 每次攻击的间隔时间
-        this.coolDown = 2;
+        this.coolDown = 3;
         // 攻击半径，如果发射方块和目标之间有其他方块挡着，是不会触发攻击的
         this.radius = 30;
         // 弹药库，如果里面有弹药，才能正常攻击，否则无法攻击
@@ -104,8 +104,15 @@ public class COITurret extends COIBuilding {
 
     @Override
     public void upgradeBuildSuccess() {
-
         // 升级成功
+        super.upgradeBuildSuccess();
+        // 先关闭
+        Bukkit.getScheduler().cancelTask(this.getTurretCoolDown().getTaskId());
+        // 数据升级
+        upgrade();
+        // 重启防御塔
+        this.turretCoolDown = new TurretTask(this);
+        this.turretCoolDown.action();
     }
 
     @Override
@@ -188,5 +195,19 @@ public class COITurret extends COIBuilding {
             }
         });
 
+    }
+
+    /**
+     * 升级
+     */
+    private void upgrade(){
+        // 最小伤害
+        this.minDamage = this.minDamage + level;
+        // 最大伤害
+        this.maxDamage = this.maxDamage + level;
+        // 击退距离
+        this.repulsionDistance = this.repulsionDistance + level;
+        // 每次攻击的间隔时间
+        this.coolDown = this.coolDown - level;
     }
 }
