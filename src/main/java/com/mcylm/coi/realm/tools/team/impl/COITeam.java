@@ -25,6 +25,7 @@ import org.bukkit.scoreboard.Scoreboard;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -367,10 +368,14 @@ public class COITeam implements Team {
     public int getPublicEmerald(){
         int count = 0;
 
+        List<Location> chests = getResourcesChests();
+
+        HashSet<Location> set = new HashSet<>(chests);
+
         String material = Entry.getInstance().getConfig().getString("game.building.material");
 
         // 总存储箱子
-        for(Location loc : getResourcesChests()){
+        for(Location loc : set){
             int num = ItemUtils.getItemAmountFromContainer(loc, Material.getMaterial(material));
             count = count + num;
         }

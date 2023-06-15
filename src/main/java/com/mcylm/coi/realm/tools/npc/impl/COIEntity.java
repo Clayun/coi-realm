@@ -1109,8 +1109,14 @@ public class COIEntity implements AI {
                 }
 
                 i++;
-                // 挥动手
-                ((LivingEntity) getNpc().getEntity()).swingMainHand();
+
+                if(isAlive()){
+                    // 挥动手
+                    ((LivingEntity) getNpc().getEntity()).swingMainHand();
+                }else{
+                    this.cancel();
+                }
+
 
                 if(i == ticks / period){
                     this.cancel();
