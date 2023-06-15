@@ -22,6 +22,20 @@ import java.util.List;
 @AllArgsConstructor
 public enum COIPropType {
 
+    TOWN_PORTAL(
+            "TOWN_PORTAL",
+            "回城卷轴",
+            new ItemStack(Material.FLOWER_BANNER_PATTERN),
+            1,
+            "右键使用开始施法回城," +
+                    "10秒内不能受到伤害或者移动," +
+                    "否则施法会被打断",
+            64,
+            COIBuildingType.FORGE,
+            1,
+            1
+    ),
+
     // 武器系列
     STONE_SWORD(
             "STONE_SWORD",

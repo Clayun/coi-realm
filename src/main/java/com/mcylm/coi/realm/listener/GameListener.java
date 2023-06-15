@@ -11,13 +11,17 @@ import com.mcylm.coi.realm.enums.COIServerMode;
 import com.mcylm.coi.realm.events.BuildingDamagedEvent;
 import com.mcylm.coi.realm.events.BuildingDestroyedEvent;
 import com.mcylm.coi.realm.events.BuildingTouchEvent;
+import com.mcylm.coi.realm.gui.BuildEditGUI;
+import com.mcylm.coi.realm.gui.BuilderGUI;
 import com.mcylm.coi.realm.item.COIJetpack;
+import com.mcylm.coi.realm.item.COITownPortal;
 import com.mcylm.coi.realm.player.COIPlayer;
 import com.mcylm.coi.realm.tools.attack.target.impl.BuildingTarget;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.impl.COIRepair;
 import com.mcylm.coi.realm.tools.building.impl.COITurret;
 import com.mcylm.coi.realm.tools.data.metadata.BuildData;
+import com.mcylm.coi.realm.tools.selection.Selector;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.LocationUtils;
@@ -301,8 +305,28 @@ public class GameListener implements Listener {
             }
         }
 
+    }
 
+    @EventHandler
+    public void onUseItem(PlayerInteractEvent event) {
 
+        Action action = event.getAction();
+
+        //判断是右手，同时避免触发两次
+        if ((Action.RIGHT_CLICK_AIR == action || Action.RIGHT_CLICK_BLOCK == action) && event.getHand().equals(EquipmentSlot.HAND)
+                //空手触发
+                && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.FLOWER_BANNER_PATTERN
+                && ItemUtils.getName(event.getPlayer().getInventory().getItemInMainHand()).equals(LoggerUtils.replaceColor(COIPropType.TOWN_PORTAL.getName()))
+        ) {
+
+            // 开始使用卷轴
+            // 删除卷轴
+            event.getPlayer().getInventory().setItemInMainHand(null);
+
+            // 开始施法
+            COITownPortal townPortal = new COITownPortal();
+            townPortal.back(event.getPlayer());
+        }
 
     }
 
