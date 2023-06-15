@@ -61,7 +61,7 @@ public class COIScoreboard {
             str.add("&e● &a建筑数量 &f"+team.getFinishedBuildings().size());
             str.add("&d● &a总人口 &f"+team.getTotalPeople());
             str.add("&b♚ 战局状态 &7基地/积分");
-            str.add("");
+            str.add(" ");
 
             List<COITeam> teams = Entry.getGame().getTeams();
 
@@ -85,9 +85,6 @@ public class COIScoreboard {
             // TODO 标题自动闪动颜色
             obj.setDisplayName("&6&l岛屿冲突");
             obj.applyLines(str);
-
-            // 设置玩家名字颜色
-            p.setDisplayName(LoggerUtils.replaceColor(team.getType().getColor() + p.getName()));
         };
 
         Scoreboard sb = Services.load(ScoreboardProvider.class).getScoreboard();

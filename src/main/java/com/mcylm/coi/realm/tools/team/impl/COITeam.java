@@ -12,6 +12,8 @@ import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -76,7 +78,7 @@ public class COITeam implements Team {
     public COITeam(COITeamType type,Location spawner) {
         this.type = type;
         // 初始化本小队的计分板
-        registerScoreboardTeam();
+        registerScoreboardTeam(type);
         this.players = new ArrayList<>();
         this.playersCache = new ArrayList<>();
         this.foodChests = new ArrayList<>();
@@ -93,12 +95,12 @@ public class COITeam implements Team {
      * 注册小队
      * @return
      */
-    private void registerScoreboardTeam() {
+    private void registerScoreboardTeam(COITeamType type) {
         org.bukkit.scoreboard.Team team = Entry.getInstance().getScoreboard().getTeam(getType().getCode());
         if (team == null) {
             team = Entry.getInstance().getScoreboard().registerNewTeam(getType().getCode());
             team.setAllowFriendlyFire(false);
-            team.setColor(getType().getChatColor());
+            team.color(type.getNamedTextColor());
         }
     }
 
