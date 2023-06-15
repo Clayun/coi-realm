@@ -31,8 +31,6 @@ game:
     muzzle-material: 'AMETHYST_BLOCK'
   # 每个小组最大玩家数量
   max-group-players: 5
-  # 矿物重生时间
-  mineral-restore-timer: 10
   # 团队总数，最多6个，最少2个
   max-teams: 3
   # 最少多少个玩家开始游戏
