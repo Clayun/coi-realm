@@ -1,6 +1,7 @@
 package com.mcylm.coi.realm.enums;
 
 import com.mcylm.coi.realm.Entry;
+import com.mcylm.coi.realm.item.COIJetpack;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,36 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public enum COIPropType {
+
+
+    JET_PACK(
+            "JET_PACK",
+            "空气动力鞋",
+            new ItemStack(Material.CHAINMAIL_BOOTS),
+            "这是可以帮你起飞的好东西。" +
+                    "但是小心别把自己摔死了！" +
+                    "这玩意可不防摔！！" +
+                    "每次使用消耗8个资源，" +
+                    "请务必配合*鞘翅*使用。",
+            2000,
+            COIBuildingType.FORGE,
+            1,
+            1
+    ),
+
+    ELYTRA(
+            "ELYTRA",
+            "鞘翅",
+            new ItemStack(Material.ELYTRA),
+            "这是可以帮你在天上滑行的好东西。" +
+                    "但是小心别把自己摔死了！" +
+                    "这玩意可不防摔！！" +
+                    "可以配合*喷气动力鞋*使用。",
+            2000,
+            COIBuildingType.FORGE,
+            1,
+            1
+    ),
 
     // 武器系列
     STONE_SWORD(

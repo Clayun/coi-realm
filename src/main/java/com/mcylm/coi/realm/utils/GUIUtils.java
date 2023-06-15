@@ -157,7 +157,7 @@ public class GUIUtils {
         for (int i = 0; i < count; i++) {
             int start = i * maxLineLength;
             int end = Math.min(start + maxLineLength, length);
-            lines.add("  &6" +introduce.substring(start, end));
+            lines.add(LoggerUtils.replaceColor("  &6" +introduce.substring(start, end)));
         }
 
         return lines;

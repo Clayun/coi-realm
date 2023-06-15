@@ -10,10 +10,7 @@ import com.mcylm.coi.realm.tools.building.LineBuild;
 import com.mcylm.coi.realm.tools.selection.AreaSelector;
 import com.mcylm.coi.realm.tools.selection.LineSelector;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
-import com.mcylm.coi.realm.utils.GUIUtils;
-import com.mcylm.coi.realm.utils.LoggerUtils;
-import com.mcylm.coi.realm.utils.SkullUtils;
-import com.mcylm.coi.realm.utils.TeamUtils;
+import com.mcylm.coi.realm.utils.*;
 import lombok.AllArgsConstructor;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Item;
@@ -62,7 +59,7 @@ public class ForgeGUI {
             for (COIPropType prop : COIPropType.getProps()) {
 
                 // 物品模型
-                ItemStack item = prop.getItemType();
+                ItemStack item = prop.getItemType().clone();
 
                 // 判断是否达到解锁条件
                 if(COIPropType.checkUnlock(team,building.getType())){
@@ -86,6 +83,8 @@ public class ForgeGUI {
                                 if(b){
                                     // 扣除成功
                                     // 交付物品
+                                    ItemUtils.rename(item,prop.getName());
+                                    ItemUtils.setLore(item,GUIUtils.autoLineFeed(prop.getIntroduce()));
                                     p.getInventory().addItem(item);
                                     LoggerUtils.sendMessage("物品打造完成！", p);
 

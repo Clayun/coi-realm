@@ -2,12 +2,12 @@ package com.mcylm.coi.realm.cmd;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIBuildingType;
+import com.mcylm.coi.realm.enums.COIPropType;
 import com.mcylm.coi.realm.gui.ChooseTeamGUI;
+import com.mcylm.coi.realm.item.COIJetpack;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.npc.monster.COIPillagerCreator;
-import com.mcylm.coi.realm.utils.LoggerUtils;
-import com.mcylm.coi.realm.utils.SkullUtils;
-import com.mcylm.coi.realm.utils.TeamUtils;
+import com.mcylm.coi.realm.utils.*;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -27,6 +27,17 @@ public class DebugCommand implements CommandExecutor {
             LoggerUtils.sendMessage("这个指令只能让玩家使用。",commandSender);
             return false;
         }
+
+        if(args.length == 0){
+            LoggerUtils.sendMessage("参数不对。",commandSender);
+            return false;
+        }
+
+        if(!commandSender.isOp()){
+            LoggerUtils.sendMessage("没有权限。",commandSender);
+            return false;
+        }
+
         if (args[0].equalsIgnoreCase("team")) {
             new ChooseTeamGUI(player).open();
         }
@@ -46,10 +57,10 @@ public class DebugCommand implements CommandExecutor {
         }
 
         if(args[0].equalsIgnoreCase("test")){
-            ItemStack head = SkullUtils.createPlayerHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGFkOTQzZDA2MzM0N2Y5NWFiOWU5ZmE3NTc5MmRhODRlYzY2NWViZDIyYjA1MGJkYmE1MTlmZjdkYTYxZGIifX19");
-
-            player.getInventory().addItem(head);
-            player.updateInventory();
+            ItemStack item = COIPropType.JET_PACK.getItemType().clone();
+            ItemUtils.rename(item,COIPropType.JET_PACK.getName());
+            ItemUtils.setLore(item, GUIUtils.autoLineFeed(COIPropType.JET_PACK.getIntroduce()));
+            player.getInventory().addItem(item);
         }
 
         return true;

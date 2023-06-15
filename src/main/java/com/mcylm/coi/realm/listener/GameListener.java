@@ -1,13 +1,17 @@
 package com.mcylm.coi.realm.listener;
 
+import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
+import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.clipboard.PlayerClipboard;
 import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COIGameStatus;
+import com.mcylm.coi.realm.enums.COIPropType;
 import com.mcylm.coi.realm.enums.COIServerMode;
 import com.mcylm.coi.realm.events.BuildingDamagedEvent;
 import com.mcylm.coi.realm.events.BuildingDestroyedEvent;
 import com.mcylm.coi.realm.events.BuildingTouchEvent;
+import com.mcylm.coi.realm.item.COIJetpack;
 import com.mcylm.coi.realm.player.COIPlayer;
 import com.mcylm.coi.realm.tools.attack.target.impl.BuildingTarget;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
@@ -46,6 +50,7 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -92,7 +97,6 @@ public class GameListener implements Listener {
                 }else{
                     // 普通建筑被攻击
                     p.sendActionBar(Component.text(LoggerUtils.replaceColor(message)));
-//                    LoggerUtils.sendMessage(LoggerUtils.replaceColor(message),p);
                 }
 
 
@@ -224,6 +228,71 @@ public class GameListener implements Listener {
 
     }
 
+    @EventHandler
+    public void onPlayerArmorChange(PlayerArmorChangeEvent event) {
+        Player player = event.getPlayer();
+        ItemStack itemStack = event.getNewItem();
+        if (itemStack == null) {
+            // 这里可以添加一些其他的判断逻辑
+            return;
+        }
+
+        COITeam team = TeamUtils.getTeamByPlayer(player);
+
+        if(team != null){
+            if (itemStack.getType().equals(Material.LEATHER_HELMET)
+                || itemStack.getType().equals(Material.LEATHER_CHESTPLATE)
+                || itemStack.getType().equals(Material.LEATHER_LEGGINGS)
+                || itemStack.getType().equals(Material.LEATHER_BOOTS)
+            ) {
+                // 皮革的，就换成小队颜色
+                if (team.getType().getLeatherColor() != null) {
+                    ItemUtils.changeColorForLeather(itemStack, team.getType().getLeatherColor());
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onJump(PlayerJumpEvent event){
+
+        // 判断是否穿了喷气背包
+        Player player = event.getPlayer();
+
+        @Nullable ItemStack[] armorContents = player.getInventory().getArmorContents();
+
+        for(ItemStack itemStack : armorContents){
+            if (itemStack != null && itemStack.getType() != Material.AIR) {
+                // 玩家穿了胸甲，可以进行相关操作
+                // 判断胸甲是否是喷气背包
+                if(itemStack.getItemMeta().getDisplayName().equals(LoggerUtils.replaceColor(COIPropType.JET_PACK.getName()))){
+                    COIJetpack jetpack = new COIJetpack();
+
+                    new BukkitRunnable(){
+
+                        int i = 0;
+                        @Override
+                        public void run() {
+                            i++;
+
+                            jetpack.jet(player);
+
+                            if(i == 2){
+                                cancel();
+                            }
+                        }
+                    }.runTaskTimerAsynchronously(Entry.getInstance(),0,10);
+                }
+
+                return;
+            }
+        }
+
+
+
+
+    }
+
     private void waitDeath(Player p){
 
         if(!p.isOnline()){
@@ -241,6 +310,7 @@ public class GameListener implements Listener {
             clone.setY(20);
             p.setNoDamageTicks(20 * (resurrectionCountdown + 1));
             p.teleport(clone);
+            p.setAllowFlight(true);
 
             new BukkitRunnable(){
 
@@ -261,6 +331,7 @@ public class GameListener implements Listener {
                         // 取消无敌
                         p.setNoDamageTicks(0);
                         coiPlayer.setDeath(false);
+                        p.setAllowFlight(false);
                         cancel();
                     }else{
                         int countDown = resurrectionCountdown - count;
