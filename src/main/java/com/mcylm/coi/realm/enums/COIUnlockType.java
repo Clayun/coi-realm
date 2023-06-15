@@ -76,11 +76,11 @@ public enum COIUnlockType {
             "&c尚未解锁 &b基础防御塔",
             SkullUtils.createPlayerHead(COIHeadType.LOCK_CHEST.getTextures()),
             """
-            升级基地到2级解锁""",
+            基地到1级解锁""",
             COIBuildingType.TURRET_NORMAL,
             COIBuildingType.BASE,
             1,
-            2
+            1
     ),
 
     // 修复塔解锁

@@ -78,8 +78,7 @@ public enum COIBuildingType {
             SkullUtils.createPlayerHead(COIHeadType.KILL.getTextures()),
             """
             防御炮塔会自动检测周围的地方单位,并自动攻击.
-            小提示：看到敌方防御塔,可以尝试躲找个掩体,
-            在掩体后面是不会被防御塔攻击的哦""",
+            可建造数量等于基地等级""",
             5,
             5L),
     TURRET_REPAIR(
