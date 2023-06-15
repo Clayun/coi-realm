@@ -166,7 +166,7 @@ public class BasicGameTask implements GameTaskApi {
                     float progress = countdown.floatValue() / gamingTimer.floatValue();
 
                     if(count >= 3){
-                        bossBar.name(Component.text(LoggerUtils.replaceColor("&c战斗还有 &f" + convertSecondsToHHmmss(countdown) + " &c！")));
+                        bossBar.name(Component.text(LoggerUtils.replaceColor("&c战斗还有 &f" + convertSecondsToHHmmss(countdown) + " &c结束！")));
                         bossBar.progress(progress);
 
                         // 游戏在进行中，倒计时需要在 boss bar 中展示
@@ -174,7 +174,7 @@ public class BasicGameTask implements GameTaskApi {
                             p.showBossBar(bossBar);
                         }
                     }else{
-                        bossBar.name(Component.text(LoggerUtils.replaceColor("&c战斗开始了，请先快速获取战备物资！")));
+                        bossBar.name(Component.text(LoggerUtils.replaceColor("&c战斗开始了，&6请先快速获取战备物资！")));
                         bossBar.progress(progress);
 
                         // 游戏在进行中，倒计时需要在 boss bar 中展示
