@@ -793,7 +793,10 @@ public abstract class COIBuilding implements Serializable {
                         Entry.runSync(() -> {
                             if (hologram.isDeleted()) return;
                             line.setText(getHealthBarText(getMaxHealth(), getHealth().get(), getHealthBarLength()));
-                            hologram.setPosition(loc.get(finalDistance).add(0,0.5,0));
+
+                            if(loc.size() > finalDistance){
+                                hologram.setPosition(loc.get(finalDistance).add(0,0.5,0));
+                            }
                         });
                     }
                 }
