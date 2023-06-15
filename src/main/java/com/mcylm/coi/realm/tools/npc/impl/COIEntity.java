@@ -995,7 +995,18 @@ public class COIEntity implements AI {
 
 
         for (ItemStack next : inventory) {
-            if (next != null) location.getWorld().dropItem(location, next);
+            if (next != null) {
+                if(WearUtils.canWearOnHead(next)
+                    || WearUtils.canWearOnBody(next)
+                    || WearUtils.canWearOnLegs(next)
+                    || WearUtils.canWearOnFeet(next)
+                ){
+                    // 武器装备类的，不允许
+                }else {
+                    location.getWorld().dropItem(location, next);
+                }
+
+            }
         }
 
         // 清空缓存

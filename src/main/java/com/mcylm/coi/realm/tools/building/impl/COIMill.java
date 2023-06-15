@@ -3,6 +3,7 @@ package com.mcylm.coi.realm.tools.building.impl;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.config.BuildingConfig;
+import com.mcylm.coi.realm.tools.npc.COIFarmerCreator;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.tools.npc.impl.COIFarmer;
 import com.mcylm.coi.realm.utils.GUIUtils;
@@ -91,7 +92,7 @@ public class COIMill extends COIBuilding {
      *
      * @return
      */
-    private COIMinerCreator initFarmerCreator() {
+    private COIFarmerCreator initFarmerCreator() {
 
         // 背包内的物品
         Inventory inventory = GUIUtils.createNpcInventory(3);
@@ -107,7 +108,7 @@ public class COIMill extends COIBuilding {
         pickItemMaterials.add("BREAD");
         pickItemMaterials.add("WHEAT");
 
-        COIMinerCreator npcCreator = new COIMinerCreator(getChestsLocation());
+        COIFarmerCreator npcCreator = new COIFarmerCreator(getChestsLocation());
         npcCreator.setInventory(inventory);
         npcCreator.setNpcType(EntityType.PILLAGER);
         npcCreator.setDisguiseType(DisguiseType.PLAYER);

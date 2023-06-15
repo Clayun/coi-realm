@@ -117,6 +117,11 @@ public class COIForge extends COIBuilding {
                         npc.getInventory().addItem(new ItemStack(Material.NETHERITE_CHESTPLATE));
                         npc.getInventory().addItem(new ItemStack(Material.NETHERITE_LEGGINGS));
                         npc.getInventory().addItem(new ItemStack(Material.NETHERITE_BOOTS));
+                    }else if(level == 5){
+                        npc.getInventory().addItem(new ItemStack(Material.NETHERITE_HELMET));
+                        npc.getInventory().addItem(new ItemStack(Material.NETHERITE_CHESTPLATE));
+                        npc.getInventory().addItem(new ItemStack(Material.NETHERITE_LEGGINGS));
+                        npc.getInventory().addItem(new ItemStack(Material.NETHERITE_BOOTS));
                     }
 
                 }
