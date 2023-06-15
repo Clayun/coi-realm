@@ -60,7 +60,7 @@ public class COIScoreboard {
             str.add("&a● &a绿宝石 &f"+team.getPublicEmerald());
             str.add("&e● &a建筑数量 &f"+team.getFinishedBuildings().size());
             str.add("&d● &a总人口 &f"+team.getTotalPeople());
-            str.add("&b♚ 战局状态 &7基地/积分");
+            str.add("&b♚ 队伍 &7基地/积分");
             str.add(" ");
 
             List<COITeam> teams = Entry.getGame().getTeams();
