@@ -329,7 +329,7 @@ public enum COIPropType {
      * @param type
      * @return
      */
-    public static boolean checkUnlock(COITeam team, COIBuildingType type){
+    public static boolean checkUnlock(COITeam team, COIPropType type){
 
         // 是否开启解锁功能
         boolean openLock = Entry.getInstance().getConfig().getBoolean("game.building.lock");
@@ -343,7 +343,7 @@ public enum COIPropType {
         for(COIPropType unlockType : values){
 
             // 匹配建筑类型
-            if(unlockType.getBuildingType().equals(type)){
+            if(unlockType.equals(type)){
                 // 匹配到了
                 // 1.检查前置建筑类型是否为null
                 if(unlockType.getBuildingType() == null){

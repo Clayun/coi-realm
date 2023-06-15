@@ -62,7 +62,7 @@ public class ForgeGUI {
                 ItemStack item = prop.getItemType();
 
                 // 判断是否达到解锁条件
-                if(COIPropType.checkUnlock(team,building.getType())){
+                if(COIPropType.checkUnlock(team,prop)){
 
                     items.add(ItemStackBuilder.of(item.clone())
                             .name(prop.getName())
