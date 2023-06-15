@@ -15,7 +15,7 @@ import org.bukkit.Material;
 @AllArgsConstructor
 public enum  COITeamType {
 
-    RED("RED","红队","&c", NamedTextColor.RED,NamedTextColor.DARK_RED,Material.RED_TERRACOTTA,Color.RED,12),
+    RED("RED","红队","&c", NamedTextColor.RED,NamedTextColor.RED,Material.RED_TERRACOTTA,Color.RED,12),
     YELLOW("YELLOW","黄队","&6",NamedTextColor.YELLOW,NamedTextColor.YELLOW,Material.YELLOW_TERRACOTTA,Color.YELLOW,14),
     GREEN("GREEN","绿队","&a",NamedTextColor.GREEN,NamedTextColor.GREEN,Material.GREEN_TERRACOTTA,Color.GREEN,16),
     BLUE("BLUE","蓝队","&b",NamedTextColor.BLUE,NamedTextColor.BLUE,Material.BLUE_TERRACOTTA,Color.BLUE,30),

@@ -48,6 +48,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
 import java.io.File;
 import java.io.FileReader;
@@ -172,6 +173,11 @@ public class Entry extends ExtendedJavaPlugin {
         // 删除NPC
         CitizensAPI.getNPCRegistry().deregisterAll();
 
+        // 清空Team的缓存
+        Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+        for (Team team : scoreboard.getTeams()) {
+            team.unregister();
+        }
     }
 
     private void registerEventListeners() {
