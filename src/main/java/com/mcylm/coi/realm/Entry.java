@@ -272,7 +272,6 @@ public class Entry extends ExtendedJavaPlugin {
                 });
 
         Events.subscribe(PlayerInteractAtEntityEvent.class)
-                .filter(e -> e.getPlayer().isSneaking())
                 .filter(e -> {
                     COINpc npc = EntityData.getNpcByEntity(e.getRightClicked());
                     if (npc != null) {

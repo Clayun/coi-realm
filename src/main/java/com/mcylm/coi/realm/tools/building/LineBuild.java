@@ -45,6 +45,9 @@ public abstract class LineBuild extends COIBuilding {
             return;
         }
 
+        // 记录玩家
+        this.buildPlayerName = player.getName();
+
         // 建筑开始就记录位置
         Location location = points.get(points.size() / 2).clone();
         setLocation(location.clone());

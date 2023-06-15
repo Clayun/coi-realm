@@ -776,11 +776,13 @@ public abstract class COIBuilding implements Serializable {
                     } else {
                         if (tick++ == 20) {
                             tick = 0;
-                            if (hologramVisitors.get(p).decrementAndGet() == 0) {
-                                holograms.remove(p);
-                                hologramVisitors.remove(p);
-                            }
 
+                            if(hologramVisitors.get(p) != null){
+                                if (hologramVisitors.get(p).decrementAndGet() == 0) {
+                                    holograms.remove(p);
+                                    hologramVisitors.remove(p);
+                                }
+                            }
                         }
                         int maxDistance = 12;
                         List<Location> loc = LocationUtils.line(getHologramPoint(), p.getEyeLocation(), 1);

@@ -4,7 +4,6 @@ import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.runnable.TaskRunnable;
 import com.mcylm.coi.realm.tools.npc.COIFarmerCreator;
-import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.utils.ChestUtils;
 import com.mcylm.coi.realm.utils.InventoryUtils;
 import com.mcylm.coi.realm.utils.ItemUtils;
@@ -213,7 +212,7 @@ public class COIFarmer extends COIEntity {
             return;
         }
 
-        COIMinerCreator coiNpc = (COIMinerCreator) getCoiNpc();
+        COIFarmerCreator coiNpc = (COIFarmerCreator) getCoiNpc();
 
         List<Location> chestsLocation = coiNpc.getChestsLocation();
 

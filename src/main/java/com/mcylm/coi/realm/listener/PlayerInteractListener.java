@@ -76,14 +76,18 @@ public class PlayerInteractListener implements Listener {
 
     @EventHandler
     public void onChooseTeam(PlayerInteractEvent event) {
-        if (event.getHand().equals(EquipmentSlot.HAND)
-                && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.COMPASS
-                && ItemUtils.getName(event.getPlayer().getInventory().getItemInMainHand()).equals(LoggerUtils.replaceColor("&c选择队伍"))
-        ) {
 
-            // 选队伍
-            new ChooseTeamGUI(event.getPlayer()).open();
+        if(event.getHand() != null){
+            if (event.getHand().equals(EquipmentSlot.HAND)
+                    && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.COMPASS
+                    && ItemUtils.getName(event.getPlayer().getInventory().getItemInMainHand()).equals(LoggerUtils.replaceColor("&c选择队伍"))
+            ) {
+
+                // 选队伍
+                new ChooseTeamGUI(event.getPlayer()).open();
+            }
         }
+
     }
 
 

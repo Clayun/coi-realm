@@ -54,7 +54,7 @@ public class COIMill extends COIBuilding {
         for (COINpc creator : getNpcCreators()) {
 
             if (isComplete()) {
-                COIMinerCreator npcCreator = (COIMinerCreator) creator;
+                COIFarmerCreator npcCreator = (COIFarmerCreator) creator;
                 // 设置食物收集箱子
                 npcCreator.setChestsLocation(getChestsLocation());
                 COIFarmer farmer = new COIFarmer(npcCreator);
