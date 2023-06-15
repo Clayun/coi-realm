@@ -16,6 +16,7 @@ import net.kyori.adventure.util.Ticks;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.time.Duration;
 import java.util.List;
 
 public class BasicGameTask implements GameTaskApi {
@@ -165,7 +166,7 @@ public class BasicGameTask implements GameTaskApi {
                     float progress = countdown.floatValue() / gamingTimer.floatValue();
 
                     if(count >= 3){
-                        bossBar.name(Component.text(LoggerUtils.replaceColor("&c战斗还有 &f" + countdown + " &c秒就要结束了！")));
+                        bossBar.name(Component.text(LoggerUtils.replaceColor("&c战斗还有 &f" + convertSecondsToHHmmss(countdown) + " &c！")));
                         bossBar.progress(progress);
 
                         // 游戏在进行中，倒计时需要在 boss bar 中展示
@@ -173,7 +174,7 @@ public class BasicGameTask implements GameTaskApi {
                             p.showBossBar(bossBar);
                         }
                     }else{
-                        bossBar.name(Component.text(LoggerUtils.replaceColor("&c战斗开始了，请快速获取战备物资，拆光他们！")));
+                        bossBar.name(Component.text(LoggerUtils.replaceColor("&c战斗开始了，请先快速获取战备物资！")));
                         bossBar.progress(progress);
 
                         // 游戏在进行中，倒计时需要在 boss bar 中展示
@@ -297,6 +298,24 @@ public class BasicGameTask implements GameTaskApi {
 
             }
         }.runTaskTimerAsynchronously(Entry.getInstance(), 20, 20);
+
+
+    }
+
+    private String convertSecondsToHHmmss(int totalSeconds) {
+
+        if(totalSeconds  > 3600){
+            // 大于一小时
+            Duration duration = Duration.ofSeconds(totalSeconds);
+            long hours = duration.toHours();
+            long minutes = duration.minusHours(hours).toMinutes();
+            long remainingSeconds = duration.minusHours(hours).minusMinutes(minutes).getSeconds();
+            return String.format("%02d小时%02d分钟%02d秒", hours, minutes, remainingSeconds);
+        }else{
+            int minutes = totalSeconds / 60; // 计算分钟数
+            int seconds = totalSeconds % 60; // 计算剩余的秒数
+            return String.format("%02d分钟%02d秒", minutes, seconds); // 将分钟数和秒数格式化为字符串
+        }
 
 
     }
