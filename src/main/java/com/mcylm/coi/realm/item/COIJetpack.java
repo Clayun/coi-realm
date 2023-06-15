@@ -32,20 +32,21 @@ public class COIJetpack {
     private double springPower = 2;
 
     // 喷气
-    public void jet(Player p){
+    public boolean jet(Player p){
 
         boolean b = InventoryUtils.deductionResources(p, cost);
 
         if(!b){
             LoggerUtils.sendActionbar(p,"&c背包内资源不足，无法起飞");
-            return;
+            return false;
         }
-
         // 击退距离
         Location location = p.getLocation();
         Location eyeLocation = p.getEyeLocation();
         p.setVelocity(eyeLocation.getDirection().multiply(getSpringPower()).setY(getDistance()));
         p.playSound(location, Sound.ENTITY_BAT_TAKEOFF, 10, 0);
         p.getWorld().spawnParticle(Particle.CRIT, location, 15);
+
+        return true;
     }
 }

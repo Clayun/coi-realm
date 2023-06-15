@@ -22,51 +22,6 @@ import java.util.List;
 @AllArgsConstructor
 public enum COIPropType {
 
-
-    SNOWBALL(
-            "SNOWBALL",
-            "爆炸果实",
-            new ItemStack(Material.SNOWBALL),
-            2,
-            "射出去后击中的目标会" +
-                    "创造一次小型的爆炸，会对建筑产生伤害",
-            500,
-            COIBuildingType.FORGE,
-            1,
-            1
-    ),
-
-    JET_PACK(
-            "JET_PACK",
-            "空气动力鞋",
-            new ItemStack(Material.CHAINMAIL_BOOTS),
-            1,
-            "这是可以帮你起飞的好东西。" +
-                    "但是小心别把自己摔死了！" +
-                    "这玩意可不防摔！！" +
-                    "每次使用消耗8个资源，" +
-                    "请务必配合*鞘翅*使用。",
-            2000,
-            COIBuildingType.FORGE,
-            1,
-            1
-    ),
-
-    ELYTRA(
-            "ELYTRA",
-            "鞘翅",
-            new ItemStack(Material.ELYTRA),
-            1,
-            "这是可以帮你在天上滑行的好东西。" +
-                    "但是小心别把自己摔死了！" +
-                    "这玩意可不防摔！！" +
-                    "可以配合*喷气动力鞋*使用。",
-            2000,
-            COIBuildingType.FORGE,
-            1,
-            1
-    ),
-
     // 武器系列
     STONE_SWORD(
             "STONE_SWORD",
@@ -276,6 +231,51 @@ public enum COIPropType {
             1,
             4
     ),
+
+    SNOWBALL(
+            "SNOWBALL",
+            "爆炸果实",
+            new ItemStack(Material.SNOWBALL),
+            1,
+            "射出去后击中的目标会" +
+                    "创造一次小型的爆炸，会对建筑产生5点伤害",
+            300,
+            COIBuildingType.FORGE,
+            1,
+            4
+    ),
+
+    JET_PACK(
+            "JET_PACK",
+            "空气动力鞋",
+            new ItemStack(Material.CHAINMAIL_BOOTS),
+            1,
+            "这是可以帮你起飞的好东西。" +
+                    "但是小心别把自己摔死了！" +
+                    "这玩意可不防摔！！" +
+                    "每次使用消耗8个资源，" +
+                    "请务必配合*鞘翅*使用。",
+            2000,
+            COIBuildingType.FORGE,
+            1,
+            4
+    ),
+
+    ELYTRA(
+            "ELYTRA",
+            "鞘翅",
+            new ItemStack(Material.ELYTRA),
+            1,
+            "这是可以帮你在天上滑行的好东西。" +
+                    "但是小心别把自己摔死了！" +
+                    "这玩意可不防摔！！" +
+                    "可以配合*喷气动力鞋*使用。",
+            2000,
+            COIBuildingType.FORGE,
+            1,
+            4
+    ),
+
 
     ;
 

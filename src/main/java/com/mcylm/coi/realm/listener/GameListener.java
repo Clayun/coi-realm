@@ -49,6 +49,8 @@ import org.bukkit.event.player.*;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Nullable;
 
@@ -266,6 +268,7 @@ public class GameListener implements Listener {
                 // 玩家穿了胸甲，可以进行相关操作
                 // 判断胸甲是否是喷气背包
                 if(itemStack.getItemMeta().getDisplayName().equals(LoggerUtils.replaceColor(COIPropType.JET_PACK.getName()))){
+
                     COIJetpack jetpack = new COIJetpack();
 
                     new BukkitRunnable(){
@@ -275,7 +278,17 @@ public class GameListener implements Listener {
                         public void run() {
                             i++;
 
-                            jetpack.jet(player);
+                            boolean jet = jetpack.jet(player);
+
+                            if(jet){
+                                // 减少耐久
+                                ItemMeta meta = itemStack.getItemMeta();
+                                if (meta != null) {
+                                    ((Damageable)meta).setDamage(((Damageable) meta).getDamage() + 5);
+                                    itemStack.setItemMeta(meta);
+                                }
+
+                            }
 
                             if(i == 2){
                                 cancel();

@@ -218,13 +218,15 @@ public class Entry extends ExtendedJavaPlugin {
                                             location.createExplosion(e.getHitEntity(), 3,false, false);
                                         }
 
-                                        COITeam teamByPlayer = TeamUtils.getTeamByPlayer((Player) e.getHitEntity());
+                                        if(e.getHitEntity() instanceof Player){
+                                            COITeam teamByPlayer = TeamUtils.getTeamByPlayer((Player) e.getHitEntity());
 
-                                        if(teamByPlayer != null && teamByPlayer != team){
-                                            // 如果不是己方的玩家，就创造个爆炸
-                                            Location location = e.getHitEntity().getLocation();
-                                            // TODO 这里可以几率触发是否燃烧
-                                            location.createExplosion(e.getHitEntity(), 3,false, false);
+                                            if(teamByPlayer != null && teamByPlayer != team){
+                                                // 如果不是己方的玩家，就创造个爆炸
+                                                Location location = e.getHitEntity().getLocation();
+                                                // TODO 这里可以几率触发是否燃烧
+                                                location.createExplosion(e.getHitEntity(), 3,false, false);
+                                            }
                                         }
 
                                     }
