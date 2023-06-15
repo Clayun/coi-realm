@@ -231,7 +231,7 @@ public enum COIPropType {
             1000,
             COIBuildingType.FORGE,
             1,
-            3
+            4
     ),
 
     ENCHANTED_GOLDEN_APPLE(
@@ -252,7 +252,7 @@ public enum COIPropType {
             new ItemStack(Material.SNOWBALL),
             1,
             "射出去后击中的目标会" +
-                    "创造一次小型的爆炸，会对建筑产生5点伤害",
+                    "创造一次小型的爆炸,会对敌方建筑产生5点伤害",
             300,
             COIBuildingType.FORGE,
             1,
@@ -272,7 +272,7 @@ public enum COIPropType {
             2000,
             COIBuildingType.FORGE,
             1,
-            4
+            5
     ),
 
     ELYTRA(
@@ -287,7 +287,7 @@ public enum COIPropType {
             2000,
             COIBuildingType.FORGE,
             1,
-            4
+            5
     ),
 
 
