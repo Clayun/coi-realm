@@ -23,10 +23,24 @@ import java.util.List;
 public enum COIPropType {
 
 
+    SNOWBALL(
+            "SNOWBALL",
+            "爆炸果实",
+            new ItemStack(Material.SNOWBALL),
+            2,
+            "射出去后击中的目标会" +
+                    "创造一次小型的爆炸，会对建筑产生伤害",
+            500,
+            COIBuildingType.FORGE,
+            1,
+            1
+    ),
+
     JET_PACK(
             "JET_PACK",
             "空气动力鞋",
             new ItemStack(Material.CHAINMAIL_BOOTS),
+            1,
             "这是可以帮你起飞的好东西。" +
                     "但是小心别把自己摔死了！" +
                     "这玩意可不防摔！！" +
@@ -42,6 +56,7 @@ public enum COIPropType {
             "ELYTRA",
             "鞘翅",
             new ItemStack(Material.ELYTRA),
+            1,
             "这是可以帮你在天上滑行的好东西。" +
                     "但是小心别把自己摔死了！" +
                     "这玩意可不防摔！！" +
@@ -57,6 +72,7 @@ public enum COIPropType {
             "STONE_SWORD",
             "石剑",
             new ItemStack(Material.STONE_SWORD),
+            1,
             "一把平平无奇的石剑,凑活用吧",
             500,
             COIBuildingType.FORGE,
@@ -68,6 +84,7 @@ public enum COIPropType {
             "IRON_SWORD",
             "铁剑",
             new ItemStack(Material.IRON_SWORD),
+            1,
             "锋利的铁剑，工艺上乘！",
             1000,
             COIBuildingType.FORGE,
@@ -79,6 +96,7 @@ public enum COIPropType {
             "DIAMOND_SWORD",
             "钻石剑",
             new ItemStack(Material.DIAMOND_SWORD),
+            1,
             "钻石制成的剑，削铁如泥！",
             2000,
             COIBuildingType.FORGE,
@@ -92,6 +110,7 @@ public enum COIPropType {
             "LEATHER_HELMET",
             "皮革头盔",
             new ItemStack(Material.LEATHER_HELMET),
+            1,
             "平平无奇",
             500,
             COIBuildingType.FORGE,
@@ -103,6 +122,7 @@ public enum COIPropType {
             "LEATHER_CHESTPLATE",
             "皮革胸甲",
             new ItemStack(Material.LEATHER_CHESTPLATE),
+            1,
             "平平无奇",
             500,
             COIBuildingType.FORGE,
@@ -114,6 +134,7 @@ public enum COIPropType {
             "LEATHER_LEGGINGS",
             "皮革护腿",
             new ItemStack(Material.LEATHER_LEGGINGS),
+            1,
             "平平无奇",
             500,
             COIBuildingType.FORGE,
@@ -125,6 +146,7 @@ public enum COIPropType {
             "LEATHER_BOOTS",
             "皮革长靴",
             new ItemStack(Material.LEATHER_BOOTS),
+            1,
             "平平无奇",
             500,
             COIBuildingType.FORGE,
@@ -137,6 +159,7 @@ public enum COIPropType {
             "IRON_HELMET",
             "铁质头盔",
             new ItemStack(Material.IRON_HELMET),
+            1,
             "这玩意可是铁的啊，强的很！",
             1000,
             COIBuildingType.FORGE,
@@ -148,6 +171,7 @@ public enum COIPropType {
             "IRON_CHESTPLATE",
             "铁质胸甲",
             new ItemStack(Material.IRON_CHESTPLATE),
+            1,
             "这玩意可是铁的啊，强的很！",
             1000,
             COIBuildingType.FORGE,
@@ -159,6 +183,7 @@ public enum COIPropType {
             "IRON_LEGGINGS",
             "铁质护腿",
             new ItemStack(Material.IRON_LEGGINGS),
+            1,
             "这玩意可是铁的啊，强的很！",
             1000,
             COIBuildingType.FORGE,
@@ -170,6 +195,7 @@ public enum COIPropType {
             "IRON_BOOTS",
             "铁质长靴",
             new ItemStack(Material.IRON_BOOTS),
+            1,
             "这玩意可是铁的啊，强的很！",
             1000,
             COIBuildingType.FORGE,
@@ -182,6 +208,7 @@ public enum COIPropType {
             "DIAMOND_HELMET",
             "钻石头盔",
             new ItemStack(Material.DIAMOND_HELMET),
+            1,
             "钻石套装，童叟无欺！",
             2000,
             COIBuildingType.FORGE,
@@ -193,6 +220,7 @@ public enum COIPropType {
             "DIAMOND_CHESTPLATE",
             "钻石胸甲",
             new ItemStack(Material.DIAMOND_CHESTPLATE),
+            1,
             "钻石套装，童叟无欺！",
             2000,
             COIBuildingType.FORGE,
@@ -204,6 +232,7 @@ public enum COIPropType {
             "DIAMOND_LEGGINGS",
             "钻石护腿",
             new ItemStack(Material.DIAMOND_LEGGINGS),
+            1,
             "钻石套装，童叟无欺！",
             2000,
             COIBuildingType.FORGE,
@@ -215,6 +244,7 @@ public enum COIPropType {
             "DIAMOND_BOOTS",
             "钻石长靴",
             new ItemStack(Material.DIAMOND_BOOTS),
+            1,
             "钻石套装，童叟无欺！",
             2000,
             COIBuildingType.FORGE,
@@ -227,6 +257,7 @@ public enum COIPropType {
             "GOLDEN_APPLE",
             "金苹果",
             new ItemStack(Material.GOLDEN_APPLE),
+            1,
             "好吃的！",
             1000,
             COIBuildingType.FORGE,
@@ -238,6 +269,7 @@ public enum COIPropType {
             "ENCHANTED_GOLDEN_APPLE",
             "附魔金苹果",
             new ItemStack(Material.ENCHANTED_GOLDEN_APPLE),
+            1,
             "超级好吃的！",
             2000,
             COIBuildingType.FORGE,
@@ -254,6 +286,8 @@ public enum COIPropType {
     private String name;
     // GUI显示的材质
     private ItemStack itemType;
+    // 数量
+    private int num;
     // 介绍
     private String introduce;
     // 价格

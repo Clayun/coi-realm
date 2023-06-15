@@ -19,6 +19,7 @@ import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.impl.*;
 import com.mcylm.coi.realm.tools.building.impl.monster.COIMonsterBase;
 import com.mcylm.coi.realm.tools.data.MapData;
+import com.mcylm.coi.realm.tools.data.metadata.BuildData;
 import com.mcylm.coi.realm.tools.data.metadata.EntityData;
 import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
 import com.mcylm.coi.realm.tools.npc.impl.monster.COIMonster;
@@ -34,7 +35,9 @@ import net.citizensnpcs.api.npc.NPC;
 import net.kyori.adventure.text.Component;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -193,6 +196,61 @@ public class Entry extends ExtendedJavaPlugin {
                     if (e.getHitEntity() != null && e.getHitEntity().hasMetadata("preview_block")) {
                         LoggerUtils.debug("ProjectileHitEvent");
                         e.setCancelled(true);
+                    }
+
+                    if(e.getEntity().getType().equals(EntityType.SNOWBALL)){
+                        // 如果是雪球，就判断是否是玩家射出的
+                        if(e.getEntity().getShooter() instanceof Player player){
+
+                            COITeam team = TeamUtils.getTeamByPlayer(player);
+                            if(team != null && getGame().getStatus().equals(COIGameStatus.GAMING)){
+                                // 玩家在小队里面 同时游戏在进行中
+
+                                if(e.getHitEntity() != null){
+
+                                    if(e.getHitEntity() instanceof LivingEntity){
+                                        COITeam npcTeam = TeamUtils.getNPCTeam(e.getEntity());
+
+                                        if(npcTeam != null && npcTeam != team){
+                                            // 如果不是己方的NPC，就创造个爆炸
+                                            Location location = e.getHitEntity().getLocation();
+                                            // TODO 这里可以几率触发是否燃烧
+                                            location.createExplosion(e.getHitEntity(), 3,false, false);
+                                        }
+
+                                        COITeam teamByPlayer = TeamUtils.getTeamByPlayer((Player) e.getHitEntity());
+
+                                        if(teamByPlayer != null && teamByPlayer != team){
+                                            // 如果不是己方的玩家，就创造个爆炸
+                                            Location location = e.getHitEntity().getLocation();
+                                            // TODO 这里可以几率触发是否燃烧
+                                            location.createExplosion(e.getHitEntity(), 3,false, false);
+                                        }
+
+                                    }
+
+                                }else if(e.getHitBlock() != null){
+
+                                    COIBuilding buildingByBlock = BuildData.getBuildingByBlock(e.getHitBlock());
+
+                                    if(buildingByBlock != null){
+
+                                        if(buildingByBlock.getTeam() != team){
+                                            // 如果不是己方的建筑，就创造个爆炸
+                                            e.getHitBlock().getLocation().createExplosion(3,false, false);
+                                            // 创造30点伤害
+                                            buildingByBlock.damage(player,5,e.getHitBlock());
+                                            LoggerUtils.sendActionbar(player,"&b攻击 "
+                                                    +buildingByBlock.getTeam().getType().getColor()
+                                                    +buildingByBlock.getTeam().getType().getName()+" "
+                                                    +buildingByBlock.getType().getName()+" &cx5 &b点伤害");
+
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
                     }
         });
 

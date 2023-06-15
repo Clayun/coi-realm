@@ -59,7 +59,7 @@ public class ForgeGUI {
             for (COIPropType prop : COIPropType.getProps()) {
 
                 // 物品模型
-                ItemStack item = prop.getItemType().clone();
+                ItemStack item = prop.getItemType();
 
                 // 判断是否达到解锁条件
                 if(COIPropType.checkUnlock(team,building.getType())){
@@ -68,8 +68,8 @@ public class ForgeGUI {
                             .name(prop.getName())
                             .amount(1)
                             .lore("")
-                            .lore("&f> &a所需耗材： &c" + prop.getPrice())
-                            .lore("&f> &a拥有材料： &c" + building.getPlayerHadResource(p))
+                            .lore("&f> &a单价/数量： &c" + prop.getPrice()+"/"+prop.getNum()+"个")
+                            .lore("&f> &a背包携带： &c" + building.getPlayerHadResource(p))
                             .lore("&f> &a介绍：")
                             .lore(GUIUtils.autoLineFeed(prop.getIntroduce()))
                             .lore("")
@@ -83,15 +83,17 @@ public class ForgeGUI {
                                 if(b){
                                     // 扣除成功
                                     // 交付物品
-                                    ItemUtils.rename(item,prop.getName());
-                                    ItemUtils.setLore(item,GUIUtils.autoLineFeed(prop.getIntroduce()));
-                                    p.getInventory().addItem(item);
+                                    ItemStack propItem = item.clone();
+                                    ItemUtils.rename(propItem,prop.getName());
+                                    ItemUtils.setLore(propItem,GUIUtils.autoLineFeed(prop.getIntroduce()));
+                                    propItem.setAmount(prop.getNum());
+                                    p.getInventory().addItem(propItem);
                                     LoggerUtils.sendMessage("物品打造完成！", p);
 
-                                }else
+                                }else{
                                     LoggerUtils.sendMessage("&c背包内的资源不够！", p);
-
-                                paginatedGui.close();
+                                    paginatedGui.close();
+                                }
 
                             }));
                 }else{
