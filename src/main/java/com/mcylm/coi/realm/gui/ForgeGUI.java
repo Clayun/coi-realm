@@ -68,7 +68,7 @@ public class ForgeGUI {
                             .name(prop.getName())
                             .amount(1)
                             .lore("")
-                            .lore("&f> &a单价/数量： &c" + prop.getPrice()+"/"+prop.getNum()+"个")
+                            .lore("&f> &a单价/数量： &c" + prop.getPrice()+"&7/"+prop.getNum()+"个")
                             .lore("&f> &a背包携带： &c" + building.getPlayerHadResource(p))
                             .lore("&f> &a介绍：")
                             .lore(GUIUtils.autoLineFeed(prop.getIntroduce()))
