@@ -10,6 +10,7 @@ import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COIServerMode;
 import com.mcylm.coi.realm.game.COIGame;
 import com.mcylm.coi.realm.gui.ForgeGUI;
+import com.mcylm.coi.realm.item.COIRocket;
 import com.mcylm.coi.realm.listener.GameListener;
 import com.mcylm.coi.realm.listener.MineralsBreakListener;
 import com.mcylm.coi.realm.listener.PlayerInteractListener;
@@ -190,6 +191,8 @@ public class Entry extends ExtendedJavaPlugin {
         pluginManager.registerEvents(new MineralsBreakListener(), this);
         // AI事件监听器
         COISoldier.registerListener();
+        // 助推器监听器
+        COIRocket.registerListener();
 
         Events.subscribe(PlayerJoinEvent.class)
                 .handler(e -> {

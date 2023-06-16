@@ -93,7 +93,7 @@ public class COICamp extends COIBuilding {
 
         // 背包内的物品
         Inventory inventory = GUIUtils.createNpcInventory(3);
-        inventory.addItem(new ItemStack(new Random().nextBoolean() ? Material.CROSSBOW : Material.IRON_SWORD));
+//        inventory.addItem(new ItemStack(new Random().nextBoolean() ? Material.CROSSBOW : Material.IRON_SWORD));
         inventory.addItem(new ItemStack(Material.LEATHER_HELMET));
         // 不破坏方块
         Set<String> breakBlockMaterials = new HashSet<>();

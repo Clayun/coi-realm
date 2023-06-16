@@ -32,7 +32,7 @@ public class SnowballCoolDownListener implements Listener {
                 if (currentTime - lastThrowTime < coolDownTime) {
                     event.setCancelled(true); // 取消扔雪球事件
 
-                    LoggerUtils.sendActionbar(player,"&c你需要等待 " + (coolDownTime - (currentTime - lastThrowTime)) / 1000 + " 秒后才能再次发射！");
+                    LoggerUtils.sendActionbar(player,"&c你需要等待 &b" + (coolDownTime - (currentTime - lastThrowTime)) / 1000 + " &c秒后才能再次发射！");
                 } else {
                     coolDowns.put(player, currentTime);
                 }

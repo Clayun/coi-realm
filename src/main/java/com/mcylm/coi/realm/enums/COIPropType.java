@@ -1,11 +1,9 @@
 package com.mcylm.coi.realm.enums;
 
 import com.mcylm.coi.realm.Entry;
-import com.mcylm.coi.realm.item.COIJetpack;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -260,15 +258,16 @@ public enum COIPropType {
             1
     ),
 
-    JET_PACK(
-            "JET_PACK",
-            "空气动力鞋",
-            new ItemStack(Material.CHAINMAIL_BOOTS),
+    FIREWORK_ROCKET(
+            "FIREWORK_ROCKET",
+            "助推器",
+            new ItemStack(Material.FIREWORK_ROCKET),
             1,
-            "这是可以帮你起飞的好东西。" +
+            "装备鞘翅后，滑翔的过程中" +
+                    "使用助推器可以加速飞行" +
                     "但是小心别把自己摔死了！" +
                     "这玩意可不防摔！！" +
-                    "每次使用消耗8个资源，" +
+                    "每次消耗8个资源" +
                     "请务必配合*鞘翅*使用。",
             500,
             COIBuildingType.FORGE,
@@ -276,20 +275,20 @@ public enum COIPropType {
             5
     ),
 
-    FIREWORK_ROCKET(
-            "FIREWORK_ROCKET",
-            "烟花",
-            new ItemStack(Material.FIREWORK_ROCKET),
-            64,
-            "这是可以帮你起飞的好东西。" +
-                    "但是小心别把自己摔死了！" +
-                    "这玩意可不防摔！！" +
-                    "请务必配合*鞘翅*使用。",
-            500,
-            COIBuildingType.FORGE,
-            1,
-            5
-    ),
+//    FIREWORK_ROCKET(
+//            "FIREWORK_ROCKET",
+//            "烟花",
+//            new ItemStack(Material.FIREWORK_ROCKET),
+//            64,
+//            "这是可以帮你起飞的好东西。" +
+//                    "但是小心别把自己摔死了！" +
+//                    "这玩意可不防摔！！" +
+//                    "请务必配合*鞘翅*使用。",
+//            500,
+//            COIBuildingType.FORGE,
+//            1,
+//            5
+//    ),
 
     ELYTRA(
             "ELYTRA",

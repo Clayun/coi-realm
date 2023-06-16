@@ -3,42 +3,31 @@ package com.mcylm.coi.realm.listener;
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import com.mcylm.coi.realm.Entry;
-import com.mcylm.coi.realm.clipboard.PlayerClipboard;
 import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COIPropType;
-import com.mcylm.coi.realm.enums.COIServerMode;
 import com.mcylm.coi.realm.events.BuildingDamagedEvent;
 import com.mcylm.coi.realm.events.BuildingDestroyedEvent;
 import com.mcylm.coi.realm.events.BuildingTouchEvent;
-import com.mcylm.coi.realm.gui.BuildEditGUI;
-import com.mcylm.coi.realm.gui.BuilderGUI;
-import com.mcylm.coi.realm.item.COIJetpack;
+import com.mcylm.coi.realm.item.COIRocket;
 import com.mcylm.coi.realm.item.COITownPortal;
 import com.mcylm.coi.realm.player.COIPlayer;
-import com.mcylm.coi.realm.tools.attack.target.impl.BuildingTarget;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.impl.COIRepair;
 import com.mcylm.coi.realm.tools.building.impl.COITurret;
 import com.mcylm.coi.realm.tools.data.metadata.BuildData;
-import com.mcylm.coi.realm.tools.selection.Selector;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.ItemUtils;
-import com.mcylm.coi.realm.utils.LocationUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
-import me.lucko.helper.Events;
 import net.citizensnpcs.api.CitizensAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -47,8 +36,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -59,7 +46,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -257,54 +243,6 @@ public class GameListener implements Listener {
                 }
             }
         }
-    }
-
-    @EventHandler
-    public void onJump(PlayerJumpEvent event){
-
-        // 判断是否穿了喷气背包
-        Player player = event.getPlayer();
-
-        @Nullable ItemStack[] armorContents = player.getInventory().getArmorContents();
-
-        for(ItemStack itemStack : armorContents){
-            if (itemStack != null && itemStack.getType() != Material.AIR) {
-                // 玩家穿了胸甲，可以进行相关操作
-                // 判断胸甲是否是喷气背包
-                if(itemStack.getItemMeta().getDisplayName().equals(LoggerUtils.replaceColor(COIPropType.JET_PACK.getName()))){
-
-                    COIJetpack jetpack = new COIJetpack();
-
-                    new BukkitRunnable(){
-
-                        int i = 0;
-                        @Override
-                        public void run() {
-                            i++;
-
-                            boolean jet = jetpack.jet(player);
-
-                            if(jet){
-                                // 减少耐久
-                                ItemMeta meta = itemStack.getItemMeta();
-                                if (meta != null) {
-                                    ((Damageable)meta).setDamage(((Damageable) meta).getDamage() + 5);
-                                    itemStack.setItemMeta(meta);
-                                }
-
-                            }
-
-                            if(i == 2){
-                                cancel();
-                            }
-                        }
-                    }.runTaskTimerAsynchronously(Entry.getInstance(),0,10);
-                }
-
-                return;
-            }
-        }
-
     }
 
     @EventHandler
