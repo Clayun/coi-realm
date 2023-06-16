@@ -60,4 +60,43 @@ public class WearUtils {
                 ;
     }
 
+    public static boolean canHoldInHand(ItemStack itemStack) {
+        if (itemStack == null || itemStack.getType() == Material.AIR) {
+            return false;
+        }
+        return itemStack.getType() == Material.DIAMOND_SWORD
+                || itemStack.getType() == Material.STONE_SWORD
+                || itemStack.getType() == Material.WOODEN_SWORD
+                || itemStack.getType() == Material.GOLDEN_SWORD
+                || itemStack.getType() == Material.IRON_SWORD
+                || itemStack.getType() == Material.NETHERITE_SWORD
+                //斧头
+                || itemStack.getType() == Material.DIAMOND_AXE
+                || itemStack.getType() == Material.GOLDEN_AXE
+                || itemStack.getType() == Material.IRON_AXE
+                || itemStack.getType() == Material.NETHERITE_AXE
+                || itemStack.getType() == Material.STONE_AXE
+                || itemStack.getType() == Material.WOODEN_AXE
+                //镐子
+                || itemStack.getType() == Material.DIAMOND_PICKAXE
+                || itemStack.getType() == Material.GOLDEN_PICKAXE
+                || itemStack.getType() == Material.IRON_PICKAXE
+                || itemStack.getType() == Material.NETHERITE_PICKAXE
+                || itemStack.getType() == Material.STONE_PICKAXE
+                || itemStack.getType() == Material.WOODEN_PICKAXE
+                //锄头
+                || itemStack.getType() == Material.DIAMOND_HOE
+                || itemStack.getType() == Material.GOLDEN_HOE
+                || itemStack.getType() == Material.IRON_HOE
+                || itemStack.getType() == Material.NETHERITE_HOE
+                || itemStack.getType() == Material.STONE_HOE
+                || itemStack.getType() == Material.WOODEN_HOE
+                // 弩
+                || itemStack.getType() == Material.CROSSBOW
+                // Bow
+                || itemStack.getType() == Material.BOW
+
+                ;
+    }
+
 }
