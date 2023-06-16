@@ -30,7 +30,7 @@ public class COIBase extends COIBuilding {
                 .setMaxLevel(10)
                 .setMaxBuild(1)
                 .setShowInMenu(false)
-                .setConsume(256);
+                .setConsume(1024);
     }
 
     @Override

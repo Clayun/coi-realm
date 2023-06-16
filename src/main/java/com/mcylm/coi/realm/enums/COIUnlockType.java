@@ -37,11 +37,11 @@ public enum COIUnlockType {
             "&c尚未解锁 &b军营",
             SkullUtils.createPlayerHead(COIHeadType.LOCK_CHEST.getTextures()),
             """
-            建造5个矿场后解锁""",
+            升级基地到2级解锁""",
             COIBuildingType.MILITARY_CAMP,
-            COIBuildingType.STOPE,
-            5,
-            1
+            COIBuildingType.BASE,
+            1,
+            2
     ),
 
     // 城墙解锁
@@ -50,7 +50,7 @@ public enum COIUnlockType {
             "&c尚未解锁 &b城墙",
             SkullUtils.createPlayerHead(COIHeadType.LOCK_CHEST.getTextures()),
             """
-            升级基地到3级解锁""",
+            升级基地到2级解锁""",
             COIBuildingType.WALL_NORMAL,
             COIBuildingType.BASE,
             1,
@@ -106,7 +106,7 @@ public enum COIUnlockType {
             COIBuildingType.FORGE,
             COIBuildingType.BASE,
             1,
-            5
+            3
     ),
 
     ;
