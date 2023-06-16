@@ -83,7 +83,7 @@ public class COIRepair extends COIBuilding {
     @Override
     public BuildingConfig getDefaultConfig() {
         return new BuildingConfig()
-                .setMaxLevel(2)
+                .setMaxLevel(3)
                 .setMaxBuild(10)
                 .setConsume(512)
                 .setStructures(getBuildingLevelStructure());
@@ -124,6 +124,7 @@ public class COIRepair extends COIBuilding {
     private void initStructure() {
         getBuildingLevelStructure().put(1, "turret1.structure");
         getBuildingLevelStructure().put(2, "turret2.structure");
+        getBuildingLevelStructure().put(3, "turret2.structure");
     }
 
     @Override

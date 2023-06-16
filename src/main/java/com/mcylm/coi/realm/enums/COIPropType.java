@@ -253,7 +253,7 @@ public enum COIPropType {
             16,
             "射出去后击中的目标会" +
                     "创造一次小型的爆炸,会对敌方建筑产生5点伤害",
-            100,
+            128,
             COIBuildingType.FORGE,
             1,
             1
@@ -268,6 +268,21 @@ public enum COIPropType {
                     "但是小心别把自己摔死了！" +
                     "这玩意可不防摔！！" +
                     "每次使用消耗8个资源，" +
+                    "请务必配合*鞘翅*使用。",
+            500,
+            COIBuildingType.FORGE,
+            1,
+            5
+    ),
+
+    FIREWORK_ROCKET(
+            "FIREWORK_ROCKET",
+            "烟花",
+            new ItemStack(Material.FIREWORK_ROCKET),
+            64,
+            "这是可以帮你起飞的好东西。" +
+                    "但是小心别把自己摔死了！" +
+                    "这玩意可不防摔！！" +
                     "请务必配合*鞘翅*使用。",
             500,
             COIBuildingType.FORGE,

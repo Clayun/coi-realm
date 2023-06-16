@@ -60,7 +60,7 @@ public class COITurret extends COIBuilding {
         // 最小伤害
         this.minDamage = 3d;
         // 最大伤害
-        this.maxDamage = 6d;
+        this.maxDamage = 5d;
         // 击退距离
         this.repulsionDistance = 0d;
         // 每次攻击的间隔时间
@@ -86,7 +86,7 @@ public class COITurret extends COIBuilding {
     @Override
     public BuildingConfig getDefaultConfig() {
         return new BuildingConfig()
-                .setMaxLevel(2)
+                .setMaxLevel(3)
                 .setMaxBuild(10)
                 .setConsume(512)
                 .setStructures(getBuildingLevelStructure());
@@ -128,6 +128,7 @@ public class COITurret extends COIBuilding {
     private void initStructure() {
         getBuildingLevelStructure().put(1, "turret1.structure");
         getBuildingLevelStructure().put(2, "turret2.structure");
+        getBuildingLevelStructure().put(3, "turret2.structure");
     }
 
     @Override
@@ -204,7 +205,7 @@ public class COITurret extends COIBuilding {
         // 最小伤害
         this.minDamage = this.minDamage + 1;
         // 最大伤害
-        this.maxDamage = this.maxDamage + 1;
+        this.maxDamage = this.maxDamage + 2;
         // 击退距离
         this.repulsionDistance = this.repulsionDistance + 1;
         // 每次攻击的间隔时间

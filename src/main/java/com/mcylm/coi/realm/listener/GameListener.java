@@ -402,6 +402,7 @@ public class GameListener implements Listener {
     public void onJoin(PlayerJoinEvent event){
 
         Player p = event.getPlayer();
+
         COITeam team = TeamUtils.getTeamByPlayer(p);
 
         // 游戏中进来的话，就要初始化信息了
