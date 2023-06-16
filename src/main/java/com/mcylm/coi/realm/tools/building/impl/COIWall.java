@@ -31,7 +31,7 @@ public class COIWall extends LineBuild {
         wall.setType(getType());
         wall.setTeam(getTeam());
         wall.setConfig(getConfig());
-
+        wall.setBuildPlayerName(getBuildPlayerName());
         return wall;
     }
 

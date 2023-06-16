@@ -37,6 +37,8 @@ public abstract class LineBuild extends COIBuilding {
             return;
         }
 
+        setBuildPlayerName(player.getName());
+
         // 扣除玩家背包里的资源
         boolean b = deductionResources(player);
 
