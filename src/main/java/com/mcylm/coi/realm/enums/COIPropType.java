@@ -27,10 +27,10 @@ public enum COIPropType {
             "回城卷轴",
             new ItemStack(Material.FLOWER_BANNER_PATTERN),
             1,
-            "右键使用开始施法回城," +
+            "右键使用开始施法回城,施法过程中" +
                     "10秒内不能受到伤害或者移动," +
                     "否则施法会被打断",
-            10,
+            1,
             COIBuildingType.FORGE,
             1,
             1
@@ -252,7 +252,8 @@ public enum COIPropType {
             new ItemStack(Material.SNOWBALL),
             16,
             "射出去后击中的目标会" +
-                    "创造一次小型的爆炸,会对敌方建筑产生5点伤害",
+                    "创造一次小型的爆炸,会对敌方建筑产生30点伤害," +
+                    "如果击中敌方生物，则会造成3点真实伤害，无视护甲",
             128,
             COIBuildingType.FORGE,
             1,

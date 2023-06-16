@@ -35,9 +35,7 @@ public class LoggerUtils {
             return;
         }
 
-        if(player != null){
-            player.sendMessage("§f[§b§l"+Entry.PREFIX+"§f] §7"+replaceColor(msg));
-        }
+        player.sendMessage("§f[§b§l"+Entry.PREFIX+"§f] §7"+replaceColor(msg));
     }
 
     public static void sendMessage(String msg, Player player){

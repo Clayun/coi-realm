@@ -13,6 +13,7 @@ import com.mcylm.coi.realm.gui.ForgeGUI;
 import com.mcylm.coi.realm.listener.GameListener;
 import com.mcylm.coi.realm.listener.MineralsBreakListener;
 import com.mcylm.coi.realm.listener.PlayerInteractListener;
+import com.mcylm.coi.realm.listener.SnowballCoolDownListener;
 import com.mcylm.coi.realm.managers.COIBuildingManager;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
@@ -184,6 +185,7 @@ public class Entry extends ExtendedJavaPlugin {
         // 注册监听器
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new PlayerInteractListener(), this);
+        pluginManager.registerEvents(new SnowballCoolDownListener(), this);
         pluginManager.registerEvents(new GameListener(), this);
         pluginManager.registerEvents(new MineralsBreakListener(), this);
         // AI事件监听器
@@ -200,75 +202,7 @@ public class Entry extends ExtendedJavaPlugin {
         Events.subscribe(ProjectileHitEvent.class)
                 .handler(e -> {
                     if (e.getHitEntity() != null && e.getHitEntity().hasMetadata("preview_block")) {
-                        LoggerUtils.debug("ProjectileHitEvent");
                         e.setCancelled(true);
-                    }
-
-                    if(e.getEntity().getType().equals(EntityType.SNOWBALL)){
-                        // 如果是雪球，就判断是否是玩家射出的
-                        if(e.getEntity().getShooter() instanceof Player player){
-
-                            COITeam team = TeamUtils.getTeamByPlayer(player);
-                            if(team != null && getGame().getStatus().equals(COIGameStatus.GAMING)){
-                                // 玩家在小队里面 同时游戏在进行中
-
-                                if(e.getHitEntity() != null){
-
-                                    if(e.getHitEntity() instanceof LivingEntity){
-                                        COITeam npcTeam = TeamUtils.getNPCTeam(e.getEntity());
-
-                                        if(npcTeam != null && npcTeam != team){
-                                            // 如果不是己方的NPC，就创造个爆炸
-                                            Location location = e.getHitEntity().getLocation();
-                                            // TODO 这里可以几率触发是否燃烧
-                                            location.createExplosion(e.getHitEntity(), 3,false, false);
-                                        }
-
-                                        if(npcTeam != null && npcTeam == team){
-                                            // 同队伍禁止
-                                            e.setCancelled(true);
-                                        }
-
-                                        if(e.getHitEntity() instanceof Player){
-                                            COITeam teamByPlayer = TeamUtils.getTeamByPlayer((Player) e.getHitEntity());
-
-                                            if(teamByPlayer != null && teamByPlayer != team){
-                                                // 如果不是己方的玩家，就创造个爆炸
-                                                Location location = e.getHitEntity().getLocation();
-                                                // TODO 这里可以几率触发是否燃烧
-                                                location.createExplosion(e.getHitEntity(), 3,false, false);
-                                            }
-
-                                            if(teamByPlayer != null && teamByPlayer == team){
-                                                // 同队伍禁止
-                                                e.setCancelled(true);
-                                            }
-                                        }
-
-                                    }
-
-                                }else if(e.getHitBlock() != null){
-
-                                    COIBuilding buildingByBlock = BuildData.getBuildingByBlock(e.getHitBlock());
-
-                                    if(buildingByBlock != null){
-
-                                        if(buildingByBlock.getTeam() != team){
-                                            // 如果不是己方的建筑，就创造个爆炸
-                                            e.getHitBlock().getLocation().createExplosion(3,false, false);
-                                            // 创造30点伤害
-                                            buildingByBlock.damage(player,5,e.getHitBlock());
-                                            LoggerUtils.sendActionbar(player,"&b攻击 "
-                                                    +buildingByBlock.getTeam().getType().getColor()
-                                                    +buildingByBlock.getTeam().getType().getName()+" "
-                                                    +buildingByBlock.getType().getName()+" &cx5 &b点伤害");
-
-                                        }
-                                    }
-
-                                }
-                            }
-                        }
                     }
         });
 
