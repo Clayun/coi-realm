@@ -9,6 +9,7 @@ import com.mcylm.coi.realm.tools.data.metadata.EntityData;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.title.Title;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -33,7 +34,14 @@ public class TeamUtils {
      */
     public static List<COITeam> initTeams(){
 
-        int maxTeam = 7;
+        int configTeams = Entry.getInstance().getConfig().getInt("game.max-teams");
+
+        if(configTeams < 2 || configTeams > 6){
+            LoggerUtils.log("&4请注意！团队数量必须在2~6个之间！！！当前团队数量有误");
+        }
+
+        // 团队数量
+        int maxTeam = configTeams;
 
         List<String> locations = Entry.getInstance().getConfig().getStringList("game.spawn-locations");
         String world = Entry.getInstance().getConfig().getString("game.spawn-world");
@@ -42,6 +50,9 @@ public class TeamUtils {
 
         // 如果小于队伍数量，就让后面几个队伍重复
         if(locations.size() < maxTeam){
+
+            LoggerUtils.log("&4请注意！团队出生点数量少于团队数量，无法正常进行游戏！！！");
+
             for(String str : locations){
                 Location location = getLocation(str, world);
                 spawnerList.add(location);
@@ -55,7 +66,7 @@ public class TeamUtils {
                 spawnerList.add(location);
             }
 
-        }else if(locations.size() >= maxTeam){
+        }else{
             // 如果有多个出生点，大于队伍数量，就随机取点，不能重复
             List<Integer> usedCursor = new ArrayList<>();
 
@@ -73,22 +84,28 @@ public class TeamUtils {
 
         }
 
-        // 默认初始化6个小队，等待倒计时结束会把所有人传送到默认出生点
-        COITeam black = new COITeam(COITeamType.BLACK,spawnerList.get(0));
-        COITeam red = new COITeam(COITeamType.RED,spawnerList.get(1));
-        COITeam purple = new COITeam(COITeamType.PURPLE,spawnerList.get(2));
-        COITeam green = new COITeam(COITeamType.GREEN,spawnerList.get(3));
-        COITeam yellow = new COITeam(COITeamType.YELLOW,spawnerList.get(4));
-        COITeam blue = new COITeam(COITeamType.BLUE,spawnerList.get(5));
-        monsterTeam = new COITeam(COITeamType.MONSTER, spawnerList.get(6));
+        // 生成好的队伍
         List<COITeam> results = new ArrayList<>();
 
-        results.add(red);
-        results.add(yellow);
-        results.add(green);
-        results.add(blue);
-        results.add(purple);
-        results.add(black);
+        COITeamType[] values = COITeamType.values();
+
+        int count = 0;
+
+        for(COITeamType type : values){
+
+            if(count < maxTeam){
+                results.add(new COITeam(type,spawnerList.get(count)));
+            }
+
+            count ++;
+        }
+
+        // 获取怪物小队的出生点
+        // 初始化一个怪物小队
+        String spawner = Entry.getInstance().getConfig().getString("game.monster-spawner");
+
+        Location location = getLocation(spawner, world);
+        monsterTeam = new COITeam(COITeamType.MONSTER, location);
         results.add(monsterTeam);
 
         return results;
@@ -171,6 +188,30 @@ public class TeamUtils {
         }
 
         return null;
+    }
+
+    /**
+     * 获取敌对小队列表
+     * @param team
+     * @return
+     */
+    public static List<COITeam> getEnemyTeams(COITeam team){
+
+        List<COITeam> result = new ArrayList<>();
+
+        List<COITeam> teams = Entry.getGame().getTeams();
+
+        Iterator<COITeam> iterator = teams.iterator();
+
+        // 查询所有队伍
+        while(iterator.hasNext()){
+            COITeam coiTeam = iterator.next();
+            if(coiTeam != team && !coiTeam.getType().equals(COITeamType.MONSTER)){
+                result.add(coiTeam);
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -280,7 +321,41 @@ public class TeamUtils {
                 // 替玩家加入小队
                 minPlayersTeam.join(p);
 
+                Title title = Title.title(
+                        Component.text(LoggerUtils.replaceColor("&a您被匹配至 "+minPlayersTeam.getType().getColor()+minPlayersTeam.getType().getName()+"")),
+                        Component.text(LoggerUtils.replaceColor("&f使用背包里的 &c建筑蓝图 &f开始游戏吧")),
+                        Title.DEFAULT_TIMES);
+                p.showTitle(title);
+
             }
+        }
+
+    }
+
+    public static void autoJoinTeam(Player p){
+
+        COITeam team = TeamUtils.getTeamByPlayer(p);
+
+        if(team == null){
+            // 玩家没选择队伍
+            // 自动选择一个人数最少的队伍丢进去
+            COITeam minPlayersTeam = TeamUtils.getMinPlayersTeam();
+
+            if(minPlayersTeam == null){
+                // 全都满了，直接给当前玩家踢了吧
+                p.kick(Component.text("当前服务器已满，请更换服务器后重试"), PlayerKickEvent.Cause.KICK_COMMAND);
+                return;
+            }
+
+            // 替玩家加入小队
+            minPlayersTeam.join(p);
+
+            Title title = Title.title(
+                    Component.text(LoggerUtils.replaceColor("&a您被匹配至 "+minPlayersTeam.getType().getColor()+minPlayersTeam.getType().getName()+"")),
+                    Component.text(LoggerUtils.replaceColor("&f使用背包里的 &c建筑蓝图 &f开始游戏吧")),
+                    Title.DEFAULT_TIMES);
+            p.showTitle(title);
+
         }
 
     }
@@ -315,6 +390,22 @@ public class TeamUtils {
 
         if (data != null && data.getTeam() != null) {
             return data.getTeam();
+
+        }
+
+        return null;
+    }
+
+    /**
+     * 获取NPC的所属人
+     * @param entity
+     * @return
+     */
+    public static String getNPCOwner(Entity entity){
+        @Nullable COINpc data = EntityData.getNpcByEntity(entity);
+
+        if (data != null && data.getBuilding() != null) {
+            return data.getBuilding().getBuildPlayerName();
 
         }
 

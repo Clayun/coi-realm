@@ -2,19 +2,29 @@ package com.mcylm.coi.realm.listener;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.clipboard.PlayerClipboard;
+import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COIServerMode;
+import com.mcylm.coi.realm.events.BuildingTouchEvent;
 import com.mcylm.coi.realm.gui.BuildEditGUI;
 import com.mcylm.coi.realm.gui.BuilderGUI;
+import com.mcylm.coi.realm.gui.ChooseTeamGUI;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
+import com.mcylm.coi.realm.tools.building.impl.COIRepair;
+import com.mcylm.coi.realm.tools.building.impl.COITurret;
 import com.mcylm.coi.realm.tools.data.metadata.BuildData;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.tools.npc.impl.COIMiner;
 import com.mcylm.coi.realm.tools.selection.Selector;
 import com.mcylm.coi.realm.utils.GUIUtils;
+import com.mcylm.coi.realm.utils.ItemUtils;
+import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,6 +33,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Nullable;
 
@@ -66,11 +77,21 @@ public class PlayerInteractListener implements Listener {
 
     }
 
-    /**
-     * 粘贴建筑
-     * @param event
-     */
+    @EventHandler
+    public void onChooseTeam(PlayerInteractEvent event) {
 
+        if(event.getHand() != null){
+            if (event.getHand().equals(EquipmentSlot.HAND)
+                    && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.COMPASS
+                    && ItemUtils.getName(event.getPlayer().getInventory().getItemInMainHand()).equals(LoggerUtils.replaceColor("&c选择队伍"))
+            ) {
+
+                // 选队伍
+                new ChooseTeamGUI(event.getPlayer()).open();
+            }
+        }
+
+    }
 
     /**
      * 粘贴建筑并设置NPC
@@ -84,7 +105,9 @@ public class PlayerInteractListener implements Listener {
         //判断是右手，同时避免触发两次
         if (Action.RIGHT_CLICK_BLOCK == action && event.getHand().equals(EquipmentSlot.HAND)
                 //空手触发
-                && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.DIAMOND_PICKAXE) {
+                && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.BOOK
+                && ItemUtils.getName(event.getPlayer().getInventory().getItemInMainHand()).equals(LoggerUtils.replaceColor("&b建筑蓝图"))
+        ) {
 
             Block clickedBlock = event.getClickedBlock();
             Location location = clickedBlock.getLocation();
@@ -99,9 +122,6 @@ public class PlayerInteractListener implements Listener {
 
                 Player player = event.getPlayer();
 
-//            COIMill building = new COIMill();
-//            building.build(location,player);
-
                 if (Selector.selectors.containsKey(player)) {
                     Selector.selectors.get(player).selectLocation(location);
                 } else {
@@ -112,8 +132,12 @@ public class PlayerInteractListener implements Listener {
 
         if (event.getClickedBlock() != null) {
             @Nullable COIBuilding building = BuildData.getBuildingByBlock(event.getClickedBlock());
-            if (building != null) {
-                building.displayHealth(event.getPlayer());
+            if (Action.RIGHT_CLICK_BLOCK == action && building != null) {
+                // 触发建筑按钮事件
+                BuildingTouchEvent touchEvent = new BuildingTouchEvent(building,event.getPlayer());
+                Bukkit.getServer().getPluginManager().callEvent(touchEvent);
+
+                // 原本的事件监听转移到了GameListener
             }
         }
 

@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 import java.time.LocalDateTime;
 
 @Data
-@ToString
 @AllArgsConstructor
 public class COIScore {
 
@@ -22,4 +21,14 @@ public class COIScore {
     // 玩家
     private Player player;
 
+    @Override
+    public String toString() {
+
+        String symbol = "+";
+        if(type.getScore() < 0){
+            symbol = "";
+        }
+
+        return type.getDescription()+" &b"+symbol+type.getScore();
+    }
 }

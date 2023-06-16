@@ -4,11 +4,13 @@ import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.runnable.TurretTask;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.config.BuildingConfig;
+import com.mcylm.coi.realm.utils.GUIUtils;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import lombok.Data;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
@@ -34,7 +36,18 @@ public class COITurret extends COIBuilding {
     private double coolDown;
     // 自动攻击 task
     private TurretTask turretCoolDown;
+
+    // 攻击半径
     private double radius;
+
+    // 弹药库
+    private Inventory inventory;
+
+    // 弹药消耗
+    private int ammunitionConsumption;
+
+    // 炮口位置
+    private Location muzzle;
 
     public COITurret() {
         // TODO 这块要搬到配置文件里
@@ -47,15 +60,19 @@ public class COITurret extends COIBuilding {
         // 最小伤害
         this.minDamage = 3d;
         // 最大伤害
-        this.maxDamage = 6d;
+        this.maxDamage = 5d;
         // 击退距离
-        this.repulsionDistance = 2d;
+        this.repulsionDistance = 0d;
         // 每次攻击的间隔时间
-        this.coolDown = 2;
+        this.coolDown = 3;
         // 攻击半径，如果发射方块和目标之间有其他方块挡着，是不会触发攻击的
         this.radius = 30;
-        // 自动攻击Task
-        this.turretCoolDown = new TurretTask(this);
+        // 弹药库，如果里面有弹药，才能正常攻击，否则无法攻击
+        // 每次攻击消耗 1 颗绿宝石
+        // “大炮一响，黄金万两”
+        this.inventory = GUIUtils.createAmmoInventory(6);
+        // 每次攻击消耗的弹药
+        this.ammunitionConsumption = 1;
         // 默认等级为1
         setLevel(1);
         // 初始化NPC创建器
@@ -69,23 +86,33 @@ public class COITurret extends COIBuilding {
     @Override
     public BuildingConfig getDefaultConfig() {
         return new BuildingConfig()
-                .setMaxLevel(2)
-                .setConsume(64)
+                .setMaxLevel(3)
+                .setMaxBuild(10)
+                .setConsume(512)
                 .setStructures(getBuildingLevelStructure());
     }
 
     @Override
     public void buildSuccess(Location location, Player player) {
-
+        super.buildSuccess(location, player);
         // 建造完成就开启自动检测周围敌方单位并攻击
+        // 自动攻击Task
+        this.turretCoolDown = new TurretTask(this);
         this.turretCoolDown.action();
 
     }
 
     @Override
     public void upgradeBuildSuccess() {
-
         // 升级成功
+        super.upgradeBuildSuccess();
+        // 先关闭
+        Bukkit.getScheduler().cancelTask(this.getTurretCoolDown().getTaskId());
+        // 数据升级
+        upgrade();
+        // 重启防御塔
+        this.turretCoolDown = new TurretTask(this);
+        this.turretCoolDown.action();
     }
 
     @Override
@@ -101,6 +128,7 @@ public class COITurret extends COIBuilding {
     private void initStructure() {
         getBuildingLevelStructure().put(1, "turret1.structure");
         getBuildingLevelStructure().put(2, "turret2.structure");
+        getBuildingLevelStructure().put(3, "turret2.structure");
     }
 
     @Override
@@ -168,5 +196,21 @@ public class COITurret extends COIBuilding {
             }
         });
 
+    }
+
+    /**
+     * 升级
+     */
+    private void upgrade(){
+        // 最小伤害
+        this.minDamage = this.minDamage + 1;
+        // 最大伤害
+        this.maxDamage = this.maxDamage + 2;
+        // 击退距离
+        this.repulsionDistance = this.repulsionDistance + 1;
+        // 每次攻击的间隔时间
+        this.coolDown = this.coolDown - 1;
+        // 攻击消耗增大
+        this.ammunitionConsumption = this.ammunitionConsumption + 2;
     }
 }

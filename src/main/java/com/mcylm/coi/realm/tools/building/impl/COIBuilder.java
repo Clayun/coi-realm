@@ -89,9 +89,6 @@ public class COIBuilder implements Builder {
 
         // NPC出生点方块名称
         String spawnerBlockTypeName = Entry.getInstance().getConfig().getString("game.npc.spawner-material");
-        // 炮口位置方块名称
-        String muzzleBlockTypeName = Entry.getInstance().getConfig().getString("game.turret.muzzle-material");
-
 
         //根据Y轴排序
         needBuildCOIBlocks.sort(Comparator.comparingDouble(COIBlock::getY));
@@ -156,12 +153,6 @@ public class COIBuilder implements Builder {
                                     spawnLocation = cloneLocation;
                                 }
 
-                                if(block.getType().equals(Material.getMaterial(muzzleBlockTypeName))){
-                                    // 如果匹配炮口方块
-                                    Location cloneLocation = block.getLocation().clone();
-                                    muzzleLocation = cloneLocation;
-                                }
-
                                 BlockState state = block.getState();
                                 state.setBlockData(blockData);
                                 state.update(true);
@@ -188,11 +179,6 @@ public class COIBuilder implements Builder {
                             // 赋值出生点
                             paster.setSpawnLocation(spawnLocation);
                             paster.getNpcCreators().forEach(npc -> npc.setSpawnLocation(spawnLocation));
-                        }
-
-                        // 炮口位置
-                        if(muzzleLocation != null){
-                            paster.setMuzzle(muzzleLocation);
                         }
 
                         // 通知外部建造完成
@@ -239,9 +225,6 @@ public class COIBuilder implements Builder {
 
         // NPC出生点方块名称
         String spawnerBlockTypeName = Entry.getInstance().getConfig().getString("game.npc.spawner-material");
-        // 炮口位置方块名称
-        String muzzleBlockTypeName = Entry.getInstance().getConfig().getString("game.turret.muzzle-material");
-
 
         //根据Y轴排序
         needBuildCOIBlocks.sort(Comparator.comparingDouble(COIBlock::getY));
@@ -302,10 +285,6 @@ public class COIBuilder implements Builder {
                                     Location cloneLocation = block.getLocation().clone();
                                     cloneLocation.setY(cloneLocation.getY() + 1);
                                     spawnLocation = cloneLocation;
-                                }else if(block.getType().equals(Material.getMaterial(muzzleBlockTypeName))){
-                                    // 如果匹配炮口方块
-                                    Location cloneLocation = block.getLocation().clone();
-                                    muzzleLocation = cloneLocation;
                                 }
 
                                 BlockState state = block.getState();
@@ -334,11 +313,6 @@ public class COIBuilder implements Builder {
                             // 赋值出生点
                             paster.setSpawnLocation(spawnLocation);
                             paster.getNpcCreators().forEach(npc -> npc.setSpawnLocation(spawnLocation));
-                        }
-
-                        // 炮口位置
-                        if(muzzleLocation != null){
-                            paster.setMuzzle(muzzleLocation);
                         }
 
                         // 通知外部建造完成

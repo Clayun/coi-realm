@@ -1,5 +1,6 @@
 package com.mcylm.coi.realm.utils;
 
+import com.mcylm.coi.realm.Entry;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Color;
@@ -13,6 +14,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -62,8 +64,13 @@ public class ItemUtils {
 
     public static void rename(ItemStack i, String s) {
         ItemMeta m = i.getItemMeta();
-        m.setDisplayName(s);
+        m.setDisplayName(LoggerUtils.replaceColor(s));
         i.setItemMeta(m);
+    }
+
+    public static String getName(ItemStack i) {
+        ItemMeta m = i.getItemMeta();
+        return m.getDisplayName();
     }
 
     public static void setLore(ItemStack i, List<String> lore) {
@@ -120,6 +127,57 @@ public class ItemUtils {
             return new HashMap<>();
         }
     }
+
+    /**
+     * 获取箱子里某样物品的总数量
+     * @param location
+     * @param material
+     * @return
+     */
+    public static int getItemAmountFromContainer(Location location,Material material){
+
+        int count = 0;
+
+        Block block = location.getBlock();
+
+        if (block.getState() instanceof Container container){
+
+            @Nullable ItemStack[] contents = container.getInventory().getContents();
+            if(contents.length > 0){
+                for(ItemStack item : contents){
+                    if(item != null && item.getType().equals(material)){
+                        count = count + item.getAmount();
+                    }
+                }
+            }
+
+        }
+
+        return count;
+    }
+
+    /**
+     * 获取背包里面某样物品的数量
+     * @param inventory
+     * @param material
+     * @return
+     */
+    public static int getItemAmountFromInventory(Inventory inventory,Material material){
+
+        int count = 0;
+
+        @Nullable ItemStack[] contents = inventory.getContents();
+        if(contents.length > 0){
+            for(ItemStack item : contents){
+                if(item != null && item.getType().equals(material)){
+                    count = count + item.getAmount();
+                }
+            }
+        }
+
+        return count;
+    }
+
 
     /**
      * 从箱子里拿指定数量的物品
@@ -204,5 +262,65 @@ public class ItemUtils {
         LeatherArmorMeta meta = (LeatherArmorMeta)item.getItemMeta();
         meta.setColor(color);
         item.setItemMeta(meta);
+    }
+
+    /**
+     * 扣减资源
+     * @param amount
+     * @param inventory
+     * @return
+     */
+    public static int deductionResources(int amount,Inventory inventory) {
+
+        String materialName = Entry.getInstance().getConfig().getString("game.building.material");
+        int playerHadResource = ItemUtils.getItemAmountFromInventory(inventory,Material.getMaterial(materialName));
+
+        // 如果玩家手里的资源数量足够
+        if (playerHadResource >= amount) {
+
+            // 扣减物品
+            ItemStack[] contents =
+                    inventory.getContents();
+
+            // 剩余所需扣减资源数量
+            int deductionCount = amount;
+
+            // 资源类型
+            Material material = Material.getMaterial(materialName);
+            for (ItemStack itemStack : contents) {
+
+                if (itemStack == null) {
+                    continue;
+                }
+
+                // 是资源物品才扣减
+                if (itemStack.getType().equals(material)) {
+                    // 如果当前物品的堆叠数量大于所需资源，就只扣减数量
+                    if (itemStack.getAmount() > deductionCount) {
+                        itemStack.setAmount(itemStack.getAmount() - deductionCount);
+                        return deductionCount;
+                    }
+
+                    // 如果当前物品的堆叠数量等于所需资源，就删物品
+                    if (itemStack.getAmount() == deductionCount) {
+                        inventory.removeItem(itemStack);
+                        return deductionCount;
+                    }
+
+                    // 如果物品的堆叠数量小于所需资源，就删物品，同时计数
+                    if (itemStack.getAmount() < deductionCount) {
+                        // 减去当前物品的库存
+                        deductionCount = deductionCount - itemStack.getAmount();
+                        inventory.removeItem(itemStack);
+                    }
+                }
+
+
+            }
+
+        } else
+            return 0;
+
+        return 0;
     }
 }

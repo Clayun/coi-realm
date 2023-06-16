@@ -6,40 +6,58 @@ import com.mcylm.coi.realm.cmd.COIStructureCommand;
 import com.mcylm.coi.realm.cmd.DebugCommand;
 import com.mcylm.coi.realm.cmd.VeinCommand;
 import com.mcylm.coi.realm.enums.COIBuildingType;
+import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COIServerMode;
 import com.mcylm.coi.realm.game.COIGame;
+import com.mcylm.coi.realm.gui.ForgeGUI;
+import com.mcylm.coi.realm.item.COIRocket;
 import com.mcylm.coi.realm.listener.GameListener;
 import com.mcylm.coi.realm.listener.MineralsBreakListener;
 import com.mcylm.coi.realm.listener.PlayerInteractListener;
+import com.mcylm.coi.realm.listener.SnowballCoolDownListener;
 import com.mcylm.coi.realm.managers.COIBuildingManager;
 import com.mcylm.coi.realm.model.COINpc;
+import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.impl.*;
 import com.mcylm.coi.realm.tools.building.impl.monster.COIMonsterBase;
 import com.mcylm.coi.realm.tools.data.MapData;
+import com.mcylm.coi.realm.tools.data.metadata.BuildData;
 import com.mcylm.coi.realm.tools.data.metadata.EntityData;
 import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
 import com.mcylm.coi.realm.tools.npc.impl.monster.COIMonster;
+import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.LoggerUtils;
+import com.mcylm.coi.realm.utils.MapUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Getter;
 import me.lucko.helper.Events;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
 import net.kyori.adventure.text.Component;
+import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scoreboard.Criteria;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class Entry extends ExtendedJavaPlugin {
@@ -84,14 +102,16 @@ public class Entry extends ExtendedJavaPlugin {
 
     private File mapDataFile = new File(getDataFolder(), "map.json");
 
+    // 计分板
+    @Getter
+    private Scoreboard scoreboard;
 
     @Override
     protected void enable() {
-
-
         instance = this;
         builder = new COIBuilder();
         NPC_FOODS = new ArrayList<>();
+        scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
 
         LoggerUtils.log(Entry.getInstance().getName() + " 开始加载...");
 
@@ -151,18 +171,36 @@ public class Entry extends ExtendedJavaPlugin {
         for (Player p : getServer().getOnlinePlayers()) {
             p.kick(Component.text("服务器重载中,请稍后重连"));
         }
+
+        // 删除NPC
+        CitizensAPI.getNPCRegistry().deregisterAll();
+
+        // 清空Team的缓存
+        Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+        for (Team team : scoreboard.getTeams()) {
+            team.unregister();
+        }
     }
 
     private void registerEventListeners() {
         // 注册监听器
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new PlayerInteractListener(), this);
+        pluginManager.registerEvents(new SnowballCoolDownListener(), this);
         pluginManager.registerEvents(new GameListener(), this);
         pluginManager.registerEvents(new MineralsBreakListener(), this);
         // AI事件监听器
         COISoldier.registerListener();
+        // 助推器监听器
+        COIRocket.registerListener();
 
-        COIMonster.registerListener();
+        Events.subscribe(PlayerJoinEvent.class)
+                .handler(e -> {
+                    if(Entry.getGame().getStatus().equals(COIGameStatus.WAITING)){
+                        // 等待中，就初始化背包
+                        Entry.getGame().initPlayerWaiting(e.getPlayer());
+                    }
+        });
 
         Events.subscribe(ProjectileHitEvent.class)
                 .handler(e -> {
@@ -181,7 +219,6 @@ public class Entry extends ExtendedJavaPlugin {
                 });
 
         Events.subscribe(PlayerInteractAtEntityEvent.class)
-                .filter(e -> e.getPlayer().isSneaking())
                 .filter(e -> {
                     COINpc npc = EntityData.getNpcByEntity(e.getRightClicked());
                     if (npc != null) {
@@ -190,9 +227,18 @@ public class Entry extends ExtendedJavaPlugin {
                     return false;
                 })
                 .handler(e -> {
-                    Inventory inv = EntityData.getNpcByEntity(e.getRightClicked()).getInventory();
 
-                    e.getPlayer().openInventory(inv);
+                    COINpc npcByEntity = EntityData.getNpcByEntity(e.getRightClicked());
+
+                    Inventory inv = npcByEntity.getInventory();
+
+                    if(npcByEntity.getBuilding().getType().equals(COIBuildingType.FORGE)){
+                        // 铁匠铺打开另一个GUI
+                        new ForgeGUI(e.getPlayer(),npcByEntity.getBuilding());
+                    }else{
+                        e.getPlayer().openInventory(inv);
+                    }
+
                     if (inv != null) {
                         new BukkitRunnable() {
                             @Override
@@ -217,9 +263,11 @@ public class Entry extends ExtendedJavaPlugin {
         buildingManager.registerBuilding(COIBuildingType.MILITARY_CAMP, COICamp.class);
         buildingManager.registerBuilding(COIBuildingType.WALL_NORMAL, COIWall.class);
         buildingManager.registerBuilding(COIBuildingType.DOOR_NORMAL, COIDoor.class);
+        buildingManager.registerBuilding(COIBuildingType.FORGE, COIForge.class);
 
         // 防御塔系列
         buildingManager.registerBuilding(COIBuildingType.TURRET_NORMAL, COITurret.class);
+        buildingManager.registerBuilding(COIBuildingType.TURRET_REPAIR, COIRepair.class);
 
         // 怪物系列
         buildingManager.registerBuilding(COIBuildingType.MONSTER_BASE, COIMonsterBase.class);
@@ -265,5 +313,42 @@ public class Entry extends ExtendedJavaPlugin {
             throw new RuntimeException(e);
         }
 
+    }
+
+    /**
+     * 重置小游戏地图
+     * 无法实现，没有主目录的权限
+     */
+    @Deprecated
+    private void resetMap(){
+
+        String worldDirName = getConfig().getString("game.spawn-world");
+        String zipName = getConfig().getString("game.world-zip");
+
+        if(worldDirName == null || zipName == null){
+            return;
+        }
+        // 先删除原本的地图
+        deleteMapFolder(worldDirName);
+
+        // 解压地图
+        try {
+            MapUtils.extractMap(
+                    new File(getServer().getWorldContainer().getParentFile(), zipName),
+                    new File(getServer().getWorldContainer().getParentFile(), worldDirName));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void deleteMapFolder(String name) {
+        File folder = new File(getServer().getWorldContainer().getParentFile(), name);
+        if (folder.exists()) {
+            try {
+                FileUtils.deleteDirectory(folder);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

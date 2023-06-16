@@ -7,14 +7,25 @@ import com.mcylm.coi.realm.enums.COITeamType;
 import com.mcylm.coi.realm.model.COIScore;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.team.Team;
+import com.mcylm.coi.realm.utils.ItemUtils;
+import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Scoreboard;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -32,6 +43,9 @@ public class COITeam implements Team {
     // 小队玩家列表（只记录名称）
     // Players list (only name)
     private List<String> players;
+
+    // 失败后的记录
+    private List<String> playersCache;
 
     // 默认出生点
     private Location spawner;
@@ -64,7 +78,10 @@ public class COITeam implements Team {
 
     public COITeam(COITeamType type,Location spawner) {
         this.type = type;
+        // 初始化本小队的计分板
+        registerScoreboardTeam(type);
         this.players = new ArrayList<>();
+        this.playersCache = new ArrayList<>();
         this.foodChests = new ArrayList<>();
         this.resourcesChests = new ArrayList<>();
         this.finishedBuildings = new ArrayList<>();
@@ -73,6 +90,49 @@ public class COITeam implements Team {
         this.spawner = spawner;
         // 初始化大本营
         TeamUtils.initTeamBase(this);
+    }
+
+    /**
+     * 注册小队
+     * @return
+     */
+    private void registerScoreboardTeam(COITeamType type) {
+        org.bukkit.scoreboard.Team team = Entry.getInstance().getScoreboard().getTeam(getType().getCode());
+        if (team == null) {
+            team = Entry.getInstance().getScoreboard().registerNewTeam(getType().getCode());
+            team.setAllowFriendlyFire(false);
+            team.color(type.getNamedTextColor());
+        }
+    }
+
+    /**
+     * 将玩家添加入计分板
+     * @param name
+     */
+    private void addPlayerToScoreboard(String name){
+        org.bukkit.scoreboard.Team team = Entry.getInstance().getScoreboard().getTeam(getType().getCode());
+        team.addEntry(name);
+    }
+
+    /**
+     * 添加实体到本小队
+     * @param entity
+     */
+    public void addEntityToScoreboard(Entity entity){
+        org.bukkit.scoreboard.Team team = Entry.getInstance().getScoreboard().getTeam(getType().getCode());
+        team.addEntity(entity);
+    }
+
+    /**
+     * 从计分板里删除生物
+     * @param entity
+     */
+    public void removeEntityFromScoreboard(Entity entity){
+        if(entity == null){
+            return;
+        }
+        org.bukkit.scoreboard.Team team = Entry.getInstance().getScoreboard().getTeam(getType().getCode());
+        team.removeEntity(entity);
     }
 
     /**
@@ -110,6 +170,9 @@ public class COITeam implements Team {
         // Join team
         getPlayers().add(player.getName());
 
+        // 计分板添加玩家
+        addPlayerToScoreboard(player.getName());
+
         return true;
     }
 
@@ -141,9 +204,14 @@ public class COITeam implements Team {
     }
 
     @Override
-    public void manageScore(COIScoreType type, Player player) {
+    public void addScore(COIScoreType type, Player player) {
 
         if(type == null || player == null){
+            return;
+        }
+
+        // 失败后不允许加积分
+        if(isDefeat()){
             return;
         }
 
@@ -154,6 +222,36 @@ public class COITeam implements Team {
 
         // 存储记录
         getScoreRecords().add(coiScore);
+
+        // 提示信息
+        LoggerUtils.sendActionbar(coiScore.toString(),player);
+
+    }
+
+    /**
+     * 通过Entity给所属人添加积分
+     * @param type
+     * @param entity
+     */
+    public void addScore(COIScoreType type, Entity entity){
+        String npcOwner = TeamUtils.getNPCOwner(entity);
+
+        if(npcOwner != null){
+            Player player = Bukkit.getPlayer(npcOwner);
+
+            if(player != null){
+                addScore(type,player);
+            }
+        }else{
+            if(entity instanceof Player player){
+                // 判断entity是否玩家
+
+                if(TeamUtils.getTeamByPlayer(player) != null){
+                    addScore(type,player);
+                }
+            }
+        }
+
 
     }
 
@@ -167,10 +265,34 @@ public class COITeam implements Team {
     @Override
     public void defeatedBy(Player player,COITeam team) {
 
-        if(player == null && team == null){
-            // 如果两个都是null，代表被野怪给干掉的
+        // 设为失败
+        setDefeat(true);
+
+        if(player == null || team == null){
+            // 不存在
         }else{
-            // 被玩家或者玩家的随从NPC干掉了
+            // 击败小队奖励埋点
+            team.addScore(COIScoreType.BEAT_TEAM,player);
+        }
+
+        // 被玩家或者玩家的随从NPC干掉了
+        // 整队在怪物队伍复活
+        // 如果怪物队伍被拆了，则直接失败
+
+        // 全员转移到怪物队伍
+        setPlayersCache(getPlayers());
+        TeamUtils.getMonsterTeam().getPlayers().addAll(getPlayers());
+        setPlayers(new ArrayList<>());
+
+        // 清理背包并传送到新的出生点
+        for(String playerName : getPlayersCache()){
+            Player defeatPlayer = Bukkit.getPlayer(playerName);
+            if(defeatPlayer != null){
+                defeatPlayer.getInventory().clear();
+                if(defeatPlayer.isOnline()){
+                    defeatPlayer.teleport(TeamUtils.getMonsterTeam().getSpawner());
+                }
+            }
         }
     }
 
@@ -188,6 +310,104 @@ public class COITeam implements Team {
         }
 
         return format;
+    }
+
+    public List<String> getEnemyPlayers(){
+        List<String> players = new ArrayList<>();
+        for(COITeam team : Entry.getGame().getTeams()){
+            if(team.equals(this)){
+                continue;
+            }
+            players.addAll(team.getPlayers());
+
+        }
+
+        return players;
+    }
+
+    /**
+     * 获取团队绿宝石总数
+     * @return
+     */
+    public int getTotalEmerald(){
+        int count = 0;
+
+        String material = Entry.getInstance().getConfig().getString("game.building.material");
+
+        // 先计算箱子里存了多少个
+        for(COIBuilding building : getFinishedBuildings()){
+            if(!building.getChestsLocation().isEmpty()){
+                // 总存储箱子
+                for(Location loc : building.getChestsLocation()){
+
+                    int num = ItemUtils.getItemAmountFromContainer(loc, Material.getMaterial(material));
+                    count = count + num;
+                }
+            }
+        }
+
+        // 再获取玩家身上的
+        for (String name : getPlayers()) {
+            Player player = Bukkit.getPlayer(name);
+
+            if(player.isOnline()){
+                int num = ItemUtils.getItemAmountFromInventory(player.getInventory(), Material.getMaterial(material));
+
+                count = count + num;
+            }
+
+        }
+
+        return count;
+    }
+
+    /**
+     * 获取公共绿宝石资源总数
+     * @return
+     */
+    public int getPublicEmerald(){
+        int count = 0;
+
+        List<Location> chests = getResourcesChests();
+
+        HashSet<Location> set = new HashSet<>(chests);
+
+        String material = Entry.getInstance().getConfig().getString("game.building.material");
+
+        // 总存储箱子
+        for(Location loc : set){
+            int num = ItemUtils.getItemAmountFromContainer(loc, Material.getMaterial(material));
+            count = count + num;
+        }
+
+        return count;
+    }
+
+    /**
+     * 获取团队总人口
+     * @return
+     */
+    public int getTotalPeople(){
+        int total = getPlayers().size();
+
+        // 计算总NPC数量
+        for(COIBuilding building : getFinishedBuildings()){
+            int size = building.getNpcCreators().size();
+
+            total = total + size;
+        }
+
+        return total;
+    }
+
+    public COIBuilding getBase(){
+        for(COIBuilding building : getFinishedBuildings()){
+            if(building.getType().equals(COIBuildingType.BASE)){
+                return building;
+            }
+        }
+
+        return null;
     }
 
 

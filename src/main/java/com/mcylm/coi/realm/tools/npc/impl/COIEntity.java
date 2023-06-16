@@ -3,15 +3,14 @@ package com.mcylm.coi.realm.tools.npc.impl;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.mcylm.coi.realm.Entry;
+import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.runnable.NpcAITask;
 import com.mcylm.coi.realm.tools.data.metadata.EntityData;
 import com.mcylm.coi.realm.tools.npc.AI;
+import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.tools.trait.DisguiseTrait;
-import com.mcylm.coi.realm.utils.GUIUtils;
-import com.mcylm.coi.realm.utils.InventoryUtils;
-import com.mcylm.coi.realm.utils.ItemUtils;
-import com.mcylm.coi.realm.utils.LoggerUtils;
+import com.mcylm.coi.realm.utils.*;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings;
@@ -20,6 +19,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.ai.PathStrategy;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.trait.VillagerProfession;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -30,6 +30,7 @@ import org.bukkit.entity.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import javax.annotation.Nullable;
@@ -241,8 +242,6 @@ public class COIEntity implements AI {
                 .useNewPathfinder(useNewPathfinder());
 
         navigator.setTarget(location);
-
-
     }
 
     protected boolean useNewPathfinder() {
@@ -451,12 +450,9 @@ public class COIEntity implements AI {
 
         if (foodChests == null
                 || foodChests.isEmpty()) {
-//            LoggerUtils.debug("食物箱子不存在");
-            // 食物箱子不存在，就直接原地摆烂
-            if (getNpc().getEntity() instanceof Player) {
-                say("肚子好饿！附近都没有吃的了");
-            }
-
+            // 食物箱子不存在，就回到出生点
+            findPath(getCoiNpc().getSpawnLocation());
+            say("&f指挥官为什么没有建造&b"+ COIBuildingType.MILL.getName() +"&f，我要饿死了");
             return;
         }
 
@@ -488,10 +484,9 @@ public class COIEntity implements AI {
 
         if (distance > FOOD_CHEST_MAX_DISTANCE) {
             // 如果食品箱子的距离大于 最大寻找的距离
-            // 直接原地摆烂
-            if (getNpc().getEntity() instanceof Player) {
-                say("肚子好饿！附近都没有吃的了");
-            }
+            // 先尝试回到出生点
+            findPath(getCoiNpc().getSpawnLocation());
+            say("好饿！好饿啊！");
             return;
         }
 
@@ -606,7 +601,6 @@ public class COIEntity implements AI {
 
     /**
      * 穿衣服
-     * todo 需要优化选择更好的物品装备
      */
     @Override
     public void wearClothes() {
@@ -624,14 +618,7 @@ public class COIEntity implements AI {
             ItemStack itemStack = iterator.next();
             //头盔
             if (itemStack == null) continue;
-            if (itemStack.getType() == Material.CHAINMAIL_HELMET
-                    || itemStack.getType() == Material.DIAMOND_HELMET
-                    || itemStack.getType() == Material.GOLDEN_HELMET
-                    || itemStack.getType() == Material.IRON_HELMET
-                    || itemStack.getType() == Material.LEATHER_HELMET
-                    || itemStack.getType() == Material.NETHERITE_HELMET
-                    || itemStack.getType() == Material.TURTLE_HELMET
-            ) {
+            if (WearUtils.canWearOnHead(itemStack)) {
                 if (itemStack.getType().equals(Material.LEATHER_HELMET)) {
                     // 皮革的，就换成小队颜色
                     if (getCoiNpc().getTeam().getType().getLeatherColor() != null) {
@@ -640,19 +627,11 @@ public class COIEntity implements AI {
                 }
                 entity.getEquipment().setHelmet(itemStack);
                 backpack.remove(itemStack);
-                LoggerUtils.debug("NPC穿上了头盔");
-                say("这可是个好东西啊，脑袋保住了");
                 continue;
             }
 
             //胸甲
-            if (itemStack.getType() == Material.CHAINMAIL_CHESTPLATE
-                    || itemStack.getType() == Material.DIAMOND_CHESTPLATE
-                    || itemStack.getType() == Material.GOLDEN_CHESTPLATE
-                    || itemStack.getType() == Material.IRON_CHESTPLATE
-                    || itemStack.getType() == Material.LEATHER_CHESTPLATE
-                    || itemStack.getType() == Material.NETHERITE_CHESTPLATE
-            ) {
+            if (WearUtils.canWearOnBody(itemStack)) {
 
                 if (itemStack.getType().equals(Material.LEATHER_CHESTPLATE)) {
                     // 皮革的，就换成小队颜色
@@ -662,19 +641,11 @@ public class COIEntity implements AI {
                 }
                 entity.getEquipment().setChestplate(itemStack);
                 backpack.remove(itemStack);
-                LoggerUtils.debug("NPC穿上了胸甲");
-                say("这是什么宝贝，胸罩么");
                 continue;
             }
 
             //裤子
-            if (itemStack.getType() == Material.LEATHER_LEGGINGS
-                    || itemStack.getType() == Material.CHAINMAIL_LEGGINGS
-                    || itemStack.getType() == Material.DIAMOND_LEGGINGS
-                    || itemStack.getType() == Material.GOLDEN_LEGGINGS
-                    || itemStack.getType() == Material.IRON_LEGGINGS
-                    || itemStack.getType() == Material.NETHERITE_LEGGINGS
-            ) {
+            if (WearUtils.canWearOnLegs(itemStack)) {
 
                 if (itemStack.getType().equals(Material.LEATHER_LEGGINGS)) {
                     // 皮革的，就换成小队颜色
@@ -684,19 +655,11 @@ public class COIEntity implements AI {
                 }
                 entity.getEquipment().setLeggings(itemStack);
                 backpack.remove(itemStack);
-                LoggerUtils.debug("NPC穿上了裤子");
-                say("这难道就是皇帝的丝袜么");
                 continue;
             }
 
             //靴子
-            if (itemStack.getType() == Material.CHAINMAIL_BOOTS
-                    || itemStack.getType() == Material.DIAMOND_BOOTS
-                    || itemStack.getType() == Material.GOLDEN_BOOTS
-                    || itemStack.getType() == Material.IRON_BOOTS
-                    || itemStack.getType() == Material.LEATHER_BOOTS
-                    || itemStack.getType() == Material.NETHERITE_BOOTS
-            ) {
+            if (WearUtils.canWearOnFeet(itemStack)) {
 
                 if (itemStack.getType().equals(Material.LEATHER_BOOTS)) {
                     // 皮革的，就换成小队颜色
@@ -707,45 +670,12 @@ public class COIEntity implements AI {
 
                 entity.getEquipment().setBoots(itemStack);
                 backpack.remove(itemStack);
-                LoggerUtils.debug("NPC穿上了鞋");
-                say("英雄不能没有切尔西！");
                 continue;
             }
 
             //武器或工具
             //剑
-            if (itemStack.getType() == Material.DIAMOND_SWORD
-                    || itemStack.getType() == Material.STONE_SWORD
-                    || itemStack.getType() == Material.WOODEN_SWORD
-                    || itemStack.getType() == Material.GOLDEN_SWORD
-                    || itemStack.getType() == Material.IRON_SWORD
-                    || itemStack.getType() == Material.NETHERITE_SWORD
-                    //斧头
-                    || itemStack.getType() == Material.DIAMOND_AXE
-                    || itemStack.getType() == Material.GOLDEN_AXE
-                    || itemStack.getType() == Material.IRON_AXE
-                    || itemStack.getType() == Material.NETHERITE_AXE
-                    || itemStack.getType() == Material.STONE_AXE
-                    || itemStack.getType() == Material.WOODEN_AXE
-                    //镐子
-                    || itemStack.getType() == Material.DIAMOND_PICKAXE
-                    || itemStack.getType() == Material.GOLDEN_PICKAXE
-                    || itemStack.getType() == Material.IRON_PICKAXE
-                    || itemStack.getType() == Material.NETHERITE_PICKAXE
-                    || itemStack.getType() == Material.STONE_PICKAXE
-                    || itemStack.getType() == Material.WOODEN_PICKAXE
-                    //锄头
-                    || itemStack.getType() == Material.DIAMOND_HOE
-                    || itemStack.getType() == Material.GOLDEN_HOE
-                    || itemStack.getType() == Material.IRON_HOE
-                    || itemStack.getType() == Material.NETHERITE_HOE
-                    || itemStack.getType() == Material.STONE_HOE
-                    || itemStack.getType() == Material.WOODEN_HOE
-                    // 弩
-                    || itemStack.getType() == Material.CROSSBOW
-                    //Bow
-                    || itemStack.getType() == Material.BOW
-            ) {
+            if (WearUtils.canHoldInHand(itemStack)) {
                 if (entity.getEquipment().getItemInMainHand().getType().equals(Material.AIR)) {
                     entity.getEquipment().setItemInMainHand(itemStack);
                     backpack.remove(itemStack);
@@ -877,6 +807,35 @@ public class COIEntity implements AI {
     }
 
     /**
+     * 看向最近的玩家
+     */
+    public void lookNearestPlayer(){
+
+        if(!isAlive()){
+            return;
+        }
+
+        Entity entityNearest = null;
+        double distance = 999999;
+
+        List<Entity> nearbyEntities = getNpc().getEntity().getNearbyEntities(5, 0, 5);
+
+        for(Entity entity : nearbyEntities){
+            if(entity instanceof LivingEntity){
+
+                if(entity.getLocation().distance(npc.getEntity().getLocation()) < distance){
+                    entityNearest = entity;
+                    distance = entity.getLocation().distance(npc.getEntity().getLocation());
+                }
+            }
+        }
+
+        if(entityNearest != null){
+            npc.faceLocation(entityNearest.getLocation());
+        }
+    }
+
+    /**
      * 生成NPC
      */
     @Override
@@ -892,7 +851,10 @@ public class COIEntity implements AI {
 
         initDisguise();
 
-        npc.spawn(location);
+        Location center = location.clone();
+        center.setX(center.getX() + 0.5);
+        center.setZ(center.getZ() + 0.5);
+        npc.spawn(center);
 
         // 恢复血量和饱食度
         initEntityStatus();
@@ -900,12 +862,17 @@ public class COIEntity implements AI {
         npc.setProtected(false);
         this.isSpawn = true;
 
+        // 添加生物到计分板
+        getCoiNpc().getBuilding().getTeam().addEntityToScoreboard(npc.getEntity());
+
         say("干活！干活！");
     }
 
     @Override
     public void despawn() {
         if (this.npc != null) {
+            // 删除生物
+            getCoiNpc().getBuilding().getTeam().removeEntityFromScoreboard(npc.getEntity());
             npc.despawn();
             this.isSpawn = false;
         }
@@ -997,11 +964,22 @@ public class COIEntity implements AI {
 
 
         for (ItemStack next : inventory) {
-            if (next != null) location.getWorld().dropItem(location, next);
+            if (next != null) {
+                if(WearUtils.canWearOnHead(next)
+                    || WearUtils.canWearOnBody(next)
+                    || WearUtils.canWearOnLegs(next)
+                    || WearUtils.canWearOnFeet(next)
+                    || WearUtils.canHoldInHand(next)
+                ){
+                    // 武器装备类的，不允许掉落
+                }else {
+                    location.getWorld().dropItem(location, next);
+                }
+
+            }
         }
 
         // 清空缓存
-        // getCoiNpc().setFoodBag(new ArrayList<>());
         getCoiNpc().getInventory().clear();
 
     }
@@ -1059,9 +1037,9 @@ public class COIEntity implements AI {
             npcCreator.setInventory(GUIUtils.createNpcInventory(3));
         }
 
-
         // 设置NPC的名称使用 Hologram
         this.npc.setAlwaysUseNameHologram(true);
+        this.npc.data().setPersistent(NPC.Metadata.NAMEPLATE_VISIBLE, false);
 
         this.npc.data().set(NPC.Metadata.KEEP_CHUNK_LOADED, true);
         // 初始化NPC的皮
@@ -1088,7 +1066,43 @@ public class COIEntity implements AI {
             entity.setMetadata("entityData", new EntityData(getCoiNpc()));
 
             entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(MAX_HEALTH);
+
         }
+    }
+
+    /**
+     * 挥手
+     * @param second
+     */
+    public void swingMainHand(int second){
+
+        int ticks = second * 20;
+        int period = 5;
+        new BukkitRunnable() {
+
+            int i = 0;
+            @Override
+            public void run() {
+
+                if(getNpc() == null || getNpc().getEntity() == null){
+                    this.cancel();
+                }
+
+                i++;
+
+                if(isAlive()){
+                    // 挥动手
+                    ((LivingEntity) getNpc().getEntity()).swingMainHand();
+                }else{
+                    this.cancel();
+                }
+
+
+                if(i == ticks / period){
+                    this.cancel();
+                }
+            }
+        }.runTaskTimerAsynchronously(Entry.getInstance(), 0, period);
     }
 
     /**

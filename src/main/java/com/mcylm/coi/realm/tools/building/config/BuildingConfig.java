@@ -16,6 +16,7 @@ public class BuildingConfig {
     public BuildingConfig() {
         showInMenu = true;
         this.maxLevel = 1;
+        this.maxBuild = 1;
         this.consume = 16;
         this.structures = Map.of();
         this.customOptions = new JsonObject();
@@ -26,7 +27,8 @@ public class BuildingConfig {
 
     @SerializedName("max_level")
     private int maxLevel;
-
+    @SerializedName("max_build")
+    private int maxBuild;
     private int consume;
 
     private Map<Integer, String> structures;

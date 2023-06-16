@@ -19,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -47,6 +48,10 @@ public class COINpc implements Serializable {
     // 所属建筑
     private COIBuilding building;
 
+    // 所属建筑等级达到多少允许该NPC出现
+    // 默认为 1
+    private int requiredBuildingLevel = 1;
+
     // 皮肤相关参数
     private String skinTextures;
     private String skinName;
@@ -56,10 +61,10 @@ public class COINpc implements Serializable {
     private boolean aggressive = false;
 
     // NPC的友军（玩家名称）
-    private Set<String> friendPlayers;
+    private Set<String> friendPlayers = new HashSet<>();
 
     // NPC的敌对玩家（玩家名称）
-    private Set<String> enemyPlayers;
+    private Set<String> enemyPlayers = new HashSet<>();
 
     // 敌对生物
     private Set<EntityType> enemyEntities;
@@ -146,10 +151,11 @@ public class COINpc implements Serializable {
     }};
 
     public void remove() {
-        setCanRespawn(false);
-        npc.despawn();
-        npc.remove();
-
+        if(npc != null){
+            setCanRespawn(false);
+            npc.despawn();
+            npc.remove();
+        }
     }
 
     public void upgrade() {
@@ -171,5 +177,13 @@ public class COINpc implements Serializable {
         return null;
     }
 
+    public Set<String> getFriendPlayers() {
+        friendPlayers.addAll(getTeam().getPlayers());
+        return friendPlayers;
+    }
 
+    public Set<String> getEnemyPlayers() {
+        enemyPlayers.addAll(getTeam().getEnemyPlayers());
+        return enemyPlayers;
+    }
 }

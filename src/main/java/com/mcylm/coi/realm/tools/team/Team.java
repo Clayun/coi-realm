@@ -21,7 +21,7 @@ public interface Team {
     List<COIBuilding> getBuildingByType(COIBuildingType type);
 
     // 给当前小队增加或者减少积分
-    void manageScore(COIScoreType type,Player player);
+    void addScore(COIScoreType type,Player player);
 
     // 被另一个队伍击败
     void defeatedBy(Player player,COITeam team);

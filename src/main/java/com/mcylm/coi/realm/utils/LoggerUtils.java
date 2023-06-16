@@ -35,9 +35,7 @@ public class LoggerUtils {
             return;
         }
 
-        if(player != null){
-            player.sendMessage("§f[§b§l"+Entry.PREFIX+"§f] §7"+replaceColor(msg));
-        }
+        player.sendMessage("§f[§b§l"+Entry.PREFIX+"§f] §7"+replaceColor(msg));
     }
 
     public static void sendMessage(String msg, Player player){
@@ -64,6 +62,10 @@ public class LoggerUtils {
         if (player == null || message == null || !player.isOnline()) return;
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(replaceColor(message)));
 
+    }
+
+    public static void sendActionbar( String message,Player player) {
+        sendActionbar(player,message);
     }
 
     public static void broadcastMessage(String message){

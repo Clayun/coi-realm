@@ -1,10 +1,13 @@
 name: COIRealm
 main: com.mcylm.coi.realm.Entry
+description: A RTS MINI GAME PLUGIN
 api-version: 1.19
 version: 1.0
 author: Mikesam
 website: https://www.mcylm.com
 depend: [helper,Citizens]
+softdepend:
+  - LibsDisguises
 commands:
   structure:
     description: save building structure

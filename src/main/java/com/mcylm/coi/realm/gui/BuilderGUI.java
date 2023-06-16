@@ -1,20 +1,28 @@
 package com.mcylm.coi.realm.gui;
 
 import com.mcylm.coi.realm.Entry;
+import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COIGameStatus;
+import com.mcylm.coi.realm.enums.COIUnlockType;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.LineBuild;
 import com.mcylm.coi.realm.tools.selection.AreaSelector;
 import com.mcylm.coi.realm.tools.selection.LineSelector;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
+import com.mcylm.coi.realm.utils.GUIUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import me.lucko.helper.item.ItemStackBuilder;
+import me.lucko.helper.menu.Gui;
 import me.lucko.helper.menu.Item;
 import me.lucko.helper.menu.paginated.PaginatedGuiBuilder;
+import me.lucko.helper.menu.scheme.MenuScheme;
+import me.lucko.helper.menu.scheme.StandardSchemeMappings;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,11 +35,10 @@ import java.util.List;
  * Player can choose building here,
  * and pick a place to build.
  */
-public class BuilderGUI {
+public class BuilderGUI{
 
     // 建造的位置
     private Location location;
-
 
     public BuilderGUI(Player p, Location loc) {
 
@@ -50,8 +57,8 @@ public class BuilderGUI {
         PaginatedGuiBuilder builder = PaginatedGuiBuilder.create();
 
         builder.title("&b&l选择你要的建筑");
-        builder.previousPageSlot(44);
-        builder.nextPageSlot(53);
+        builder.previousPageSlot(49);
+        builder.nextPageSlot(51);
         builder.nextPageItem((pageInfo) -> ItemStackBuilder.of(Material.ARROW).name("&a下一页").build());
         builder.previousPageItem((pageInfo) -> ItemStackBuilder.of(Material.ARROW).name("&a上一页").build());
 
@@ -60,35 +67,66 @@ public class BuilderGUI {
             for (COIBuilding building : Entry.getInstance().getBuildingManager().getAllBuildingTemplates()) {
 
                 if(building.getConfig().isShowInMenu()){
-                    items.add(ItemStackBuilder.of(building.getType().getItemType())
-                            .name(building.getType().getName())
-                            .amount(getBuildingNum(team.getBuildingByType(building.getType())))
-                            .lore("")
-                            .lore("&f> &a已造数量： &c" + team.getBuildingByType(building.getType()).size())
-                            .lore("&f> &a所需耗材： &c" + building.getConsume())
-                            .lore("&f> &a拥有材料： &c" + building.getPlayerHadResource(p))
-                            .lore("&f> &a介绍：")
-                            .lore(autoLineFeed(building.getType().getIntroduce()))
-                            .lore("")
-                            .lore("&f> &a&l点击进行建造")
-                            .build(() -> {
-                                // 点击时触发下面的方法
-                                // TODO 封装建造方法
 
-                                building.setTeam(team);
-                                // building.build(location,getPlayer());
-                                if (building.getStructureByLevel() != null) {
-                                    if (building instanceof LineBuild lineBuild) {
-                                        new LineSelector(p, lineBuild, location);
-                                    } else {
-                                        new AreaSelector(p, building, location);
+                    ItemStack item = building.getType().getItemType();
+                    // 判断是否达到解锁条件
+                    if(COIUnlockType.checkUnlock(team,building.getType())){
+
+                        items.add(ItemStackBuilder.of(item.clone())
+                                .name(building.getType().getName())
+                                .amount(getBuildingNum(team.getBuildingByType(building.getType())))
+                                .lore("")
+                                .lore("&f> &a可造数量： &c" + team.getBuildingByType(building.getType()).size() +"&7/"+getMaxBuild(building,team))
+                                .lore("&f> &a所需耗材： &c" + building.getConsume())
+                                .lore("&f> &a拥有材料： &c" + building.getPlayerHadResource(p))
+                                .lore("&f> &a介绍：")
+                                .lore(GUIUtils.autoLineFeed(building.getType().getIntroduce()))
+                                .lore("")
+                                .lore("&f> &a&l点击进行建造")
+                                .build(() -> {
+                                    // 点击时触发下面的方法
+
+                                    if(team.getBuildingByType(building.getType()).size() < getMaxBuild(building,team)){
+                                        // 建造数量没有满的时候，可以建造
+                                        building.setTeam(team);
+                                        // building.build(location,getPlayer());
+                                        if (building.getStructureByLevel() != null) {
+                                            if (building instanceof LineBuild lineBuild) {
+                                                new LineSelector(p, lineBuild, location);
+                                            } else {
+                                                new AreaSelector(p, building, location);
+                                            }
+                                        } else {
+                                            building.build(location, p);
+                                        }
+
+                                        paginatedGui.close();
+                                    }else{
+                                        paginatedGui.close();
+                                        LoggerUtils.sendMessage("&c当前建筑数量已到最大限制！",p);
                                     }
-                                } else {
-                                    building.build(location, p);
-                                }
 
-                                paginatedGui.close();
-                            }));
+                                }));
+                    }else{
+                        // 不满足解锁条件
+                        COIUnlockType unlockItem = COIUnlockType.getUnlockItem(building.getType());
+
+                        ItemStack itemType = unlockItem.getItemType();
+
+                        if(unlockItem != null){
+                            items.add(ItemStackBuilder.of(itemType.clone())
+                                    .name(unlockItem.getName())
+                                    .amount(1)
+                                    .lore("")
+                                    .lore("&f> &a解锁条件：")
+                                    .lore(GUIUtils.autoLineFeed(unlockItem.getIntroduce()))
+                                    .lore("")
+                                    .lore("&f> &a&l快去解锁吧")
+                                    .build(paginatedGui::close));
+                        }
+
+                    }
+
                 }
 
             }
@@ -98,6 +136,27 @@ public class BuilderGUI {
 
 
 
+    }
+
+    /**
+     * 获取建筑最大建造数量
+     * @param building
+     * @param team
+     * @return
+     */
+    private int getMaxBuild(COIBuilding building,COITeam team){
+        Integer maxBuild = building.getMaxBuild();
+
+        if(building.getType().equals(COIBuildingType.TURRET_NORMAL)){
+            int level = team.getBase().getLevel();
+
+            // 防御塔最大建造数量
+            if(level <= maxBuild){
+                maxBuild = level;
+            }
+        }
+
+        return maxBuild;
     }
 
     /**
@@ -112,39 +171,6 @@ public class BuilderGUI {
                 || buildings.size() == 0) {
             return 1;
         }
-        int maxStackSize = buildings.get(0).getType().getItemType().getMaxStackSize();
-
-        if (buildings.size() > maxStackSize) {
-            return maxStackSize;
-        }
         return buildings.size();
-    }
-
-    /**
-     * 介绍自动换行
-     *
-     * @param introduce
-     * @return
-     */
-    private List<String> autoLineFeed(String introduce) {
-        if (introduce == null || introduce.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        int maxLineLength = 10;
-        List<String> lines = new ArrayList<>();
-        int length = introduce.length();
-        int count = length / maxLineLength;
-        if (length % maxLineLength != 0) {
-            count++;
-        }
-
-        for (int i = 0; i < count; i++) {
-            int start = i * maxLineLength;
-            int end = Math.min(start + maxLineLength, length);
-            lines.add("  &6" +introduce.substring(start, end));
-        }
-
-        return lines;
     }
 }

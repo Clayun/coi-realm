@@ -1,6 +1,8 @@
 package com.mcylm.coi.realm.tools.building;
 
 import com.mcylm.coi.realm.model.COIPaster;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 public interface Builder {

@@ -20,6 +20,7 @@ public class COIWall extends LineBuild {
     public BuildingConfig getDefaultConfig() {
         return new BuildingConfig()
                 .setMaxLevel(1)
+                .setMaxBuild(9999)
                 .setConsume(8)
                 .setStructures(getBuildingLevelStructure());
     }

@@ -5,11 +5,13 @@ import com.mcylm.coi.realm.tools.npc.COICartCreator;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
+import net.citizensnpcs.api.ai.Navigator;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 
 import java.util.List;
 import java.util.Map;
@@ -55,11 +57,28 @@ public class COICart extends COIEntity {
             return;
         }
 
-        if(getCoiNpc().getInventory().isEmpty()){
+        if(!needTransport()){
             collectingResources();
         }else{
             transportResources();
         }
+    }
+
+    /**
+     * 判断背包内是否有矿物
+     * @return
+     */
+    private boolean needTransport(){
+        if(getCoiNpc().getInventory().isEmpty()){
+            return false;
+        }else {
+            String material = Entry.getInstance().getConfig().getString("game.building.material");
+            if(!getCoiNpc().getInventory().contains(Material.getMaterial(material))){
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -170,27 +189,6 @@ public class COICart extends COIEntity {
             }
         }
     }
-
-//    @Override
-//    public void findPath(Location location) {
-//        if (!isAlive()) {
-//            return;
-//        }
-//
-//        if (!npc.isSpawned()) {
-//            return;
-//        }
-//
-//        npc.faceLocation(location);
-//
-//        Navigator navigator = npc.getNavigator();
-//        navigator.getDefaultParameters()
-//                .stuckAction(null)
-//                .useNewPathfinder(true);
-//
-//        navigator.setTarget(location);
-//
-//    }
 
 
     /**

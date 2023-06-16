@@ -21,14 +21,18 @@ game:
   building:
     # 建筑材料，建议和矿工挖掘捡起的某样物资一致
     material: 'EMERALD'
+    # 是否开启建筑解锁功能
+    lock: false
+  # 游戏开始时，给玩家的一定的数量
+  when-start-give-player: 64
   # 防御塔相关的配置
   turret:
     # 炮口的方块，激光射线会从这个方块发出
     muzzle-material: 'AMETHYST_BLOCK'
   # 每个小组最大玩家数量
   max-group-players: 5
-  # 矿物重生时间
-  mineral-restore-timer: 10
+  # 团队总数，最多6个，最少2个
+  max-teams: 2
   # 最少多少个玩家开始游戏
   min-players: 2
   # 游戏开始等待时间（秒）
@@ -46,16 +50,20 @@ game:
   # 本配置文件的坐标地址是官方默认地图的
   # 下载地址：https://待完成
   spawn-locations:
-    - '155,49,393'
-    - '394,49,184'
-    - '604,51,148'
-    - '910,49,225'
-    - '872,49,540'
-    - '764,49,814'
-    - '435,49,841'
+    - '-75,87,-170'
+    - '-75,87,156'
+#    - '155,49,393'
+#    - '394,49,184'
+#    - '604,51,148'
+#    - '910,49,225'
+#    - '872,49,540'
+#    - '764,49,814'
+  # 怪物阵营的出生点（大于等于3个团队时生效）
+  monster-spawner: '435,49,841'
 
   # 墙体的判定高度
-  wall-detect-height: 26
+  # wall-detect-height: 26
+  wall-detect-height: 84
 
 # NPC可食用的 Material Name
 foods:
