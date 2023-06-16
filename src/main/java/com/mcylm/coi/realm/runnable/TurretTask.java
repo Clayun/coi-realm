@@ -136,8 +136,18 @@ public class TurretTask {
                             LoggerUtils.debug(e.getName()+"是本小队的NPC，取消锁定攻击");
                         }
                     }
-                }
+                }else {
 
+                    if(e instanceof LivingEntity){
+                        // 如果实体作为玩家非本校对，就把他再当作NPC去判断
+                        if(!TeamUtils.checkNPCInTeam(e,torreta.getTeam())){
+                            // 是本小队的NPC，就取消锁定攻击
+                            attackPermission = true;
+                            LoggerUtils.debug(e.getName()+"非本小队的NPC，锁定攻击");
+                        }
+                    }
+
+                }
 
 
                 if (attackPermission) {

@@ -211,6 +211,6 @@ public class COITurret extends COIBuilding {
         // 每次攻击的间隔时间
         this.coolDown = this.coolDown - 1;
         // 攻击消耗增大
-        this.ammunitionConsumption = this.ammunitionConsumption + 1;
+        this.ammunitionConsumption = this.ammunitionConsumption + 2;
     }
 }

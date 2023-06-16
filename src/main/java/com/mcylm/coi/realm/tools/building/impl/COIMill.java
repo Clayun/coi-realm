@@ -73,7 +73,7 @@ public class COIMill extends COIBuilding {
     public void upgradeBuildSuccess() {
         super.upgradeBuildSuccess();
         for (COINpc creator : getNpcCreators()) {
-            COIMinerCreator npcCreator = (COIMinerCreator) creator;
+            COIFarmerCreator npcCreator = (COIFarmerCreator) creator;
             // 设置食物收集箱子
             npcCreator.setChestsLocation(getChestsLocation());
             getTeam().getFoodChests().addAll(getChestsLocation());

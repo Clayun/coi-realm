@@ -55,7 +55,7 @@ public class SnowballCoolDownListener implements Listener {
                     if(e.getHitEntity() != null){
 
                         if(e.getHitEntity() instanceof LivingEntity){
-                            COITeam npcTeam = TeamUtils.getNPCTeam(e.getEntity());
+                            COITeam npcTeam = TeamUtils.getNPCTeam(e.getHitEntity());
 
                             if(npcTeam != null && npcTeam != team){
                                 // 如果不是己方的NPC，就创造个爆炸
