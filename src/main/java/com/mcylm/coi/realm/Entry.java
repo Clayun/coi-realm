@@ -224,6 +224,11 @@ public class Entry extends ExtendedJavaPlugin {
                                             location.createExplosion(e.getHitEntity(), 3,false, false);
                                         }
 
+                                        if(npcTeam != null && npcTeam == team){
+                                            // 同队伍禁止
+                                            e.setCancelled(true);
+                                        }
+
                                         if(e.getHitEntity() instanceof Player){
                                             COITeam teamByPlayer = TeamUtils.getTeamByPlayer((Player) e.getHitEntity());
 
@@ -232,6 +237,11 @@ public class Entry extends ExtendedJavaPlugin {
                                                 Location location = e.getHitEntity().getLocation();
                                                 // TODO 这里可以几率触发是否燃烧
                                                 location.createExplosion(e.getHitEntity(), 3,false, false);
+                                            }
+
+                                            if(teamByPlayer != null && teamByPlayer == team){
+                                                // 同队伍禁止
+                                                e.setCancelled(true);
                                             }
                                         }
 
