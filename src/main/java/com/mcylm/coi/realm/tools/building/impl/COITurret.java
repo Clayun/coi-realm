@@ -5,13 +5,11 @@ import com.mcylm.coi.realm.runnable.TurretTask;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.config.BuildingConfig;
 import com.mcylm.coi.realm.utils.GUIUtils;
-import com.mcylm.coi.realm.utils.ItemUtils;
 import lombok.Data;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -133,7 +131,7 @@ public class COITurret extends COIBuilding {
 
     @Override
     public int getMaxHealth() {
-        return 100 + getLevel() * 50;
+        return 400 + getLevel() * 200;
     }
 
     /**

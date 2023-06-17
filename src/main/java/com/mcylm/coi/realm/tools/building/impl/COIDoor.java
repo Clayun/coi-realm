@@ -3,7 +3,6 @@ package com.mcylm.coi.realm.tools.building.impl;
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.config.BuildingConfig;
-import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -79,7 +78,7 @@ public class COIDoor extends COIBuilding {
 
     @Override
     public int getMaxHealth() {
-        return 200 + getLevel() * 100;
+        return 400 + getLevel() * 200;
     }
 
     public void open() {
