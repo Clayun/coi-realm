@@ -17,8 +17,6 @@ import java.util.Set;
 @Getter
 public class COIUnlockType {
 
-    // 磨坊解锁判断
-
     public static final COIUnlockType LOCK_MILL = new COIUnlockType(
             "LOCK_MILL",
             "&c尚未解锁 &b磨坊",
