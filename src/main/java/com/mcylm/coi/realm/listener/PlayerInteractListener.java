@@ -2,6 +2,7 @@ package com.mcylm.coi.realm.listener;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.clipboard.PlayerClipboard;
+import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COIServerMode;
 import com.mcylm.coi.realm.events.BuildingTouchEvent;
 import com.mcylm.coi.realm.gui.BuildEditGUI;
@@ -104,6 +105,12 @@ public class PlayerInteractListener implements Listener {
                 && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.BOOK
                 && ItemUtils.getName(event.getPlayer().getInventory().getItemInMainHand()).equals(LoggerUtils.replaceColor("&b建筑蓝图"))
         ) {
+
+            if(!Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
+                event.setCancelled(true);
+                LoggerUtils.sendMessage("&c当前世界非游戏世界", event.getPlayer());
+                return;
+            }
 
             Block clickedBlock = event.getClickedBlock();
             Location location = clickedBlock.getLocation();

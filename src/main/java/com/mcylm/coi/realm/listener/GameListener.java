@@ -206,28 +206,7 @@ public class GameListener implements Listener {
         event.setCancelled(true);
     }
 
-    @EventHandler
-    public void onRespawn(PlayerRespawnEvent event){
 
-        Player p = event.getPlayer();
-        COITeam team = TeamUtils.getTeamByPlayer(p);
-        if(team !=null){
-
-            COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(event.getPlayer());
-
-            if(coiPlayer.isDeath()){
-
-                waitDeath(event.getPlayer());
-
-            }else{
-                event.setRespawnLocation(team.getSpawner());
-                p.teleport(team.getSpawner());
-            }
-
-
-
-        }
-    }
 
     @EventHandler
     public void onMove(PlayerMoveEvent event){
@@ -392,6 +371,30 @@ public class GameListener implements Listener {
     }
 
     @EventHandler
+    public void onRespawn(PlayerRespawnEvent event){
+
+        Player p = event.getPlayer();
+        COITeam team = TeamUtils.getTeamByPlayer(p);
+        if(team !=null){
+
+            COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(event.getPlayer());
+
+            if(coiPlayer.isDeath()){
+                waitDeath(event.getPlayer());
+            }else{
+                TeamUtils.tpSpawner(p);
+            }
+        }else{
+            // 自动加入队伍
+            TeamUtils.autoJoinTeam(p);
+            // 传送到小队复活点
+            TeamUtils.tpSpawner(p);
+            // 初始化玩家背包
+            Entry.getGame().initPlayerGaming(p);
+        }
+    }
+
+    @EventHandler
     public void onPlayerDropItem(PlayerDropItemEvent event) {
         ItemStack item = event.getItemDrop().getItemStack();
         if (item.getType() == Material.BOOK
@@ -459,10 +462,13 @@ public class GameListener implements Listener {
         // 清空
         event.getDrops().removeAll(needSave);
 
-        // 死亡记录
-        COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(event.getPlayer());
-        coiPlayer.setDeathCount(coiPlayer.getDeathCount() + 1);
-        coiPlayer.setDeath(true);
+        // 游戏中才记录
+        if(Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
+            // 死亡记录
+            COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(event.getPlayer());
+            coiPlayer.setDeathCount(coiPlayer.getDeathCount() + 1);
+            coiPlayer.setDeath(true);
+        }
     }
 
     @EventHandler
