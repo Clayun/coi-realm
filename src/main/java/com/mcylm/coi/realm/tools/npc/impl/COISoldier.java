@@ -340,12 +340,12 @@ public class COISoldier extends COIEntity implements Commandable {
         Mob npcEntity = ((Mob) getNpc().getEntity());
         npcEntity.getEquipment().setItemInMainHand(new ItemStack(new Random().nextBoolean() ? Material.CROSSBOW : Material.IRON_SWORD));
 
-        // 追击/跟随时，移动速度加快
-        LivingEntity entity = (LivingEntity)npc.getEntity();
-        // 获取当前移动速度
-        double currentSpeed = entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getValue();
-        // 设置移动速度为 1.5倍速度
-        entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(currentSpeed * 1.5);
+//        // 追击/跟随时，移动速度加快
+//        LivingEntity entity = (LivingEntity)npc.getEntity();
+//        // 获取当前移动速度
+//        double currentSpeed = entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getValue();
+//        // 设置移动速度为 1.5倍速度
+//        entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(currentSpeed * 1.5);
 
     }
 }
