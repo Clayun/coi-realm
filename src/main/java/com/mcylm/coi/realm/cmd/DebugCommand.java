@@ -56,10 +56,6 @@ public class DebugCommand implements CommandExecutor {
         }
 
         if(args[0].equalsIgnoreCase("test")){
-//            ItemStack item = COIPropType.JET_PACK.getItemType().clone();
-//            ItemUtils.rename(item,COIPropType.JET_PACK.getName());
-//            ItemUtils.setLore(item, GUIUtils.autoLineFeed(COIPropType.JET_PACK.getIntroduce()));
-//            player.getInventory().addItem(item);
 
             ItemStack item = COIPropType.TOWN_PORTAL.getItemType().clone();
             ItemUtils.rename(item,COIPropType.TOWN_PORTAL.getName());
