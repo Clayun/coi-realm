@@ -41,6 +41,7 @@ public class TeamFollowGoal extends SimpleGoal {
 
         if (npc.getLocation() == null && followingEntity != null) {
             quitTeam();
+            return;
         }
 
         // int index = team.getMembers().indexOf((COIEntity) npc);
