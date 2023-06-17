@@ -399,7 +399,7 @@ public class GameListener implements Listener {
             event.setCancelled(true);
         }
 
-        if (item.getType() == Material.WHITE_BANNER) {
+        if (item.getType() == Material.NETHER_STAR) {
             event.setCancelled(true);
         }
 

@@ -139,7 +139,7 @@ public class PlayerInteractListener implements Listener {
 
         if (Action.RIGHT_CLICK_BLOCK == action && event.getHand().equals(EquipmentSlot.HAND)
                 //空手触发
-                && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.WHITE_BANNER
+                && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.NETHER_STAR
         ) {
             COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(event.getPlayer());
 
