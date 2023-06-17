@@ -38,6 +38,9 @@ public class COIPlayer {
     @Getter
     private PlayerSettings settings = new PlayerSettings();
 
+    @Getter
+    private AttackTeam team;
+
     public Player getBukkitPlayer() {
         return player;
     }

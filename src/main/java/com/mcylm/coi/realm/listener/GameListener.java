@@ -387,6 +387,10 @@ public class GameListener implements Listener {
             event.setCancelled(true);
         }
 
+        if (item.getType() == Material.WHITE_BANNER) {
+            event.setCancelled(true);
+        }
+
         if (item.getType() == Material.IRON_PICKAXE
                 || item.getType() == Material.DIAMOND_PICKAXE) {
             event.setCancelled(true);
