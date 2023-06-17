@@ -26,7 +26,7 @@ public class TeamFollowGoal extends SimpleGoal {
     // 2秒扣一次，避免给旋了
     private int skipFeedAction = 0;
 
-    private int maxRadius = 20;
+    private int maxRadius = 30;
     public TeamFollowGoal(Commandable npc, AttackTeam team) {
         super(npc);
         this.team = team;
@@ -37,9 +37,13 @@ public class TeamFollowGoal extends SimpleGoal {
 
         Commandable npc = getExecutor();
 
-        if (npc.getLocation() == null) return;
 
-        int index = team.getMembers().indexOf((COIEntity) npc);
+
+        if (npc.getLocation() == null) {
+            quitTeam();
+        }
+
+        // int index = team.getMembers().indexOf((COIEntity) npc);
 
         boolean needFollow;
         if (npc.getTarget() == null && followingEntity != null && npc.getLocation().distance(followingEntity.getLocation()) > 2.5) {
@@ -52,9 +56,6 @@ public class TeamFollowGoal extends SimpleGoal {
         }
         if (needFollow) {
             npc.setTarget(null);
-            if (followingEntity.isDead() && index > 0) {
-                team.getMembers().remove(index - 1);
-            }
             if (npc.getLocation() != null && npc.getLocation().distance(npc.getCommander().getLocation()) >= 3) {
                 npc.findPath(followingEntity.getLocation());
             }
@@ -98,10 +99,19 @@ public class TeamFollowGoal extends SimpleGoal {
         COIEntity entity = (COIEntity) getExecutor();
 
         int index = team.getMembers().indexOf(entity);
+        if (index == -1) {
+            quitTeam();
+            return;
+        }
         if (index == 0) {
             followingEntity = team.getCommander();
         } else {
-            followingEntity = (LivingEntity) team.getMembers().get(index - 1).getNpc().getEntity();
+            for (int i = index - 1; i > 0; i--) {
+                if (team.getMembers().get(i).isAlive()) {
+                    followingEntity = (LivingEntity) team.getMembers().get(i).getNpc().getEntity();
+                    break;
+                }
+            }
         }
 
 
@@ -111,6 +121,15 @@ public class TeamFollowGoal extends SimpleGoal {
     @Override
     public AttackGoalType getType() {
         return AttackGoalType.TEAM_FOLLOW;
+    }
+
+    public void quitTeam() {
+
+        if (getExecutor() instanceof COIEntity entity) {
+            getExecutor().setGoal(new PatrolGoal(getExecutor()));
+            getExecutor().getGoal().start();
+            team.getMembers().remove(entity);
+        }
     }
 
 

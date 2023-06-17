@@ -20,6 +20,9 @@ import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.player.COIPlayer;
 import com.mcylm.coi.realm.tools.attack.impl.PatrolGoal;
 import com.mcylm.coi.realm.tools.attack.impl.TeamFollowGoal;
+import com.mcylm.coi.realm.tools.attack.target.Target;
+import com.mcylm.coi.realm.tools.attack.target.impl.EntityTarget;
+import com.mcylm.coi.realm.tools.attack.team.AttackTeam;
 import com.mcylm.coi.realm.tools.building.impl.*;
 import com.mcylm.coi.realm.tools.building.impl.monster.COIMonsterBase;
 import com.mcylm.coi.realm.tools.data.MapData;
@@ -38,8 +41,10 @@ import net.kyori.adventure.text.Component;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -196,8 +201,26 @@ public class Entry extends ExtendedJavaPlugin {
                     if(Entry.getGame().getStatus().equals(COIGameStatus.WAITING)){
                         // 等待中，就初始化背包
                         Entry.getGame().initPlayerWaiting(e.getPlayer());
+
                     }
         });
+
+        Events.subscribe(EntityDamageByEntityEvent.class)
+                .handler(e-> {
+                    if (e.getDamager() instanceof Player p && e.getEntity() instanceof LivingEntity livingEntity) {
+                        COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(p);
+                        AttackTeam team = coiPlayer.getAttackTeam();
+                        if (team.getStatus() == AttackTeam.Status.LOCK) {
+                            for (COIEntity entity : coiPlayer.getAttackTeam().getMembers()) {
+                                if (entity instanceof COISoldier soldier && soldier.isAlive()) {
+                                    Target target = new EntityTarget(livingEntity, 9);
+                                    soldier.setTarget(target);
+                                }
+                            }
+                        }
+                    }
+
+                });
 
         Events.subscribe(ProjectileHitEvent.class)
                 .handler(e -> {
