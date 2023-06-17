@@ -41,8 +41,10 @@ public class TeamFollowGoal extends SimpleGoal {
 
         int index = team.getMembers().indexOf((COIEntity) npc);
 
-        boolean needFollow = true;
-        if (npc.getTarget() == null && followingEntity != null) {
+        boolean needFollow;
+        if (npc.getTarget() == null && followingEntity != null && npc.getLocation().distance(followingEntity.getLocation()) > 2.5) {
+            needFollow = true;
+        } else {
             needFollow = false;
         }
         if (followingEntity != null && npc.getLocation().distance(followingEntity.getLocation()) > maxRadius) {
@@ -85,7 +87,9 @@ public class TeamFollowGoal extends SimpleGoal {
             }
         }
 
-        getExecutor().lookForEnemy(-1);
+        if (!needFollow) {
+            getExecutor().lookForEnemy(-1);
+        }
     }
 
     @Override
