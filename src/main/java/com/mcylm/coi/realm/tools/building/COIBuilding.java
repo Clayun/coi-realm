@@ -555,6 +555,11 @@ public abstract class COIBuilding implements Serializable {
     }
 
     public boolean deductionResources(Player player, int amount) {
+
+        if(player.isOp() && player.getGameMode().equals(GameMode.CREATIVE)){
+            return true;
+        }
+
         int playerHadResource = getPlayerHadResource(player);
 
         // 如果玩家手里的资源数量足够
