@@ -146,7 +146,7 @@ public class COICart extends COIEntity {
         List<Location> chestsLocation = coiNpc.getToSaveResourcesLocations();
 
         if(chestsLocation.isEmpty()){
-            LoggerUtils.debug("存放资源的箱子不存在");
+            // 存放资源的箱子不存在
             // 返回出生点
             findPath(coiNpc.getSpawnLocation());
             return;
@@ -156,7 +156,7 @@ public class COICart extends COIEntity {
         Location notFullChestLocation = getEmptyChestByLocations(chestsLocation);
 
         if(notFullChestLocation == null){
-            LoggerUtils.debug("存放资源的箱子都满了");
+            // 存放资源的箱子都满了
             // 返回出生点
             findPath(coiNpc.getSpawnLocation());
             return;
