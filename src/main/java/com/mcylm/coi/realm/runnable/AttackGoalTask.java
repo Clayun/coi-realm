@@ -7,41 +7,52 @@ import lombok.Getter;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashSet;
-import java.util.Set;
+import java.util.Iterator;
 
 public class AttackGoalTask {
 
     @Getter
-    private static Set<AttackGoal> goalSet = new HashSet<>();
+    private static HashSet<AttackGoal> goalSet = new HashSet<>();
 
     public static void runTask() {
         new BukkitRunnable() {
             @Override
             public void run() {
-                goalSet.forEach(goal -> {
-                    if (!goal.isStop()) {
-                        if (goal.getExecutor() instanceof COIEntity entity) {
-                            if (!entity.isTooHungryToWork()) {
-                                goal.tick();
+                Iterator<AttackGoal> iterator = goalSet.iterator();
+                if (iterator.hasNext()) {
+                    do {
+                        AttackGoal goal = iterator.next();
+                        if (!goal.isStop()) {
+                            if (goal.getExecutor() instanceof COIEntity entity) {
+                                if (!entity.isTooHungryToWork()) {
+                                    goal.tick();
+                                }
                             }
                         }
-                    }
-                });
+
+                    } while (iterator.hasNext());
+                }
             }
         }.runTaskTimer(Entry.getInstance(), 1, 1);
 
         new BukkitRunnable() {
             @Override
             public void run() {
-                goalSet.forEach(goal -> {
-                if (!goal.isStop()) {
-                    if (goal.getExecutor() instanceof COIEntity entity) {
-                        if (!entity.isTooHungryToWork()) {
-                            goal.asyncTick();
+                Iterator<AttackGoal> iterator = goalSet.iterator();
+                if (iterator.hasNext()) {
+                    do {
+                        AttackGoal goal = iterator.next();
+                        if (!goal.isStop()) {
+                            if (goal.getExecutor() instanceof COIEntity entity) {
+                                if (!entity.isTooHungryToWork()) {
+                                    goal.asyncTick();
+                                }
+                            }
                         }
-                    }
+
+                    } while (iterator.hasNext());
+
                 }
-                });
             }
         }.runTaskTimerAsynchronously(Entry.getInstance(), 1, 1);
 
