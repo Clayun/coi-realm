@@ -4,11 +4,16 @@ import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.config.BuildingConfig;
+import com.mcylm.coi.realm.tools.npc.COICartCreator;
+import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.tools.npc.COISoldierCreator;
+import com.mcylm.coi.realm.tools.npc.impl.COICart;
+import com.mcylm.coi.realm.tools.npc.impl.COIMiner;
 import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
 import com.mcylm.coi.realm.utils.GUIUtils;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -43,44 +48,52 @@ public class COICamp extends COIBuilding {
         return new BuildingConfig()
                 .setMaxLevel(3)
                 .setMaxBuild(5)
-                .setConsume(1024)
+                .setConsume(512)
                 .setStructures(getBuildingLevelStructure());
     }
 
     @Override
-    public void build(Location location, Player player){
-        super.build(location,player);
+    public void buildSuccess(Location location, Player player) {
+        super.buildSuccess(location, player);
 
-            new BukkitRunnable() {
+        for (COINpc creator : getNpcCreators()) {
+            // 必须是符合建筑等级的要求的
+            if(creator.getRequiredBuildingLevel() == getLevel()){
+                COISoldierCreator npcCreator = (COISoldierCreator) creator;
 
-                COISoldier soldier = null;
+                // 设置NPC跟随创造建筑的玩家
+                npcCreator.setFollowPlayerName(player.getName());
+                // 初始化
+                COISoldier soldier = new COISoldier(npcCreator);
+                soldier.spawn(creator.getSpawnLocation());
+                // 仅用于跟随的 Commander
+                soldier.setCommander(player);
+            }
+        }
 
-                @Override
-                public void run() {
+    }
 
-                    // 如果建筑建造完成，NPC就初始化
-                    if(isComplete()){
-                        for (COINpc creator : getNpcCreators()) {
-                            COISoldierCreator npcCreator = (COISoldierCreator) creator;
+    @Override
+    public void upgradeBuildSuccess() {
+        super.upgradeBuildSuccess();
+        for (COINpc creator : getNpcCreators()) {
 
-                            // 设置NPC跟随创造建筑的玩家
-                            npcCreator.setFollowPlayerName(player.getName());
-                            // 初始化
-                            soldier = new COISoldier(npcCreator);
-                            soldier.spawn(creator.getSpawnLocation());
-                            // 仅用于跟随的 Commander
-                            soldier.setCommander(player);
-                            // 游戏主流程简化，改为跟随建造者行走
-                            //soldier.setGoal(new FollowGoal(soldier));
-                            //soldier.getGoal().start();
-                            // 关闭Ticker
-                            this.cancel();
-                        }
-                    }
-                }
-            }.runTaskTimer(Entry.getInstance(),0, 20L);
+            // 判断是否符合NPC生成条件
+            if(creator.getRequiredBuildingLevel() == getLevel()){
+                COISoldierCreator npcCreator = (COISoldierCreator) creator;
 
+                // 设置NPC跟随创造建筑的玩家
+                npcCreator.setFollowPlayerName(getBuildPlayerName());
+                // 初始化
+                COISoldier soldier = new COISoldier(npcCreator);
+                soldier.spawn(creator.getSpawnLocation());
+                // 仅用于跟随的 Commander
 
+                Player player = Bukkit.getPlayer(getBuildPlayerName());
+                soldier.setCommander(player);
+            }
+
+        }
     }
 
     /**
