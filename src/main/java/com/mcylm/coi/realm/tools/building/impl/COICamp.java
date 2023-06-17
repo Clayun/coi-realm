@@ -2,7 +2,6 @@ package com.mcylm.coi.realm.tools.building.impl;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.model.COINpc;
-import com.mcylm.coi.realm.tools.attack.impl.FollowGoal;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.config.BuildingConfig;
 import com.mcylm.coi.realm.tools.npc.COISoldierCreator;
@@ -72,8 +71,8 @@ public class COICamp extends COIBuilding {
                             // 仅用于跟随的 Commander
                             soldier.setCommander(player);
                             // 游戏主流程简化，改为跟随建造者行走
-                            soldier.setGoal(new FollowGoal(soldier));
-                            soldier.getGoal().start();
+                            //soldier.setGoal(new FollowGoal(soldier));
+                            //soldier.getGoal().start();
                             // 关闭Ticker
                             this.cancel();
                         }
