@@ -78,7 +78,7 @@ public class ForgeGUI {
                                 // 点击时触发下面的方法
 
                                 // 扣除资源，并交付道具
-                                boolean b = building.deductionResources(p, prop.getPrice());
+                                boolean b = InventoryUtils.deductionResources(p, prop.getPrice());
 
                                 if(b){
                                     // 扣除成功

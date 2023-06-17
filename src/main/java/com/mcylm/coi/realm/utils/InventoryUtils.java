@@ -3,6 +3,7 @@ package com.mcylm.coi.realm.utils;
 
 import com.mcylm.coi.realm.Entry;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -34,6 +35,16 @@ public class InventoryUtils {
      * @return
      */
     public static boolean deductionResources(Player player, int amount) {
+
+        if(player != null){
+            if(player.isOp() && player.getGameMode().equals(GameMode.CREATIVE)){
+                return true;
+            }
+        }else{
+            return false;
+        }
+
+
         int playerHadResource = getPlayerHadResource(player);
 
         // 如果玩家手里的资源数量足够
