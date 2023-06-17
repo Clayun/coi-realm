@@ -52,4 +52,9 @@ public class COIWall extends LineBuild {
         getBuildingLevelStructure().put(1,"wall1.structure");
 
     }
+
+    @Override
+    public int getMaxHealth() {
+        return 300 + getLevel() * 200;
+    }
 }
