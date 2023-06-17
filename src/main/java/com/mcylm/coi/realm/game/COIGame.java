@@ -300,7 +300,7 @@ public class COIGame {
         ironPickaxe.setItemMeta(meta);
         p.getInventory().addItem(ironPickaxe);
 
-        ItemStack commandItem = new ItemStack(Material.WHITE_BANNER);
+        ItemStack commandItem = new ItemStack(Material.NETHER_STAR);
         ItemUtils.rename(itemStack,"&b攻击指挥");
         lore = new ArrayList<>();
         lore.add(LoggerUtils.replaceColor("&f切换你战士小队的攻击状态"));
