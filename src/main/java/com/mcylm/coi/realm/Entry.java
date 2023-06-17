@@ -43,6 +43,7 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -237,21 +238,24 @@ public class Entry extends ExtendedJavaPlugin {
                         } else {
                             COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(e.getPlayer());
 
+                            if (e.getHand().equals(EquipmentSlot.HAND)) {
 
-                            if (npcByEntity instanceof COISoldierCreator creator) {
-                                COISoldier soldier = ((COISoldier) creator.getNpc());;
-                                if (creator.getAttackTeam() == null || creator.getAttackTeam().getCommander().isDead()) {
-                                    coiPlayer.getAttackTeam().getMembers().add((COIEntity) creator.getNpc());
-                                    creator.setAttackTeam(coiPlayer.getAttackTeam());
-                                    soldier.setGoal(new TeamFollowGoal(soldier, coiPlayer.getAttackTeam()));
-                                    soldier.getGoal().start();
-                                    LoggerUtils.sendMessage("&a成功入队", e.getPlayer());
-                                } else if (creator.getAttackTeam() == coiPlayer.getAttackTeam()) {
-                                    coiPlayer.getAttackTeam().getMembers().remove(soldier);
-                                    creator.setAttackTeam(null);
-                                    soldier.setGoal(new PatrolGoal(soldier));
-                                    soldier.getGoal().start();
-                                    LoggerUtils.sendMessage("&c成功脱队", e.getPlayer());
+                                if (npcByEntity instanceof COISoldierCreator creator) {
+                                    COISoldier soldier = ((COISoldier) creator.getNpc());
+                                    ;
+                                    if (creator.getAttackTeam() == null || creator.getAttackTeam().getCommander().isDead()) {
+                                        coiPlayer.getAttackTeam().getMembers().add((COIEntity) creator.getNpc());
+                                        creator.setAttackTeam(coiPlayer.getAttackTeam());
+                                        soldier.setGoal(new TeamFollowGoal(soldier, coiPlayer.getAttackTeam()));
+                                        soldier.getGoal().start();
+                                        LoggerUtils.sendMessage("&a成功入队", e.getPlayer());
+                                    } else if (creator.getAttackTeam() == coiPlayer.getAttackTeam()) {
+                                        coiPlayer.getAttackTeam().getMembers().remove(soldier);
+                                        creator.setAttackTeam(null);
+                                        soldier.setGoal(new PatrolGoal(soldier));
+                                        soldier.getGoal().start();
+                                        LoggerUtils.sendMessage("&c成功脱队", e.getPlayer());
+                                    }
                                 }
 
                             }
