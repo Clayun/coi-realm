@@ -1,6 +1,5 @@
 package com.mcylm.coi.realm.tools.npc.impl;
 
-import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.runnable.AttackGoalTask;
 import com.mcylm.coi.realm.tools.attack.AttackGoal;
@@ -25,11 +24,9 @@ import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -203,6 +200,7 @@ public class COISoldier extends COIEntity implements Commandable {
             return;
         }
         target = null;
+        ((COISoldierCreator) getCoiNpc()).setAttackTeam(null);
     }
 
     @Override
