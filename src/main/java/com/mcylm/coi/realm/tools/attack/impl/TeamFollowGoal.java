@@ -25,6 +25,8 @@ public class TeamFollowGoal extends SimpleGoal {
 
     // 2秒扣一次，避免给旋了
     private int skipFeedAction = 0;
+
+    private int maxRadius = 20;
     public TeamFollowGoal(Commandable npc, AttackTeam team) {
         super(npc);
         this.team = team;
@@ -32,11 +34,22 @@ public class TeamFollowGoal extends SimpleGoal {
 
     @Override
     public void tick() {
+
         Commandable npc = getExecutor();
+
+        if (npc.getLocation() == null) return;
 
         int index = team.getMembers().indexOf((COIEntity) npc);
 
+        boolean needFollow = true;
         if (npc.getTarget() == null && followingEntity != null) {
+            needFollow = false;
+        }
+        if (followingEntity != null && npc.getLocation().distance(followingEntity.getLocation()) > maxRadius) {
+            needFollow = true;
+        }
+        if (needFollow) {
+            npc.setTarget(null);
             if (followingEntity.isDead() && index > 0) {
                 team.getMembers().remove(index - 1);
             }
