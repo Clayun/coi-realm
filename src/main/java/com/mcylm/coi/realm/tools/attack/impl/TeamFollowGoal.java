@@ -41,6 +41,8 @@ public class TeamFollowGoal extends SimpleGoal {
 
         if (npc.getLocation() == null) {
             quitTeam();
+        } else {
+            followingEntity.getLocation();
         }
 
         // int index = team.getMembers().indexOf((COIEntity) npc);
@@ -106,8 +108,9 @@ public class TeamFollowGoal extends SimpleGoal {
         if (index == 0) {
             followingEntity = team.getCommander();
         } else {
-            for (int i = index - 1; i > 0; i--) {
-                if (team.getMembers().get(i).isAlive()) {
+            for (int i = index; i > 0; i--) {
+                COIEntity member = team.getMembers().get(i);
+                if (member.isAlive() && member != this.getExecutor()) {
                     followingEntity = (LivingEntity) team.getMembers().get(i).getNpc().getEntity();
                     break;
                 }
