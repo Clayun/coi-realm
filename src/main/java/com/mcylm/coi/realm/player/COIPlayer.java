@@ -1,29 +1,25 @@
 package com.mcylm.coi.realm.player;
 
 import com.mcylm.coi.realm.player.settings.PlayerSettings;
-import com.mcylm.coi.realm.tools.attack.Commandable;
 import com.mcylm.coi.realm.tools.attack.target.Target;
-import lombok.Data;
+import com.mcylm.coi.realm.tools.attack.team.AttackTeam;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 public class COIPlayer {
 
-    private Player player;
+    private final Player player;
     @Getter
     private Set<Target> selectedTargets = new HashSet<>();
 
     @Getter
-    private Set<Commandable> teamNpcs = new HashSet<>();
-
-    @Getter
-    private Set<Commandable>selectedNpcs = new HashSet<>();
-
+    private AttackTeam team;
     // 死亡次数
     @Setter
     @Getter
@@ -48,6 +44,8 @@ public class COIPlayer {
 
     public COIPlayer(Player player){
         this.player = player;
+        this.team = new AttackTeam().setCommander(player).setMembers(new ArrayList<>());
+
         // TODO 玩家设置部分待开发
     }
 
