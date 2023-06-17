@@ -38,8 +38,6 @@ public class COIPlayer {
     @Getter
     private PlayerSettings settings = new PlayerSettings();
 
-    @Getter
-    private AttackTeam team;
 
     public Player getBukkitPlayer() {
         return player;
@@ -47,7 +45,7 @@ public class COIPlayer {
 
     public COIPlayer(Player player){
         this.player = player;
-        this.team = new AttackTeam().setCommander(player).setMembers(new ArrayList<>());
+        this.attackTeam = new AttackTeam().setCommander(player).setMembers(new ArrayList<>());
 
         // TODO 玩家设置部分待开发
     }
