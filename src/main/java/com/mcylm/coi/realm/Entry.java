@@ -205,6 +205,7 @@ public class Entry extends ExtendedJavaPlugin {
                     }
         });
 
+
         Events.subscribe(EntityDamageByEntityEvent.class)
                 .handler(e-> {
                     if (e.getDamager() instanceof Player p && e.getEntity() instanceof LivingEntity livingEntity) {

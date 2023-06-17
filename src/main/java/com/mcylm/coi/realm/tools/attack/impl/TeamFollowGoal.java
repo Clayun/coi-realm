@@ -38,8 +38,12 @@ public class TeamFollowGoal extends SimpleGoal {
         Commandable npc = getExecutor();
 
 
-
         if (npc.getLocation() == null && followingEntity != null) {
+            quitTeam();
+            return;
+        }
+
+        if (npc.getLocation().distance(team.getCommander().getLocation()) > maxRadius * 1.4) {
             quitTeam();
             return;
         }
@@ -47,7 +51,7 @@ public class TeamFollowGoal extends SimpleGoal {
         // int index = team.getMembers().indexOf((COIEntity) npc);
 
         boolean needFollow;
-        if (npc.getTarget() == null && followingEntity != null && npc.getLocation().distance(followingEntity.getLocation()) > 2.5) {
+        if (npc.getTarget() == null && followingEntity != null && npc.getLocation().distance(followingEntity.getLocation()) > 2) {
             needFollow = true;
         } else {
             needFollow = false;
@@ -89,15 +93,21 @@ public class TeamFollowGoal extends SimpleGoal {
             }
         }
 
-        if (!needFollow) {
-            getExecutor().lookForEnemy(-1);
-        }
+        getExecutor().lookForEnemy(maxRadius);
+
     }
 
     @Override
     public void asyncTick() {
 
         COIEntity entity = (COIEntity) getExecutor();
+
+
+        if (team.getCommander() instanceof Player player) {
+            if (!player.isOnline()) {
+                quitTeam();
+            }
+        }
 
         int index = team.getMembers().indexOf(entity);
         if (index == -1) {
