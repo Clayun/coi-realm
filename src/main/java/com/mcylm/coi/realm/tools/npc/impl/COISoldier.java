@@ -190,7 +190,10 @@ public class COISoldier extends COIEntity implements Commandable {
         //警戒周围
         meleeAttackTarget();
 
-        if (target != null && target.isDead()) target = null;
+        if (target != null && target.isDead()) {
+            target = null;
+            ((Mob) getNpc().getEntity()).setTarget(null);
+        }
     }
 
     @Override
