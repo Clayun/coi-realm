@@ -146,10 +146,10 @@ public class PlayerInteractListener implements Listener {
             AttackTeam.Status status = coiPlayer.getAttackTeam().getStatus();
             if (status == AttackTeam.Status.FREE) {
                 coiPlayer.getAttackTeam().setStatus(AttackTeam.Status.LOCK);
-                LoggerUtils.sendMessage("&e更换为锁定攻击(会攻击你所攻击的建筑)", event.getPlayer());
+                LoggerUtils.sendMessage("&e更换为 &c锁定攻击(会攻击你所攻击的建筑或敌人)", event.getPlayer());
             } else {
                 coiPlayer.getAttackTeam().setStatus(AttackTeam.Status.FREE);
-                LoggerUtils.sendMessage("&e更换为自由攻击", event.getPlayer());
+                LoggerUtils.sendMessage("&e更换为 &b自由攻击(自己寻找附近的目标)", event.getPlayer());
             }
         }
 

@@ -11,10 +11,7 @@ import com.mcylm.coi.realm.model.COIPaster;
 import com.mcylm.coi.realm.model.COIStructure;
 import com.mcylm.coi.realm.tools.building.config.BuildingConfig;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
-import com.mcylm.coi.realm.utils.ItemUtils;
-import com.mcylm.coi.realm.utils.LocationUtils;
-import com.mcylm.coi.realm.utils.LoggerUtils;
-import com.mcylm.coi.realm.utils.TeamUtils;
+import com.mcylm.coi.realm.utils.*;
 import com.mcylm.coi.realm.utils.rotation.Rotation;
 import lombok.Data;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
@@ -550,62 +547,7 @@ public abstract class COIBuilding implements Serializable {
      * @return
      */
     public boolean deductionResources(Player player) {
-        return deductionResources(player, getConsume());
-
-    }
-
-    public boolean deductionResources(Player player, int amount) {
-        int playerHadResource = getPlayerHadResource(player);
-
-        // 如果玩家手里的资源数量足够
-        if (playerHadResource >= amount) {
-
-            // 扣减物品
-            ItemStack[] contents =
-                    player.getInventory().getContents();
-
-            // 剩余所需扣减资源数量
-            int deductionCount = amount;
-
-            // 资源类型
-            Material material = getResourceType();
-            for (ItemStack itemStack : contents) {
-
-                if (itemStack == null) {
-                    continue;
-                }
-
-                // 是资源物品才扣减
-                if (itemStack.getType().equals(material)) {
-                    // 如果当前物品的堆叠数量大于所需资源，就只扣减数量
-                    if (itemStack.getAmount() > deductionCount) {
-                        itemStack.setAmount(itemStack.getAmount() - deductionCount);
-                        return true;
-                    }
-
-                    // 如果当前物品的堆叠数量等于所需资源，就删物品
-                    if (itemStack.getAmount() == deductionCount) {
-                        player.getInventory().removeItem(itemStack);
-                        player.updateInventory();
-                        return true;
-                    }
-
-                    // 如果物品的堆叠数量小于所需资源，就删物品，同时计数
-                    if (itemStack.getAmount() < deductionCount) {
-                        // 减去当前物品的库存
-                        deductionCount = deductionCount - itemStack.getAmount();
-                        player.getInventory().removeItem(itemStack);
-                        player.updateInventory();
-                    }
-                }
-
-
-            }
-
-        } else
-            return false;
-
-        return false;
+        return InventoryUtils.deductionResources(player, getConsume());
     }
 
     /**
@@ -879,7 +821,7 @@ public abstract class COIBuilding implements Serializable {
             return;
         }
         if (getPlayerHadResource(player) >= getUpgradeRequiredConsume()) {
-            deductionResources(player, getUpgradeRequiredConsume());
+            InventoryUtils.deductionResources(player, getUpgradeRequiredConsume());
             level++;
             upgradeBuild(player);
         }else{

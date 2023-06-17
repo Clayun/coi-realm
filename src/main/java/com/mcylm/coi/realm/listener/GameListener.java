@@ -234,7 +234,7 @@ public class GameListener implements Listener {
 
         COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(event.getPlayer());
 
-        if(coiPlayer.isDeath()){
+        if(coiPlayer.isDeath() && Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
             event.setCancelled(true);
         }
 
@@ -379,6 +379,11 @@ public class GameListener implements Listener {
             if(coiPlayer.isDeath()){
                 // 等待死亡
                 waitDeath(event.getPlayer());
+            }else{
+                if(team != null){
+                    // 传送到小队复活点
+                    TeamUtils.tpSpawner(p);
+                }
             }
 
 
