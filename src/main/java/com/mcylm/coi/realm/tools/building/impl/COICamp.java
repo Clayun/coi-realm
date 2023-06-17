@@ -20,7 +20,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 /**
@@ -34,7 +33,7 @@ public class COICamp extends COIBuilding {
         // 默认等级为1
         setLevel(1);
         // 初始化NPC创建器
-        setNpcCreators(List.of(initSoldierCreator(), initSoldierCreator(), initSoldierCreator()));
+        setNpcCreators(List.of(initSoldierCreator(1), initSoldierCreator(2), initSoldierCreator(3)));
         //初始化完成，可建造
         setAvailable(true);
     }
@@ -43,7 +42,7 @@ public class COICamp extends COIBuilding {
     public BuildingConfig getDefaultConfig() {
 
         return new BuildingConfig()
-                .setMaxLevel(2)
+                .setMaxLevel(3)
                 .setMaxBuild(5)
                 .setConsume(1024)
                 .setStructures(getBuildingLevelStructure());
@@ -89,7 +88,7 @@ public class COICamp extends COIBuilding {
      * 构造一个战士NPC创建器
      * @return
      */
-    private COISoldierCreator initSoldierCreator(){
+    private COISoldierCreator initSoldierCreator(int level){
 
         // 背包内的物品
         Inventory inventory = GUIUtils.createNpcInventory(3);
@@ -111,6 +110,7 @@ public class COICamp extends COIBuilding {
 
         COISoldierCreator npcCreator = new COISoldierCreator();
 
+        npcCreator.setRequiredBuildingLevel(level);
         npcCreator.setNpcType(EntityType.PILLAGER);
 
         npcCreator.setDisguiseType(DisguiseType.PLAYER);
@@ -138,6 +138,7 @@ public class COICamp extends COIBuilding {
     private void initStructure(){
         getBuildingLevelStructure().put(1,"junying1.structure");
         getBuildingLevelStructure().put(2,"junying1.structure");
+        getBuildingLevelStructure().put(3,"junying1.structure");
     }
 
     @Override

@@ -11,7 +11,6 @@ import com.mcylm.coi.realm.model.COIScoreDetail;
 import com.mcylm.coi.realm.player.COIPlayer;
 import com.mcylm.coi.realm.runnable.AttackGoalTask;
 import com.mcylm.coi.realm.runnable.BasicGameTask;
-import com.mcylm.coi.realm.tools.npc.impl.COIEntity;
 import com.mcylm.coi.realm.tools.team.impl.COIScoreboard;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.ItemUtils;
@@ -26,7 +25,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.Scoreboard;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -301,6 +299,14 @@ public class COIGame {
         meta.setUnbreakable(true);
         ironPickaxe.setItemMeta(meta);
         p.getInventory().addItem(ironPickaxe);
+
+        ItemStack commandItem = new ItemStack(Material.WHITE_BANNER);
+        ItemUtils.rename(itemStack,"&b攻击指挥");
+        lore = new ArrayList<>();
+        lore.add(LoggerUtils.replaceColor("&f切换你战士小队的攻击状态"));
+        ItemUtils.setLore(commandItem,lore);
+
+        p.getInventory().addItem(commandItem);
 
         // 面包
         ItemStack bread = new ItemStack(Material.BREAD);

@@ -2,15 +2,14 @@ package com.mcylm.coi.realm.listener;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.clipboard.PlayerClipboard;
-import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COIServerMode;
 import com.mcylm.coi.realm.events.BuildingTouchEvent;
 import com.mcylm.coi.realm.gui.BuildEditGUI;
 import com.mcylm.coi.realm.gui.BuilderGUI;
 import com.mcylm.coi.realm.gui.ChooseTeamGUI;
+import com.mcylm.coi.realm.player.COIPlayer;
+import com.mcylm.coi.realm.tools.attack.team.AttackTeam;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
-import com.mcylm.coi.realm.tools.building.impl.COIRepair;
-import com.mcylm.coi.realm.tools.building.impl.COITurret;
 import com.mcylm.coi.realm.tools.data.metadata.BuildData;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.tools.npc.impl.COIMiner;
@@ -23,8 +22,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -33,7 +30,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Nullable;
 
@@ -94,11 +90,11 @@ public class PlayerInteractListener implements Listener {
     }
 
     /**
-     * 粘贴建筑并设置NPC
+     * 使用道具
      * @param event
      */
     @EventHandler
-    public void onBuilding(PlayerInteractEvent event) {
+    public void onUseItem(PlayerInteractEvent event) {
 
         Action action = event.getAction();
 
@@ -138,6 +134,22 @@ public class PlayerInteractListener implements Listener {
                 Bukkit.getServer().getPluginManager().callEvent(touchEvent);
 
                 // 原本的事件监听转移到了GameListener
+            }
+        }
+
+        if (Action.RIGHT_CLICK_BLOCK == action && event.getHand().equals(EquipmentSlot.HAND)
+                //空手触发
+                && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.WHITE_BANNER
+        ) {
+            COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(event.getPlayer());
+
+            AttackTeam.Status status = coiPlayer.getAttackTeam().getStatus();
+            if (status == AttackTeam.Status.FREE) {
+                coiPlayer.getAttackTeam().setStatus(AttackTeam.Status.LOCK);
+                LoggerUtils.sendMessage("&e更换为锁定攻击(会攻击你所攻击的建筑)", event.getPlayer());
+            } else {
+                coiPlayer.getAttackTeam().setStatus(AttackTeam.Status.FREE);
+                LoggerUtils.sendMessage("&e更换为自由攻击", event.getPlayer());
             }
         }
 

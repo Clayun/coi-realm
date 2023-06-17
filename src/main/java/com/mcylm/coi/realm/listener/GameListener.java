@@ -11,6 +11,7 @@ import com.mcylm.coi.realm.events.BuildingTouchEvent;
 import com.mcylm.coi.realm.item.COITownPortal;
 import com.mcylm.coi.realm.player.COIPlayer;
 import com.mcylm.coi.realm.tools.attack.target.impl.BuildingTarget;
+import com.mcylm.coi.realm.tools.attack.team.AttackTeam;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.impl.COIRepair;
 import com.mcylm.coi.realm.tools.building.impl.COITurret;
@@ -175,9 +176,13 @@ public class GameListener implements Listener {
         if (building != null && building.getTeam() != TeamUtils.getTeamByPlayer(player)) {
             building.damage(player,10,block);
             COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(player);
-            for (COIEntity entity : coiPlayer.getAttackTeam().getMembers()) {
-                if (entity instanceof COISoldier soldier && soldier.isAlive()) {
-                    soldier.setTarget(new BuildingTarget(building, building.getNearestBlock(soldier.getLocation()).getLocation()));
+            if (coiPlayer.getAttackTeam().getStatus() == AttackTeam.Status.LOCK) {
+                for (COIEntity entity : coiPlayer.getAttackTeam().getMembers()) {
+                    if (entity instanceof COISoldier soldier && soldier.isAlive()) {
+                        BuildingTarget target = new BuildingTarget(building, building.getNearestBlock(soldier.getLocation()).getLocation());
+                        target.setTargetLevel(7);
+                        soldier.setTarget(target);
+                    }
                 }
             }
             event.setCancelled(true);
