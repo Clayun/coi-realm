@@ -1,13 +1,13 @@
 package com.mcylm.coi.realm.enums;
 
 import com.mcylm.coi.realm.Entry;
+import com.mcylm.coi.realm.enums.types.COIUnlockTypes;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.SkullUtils;
 import lombok.Getter;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -100,7 +100,6 @@ public class COIUnlockType {
             1,
             3
     );
-    private static Set<COIUnlockType> values = new HashSet<>();
 
 
     // CODE
@@ -137,7 +136,7 @@ public class COIUnlockType {
         this.preBuildingType = preBuildingType;
         this.buildingsNum = buildingsNum;
         this.buildingLevel = buildingLevel;
-        values.add(this);
+        COIUnlockTypes.values().add(this);
     }
 
     /**
@@ -206,7 +205,7 @@ public class COIUnlockType {
     }
 
     public static Set<COIUnlockType> values() {
-        return values;
+        return COIUnlockTypes.values();
     }
 
     /**
