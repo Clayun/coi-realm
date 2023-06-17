@@ -17,15 +17,16 @@ import com.mcylm.coi.realm.listener.PlayerInteractListener;
 import com.mcylm.coi.realm.listener.SnowballCoolDownListener;
 import com.mcylm.coi.realm.managers.COIBuildingManager;
 import com.mcylm.coi.realm.model.COINpc;
-import com.mcylm.coi.realm.tools.building.COIBuilding;
+import com.mcylm.coi.realm.player.COIPlayer;
+import com.mcylm.coi.realm.tools.attack.impl.PatrolGoal;
+import com.mcylm.coi.realm.tools.attack.impl.TeamFollowGoal;
 import com.mcylm.coi.realm.tools.building.impl.*;
 import com.mcylm.coi.realm.tools.building.impl.monster.COIMonsterBase;
 import com.mcylm.coi.realm.tools.data.MapData;
-import com.mcylm.coi.realm.tools.data.metadata.BuildData;
 import com.mcylm.coi.realm.tools.data.metadata.EntityData;
+import com.mcylm.coi.realm.tools.npc.COISoldierCreator;
+import com.mcylm.coi.realm.tools.npc.impl.COIEntity;
 import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
-import com.mcylm.coi.realm.tools.npc.impl.monster.COIMonster;
-import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.MapUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
@@ -33,13 +34,10 @@ import lombok.Getter;
 import me.lucko.helper.Events;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.NPC;
 import net.kyori.adventure.text.Component;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -48,7 +46,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
@@ -57,7 +54,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class Entry extends ExtendedJavaPlugin {
@@ -236,7 +232,28 @@ public class Entry extends ExtendedJavaPlugin {
                         // 铁匠铺打开另一个GUI
                         new ForgeGUI(e.getPlayer(),npcByEntity.getBuilding());
                     }else{
-                        e.getPlayer().openInventory(inv);
+                        if (!e.getPlayer().isSneaking()) {
+                            e.getPlayer().openInventory(inv);
+                        } else {
+                            COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(e.getPlayer());
+
+
+                            if (npcByEntity instanceof COISoldierCreator creator) {
+                                COISoldier soldier = ((COISoldier) creator.getNpc());;
+                                if (creator.getAttackTeam() == null || creator.getAttackTeam().getCommander().isDead()) {
+                                    coiPlayer.getAttackTeam().getMembers().add((COIEntity) creator.getNpc());
+                                    creator.setAttackTeam(coiPlayer.getAttackTeam());
+                                    soldier.setGoal(new TeamFollowGoal(soldier, coiPlayer.getAttackTeam()));
+                                    LoggerUtils.sendMessage("&a成功入队", e.getPlayer());
+                                } else if (creator.getAttackTeam() == coiPlayer.getAttackTeam()) {
+                                    coiPlayer.getAttackTeam().getMembers().remove(soldier);
+                                    creator.setAttackTeam(null);
+                                    soldier.setGoal(new PatrolGoal(soldier));
+                                    LoggerUtils.sendMessage("&c成功脱队", e.getPlayer());
+                                }
+
+                            }
+                        }
                     }
 
                     if (inv != null) {

@@ -19,7 +19,7 @@ public class COIPlayer {
     private Set<Target> selectedTargets = new HashSet<>();
 
     @Getter
-    private AttackTeam team;
+    private AttackTeam attackTeam;
     // 死亡次数
     @Setter
     @Getter

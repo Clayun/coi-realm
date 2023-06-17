@@ -1,7 +1,6 @@
 package com.mcylm.coi.realm.listener;
 
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
-import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COIGameStatus;
@@ -9,13 +8,15 @@ import com.mcylm.coi.realm.enums.COIPropType;
 import com.mcylm.coi.realm.events.BuildingDamagedEvent;
 import com.mcylm.coi.realm.events.BuildingDestroyedEvent;
 import com.mcylm.coi.realm.events.BuildingTouchEvent;
-import com.mcylm.coi.realm.item.COIRocket;
 import com.mcylm.coi.realm.item.COITownPortal;
 import com.mcylm.coi.realm.player.COIPlayer;
+import com.mcylm.coi.realm.tools.attack.target.impl.BuildingTarget;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.impl.COIRepair;
 import com.mcylm.coi.realm.tools.building.impl.COITurret;
 import com.mcylm.coi.realm.tools.data.metadata.BuildData;
+import com.mcylm.coi.realm.tools.npc.impl.COIEntity;
+import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
@@ -40,10 +41,7 @@ import org.bukkit.event.player.*;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -176,7 +174,12 @@ public class GameListener implements Listener {
         COIBuilding building = BuildData.getBuildingByBlock(block);
         if (building != null && building.getTeam() != TeamUtils.getTeamByPlayer(player)) {
             building.damage(player,10,block);
-
+            COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(player);
+            for (COIEntity entity : coiPlayer.getAttackTeam().getMembers()) {
+                if (entity instanceof COISoldier soldier && soldier.isAlive()) {
+                    soldier.setTarget(new BuildingTarget(building, building.getNearestBlock(soldier.getLocation()).getLocation()));
+                }
+            }
             event.setCancelled(true);
         }
     }
