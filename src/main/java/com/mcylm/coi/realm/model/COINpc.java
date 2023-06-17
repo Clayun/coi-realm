@@ -82,10 +82,10 @@ public class COINpc implements Serializable {
     private double alertRadius = 5;
 
     // 攻击伤害最小值
-    private double minDamage = 2;
+    private double minDamage = 1;
 
     // 攻击伤害最大值
-    private double maxDamage = 8;
+    private double maxDamage = 2;
 
     // 跟随的玩家
     // 很重要的属性，决定了NPC产生的积分结算给哪个玩家
