@@ -131,7 +131,7 @@ public class COITurret extends COIBuilding {
 
     @Override
     public int getMaxHealth() {
-        return 400 + getLevel() * 200;
+        return 100 + getLevel() * 100;
     }
 
     /**
