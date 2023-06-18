@@ -820,8 +820,10 @@ public abstract class COIBuilding implements Serializable {
         if (level + 1 > maxLevel || !isComplete()) {
             return;
         }
-        if (getPlayerHadResource(player) >= getUpgradeRequiredConsume()) {
-            InventoryUtils.deductionResources(player, getUpgradeRequiredConsume());
+
+        // 扣减资源，扣除成功就是 true ，不够就不扣，返回 false
+        boolean b = InventoryUtils.deductionResources(player, getUpgradeRequiredConsume());
+        if (b) {
             level++;
             upgradeBuild(player);
         }else{

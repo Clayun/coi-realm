@@ -13,6 +13,7 @@ import com.mcylm.coi.realm.player.COIPlayer;
 import com.mcylm.coi.realm.tools.attack.target.impl.BuildingTarget;
 import com.mcylm.coi.realm.tools.attack.team.AttackTeam;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
+import com.mcylm.coi.realm.tools.building.impl.COIAirRaid;
 import com.mcylm.coi.realm.tools.building.impl.COIRepair;
 import com.mcylm.coi.realm.tools.building.impl.COITurret;
 import com.mcylm.coi.realm.tools.data.metadata.BuildData;
@@ -425,6 +426,7 @@ public class GameListener implements Listener {
 
         if(building.getType().equals(COIBuildingType.TURRET_NORMAL)
                 || building.getType().equals(COIBuildingType.TURRET_REPAIR)
+                || building.getType().equals(COIBuildingType.TURRET_AIR_RAID)
         ){
             // 如果是塔类型，就打开该塔的弹药库GUI
             // 仅限本小队才允许
@@ -432,6 +434,8 @@ public class GameListener implements Listener {
                 if(building instanceof COITurret turret){
                     event.getPlayer().openInventory(turret.getInventory());
                 }else if(building instanceof COIRepair turret){
+                    event.getPlayer().openInventory(turret.getInventory());
+                }else if(building instanceof COIAirRaid turret){
                     event.getPlayer().openInventory(turret.getInventory());
                 }
             }

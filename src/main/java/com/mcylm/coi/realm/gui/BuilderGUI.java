@@ -147,7 +147,8 @@ public class BuilderGUI{
     private int getMaxBuild(COIBuilding building,COITeam team){
         Integer maxBuild = building.getMaxBuild();
 
-        if(building.getType().equals(COIBuildingType.TURRET_NORMAL)){
+        if(building.getType().equals(COIBuildingType.TURRET_NORMAL)
+            || building.getType().equals(COIBuildingType.TURRET_AIR_RAID)){
             int level = team.getBase().getLevel();
 
             // 防御塔最大建造数量

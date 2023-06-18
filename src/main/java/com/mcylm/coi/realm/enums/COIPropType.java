@@ -47,6 +47,42 @@ public enum COIPropType {
             1
     ),
 
+    BOW(
+            "BOW",
+            "弓",
+            new ItemStack(Material.BOW),
+            1,
+            "一把平平无奇的弓,凑活用吧",
+            50,
+            COIBuildingType.FORGE,
+            1,
+            1
+    ),
+
+    CROSSBOW(
+            "CROSSBOW",
+            "弩",
+            new ItemStack(Material.CROSSBOW),
+            1,
+            "一把平平无奇的弩,凑活用吧",
+            50,
+            COIBuildingType.FORGE,
+            1,
+            1
+    ),
+
+    ARROW(
+            "ARROW",
+            "箭",
+            new ItemStack(Material.ARROW),
+            64,
+            "箭矢",
+            64,
+            COIBuildingType.FORGE,
+            1,
+            1
+    ),
+
     IRON_SWORD(
             "IRON_SWORD",
             "铁剑",
@@ -248,11 +284,11 @@ public enum COIPropType {
             "SNOWBALL",
             "爆炸果实",
             new ItemStack(Material.SNOWBALL),
-            16,
+            4,
             "射出去后击中的目标会" +
                     "创造一次小型的爆炸,会对敌方建筑产生30点伤害," +
                     "如果击中敌方生物，则会造成3点真实伤害，无视护甲",
-            128,
+            256,
             COIBuildingType.FORGE,
             1,
             1
@@ -274,21 +310,6 @@ public enum COIPropType {
             1,
             5
     ),
-
-//    FIREWORK_ROCKET(
-//            "FIREWORK_ROCKET",
-//            "烟花",
-//            new ItemStack(Material.FIREWORK_ROCKET),
-//            64,
-//            "这是可以帮你起飞的好东西。" +
-//                    "但是小心别把自己摔死了！" +
-//                    "这玩意可不防摔！！" +
-//                    "请务必配合*鞘翅*使用。",
-//            500,
-//            COIBuildingType.FORGE,
-//            1,
-//            5
-//    ),
 
     ELYTRA(
             "ELYTRA",
