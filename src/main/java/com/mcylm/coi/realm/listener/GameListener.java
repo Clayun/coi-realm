@@ -207,7 +207,19 @@ public class GameListener implements Listener {
         event.setCancelled(true);
     }
 
+    @EventHandler
+    public void onChat(AsyncPlayerChatEvent event){
 
+        // 游戏中
+        if(Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
+            Player player = event.getPlayer();
+            String message = event.getMessage();
+            TeamUtils.sendTeamMessage(player,message);
+            event.setCancelled(true);
+        }
+
+
+    }
 
     @EventHandler
     public void onMove(PlayerMoveEvent event){

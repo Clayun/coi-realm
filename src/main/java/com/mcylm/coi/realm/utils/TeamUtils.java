@@ -260,6 +260,23 @@ public class TeamUtils {
     }
 
     /**
+     * 给小队的玩家发送消息
+     * @param p
+     * @param message
+     */
+    public static void sendTeamMessage(Player p,String message){
+
+        COITeam teamByPlayer = getTeamByPlayer(p);
+        if(teamByPlayer != null){
+            for(String teamPartner : teamByPlayer.getPlayers()){
+                LoggerUtils.sendMessage(teamByPlayer.getType().getColor()+"[队内密聊]"+"<"+p.getName()+">" + " &f"+message,Bukkit.getPlayer(teamPartner));
+            }
+
+        }
+
+    }
+
+    /**
      * 传送到大厅
      * @param p
      */
