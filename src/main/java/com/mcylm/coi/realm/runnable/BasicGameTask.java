@@ -292,7 +292,8 @@ public class BasicGameTask implements GameTaskApi {
                         p.showTitle(title);
                     }
 
-                    // TODO 重置当前服务器
+                    // 关闭当前服务器
+                    Entry.getInstance().getServer().shutdown();
                     this.cancel();
                 }
 
