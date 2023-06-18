@@ -146,12 +146,6 @@ public class COITeam implements Team {
     @Override
     public boolean join(Player player) {
 
-        if(getPlayers().size() >= Entry.getInstance().getConfig().getInt("game.max-group-players")){
-            // 加入失败，队伍满了
-            // Join fail,the team is full.
-            return false;
-        }
-
         List<COITeam> teams = Entry.getGame().getTeams();
 
         Iterator<COITeam> iterator = teams.iterator();

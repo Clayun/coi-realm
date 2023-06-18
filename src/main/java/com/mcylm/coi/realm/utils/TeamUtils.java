@@ -239,10 +239,6 @@ public class TeamUtils {
             }
         }
 
-        if(players >= Entry.getInstance().getConfig().getInt("game.max-group-players")){
-            return null;
-        }
-
         return minimumTeam;
     }
 

@@ -471,13 +471,20 @@ public class COIEntity implements AI {
                 if (block.getInventory().isEmpty()) {
                     continue;
                 }
-                double locationDistance = location.distance(getNpc().getEntity().getLocation());
 
-                // 冒泡排序
-                if (locationDistance <= distance) {
-                    nearestLocation = location;
-                    distance = locationDistance;
+                if(getNpc().getEntity().getLocation().getWorld() == location.getWorld()){
+                    double locationDistance = location.distance(getNpc().getEntity().getLocation());
+
+                    // 冒泡排序
+                    if (locationDistance <= distance) {
+                        nearestLocation = location;
+                        distance = locationDistance;
+                    }
+
+                }else{
+                    return;
                 }
+
 
             }
         }
