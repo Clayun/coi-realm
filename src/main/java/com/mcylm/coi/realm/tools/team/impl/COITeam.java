@@ -269,22 +269,25 @@ public class COITeam implements Team {
             team.addScore(COIScoreType.BEAT_TEAM,player);
         }
 
-        // 被玩家或者玩家的随从NPC干掉了
-        // 整队在怪物队伍复活
-        // 如果怪物队伍被拆了，则直接失败
+        if(!Entry.getGame().checkGameComplete()){
+            // 游戏尚未结束
 
-        // 全员转移到怪物队伍
-        setPlayersCache(getPlayers());
-        TeamUtils.getMonsterTeam().getPlayers().addAll(getPlayers());
-        setPlayers(new ArrayList<>());
+            // 整队在怪物队伍复活
+            // 如果怪物队伍被拆了，则直接失败
 
-        // 清理背包并传送到新的出生点
-        for(String playerName : getPlayersCache()){
-            Player defeatPlayer = Bukkit.getPlayer(playerName);
-            if(defeatPlayer != null){
-                defeatPlayer.getInventory().clear();
-                if(defeatPlayer.isOnline()){
-                    defeatPlayer.teleport(TeamUtils.getMonsterTeam().getSpawner());
+            // 全员转移到怪物队伍
+            setPlayersCache(getPlayers());
+            TeamUtils.getMonsterTeam().getPlayers().addAll(getPlayers());
+            setPlayers(new ArrayList<>());
+
+            // 清理背包并传送到新的出生点
+            for(String playerName : getPlayersCache()){
+                Player defeatPlayer = Bukkit.getPlayer(playerName);
+                if(defeatPlayer != null){
+                    defeatPlayer.getInventory().clear();
+                    if(defeatPlayer.isOnline()){
+                        defeatPlayer.teleport(TeamUtils.getMonsterTeam().getSpawner());
+                    }
                 }
             }
         }
