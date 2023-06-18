@@ -53,6 +53,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
@@ -150,7 +151,9 @@ public class Entry extends ExtendedJavaPlugin {
         readMapData();
 
         // 注册主服务器
-        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        if(getConfig().getBoolean("bungeecord")){
+            getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        }
 
         // 开发测试环境注册
         if (serverMode.equals(COIServerMode.DEVELOP)) {
@@ -186,6 +189,9 @@ public class Entry extends ExtendedJavaPlugin {
         registerEventListeners();
         registerDefaultBuildings();
 
+        // 展示游戏公告
+        showNotice();
+
         // 一切准备就绪，创建主游戏进程
         game = new COIGame();
         LoggerUtils.log("小游戏主线程创建完成");
@@ -211,6 +217,42 @@ public class Entry extends ExtendedJavaPlugin {
         for (Team team : scoreboard.getTeams()) {
             team.unregister();
         }
+    }
+
+    /**
+     * 自动展示公告
+     */
+    private void showNotice(){
+        List<String> notice = getConfig().getStringList("notice");
+
+        if(notice.isEmpty()){
+            return;
+        }
+
+        // 间隔
+        int interval = getConfig().getInt("notice-interval");
+
+        if(interval == 0){
+            interval = 10;
+        }
+
+        new BukkitRunnable(){
+
+            int index = 0;
+            @Override
+            public void run() {
+                // 每次循环播报一条公告信息
+                String announcement = notice.get(index);
+
+                LoggerUtils.broadcastMessage(announcement);
+
+                // 将索引加 1，如果已经到达列表末尾，则重新开始循环
+                index++;
+                if (index >= notice.size()) {
+                    index = 0;
+                }
+            }
+        }.runTaskTimerAsynchronously(this,0,20 * interval);
     }
 
     private void registerEventListeners() {

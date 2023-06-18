@@ -269,7 +269,7 @@ public class TeamUtils {
         COITeam teamByPlayer = getTeamByPlayer(p);
         if(teamByPlayer != null){
             for(String teamPartner : teamByPlayer.getPlayers()){
-                LoggerUtils.sendMessage(teamByPlayer.getType().getColor()+"[队内密聊]"+"<"+p.getName()+">" + " &f"+message,Bukkit.getPlayer(teamPartner));
+                LoggerUtils.sendTeamChatMessage(teamByPlayer.getType().getColor()+"<"+p.getName()+">" + " &f"+message,Bukkit.getPlayer(teamPartner));
             }
 
         }

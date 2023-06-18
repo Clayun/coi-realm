@@ -304,13 +304,21 @@ public class BasicGameTask implements GameTaskApi {
                                 times);
                         p.showTitle(title);
 
-                        Entry.runSync(new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                // 关闭当前服务器
-                                ServerUtils.teleport(p,"imc_lobby");
-                            }
-                        });
+                        if(Entry.getInstance().getConfig().getBoolean("bungeecord")){
+
+                            // 大厅服务器名称
+                            String lobby = Entry.getInstance().getConfig().getString("bungeecord-lobby");
+
+                            Entry.runSync(new BukkitRunnable() {
+                                @Override
+                                public void run() {
+                                    // 关闭当前服务器
+                                    ServerUtils.teleport(p,lobby);
+                                }
+                            });
+                        }
+
+
                     }
                 }
 

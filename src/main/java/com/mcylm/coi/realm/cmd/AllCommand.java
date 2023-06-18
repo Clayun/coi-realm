@@ -35,12 +35,12 @@ public class AllCommand implements CommandExecutor {
                     COITeam teamByPlayer = TeamUtils.getTeamByPlayer(player);
                     // 游戏中
                     for(Player p : Bukkit.getOnlinePlayers()){
-                        LoggerUtils.sendMessage(teamByPlayer.getType().getColor()+"[全局 &c/all"+teamByPlayer.getType().getColor()+"]"+"<"+p.getName()+">" + " &f"+message, p);
+                        LoggerUtils.sendAllChatMessage(teamByPlayer.getType().getColor()+"<"+player.getName()+">" + " &f"+message, p);
                     }
 
                     return true;
                 }else{
-                    LoggerUtils.sendMessage("&c游戏尚未开始，无需全局喊话",player);
+                    LoggerUtils.sendAllChatMessage("&7游戏尚未开始，无需全局喊话",player);
 
                     return true;
                 }

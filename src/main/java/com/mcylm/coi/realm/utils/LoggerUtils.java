@@ -49,6 +49,28 @@ public class LoggerUtils {
         }
     }
 
+    public static void sendAllChatMessage(String msg, Player player){
+
+        if(player == null){
+            return;
+        }
+
+        if(player.isOnline()){
+            player.sendMessage("§f[§e全局 §c/all§f] §7"+replaceColor(msg));
+        }
+    }
+
+    public static void sendTeamChatMessage(String msg, Player player){
+
+        if(player == null){
+            return;
+        }
+
+        if(player.isOnline()){
+            player.sendMessage("§f[§b队内§f] §7"+replaceColor(msg));
+        }
+    }
+
     public static String replaceColor(String msg){
         return msg.replace("&","§");
     }
@@ -69,7 +91,12 @@ public class LoggerUtils {
     }
 
     public static void broadcastMessage(String message){
-        Bukkit.broadcastMessage(replaceColor(message));
+
+        for(Player player : Bukkit.getOnlinePlayers()){
+            if(player.isOnline()){
+                player.sendMessage("§f[§a公告§f] §7"+replaceColor(message));
+            }
+        }
     }
 
 
