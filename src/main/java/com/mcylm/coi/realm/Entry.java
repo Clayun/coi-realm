@@ -154,6 +154,25 @@ public class Entry extends ExtendedJavaPlugin {
             LoggerUtils.log("命令注册完成");
         }
 
+        // 团队数量
+        int maxTeams = Entry.getInstance().getConfig().getInt("game.max-teams");
+        // 每个团队最大人数
+        int maxPlayerPerTeam = Entry.getInstance().getConfig().getInt("game.max-group-players");
+        // 服务器最大在线人数
+        int maxPlayer = maxPlayerPerTeam * maxTeams;
+        // 设置最大在线人数
+        getServer().setMaxPlayers(maxPlayer);
+
+        // 检测前置插件是否加载了
+        // 检查是否已加载Disguise插件
+        try {
+            Class.forName("me.libraryaddict.disguise.DisguiseAPI");
+        } catch (ClassNotFoundException e) {
+            // 如果没有加载Disguise插件，则重新加载服务器
+            Bukkit.getServer().reload();
+            return;
+        }
+
         registerEventListeners();
         registerDefaultBuildings();
 

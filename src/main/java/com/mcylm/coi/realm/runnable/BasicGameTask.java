@@ -13,6 +13,8 @@ import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -292,8 +294,13 @@ public class BasicGameTask implements GameTaskApi {
                         p.showTitle(title);
                     }
 
-                    // 关闭当前服务器
-                    Entry.getInstance().getServer().shutdown();
+                    Entry.runSync(new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            // 关闭当前服务器
+                            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(),"restart");
+                        }
+                    });
                     this.cancel();
                 }
 
