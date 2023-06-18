@@ -37,6 +37,8 @@ public class AllCommand implements CommandExecutor {
                     for(Player p : Bukkit.getOnlinePlayers()){
                         LoggerUtils.sendMessage(teamByPlayer.getType().getColor()+"[全局 &c/all"+teamByPlayer.getType().getColor()+"]"+"<"+p.getName()+">" + " &f"+message, p);
                     }
+                }else{
+                    LoggerUtils.sendMessage("&c游戏尚未开始，无需全局喊话",player);
                 }
             }
         }
