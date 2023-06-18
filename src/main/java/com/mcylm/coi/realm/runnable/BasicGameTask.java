@@ -8,6 +8,7 @@ import com.mcylm.coi.realm.model.COIScoreDetail;
 import com.mcylm.coi.realm.runnable.api.GameTaskApi;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.LoggerUtils;
+import com.mcylm.coi.realm.utils.ServerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
@@ -269,20 +270,25 @@ public class BasicGameTask implements GameTaskApi {
 
                     }else{
 
+                        // 提前5秒传送玩家
+                        int fakeCountDown = countdown - 5;
 
-                        // 倒计时最后10秒
-                        Title title = Title.title(
-                                Component.text(LoggerUtils.replaceColor("&f"+countdown+" &c即将结束...")),
-                                Component.text(LoggerUtils.replaceColor("&f奖励已结算，可以在&6左下角&f查看")),
-                                times);
-                        p.showTitle(title);
+                        if(fakeCountDown > 0){
+                            // 倒计时最后10秒
+                            Title title = Title.title(
+                                    Component.text(LoggerUtils.replaceColor("&f"+fakeCountDown+" &c即将结束...")),
+                                    Component.text(LoggerUtils.replaceColor("&f奖励已结算，可以在&6左下角&f查看")),
+                                    times);
+                            p.showTitle(title);
+                        }
+
                     }
 
 
                 }
 
-                if(count >= stoppingTimer){
-
+                // 倒计时5秒的时候就开始传送
+                if(stoppingTimer - count == 5){
                     for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
 
                         Title.Times times = Title.Times.times(Ticks.duration(0L), Ticks.duration(70L), Ticks.duration(0L));
@@ -292,7 +298,18 @@ public class BasicGameTask implements GameTaskApi {
                                 Component.text(LoggerUtils.replaceColor("&f即将传送回主服务器")),
                                 times);
                         p.showTitle(title);
+
+                        Entry.runSync(new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                // 关闭当前服务器
+                                ServerUtils.teleport(p,"imc_lobby");
+                            }
+                        });
                     }
+                }
+
+                if(count >= stoppingTimer){
 
                     Entry.runSync(new BukkitRunnable() {
                         @Override

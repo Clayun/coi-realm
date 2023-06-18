@@ -144,6 +144,8 @@ public class Entry extends ExtendedJavaPlugin {
         }
         readMapData();
 
+        // 注册主服务器
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 
         // 开发测试环境注册
         if (serverMode.equals(COIServerMode.DEVELOP)) {

@@ -350,7 +350,6 @@ public class GameListener implements Listener {
 
 
         if(Entry.getGame().getStatus().equals(COIGameStatus.WAITING)){
-
             // 游戏等待中，就在大厅等待
             TeamUtils.tpLobby(p);
         }else if(Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
@@ -377,6 +376,8 @@ public class GameListener implements Listener {
                     TeamUtils.tpSpawner(p);
                 }
             }
+        }else{
+            TeamUtils.tpLobby(p);
         }
     }
 
@@ -384,24 +385,34 @@ public class GameListener implements Listener {
     public void onRespawn(PlayerRespawnEvent event){
 
         Player p = event.getPlayer();
-        COITeam team = TeamUtils.getTeamByPlayer(p);
-        if(team !=null){
 
-            COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(event.getPlayer());
+        if(Entry.getGame().getStatus().equals(COIGameStatus.WAITING)){
+            // 游戏等待中，就在大厅等待
+            TeamUtils.tpLobby(p);
+        }else if(Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
+            COITeam team = TeamUtils.getTeamByPlayer(p);
 
-            if(coiPlayer.isDeath()){
-                waitDeath(event.getPlayer());
+            if(team !=null){
+
+                COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(event.getPlayer());
+
+                if(coiPlayer.isDeath()){
+                    waitDeath(event.getPlayer());
+                }else{
+                    TeamUtils.tpSpawner(p);
+                }
             }else{
+                // 自动加入队伍
+                TeamUtils.autoJoinTeam(p);
+                // 传送到小队复活点
                 TeamUtils.tpSpawner(p);
+                // 初始化玩家背包
+                Entry.getGame().initPlayerGaming(p);
             }
         }else{
-            // 自动加入队伍
-            TeamUtils.autoJoinTeam(p);
-            // 传送到小队复活点
-            TeamUtils.tpSpawner(p);
-            // 初始化玩家背包
-            Entry.getGame().initPlayerGaming(p);
+            TeamUtils.tpLobby(p);
         }
+
     }
 
     @EventHandler
