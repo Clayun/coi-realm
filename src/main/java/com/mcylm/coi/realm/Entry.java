@@ -78,6 +78,9 @@ public class Entry extends ExtendedJavaPlugin {
     // 服务器模式，在配置文件 Config 中有详细注释
     public static String SERVER_MODE = "develop";
 
+    // 游戏世界
+    public static String WORLD;
+
     // 每个小队最大人数限制
     public static Integer MAX_GROUP_PLAYERS = 1;
 
@@ -129,6 +132,7 @@ public class Entry extends ExtendedJavaPlugin {
         NPC_FOODS = getConfig().getStringList("foods");
         WALL_DETECT_HEIGHT = getConfig().getInt("game.wall-detect-height");
         UPGRADE_SKIP_BLOCKS = getConfig().getStringList("upgrade-skip-blocks");
+        WORLD = Entry.getInstance().getConfig().getString("game.spawn-world");
         COIServerMode serverMode = COIServerMode.parseCode(SERVER_MODE);
 
         if (serverMode == null) {

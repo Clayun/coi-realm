@@ -183,6 +183,11 @@ public class BasicGameTask implements GameTaskApi {
                         // 游戏在进行中，倒计时需要在 boss bar 中展示
                         for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
                             p.showBossBar(bossBar);
+
+                            if(!p.getWorld().getName().equals(Entry.WORLD)){
+                                LoggerUtils.sendMessage("&c正在进入游戏", p);
+                                TeamUtils.tpSpawner(p);
+                            }
                         }
                     }
 

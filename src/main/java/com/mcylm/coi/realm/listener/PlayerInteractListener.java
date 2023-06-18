@@ -106,10 +106,16 @@ public class PlayerInteractListener implements Listener {
                 && ItemUtils.getName(event.getPlayer().getInventory().getItemInMainHand()).equals(LoggerUtils.replaceColor("&b建筑蓝图"))
         ) {
 
-            if(!Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
-                event.setCancelled(true);
-                LoggerUtils.sendMessage("&c当前世界非游戏世界", event.getPlayer());
-                return;
+            if(Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
+
+
+                if(!event.getPlayer().getWorld().getName().equals(Entry.WORLD)){
+                    event.setCancelled(true);
+                    LoggerUtils.sendMessage("&c当前世界非游戏世界", event.getPlayer());
+                    TeamUtils.tpSpawner(event.getPlayer());
+                    return;
+                }
+
             }
 
             Block clickedBlock = event.getClickedBlock();
@@ -149,6 +155,13 @@ public class PlayerInteractListener implements Listener {
                 && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.NETHER_STAR
         ) {
             COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(event.getPlayer());
+
+            if(!Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
+                event.setCancelled(true);
+                LoggerUtils.sendMessage("&c当前世界非游戏世界", event.getPlayer());
+                TeamUtils.tpSpawner(event.getPlayer());
+                return;
+            }
 
             AttackTeam.Status status = coiPlayer.getAttackTeam().getStatus();
             if (status == AttackTeam.Status.FREE) {
