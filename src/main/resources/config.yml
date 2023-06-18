@@ -60,6 +60,9 @@ game:
 #    - '764,49,814'
   # 怪物阵营的出生点（大于等于3个团队时生效）
   monster-spawner: '435,49,841'
+  # 等待大厅世界
+  lobby-world: 'lobby'
+  lobby-location: '0.5,65,0.5'
 
   # 墙体的判定高度
   # wall-detect-height: 26

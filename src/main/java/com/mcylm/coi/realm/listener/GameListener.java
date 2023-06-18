@@ -212,12 +212,19 @@ public class GameListener implements Listener {
     @EventHandler
     public void onMove(PlayerMoveEvent event){
 
-        COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(event.getPlayer());
-
-        if(coiPlayer.isDeath() && Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
+        // 等待中，禁止移动
+        if(Entry.getGame().getStatus().equals(COIGameStatus.WAITING)){
             event.setCancelled(true);
+            return;
         }
 
+        if(Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
+            COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(event.getPlayer());
+            if(coiPlayer.isDeath()){
+                // 死亡的情况下，禁止移动
+                event.setCancelled(true);
+            }
+        }
     }
 
     @EventHandler
@@ -341,34 +348,36 @@ public class GameListener implements Listener {
 
         Player p = event.getPlayer();
 
-        COITeam team = TeamUtils.getTeamByPlayer(p);
 
-        // 游戏中进来的话，就要初始化信息了
-        if(team == null && Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
-            // 自动加入队伍
-            TeamUtils.autoJoinTeam(p);
-            // 传送到小队复活点
-            TeamUtils.tpSpawner(p);
-            // 初始化玩家背包
-            Entry.getGame().initPlayerGaming(p);
-        }else{
-            // 玩家已经加入了小队，要判断是否复活了
-            // 死亡记录
-            COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(event.getPlayer());
+        if(Entry.getGame().getStatus().equals(COIGameStatus.WAITING)){
 
-            if(coiPlayer.isDeath()){
-                // 等待死亡
-                waitDeath(event.getPlayer());
+            // 游戏等待中，就在大厅等待
+            TeamUtils.tpLobby(p);
+        }else if(Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
+            // 游戏中
+            COITeam team = TeamUtils.getTeamByPlayer(p);
+
+            if(team == null){
+                // 自动加入队伍
+                TeamUtils.autoJoinTeam(p);
+                // 传送到小队复活点
+                TeamUtils.tpSpawner(p);
+                // 初始化玩家背包
+                Entry.getGame().initPlayerGaming(p);
             }else{
-                if(team != null){
+                // 玩家已经加入了小队，要判断是否复活了
+                // 死亡记录
+                COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(event.getPlayer());
+
+                if(coiPlayer.isDeath()){
+                    // 等待死亡
+                    waitDeath(event.getPlayer());
+                }else{
                     // 传送到小队复活点
                     TeamUtils.tpSpawner(p);
                 }
             }
-
-
         }
-
     }
 
     @EventHandler

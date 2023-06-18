@@ -264,6 +264,17 @@ public class TeamUtils {
     }
 
     /**
+     * 传送到大厅
+     * @param p
+     */
+    public static void tpLobby(Player p){
+        String lobbyLoc = Entry.getInstance().getConfig().getString("game.lobby-location");
+        String world = Entry.getInstance().getConfig().getString("game.lobby-world");
+        Location location = getLocation(lobbyLoc, world);
+        p.teleport(location);
+    }
+
+    /**
      * 初始化小队的基地
      * 并返回玩家的出生点
      * @param team
