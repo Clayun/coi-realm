@@ -41,6 +41,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -171,6 +172,14 @@ public class GameListener implements Listener {
 
         }
 
+    }
+
+    @EventHandler
+    public void onCraftItem(CraftItemEvent event) {
+        ItemStack result = event.getRecipe().getResult();
+        if (result.getType() == Material.SNOW_BLOCK) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler

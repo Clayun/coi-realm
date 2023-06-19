@@ -92,7 +92,7 @@ public class LineSelector implements Selector {
 
             List<Block> blocks = new ArrayList<>();
             Iterator<Location> iterator = line.iterator();
-            LocalDateTime startTime = LocalDateTime.now();
+//            LocalDateTime startTime = LocalDateTime.now();
             while (iterator.hasNext()) {
                 Location point = iterator.next();
                 Block block = getSuitableBlock(structure, point);
@@ -125,10 +125,10 @@ public class LineSelector implements Selector {
                 builder.location(particleLoc).receivers(player).spawn();
             }
 
-            LocalDateTime endTime = LocalDateTime.now();
-            Duration duration = Duration.between(startTime, endTime);
-            long millis = duration.toMillis();
-            LoggerUtils.debug("select方法执行所需时间（毫秒）："+millis);
+//            LocalDateTime endTime = LocalDateTime.now();
+//            Duration duration = Duration.between(startTime, endTime);
+//            long millis = duration.toMillis();
+//            LoggerUtils.debug("select方法执行所需时间（毫秒）："+millis);
 
             String state = canPlace ? "§a可放置" : "§c不可放置";
 
