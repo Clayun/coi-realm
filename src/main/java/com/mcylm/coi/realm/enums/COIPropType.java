@@ -56,7 +56,7 @@ public enum COIPropType {
             50,
             COIBuildingType.FORGE,
             1,
-            1
+            2
     ),
 
     CROSSBOW(
@@ -68,7 +68,7 @@ public enum COIPropType {
             50,
             COIBuildingType.FORGE,
             1,
-            1
+            2
     ),
 
     ARROW(
@@ -118,7 +118,7 @@ public enum COIPropType {
             20,
             COIBuildingType.FORGE,
             1,
-            1
+            2
     ),
 
     LEATHER_CHESTPLATE(
@@ -130,7 +130,7 @@ public enum COIPropType {
             20,
             COIBuildingType.FORGE,
             1,
-            1
+            2
     ),
 
     LEATHER_LEGGINGS(
@@ -142,7 +142,7 @@ public enum COIPropType {
             20,
             COIBuildingType.FORGE,
             1,
-            1
+            2
     ),
 
     LEATHER_BOOTS(
@@ -154,7 +154,7 @@ public enum COIPropType {
             20,
             COIBuildingType.FORGE,
             1,
-            1
+            2
     ),
 
     // 铁套装系列
@@ -167,7 +167,7 @@ public enum COIPropType {
             50,
             COIBuildingType.FORGE,
             1,
-            2
+            3
     ),
 
     IRON_CHESTPLATE(
@@ -179,7 +179,7 @@ public enum COIPropType {
             50,
             COIBuildingType.FORGE,
             1,
-            2
+            3
     ),
 
     IRON_LEGGINGS(
@@ -191,7 +191,7 @@ public enum COIPropType {
             50,
             COIBuildingType.FORGE,
             1,
-            2
+            3
     ),
 
     IRON_BOOTS(
@@ -203,7 +203,7 @@ public enum COIPropType {
             50,
             COIBuildingType.FORGE,
             1,
-            2
+            3
     ),
 
     // 钻石套装系列
@@ -216,7 +216,7 @@ public enum COIPropType {
             100,
             COIBuildingType.FORGE,
             1,
-            3
+            4
     ),
 
     DIAMOND_CHESTPLATE(
@@ -228,7 +228,7 @@ public enum COIPropType {
             100,
             COIBuildingType.FORGE,
             1,
-            3
+            4
     ),
 
     DIAMOND_LEGGINGS(
@@ -240,7 +240,7 @@ public enum COIPropType {
             100,
             COIBuildingType.FORGE,
             1,
-            3
+            4
     ),
 
     DIAMOND_BOOTS(
@@ -252,7 +252,7 @@ public enum COIPropType {
             100,
             COIBuildingType.FORGE,
             1,
-            3
+            4
     ),
 
     // 道具
@@ -277,7 +277,7 @@ public enum COIPropType {
             200,
             COIBuildingType.FORGE,
             1,
-            4
+            5
     ),
 
     SNOWBALL(
@@ -294,37 +294,37 @@ public enum COIPropType {
             1
     ),
 
-    FIREWORK_ROCKET(
-            "FIREWORK_ROCKET",
-            "助推器",
-            new ItemStack(Material.FIREWORK_ROCKET),
-            1,
-            "装备鞘翅后，滑翔的过程中" +
-                    "使用助推器可以加速飞行" +
-                    "但是小心别把自己摔死了！" +
-                    "这玩意可不防摔！！" +
-                    "每次消耗8个资源" +
-                    "请务必配合*鞘翅*使用。",
-            500,
-            COIBuildingType.FORGE,
-            1,
-            5
-    ),
-
-    ELYTRA(
-            "ELYTRA",
-            "鞘翅",
-            new ItemStack(Material.ELYTRA),
-            1,
-            "这是可以帮你在天上滑行的好东西。" +
-                    "但是小心别把自己摔死了！" +
-                    "这玩意可不防摔！！" +
-                    "可以配合*喷气动力鞋*使用。",
-            500,
-            COIBuildingType.FORGE,
-            1,
-            5
-    ),
+//    FIREWORK_ROCKET(
+//            "FIREWORK_ROCKET",
+//            "助推器",
+//            new ItemStack(Material.FIREWORK_ROCKET),
+//            1,
+//            "装备鞘翅后，滑翔的过程中" +
+//                    "使用助推器可以加速飞行" +
+//                    "但是小心别把自己摔死了！" +
+//                    "这玩意可不防摔！！" +
+//                    "每次消耗8个资源" +
+//                    "请务必配合*鞘翅*使用。",
+//            500,
+//            COIBuildingType.FORGE,
+//            1,
+//            5
+//    ),
+//
+//    ELYTRA(
+//            "ELYTRA",
+//            "鞘翅",
+//            new ItemStack(Material.ELYTRA),
+//            1,
+//            "这是可以帮你在天上滑行的好东西。" +
+//                    "但是小心别把自己摔死了！" +
+//                    "这玩意可不防摔！！" +
+//                    "可以配合*喷气动力鞋*使用。",
+//            500,
+//            COIBuildingType.FORGE,
+//            1,
+//            5
+//    ),
 
 
     ;

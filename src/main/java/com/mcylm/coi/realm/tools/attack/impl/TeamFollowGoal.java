@@ -5,6 +5,7 @@ import com.mcylm.coi.realm.tools.attack.Commandable;
 import com.mcylm.coi.realm.tools.attack.team.AttackTeam;
 import com.mcylm.coi.realm.tools.npc.impl.COIEntity;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -26,7 +27,9 @@ public class TeamFollowGoal extends SimpleGoal {
     // 2秒扣一次，避免给旋了
     private int skipFeedAction = 0;
 
+    // 最大的半径范围
     private int maxRadius = 30;
+
     public TeamFollowGoal(Commandable npc, AttackTeam team) {
         super(npc);
         this.team = team;
@@ -62,7 +65,17 @@ public class TeamFollowGoal extends SimpleGoal {
         if (needFollow) {
             npc.setTarget(null);
             if (npc.getLocation() != null && npc.getLocation().distance(npc.getCommander().getLocation()) >= 3) {
+                // 跟随时，移动速度加快
+                LivingEntity entity = npc.getCommander();
+                entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.5);
+
                 npc.findPath(followingEntity.getLocation());
+            }else{
+                // 跟随到了，就减速
+                LivingEntity entity = npc.getCommander();
+                // 设置移动速度为原本的速度
+                entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.3);
+
             }
         }
 
