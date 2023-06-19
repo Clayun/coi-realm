@@ -27,6 +27,7 @@ import com.mcylm.coi.realm.tools.attack.team.AttackTeam;
 import com.mcylm.coi.realm.tools.building.impl.*;
 import com.mcylm.coi.realm.tools.building.impl.monster.COIMonsterBase;
 import com.mcylm.coi.realm.tools.data.MapData;
+import com.mcylm.coi.realm.tools.data.SkinData;
 import com.mcylm.coi.realm.tools.data.metadata.EntityData;
 import com.mcylm.coi.realm.tools.npc.COISoldierCreator;
 import com.mcylm.coi.realm.tools.npc.impl.COIEntity;
@@ -101,6 +102,10 @@ public class Entry extends ExtendedJavaPlugin {
     @Getter
     private static MapData mapData;
 
+    // 皮肤数据
+    @Getter
+    private static SkinData skinData;
+
     // GSON
     public static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
@@ -108,6 +113,8 @@ public class Entry extends ExtendedJavaPlugin {
     private COIBuildingManager buildingManager = new COIBuildingManager();
 
     private File mapDataFile = new File(getDataFolder(), "map.json");
+    // 建筑皮肤
+    private File skinDataFile = new File(getDataFolder(), "skin.json");
 
     // 计分板
     @Getter
@@ -149,6 +156,12 @@ public class Entry extends ExtendedJavaPlugin {
             saveMapData();
         }
         readMapData();
+
+        // 建筑皮肤
+        if (!skinDataFile.exists()) {
+            saveSkinData();
+        }
+        readSkinData();
 
         // 注册主服务器
         if(getConfig().getBoolean("bungeecord")){
@@ -428,6 +441,27 @@ public class Entry extends ExtendedJavaPlugin {
         }
         try (FileWriter writer = new FileWriter(mapDataFile)) {
             GSON.toJson(mapData, writer);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+
+    public void readSkinData() {
+        try (FileReader reader = new FileReader(skinDataFile)) {
+            skinData = GSON.fromJson(reader, SkinData.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void saveSkinData() {
+        if (skinData == null) {
+            skinData = new SkinData();
+        }
+        try (FileWriter writer = new FileWriter(skinDataFile)) {
+            GSON.toJson(skinData, writer);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

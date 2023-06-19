@@ -133,7 +133,6 @@ public class TurretTask {
                         if(TeamUtils.checkNPCInTeam(e,torreta.getTeam())){
                             // 是本小队的NPC，就取消锁定攻击
                             attackPermission = false;
-                            LoggerUtils.debug(e.getName()+"是本小队的NPC，取消锁定攻击");
                         }
                     }
                 }else {
@@ -143,7 +142,6 @@ public class TurretTask {
                         if(!TeamUtils.checkNPCInTeam(e,torreta.getTeam())){
                             // 是本小队的NPC，就取消锁定攻击
                             attackPermission = true;
-                            LoggerUtils.debug(e.getName()+"非本小队的NPC，锁定攻击");
                         }
                     }
 

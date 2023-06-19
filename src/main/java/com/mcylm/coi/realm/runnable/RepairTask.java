@@ -164,7 +164,6 @@ public class RepairTask {
                     if (TeamUtils.checkNPCInTeam(e, torreta.getTeam())) {
                         // 是本小队的NPC，就锁定攻击
                         attackPermission = true;
-                        LoggerUtils.debug(e.getName() + "是本小队的NPC，锁定回血");
                         health = p.getHealth();
                     }
 
@@ -182,7 +181,6 @@ public class RepairTask {
                     if (TeamUtils.checkNPCInTeam(e, torreta.getTeam())) {
                         // 是本小队的NPC，就锁定攻击
                         attackPermission = true;
-                        LoggerUtils.debug(e.getName() + "是本小队的NPC，锁定回血");
                         health = livingEntity.getHealth();
                     }
                 }

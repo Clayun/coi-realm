@@ -254,8 +254,15 @@ public class TeamUtils {
             p.kick(Component.text("没队伍自动踢出服务器"));
             return;
         }
-        Location spawner = teamByPlayer.getSpawner();
-        p.teleport(spawner);
+
+        new BukkitRunnable(){
+            @Override
+            public void run() {
+                Location spawner = teamByPlayer.getSpawner();
+                p.teleport(spawner);
+            }
+        }.runTaskLater(Entry.getInstance(),0);
+
 
     }
 
@@ -272,6 +279,10 @@ public class TeamUtils {
                 LoggerUtils.sendTeamChatMessage(teamByPlayer.getType().getColor()+"<"+p.getName()+">" + " &f"+message,Bukkit.getPlayer(teamPartner));
             }
 
+            // 记录日志
+            LoggerUtils.log(teamByPlayer.getType().getColor()+"<"+p.getName()+">" + " &f"+message);
+
+
         }
 
     }
@@ -283,8 +294,15 @@ public class TeamUtils {
     public static void tpLobby(Player p){
         String lobbyLoc = Entry.getInstance().getConfig().getString("game.lobby-location");
         String world = Entry.getInstance().getConfig().getString("game.lobby-world");
-        Location location = getLocation(lobbyLoc, world);
-        p.teleport(location);
+
+        new BukkitRunnable(){
+            @Override
+            public void run() {
+                Location location = getLocation(lobbyLoc, world);
+                p.teleport(location);
+            }
+        }.runTaskLater(Entry.getInstance(),0);
+
     }
 
     /**

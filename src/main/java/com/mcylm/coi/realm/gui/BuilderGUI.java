@@ -86,25 +86,33 @@ public class BuilderGUI{
                                 .build(() -> {
                                     // 点击时触发下面的方法
 
-                                    if(team.getBuildingByType(building.getType()).size() < getMaxBuild(building,team)){
-                                        // 建造数量没有满的时候，可以建造
-                                        building.setTeam(team);
-                                        // building.build(location,getPlayer());
-                                        if (building.getStructureByLevel() != null) {
-                                            if (building instanceof LineBuild lineBuild) {
-                                                new LineSelector(p, lineBuild, location);
-                                            } else {
-                                                new AreaSelector(p, building, location);
-                                            }
-                                        } else {
-                                            building.build(location, p);
-                                        }
-
+                                    if(!loc.getWorld().getName().equals(Entry.WORLD)){
                                         paginatedGui.close();
+                                        LoggerUtils.sendMessage("&c非游戏世界！",p);
+                                        TeamUtils.tpSpawner(p);
                                     }else{
-                                        paginatedGui.close();
-                                        LoggerUtils.sendMessage("&c当前建筑数量已到最大限制！",p);
+                                        if(team.getBuildingByType(building.getType()).size() < getMaxBuild(building,team)){
+                                            // 建造数量没有满的时候，可以建造
+                                            building.setTeam(team);
+                                            // building.build(location,getPlayer());
+                                            if (building.getStructureByLevel() != null) {
+                                                if (building instanceof LineBuild lineBuild) {
+                                                    new LineSelector(p, lineBuild, location);
+                                                } else {
+                                                    new AreaSelector(p, building, location);
+                                                }
+                                            } else {
+                                                building.build(location, p);
+                                            }
+
+                                            paginatedGui.close();
+                                        }else{
+                                            paginatedGui.close();
+                                            LoggerUtils.sendMessage("&c当前建筑数量已到最大限制！",p);
+                                        }
                                     }
+
+
 
                                 }));
                     }else{

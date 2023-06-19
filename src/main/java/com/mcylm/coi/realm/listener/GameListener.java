@@ -215,6 +215,9 @@ public class GameListener implements Listener {
             Player player = event.getPlayer();
             String message = event.getMessage();
             TeamUtils.sendTeamMessage(player,message);
+
+
+
             event.setCancelled(true);
         }
 

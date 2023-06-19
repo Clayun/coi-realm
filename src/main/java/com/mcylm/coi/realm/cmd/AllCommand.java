@@ -38,6 +38,9 @@ public class AllCommand implements CommandExecutor {
                         LoggerUtils.sendAllChatMessage(teamByPlayer.getType().getColor()+"<"+player.getName()+">" + " &f"+message, p);
                     }
 
+                    // 记录聊天日志
+                    LoggerUtils.log(teamByPlayer.getType().getColor()+"<"+player.getName()+">" + " &f"+message);
+
                     return true;
                 }else{
                     LoggerUtils.sendAllChatMessage("&7游戏尚未开始，无需全局喊话",player);

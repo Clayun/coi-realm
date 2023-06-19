@@ -18,13 +18,13 @@ import java.util.List;
 public class LoggerUtils {
 
     public static void log(String msg){
-        Entry.getInstance().getLogger().info("["+Entry.PREFIX+"] "+msg);
+        Entry.getInstance().getLogger().info("["+Entry.PREFIX+" INFO] "+replaceColor(msg));
     }
 
     public static void debug(String msg){
         //只有开发模式才输出的日志
         if(COIServerMode.DEVELOP.getCode().equals(Entry.SERVER_MODE)){
-            Entry.getInstance().getLogger().info("["+Entry.PREFIX+"] "+msg);
+            Entry.getInstance().getLogger().info("["+Entry.PREFIX+" DEBUG] "+replaceColor(msg));
         }
 
     }
