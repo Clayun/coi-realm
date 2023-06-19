@@ -58,7 +58,7 @@ public class COIUnlockType {
             "&c尚未解锁 &b城门",
             SkullUtils.createPlayerHead(COIHeadType.LOCK_CHEST.getTextures()),
             """
-            升级基地到3级解锁""",
+            升级基地到2级解锁""",
             COIBuildingType.DOOR_NORMAL,
             COIBuildingType.BASE,
             1,
@@ -94,7 +94,7 @@ public class COIUnlockType {
             "&c尚未解锁 &b铁匠铺",
             SkullUtils.createPlayerHead(COIHeadType.LOCK_CHEST.getTextures()),
             """
-            升级基地到5级解锁""",
+            升级基地到3级解锁""",
             COIBuildingType.FORGE,
             COIBuildingType.BASE,
             1,
