@@ -1,5 +1,6 @@
 package com.mcylm.coi.realm.gui;
 
+import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import me.lucko.helper.item.ItemStackBuilder;
@@ -38,9 +39,10 @@ public class BuildEditGUI extends Gui {
             // 显示在GUI的才算
             if(building.getConfig().isShowInMenu()){
 
-                if(building.getBuildPlayerName() != null
-                    && building.getBuildPlayerName().equals(getPlayer().getName())){
-                    // 建筑是当前玩家建造的，才允许拆除
+                if((building.getBuildPlayerName() != null
+                        && building.getBuildPlayerName().equals(getPlayer().getName()))
+                    || building.getType() == COIBuildingType.WALL_NORMAL){
+                    // 建筑是当前玩家建造的或者是城墙，允许拆除
 
                     populator.accept(ItemStackBuilder.of(Material.BARRIER)
                             .name("&c拆除")

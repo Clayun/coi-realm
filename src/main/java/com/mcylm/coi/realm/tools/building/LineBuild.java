@@ -85,7 +85,6 @@ public abstract class LineBuild extends COIBuilding {
         processLine(points);
 
         Iterator<Location> iterator = points.iterator();
-        LoggerUtils.debug(String.valueOf(points));
         // 开始建造
 
         Set<COIPaster> pasters = new HashSet<>();
@@ -211,7 +210,6 @@ public abstract class LineBuild extends COIBuilding {
         processLine(points);
 
         Iterator<Location> iterator = points.iterator();
-        LoggerUtils.debug(String.valueOf(points));
         // 开始建造
 
         Set<COIPaster> pasters = new HashSet<>();
