@@ -406,7 +406,7 @@ public class COIEntity implements AI {
                                     }
                                     entity.getEquipment().setItemInMainHand(item);
                                     setHunger(getHunger() + 1);
-                                    entity.getWorld().playSound(entity.getLocation(), Sound.ENTITY_GENERIC_EAT, 100, 2);
+                                    entity.getWorld().playSound(entity.getLocation(), Sound.ENTITY_GENERIC_EAT, 2, 2);
                                     entity.getEquipment().setItemInMainHand(cache);
                                     return;
                                 } else {

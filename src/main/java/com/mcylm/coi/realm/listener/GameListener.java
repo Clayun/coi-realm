@@ -75,7 +75,7 @@ public class GameListener implements Listener {
 
             if(p != null && p.isOnline()){
 
-                String message = "&c注意，您的 &6"+event.getBuilding().getType().getName()+" &c正在被 "+attacker+" 攻击！";
+                String message = "&c注意，您的 &6"+event.getBuilding().getType().getName()+" &c正在被 "+attacker+" 攻击！位置在："+event.getAttackedBlock().getX()+","+event.getAttackedBlock().getY()+","+event.getAttackedBlock().getZ();
 
                 // 基地被攻击
                 if(event.getBuilding().getType().equals(COIBuildingType.BASE)){
