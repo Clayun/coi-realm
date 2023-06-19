@@ -28,7 +28,7 @@ public class GUIUtils {
     }
 
     public static Inventory createAmmoInventory(int line) {
-        Inventory inventory = Bukkit.createInventory(null, line * 9, "弹药库");
+        Inventory inventory = Bukkit.createInventory(null, line * 9, "弹药库（弹药是绿宝石）");
         return inventory;
     }
 

@@ -44,6 +44,7 @@ public class SnowballCoolDownListener implements Listener {
 
     @EventHandler
     public void onSnowballHit(ProjectileHitEvent e) {
+
         if(e.getEntity().getType().equals(EntityType.SNOWBALL)){
             // 如果是雪球，就判断是否是玩家射出的
             if(e.getEntity().getShooter() instanceof Player player){
