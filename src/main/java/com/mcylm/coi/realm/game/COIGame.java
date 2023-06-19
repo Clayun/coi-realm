@@ -49,6 +49,9 @@ public class COIGame {
     // 玩家缓存
     private Map<Player, COIPlayer> coiPlayers = new HashMap<>();
 
+    // 游戏开始时间
+    private LocalDateTime startTime;
+
     public COIGame() {
         this.teams = new ArrayList<>();
         this.status = COIGameStatus.WAITING;

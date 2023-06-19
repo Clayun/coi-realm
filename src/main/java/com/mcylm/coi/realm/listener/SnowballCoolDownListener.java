@@ -16,6 +16,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 
 public class SnowballCoolDownListener implements Listener {
@@ -44,6 +46,19 @@ public class SnowballCoolDownListener implements Listener {
 
     @EventHandler
     public void onSnowballHit(ProjectileHitEvent e) {
+
+
+        // 基础伤害30点
+        Double damage = 30d;
+
+        // 每分钟增加1点
+        LocalDateTime startTime = Entry.getGame().getStartTime();
+        if(startTime != null){
+            LocalDateTime now = LocalDateTime.now();
+            Duration duration = Duration.between(startTime, now);
+            long minutes = duration.toMinutes();
+            damage = damage + minutes;
+        }
 
         if(e.getEntity().getType().equals(EntityType.SNOWBALL)){
             // 如果是雪球，就判断是否是玩家射出的
@@ -102,11 +117,11 @@ public class SnowballCoolDownListener implements Listener {
                                 // 如果不是己方的建筑，就创造个爆炸
                                 e.getHitBlock().getLocation().createExplosion(3,false, false);
                                 // 创造30点伤害
-                                buildingByBlock.damage(player,30,e.getHitBlock());
+                                buildingByBlock.damage(player,damage.intValue(),e.getHitBlock());
                                 LoggerUtils.sendActionbar(player,"&b攻击 "
                                         +buildingByBlock.getTeam().getType().getColor()
                                         +buildingByBlock.getTeam().getType().getName()+" "
-                                        +buildingByBlock.getType().getName()+" &cx30 &b点伤害");
+                                        +buildingByBlock.getType().getName()+" &cx"+damage+" &b点伤害");
 
                             }
                         }

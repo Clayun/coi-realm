@@ -20,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class BasicGameTask implements GameTaskApi {
@@ -83,6 +84,7 @@ public class BasicGameTask implements GameTaskApi {
                         // 开始下一个游戏中进程
                         gaming();
 
+
                         // 关闭当前task
                         this.cancel();
 
@@ -130,6 +132,8 @@ public class BasicGameTask implements GameTaskApi {
     public void gaming() {
         // 游戏状态标为游戏中
         Entry.getGame().setStatus(COIGameStatus.GAMING);
+        // 记录游戏开始时间
+        Entry.getGame().setStartTime(LocalDateTime.now());
         // 生成矿脉
         VeinGenerateTask.runTask();
         // 游戏中进程

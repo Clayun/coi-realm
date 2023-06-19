@@ -102,6 +102,7 @@ public class AirRaidTask {
      */
     private void animation(Entity entity){
         entity.getWorld().strikeLightningEffect(entity.getLocation());
+        this.muzzle.getWorld().strikeLightningEffect(this.muzzle);
     }
 
     /**

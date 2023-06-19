@@ -184,6 +184,7 @@ public class GameListener implements Listener {
 
             COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(player);
 
+            // 最快可以0.3秒拆一次，否则无效
             if(coiPlayer.getLastDamageBuilding() == null
                 || Duration.between(coiPlayer.getLastDamageBuilding(), LocalDateTime.now()).getSeconds() >= 0.3){
                 building.damage(player,10,block);
@@ -198,8 +199,6 @@ public class GameListener implements Listener {
                         }
                     }
                 }
-            }else{
-                LoggerUtils.sendActionbar("&c拆除速度过快，异常行为记录上报",player);
             }
 
 
