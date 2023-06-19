@@ -47,6 +47,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -56,17 +58,19 @@ public class GameListener implements Listener {
     @EventHandler
     public void onBuildingDamaged(BuildingDamagedEvent event){
 
-        String attacker = "神秘生物";
+        String attacker = "战士";
 
         COITeam npcTeam = TeamUtils.getNPCTeam(event.getEntity());
 
-        if(npcTeam == null){
-            npcTeam = TeamUtils.getTeamByPlayer((Player)event.getEntity());
+        if(npcTeam != null){
+            attacker = npcTeam.getType().getColor()+npcTeam.getType().getName()+" "+attacker;
+        }else {
+            Player otherTeamPlayer = (Player) event.getEntity();
+            npcTeam = TeamUtils.getTeamByPlayer(otherTeamPlayer);
+            attacker = npcTeam.getType().getColor()+npcTeam.getType().getName()+" "+otherTeamPlayer.getName();
         }
 
-        if(npcTeam != null){
-            attacker = npcTeam.getType().getColor()+npcTeam.getType().getName();
-        }
+
 
         COITeam team = event.getBuilding().getTeam();
         for (String playerName : team.getPlayers()) {
@@ -177,17 +181,28 @@ public class GameListener implements Listener {
         Block block = event.getBlock();
         COIBuilding building = BuildData.getBuildingByBlock(block);
         if (building != null && building.getTeam() != TeamUtils.getTeamByPlayer(player)) {
-            building.damage(player,10,block);
+
             COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(player);
-            if (coiPlayer.getAttackTeam().getStatus() == AttackTeam.Status.LOCK) {
-                for (COIEntity entity : coiPlayer.getAttackTeam().getMembers()) {
-                    if (entity instanceof COISoldier soldier && soldier.isAlive()) {
-                        BuildingTarget target = new BuildingTarget(building, building.getNearestBlock(soldier.getLocation()).getLocation());
-                        target.setTargetLevel(7);
-                        soldier.setTarget(target);
+
+            if(coiPlayer.getLastDamageBuilding() == null
+                || Duration.between(coiPlayer.getLastDamageBuilding(), LocalDateTime.now()).getSeconds() >= 0.3){
+                building.damage(player,10,block);
+                coiPlayer.setLastDamageBuilding(LocalDateTime.now());
+
+                if (coiPlayer.getAttackTeam().getStatus() == AttackTeam.Status.LOCK) {
+                    for (COIEntity entity : coiPlayer.getAttackTeam().getMembers()) {
+                        if (entity instanceof COISoldier soldier && soldier.isAlive()) {
+                            BuildingTarget target = new BuildingTarget(building, building.getNearestBlock(soldier.getLocation()).getLocation());
+                            target.setTargetLevel(7);
+                            soldier.setTarget(target);
+                        }
                     }
                 }
+            }else{
+                LoggerUtils.sendActionbar("&c拆除速度过快，异常行为记录上报",player);
             }
+
+
             event.setCancelled(true);
         }
     }

@@ -99,7 +99,8 @@ public abstract class LineBuild extends COIBuilding {
 
                 Location point = iterator.next();
 
-                LoggerUtils.debug("build");
+//                LoggerUtils.debug("build");
+
                 // 构造一个建造器
                 COIPaster coiPaster = new COIPaster(false, getType().getUnit(), getType().getInterval()
                         , location.getWorld().getName(), point,null
@@ -135,7 +136,7 @@ public abstract class LineBuild extends COIBuilding {
 
                     if (isComplete()) {
 
-                        LoggerUtils.debug("complete");
+                        LoggerUtils.debug("LineBuild 建造完成");
                         Bukkit.getScheduler().runTask(Entry.getInstance(), () -> {
                             buildSuccess(location, player);
                         });
@@ -224,7 +225,8 @@ public abstract class LineBuild extends COIBuilding {
 
                 Location point = iterator.next();
 
-                LoggerUtils.debug("build");
+//                LoggerUtils.debug("build");
+
                 // 构造一个建造器
                 COIPaster coiPaster = new COIPaster(false, getType().getUnit(), getType().getInterval()
                         , location.getWorld().getName(), point,null
@@ -270,7 +272,7 @@ public abstract class LineBuild extends COIBuilding {
 
                     if (isComplete()) {
 
-                        LoggerUtils.debug("complete");
+                        LoggerUtils.debug("LineBuild 升级完成");
                         Bukkit.getScheduler().runTask(Entry.getInstance(), () -> {
                             buildSuccess(location, player);
                         });

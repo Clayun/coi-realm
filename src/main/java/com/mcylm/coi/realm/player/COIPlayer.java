@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -30,6 +31,11 @@ public class COIPlayer {
     @Getter
     private boolean death = false;
 
+    // 上一次摧毁建筑的时间
+    @Setter
+    @Getter
+    private LocalDateTime lastDamageBuilding;
+
     @Setter
     @Getter
     @Nullable
@@ -46,6 +52,7 @@ public class COIPlayer {
     public COIPlayer(Player player){
         this.player = player;
         this.attackTeam = new AttackTeam().setCommander(player).setMembers(new ArrayList<>());
+        this.lastDamageBuilding = null;
 
         // TODO 玩家设置部分待开发
     }
