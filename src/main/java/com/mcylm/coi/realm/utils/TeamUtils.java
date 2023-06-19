@@ -231,11 +231,21 @@ public class TeamUtils {
         while(iterator.hasNext()){
             COITeam coiTeam = iterator.next();
 
+            int i = 0;
+            for(String playerName : coiTeam.getPlayers()){
+
+                Player player = Bukkit.getPlayer(playerName);
+                if(player != null
+                    && player.isOnline()){
+                    i++;
+                }
+            }
+
             // 修改为仅小于，这样就不会反复进入最后一个队伍
-            if(coiTeam.getPlayers().size() < players
+            if(i < players
                 && coiTeam.getType().getSlot() != -1){
                 minimumTeam = coiTeam;
-                players = coiTeam.getPlayers().size();
+                players = i;
             }
         }
 
