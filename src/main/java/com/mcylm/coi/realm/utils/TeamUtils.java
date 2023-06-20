@@ -10,6 +10,7 @@ import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -34,7 +35,14 @@ public class TeamUtils {
      */
     public static List<COITeam> initTeams(){
 
-        int maxTeam = 7;
+        int configTeams = Entry.getInstance().getConfig().getInt("game.max-teams");
+
+        if(configTeams < 2 || configTeams > 6){
+            LoggerUtils.log("&4请注意！团队数量必须在2~6个之间！！！当前团队数量有误");
+        }
+
+        // 团队数量
+        int maxTeam = configTeams;
 
         List<String> locations = Entry.getInstance().getConfig().getStringList("game.spawn-locations");
         String world = Entry.getInstance().getConfig().getString("game.spawn-world");
@@ -43,6 +51,9 @@ public class TeamUtils {
 
         // 如果小于队伍数量，就让后面几个队伍重复
         if(locations.size() < maxTeam){
+
+            LoggerUtils.log("&4请注意！团队出生点数量少于团队数量，无法正常进行游戏！！！");
+
             for(String str : locations){
                 Location location = getLocation(str, world);
                 spawnerList.add(location);
@@ -56,7 +67,7 @@ public class TeamUtils {
                 spawnerList.add(location);
             }
 
-        }else if(locations.size() >= maxTeam){
+        }else{
             // 如果有多个出生点，大于队伍数量，就随机取点，不能重复
             List<Integer> usedCursor = new ArrayList<>();
 
@@ -74,22 +85,28 @@ public class TeamUtils {
 
         }
 
-        // 默认初始化6个小队，等待倒计时结束会把所有人传送到默认出生点
-        COITeam black = new COITeam(COITeamType.BLACK,spawnerList.get(0));
-        COITeam red = new COITeam(COITeamType.RED,spawnerList.get(1));
-        COITeam purple = new COITeam(COITeamType.PURPLE,spawnerList.get(2));
-        COITeam green = new COITeam(COITeamType.GREEN,spawnerList.get(3));
-        COITeam yellow = new COITeam(COITeamType.YELLOW,spawnerList.get(4));
-        COITeam blue = new COITeam(COITeamType.BLUE,spawnerList.get(5));
-        monsterTeam = new COITeam(COITeamType.MONSTER, spawnerList.get(6));
+        // 生成好的队伍
         List<COITeam> results = new ArrayList<>();
 
-        results.add(red);
-        results.add(yellow);
-        results.add(green);
-        results.add(blue);
-        results.add(purple);
-        results.add(black);
+        COITeamType[] values = COITeamType.values();
+
+        int count = 0;
+
+        for(COITeamType type : values){
+
+            if(count < maxTeam){
+                results.add(new COITeam(type,spawnerList.get(count)));
+            }
+
+            count ++;
+        }
+
+        // 获取怪物小队的出生点
+        // 初始化一个怪物小队
+        String spawner = Entry.getInstance().getConfig().getString("game.monster-spawner");
+
+        Location location = getLocation(spawner, world);
+        monsterTeam = new COITeam(COITeamType.MONSTER, location);
         results.add(monsterTeam);
 
         return results;
@@ -214,16 +231,22 @@ public class TeamUtils {
         while(iterator.hasNext()){
             COITeam coiTeam = iterator.next();
 
+            int i = 0;
+            for(String playerName : coiTeam.getPlayers()){
+
+                Player player = Bukkit.getPlayer(playerName);
+                if(player != null
+                    && player.isOnline()){
+                    i++;
+                }
+            }
+
             // 修改为仅小于，这样就不会反复进入最后一个队伍
-            if(coiTeam.getPlayers().size() < players
+            if(i < players
                 && coiTeam.getType().getSlot() != -1){
                 minimumTeam = coiTeam;
-                players = coiTeam.getPlayers().size();
+                players = i;
             }
-        }
-
-        if(players >= Entry.getInstance().getConfig().getInt("game.max-group-players")){
-            return null;
         }
 
         return minimumTeam;
@@ -241,8 +264,54 @@ public class TeamUtils {
             p.kick(Component.text("没队伍自动踢出服务器"));
             return;
         }
-        Location spawner = teamByPlayer.getSpawner();
-        p.teleport(spawner);
+
+        new BukkitRunnable(){
+            @Override
+            public void run() {
+                Location spawner = teamByPlayer.getSpawner();
+                p.teleport(spawner);
+            }
+        }.runTaskLater(Entry.getInstance(),0);
+
+
+    }
+
+    /**
+     * 给小队的玩家发送消息
+     * @param p
+     * @param message
+     */
+    public static void sendTeamMessage(Player p,String message){
+
+        COITeam teamByPlayer = getTeamByPlayer(p);
+        if(teamByPlayer != null){
+            for(String teamPartner : teamByPlayer.getPlayers()){
+                LoggerUtils.sendTeamChatMessage(teamByPlayer.getType().getColor()+"<"+p.getName()+">" + " &f"+message,Bukkit.getPlayer(teamPartner));
+            }
+
+            // 记录日志
+            LoggerUtils.log(teamByPlayer.getType().getColor()+"<"+p.getName()+">" + " &f"+message);
+
+
+        }
+
+    }
+
+    /**
+     * 传送到大厅
+     * @param p
+     */
+    public static void tpLobby(Player p){
+        String lobbyLoc = Entry.getInstance().getConfig().getString("game.lobby-location");
+        String world = Entry.getInstance().getConfig().getString("game.lobby-world");
+
+        new BukkitRunnable(){
+            @Override
+            public void run() {
+                Location location = getLocation(lobbyLoc, world);
+                p.teleport(location);
+            }
+        }.runTaskLater(Entry.getInstance(),0);
 
     }
 

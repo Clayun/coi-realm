@@ -2,16 +2,18 @@ package com.mcylm.coi.realm.cmd;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIBuildingType;
+import com.mcylm.coi.realm.enums.COIPropType;
 import com.mcylm.coi.realm.gui.ChooseTeamGUI;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.npc.monster.COIPillagerCreator;
-import com.mcylm.coi.realm.utils.LoggerUtils;
-import com.mcylm.coi.realm.utils.SkullUtils;
-import com.mcylm.coi.realm.utils.TeamUtils;
+import com.mcylm.coi.realm.utils.*;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +29,17 @@ public class DebugCommand implements CommandExecutor {
             LoggerUtils.sendMessage("这个指令只能让玩家使用。",commandSender);
             return false;
         }
+
+        if(args.length == 0){
+            LoggerUtils.sendMessage("参数不对。",commandSender);
+            return false;
+        }
+
+        if(!commandSender.isOp()){
+            LoggerUtils.sendMessage("没有权限。",commandSender);
+            return false;
+        }
+
         if (args[0].equalsIgnoreCase("team")) {
             new ChooseTeamGUI(player).open();
         }
@@ -45,11 +58,30 @@ public class DebugCommand implements CommandExecutor {
 
         }
 
-        if(args[0].equalsIgnoreCase("test")){
-            ItemStack head = SkullUtils.createPlayerHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGFkOTQzZDA2MzM0N2Y5NWFiOWU5ZmE3NTc5MmRhODRlYzY2NWViZDIyYjA1MGJkYmE1MTlmZjdkYTYxZGIifX19");
+        if(args[0].equalsIgnoreCase("speed")){
 
-            player.getInventory().addItem(head);
-            player.updateInventory();
+            if(args.length < 3){
+                LoggerUtils.sendMessage("参数错误。",commandSender);
+                return false;
+            }
+            String targetPlayerName = args[1];
+
+            Player target = Bukkit.getPlayer(targetPlayerName);
+
+            if(target != null){
+                // 更改移动速度
+                LivingEntity entity = target;
+                entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(Double.valueOf(args[2]));
+
+            }
+        }
+
+        if(args[0].equalsIgnoreCase("test")){
+
+            ItemStack item = COIPropType.TOWN_PORTAL.getItemType().clone();
+            ItemUtils.rename(item,COIPropType.TOWN_PORTAL.getName());
+            ItemUtils.setLore(item, GUIUtils.autoLineFeed(COIPropType.TOWN_PORTAL.getIntroduce()));
+            player.getInventory().addItem(item);
         }
 
         return true;

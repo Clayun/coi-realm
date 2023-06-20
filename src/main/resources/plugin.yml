@@ -7,11 +7,13 @@ author: Mikesam
 website: https://www.mcylm.com
 depend: [helper,Citizens]
 softdepend:
+  - Multiverse-Core
   - LibsDisguises
 commands:
   structure:
     description: save building structure
     usage: /<command> save fileName
   cdebug:
+  all:
   cvein:
     permission: coi.realm.vein

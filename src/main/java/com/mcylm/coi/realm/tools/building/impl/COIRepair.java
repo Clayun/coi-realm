@@ -55,13 +55,13 @@ public class COIRepair extends COIBuilding {
         // 粒子的大小
         this.particleSize = 1;
         // 最小伤害（回血数量）
-        this.minDamage = 4d;
+        this.minDamage = 1d;
         // 最大伤害
-        this.maxDamage = 8d;
+        this.maxDamage = 2d;
         // 击退距离
         this.repulsionDistance = 0d;
         // 每次攻击的间隔时间
-        this.coolDown = 2;
+        this.coolDown = 4;
         // 攻击半径，如果发射方块和目标之间有其他方块挡着，是不会触发攻击的
         this.radius = 30;
         // 弹药库，如果里面有弹药，才能正常攻击，否则无法攻击
@@ -83,7 +83,7 @@ public class COIRepair extends COIBuilding {
     @Override
     public BuildingConfig getDefaultConfig() {
         return new BuildingConfig()
-                .setMaxLevel(2)
+                .setMaxLevel(3)
                 .setMaxBuild(10)
                 .setConsume(512)
                 .setStructures(getBuildingLevelStructure());
@@ -100,8 +100,15 @@ public class COIRepair extends COIBuilding {
 
     @Override
     public void upgradeBuildSuccess() {
-
+        super.upgradeBuildSuccess();
         // 升级成功
+        // 先关闭
+        Bukkit.getScheduler().cancelTask(this.getTurretCoolDown().getTaskId());
+        // 数据升级
+        upgrade();
+        // 重启防御塔
+        this.turretCoolDown = new RepairTask(this);
+        this.turretCoolDown.action();
     }
 
     @Override
@@ -117,6 +124,7 @@ public class COIRepair extends COIBuilding {
     private void initStructure() {
         getBuildingLevelStructure().put(1, "turret1.structure");
         getBuildingLevelStructure().put(2, "turret2.structure");
+        getBuildingLevelStructure().put(3, "turret2.structure");
     }
 
     @Override
@@ -212,5 +220,16 @@ public class COIRepair extends COIBuilding {
             }
         });
 
+    }
+
+    private void upgrade(){
+        // 最小伤害
+        this.minDamage = this.minDamage + 1;
+        // 最大伤害
+        this.maxDamage = this.maxDamage + 1;
+        // 每次攻击的间隔时间
+        this.coolDown = this.coolDown - 1;
+        // 弹药消耗增大
+        this.ammunitionConsumption = this.ammunitionConsumption + 1;
     }
 }

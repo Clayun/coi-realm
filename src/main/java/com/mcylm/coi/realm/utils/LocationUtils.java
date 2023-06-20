@@ -9,6 +9,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.util.Vector;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class LocationUtils {
     private static final BlockFace[] BLOCK_FACES = {BlockFace.NORTH, BlockFace.WEST, BlockFace.SOUTH, BlockFace.EAST};
@@ -65,7 +66,9 @@ public class LocationUtils {
                 }
             }
         }
-        blocks.sort(Comparator.comparingDouble(b -> firstlyBrokeCentralBlock.getLocation().distance(b.getLocation())));
+        // 性能优化
+        blocks.parallelStream().sorted(Comparator.comparingDouble(b -> firstlyBrokeCentralBlock.getLocation().distance(b.getLocation()))).collect(Collectors.toList());
+//        blocks.sort(Comparator.comparingDouble(b -> firstlyBrokeCentralBlock.getLocation().distance(b.getLocation())));
         return blocks;
     }
 

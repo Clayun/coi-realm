@@ -2,6 +2,7 @@ package com.mcylm.coi.realm.tools.attack.impl;
 
 import com.mcylm.coi.realm.enums.AttackGoalType;
 import com.mcylm.coi.realm.tools.attack.Commandable;
+import com.mcylm.coi.realm.tools.npc.impl.COIEntity;
 import org.bukkit.Location;
 
 import java.util.Random;
@@ -18,7 +19,11 @@ public class PatrolGoal extends SimpleGoal {
     Location point;
     public PatrolGoal(Commandable npc) {
         super(npc);
-        point = npc.getLocation();
+        if (npc.getLocation() != null) {
+            point = npc.getLocation();
+        } else if (npc instanceof COIEntity entity) {
+            point = entity.getCoiNpc().getSpawnLocation();
+        }
     }
 
     public PatrolGoal(Commandable npc, int maxRadius, Location point) {

@@ -5,9 +5,16 @@ import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COITeamType;
 import com.mcylm.coi.realm.events.GameStatusEvent;
+import com.mcylm.coi.realm.model.COINpc;
+import com.mcylm.coi.realm.tools.attack.target.impl.EntityTarget;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
+import com.mcylm.coi.realm.tools.data.metadata.EntityData;
+import com.mcylm.coi.realm.tools.npc.COISoldierCreator;
+import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
+import com.mcylm.coi.realm.utils.DamageUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
+import fr.mrmicky.fastboard.FastBoard;
 import lombok.Data;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
@@ -19,119 +26,103 @@ import me.lucko.helper.scoreboard.Scoreboard;
 import me.lucko.helper.scoreboard.ScoreboardObjective;
 import me.lucko.helper.scoreboard.ScoreboardProvider;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.DisplaySlot;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.BiConsumer;
 
 @Data
 public class COIScoreboard {
 
-    MetadataKey<ScoreboardObjective> SCOREBOARD_KEY = MetadataKey.create("scoreboard", ScoreboardObjective.class);
+    private HashMap<String,FastBoard> playerScoreboard = new HashMap<>();
+
+    public void showBoard() {
 
 
-    /**
-     * 获取每个小队该显示的Scoreboard
-     */
-    public void showBoard(){
-
-        BiConsumer<Player, ScoreboardObjective> updater = (p, obj) -> {
+        BiConsumer<Player, FastBoard> updater = (p, board) -> {
 
             COITeam team = TeamUtils.getTeamByPlayer(p);
 
-            int baseLevel = 0;
+            if(team != null){
+                int baseLevel = 0;
 
-            for (COIBuilding finishedBuilding : team.getFinishedBuildings()) {
+                for (COIBuilding finishedBuilding : team.getFinishedBuildings()) {
 
-                if(finishedBuilding.getType().equals(COIBuildingType.BASE)){
-                    baseLevel = finishedBuilding.getLevel();
+                    if(finishedBuilding.getType().equals(COIBuildingType.BASE)){
+                        baseLevel = finishedBuilding.getLevel();
+                    }
+
                 }
 
+
+                List<String> str = new ArrayList<>();
+
+                str.add(LoggerUtils.replaceColor("&f<&aLV."+baseLevel+"&f> "+team.getType().getColor()+team.getType().getName()));
+                str.add(LoggerUtils.replaceColor("&e团队战分&7(奖励) &f"+team.getScore()));
+                str.add(LoggerUtils.replaceColor("&b♚ 团队资源 &7资产"));
+                str.add(LoggerUtils.replaceColor("&a● &a绿宝石 &f"+team.getPublicEmerald()));
+                str.add(LoggerUtils.replaceColor("&e● &a建筑数量 &f"+team.getFinishedBuildings().size()));
+                str.add(LoggerUtils.replaceColor("&d● &a总人口 &f"+team.getTotalPeople()));
+                str.add(LoggerUtils.replaceColor("&b♚ 队伍 &7基地/积分"));
+                str.add(" ");
+
+                List<COITeam> teams = Entry.getGame().getTeams();
+
+                for(COITeam coiTeam : teams){
+
+                    if(coiTeam.getType().equals(COITeamType.MONSTER)){
+                        continue;
+                    }
+
+                    COIBuilding base = coiTeam.getBase();
+                    if(base != null){
+                        str.add(LoggerUtils.replaceColor("&a● "+coiTeam.getType().getColor() + coiTeam.getType().getName()+" &f"+base.getHealth()+"&e/"+coiTeam.getScore()));
+                    }else{
+                        str.add(LoggerUtils.replaceColor("&7● "+coiTeam.getType().getColor() + coiTeam.getType().getName()+" &7&m已被摧毁"));
+                    }
+                }
+
+                str.add("");
+
+                board.updateLines(str);
             }
 
-            List<String> str = new ArrayList<>();
-
-            str.add("&f<&aLV."+baseLevel+"&f> "+team.getType().getColor()+team.getType().getName());
-            str.add("&e团队战分&7(奖励) &f"+team.getScore());
-            str.add("&b♚ 团队资源 &7资产明细");
-            str.add("&a● &a绿宝石 &f"+team.getPublicEmerald());
-            str.add("&e● &a建筑数量 &f"+team.getFinishedBuildings().size());
-            str.add("&d● &a总人口 &f"+team.getTotalPeople());
-            str.add("&b♚ 战局状态 &7血量/积分");
-            str.add("");
-
-            List<COITeam> teams = Entry.getGame().getTeams();
-
-            for(COITeam coiTeam : teams){
-
-                if(coiTeam.getType().equals(COITeamType.MONSTER)){
-                    continue;
-                }
-
-                COIBuilding base = coiTeam.getBase();
-                if(base != null){
-                    str.add("&a● "+coiTeam.getType().getColor() + coiTeam.getType().getName()+" &f"+base.getHealth()+"&7/"+coiTeam.getScore());
-                }else{
-                    str.add("&7● "+coiTeam.getType().getColor() + coiTeam.getType().getName()+" &c已被摧毁");
-                }
-            }
-
-            str.add("");
-
-
-            // TODO 标题自动闪动颜色
-            obj.setDisplayName("&6&l岛屿冲突");
-            obj.applyLines(str);
-
-            // 设置玩家名字颜色
-            p.setDisplayName(LoggerUtils.replaceColor(team.getType().getColor() + p.getName()));
         };
 
-        Scoreboard sb = Services.load(ScoreboardProvider.class).getScoreboard();
+        Events.subscribe(PlayerJoinEvent.class).handler(e -> {
+            Player player = e.getPlayer();
+            FastBoard board = new FastBoard(player);
+            board.updateTitle(LoggerUtils.replaceColor("&6岛屿冲突"));
+            playerScoreboard.put(player.getName(), board);
+        });
 
-        // 游戏状态变更事件
-        Events.subscribe(GameStatusEvent.class)
-                .handler(e -> {
-                    // 游戏状态变更为游戏中的时候，给全体玩家上一个scoreboard
-                    if(e.getStatus().equals(COIGameStatus.GAMING)){
-
-                        for(Player p : Bukkit.getOnlinePlayers()){
-                            ScoreboardObjective obj = sb.createPlayerObjective(p, "null", DisplaySlot.SIDEBAR);
-                            Metadata.provideForPlayer(p).put(SCOREBOARD_KEY, obj);
-
-                            updater.accept(p, obj);
-                        }
-                    }
-
-                });
-
-        // 进入事件
-        Events.subscribe(PlayerJoinEvent.class)
-                .handler(e -> {
-                    // 玩家进入游戏的时候，上计分板
-                    if(Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
-
-                        Player p = e.getPlayer();
-                        ScoreboardObjective obj = sb.createPlayerObjective(p, "null", DisplaySlot.SIDEBAR);
-                        Metadata.provideForPlayer(p).put(SCOREBOARD_KEY, obj);
-
-                        updater.accept(p, obj);
-                    }
-
-                });
+        Events.subscribe(PlayerQuitEvent .class).handler(e -> {
+            Player player = e.getPlayer();
+            FastBoard board = playerScoreboard.remove(player.getName());
+            if (board != null) {
+                board.delete();
+            }
+        });
 
         Schedulers.sync().runRepeating(() -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
-                MetadataMap metadata = Metadata.provideForPlayer(player);
-                ScoreboardObjective obj = metadata.getOrNull(SCOREBOARD_KEY);
-                if (obj != null) {
-                    updater.accept(player, obj);
-                }
+                FastBoard board = playerScoreboard.get(player.getName());
+                updater.accept(player, board);
             }
         }, 3L, 3L);
+
+
     }
 
 

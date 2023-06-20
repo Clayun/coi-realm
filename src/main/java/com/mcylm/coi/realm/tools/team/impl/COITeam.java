@@ -12,6 +12,8 @@ import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -23,6 +25,7 @@ import org.bukkit.scoreboard.Scoreboard;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -76,7 +79,7 @@ public class COITeam implements Team {
     public COITeam(COITeamType type,Location spawner) {
         this.type = type;
         // 初始化本小队的计分板
-        registerScoreboardTeam();
+        registerScoreboardTeam(type);
         this.players = new ArrayList<>();
         this.playersCache = new ArrayList<>();
         this.foodChests = new ArrayList<>();
@@ -93,12 +96,12 @@ public class COITeam implements Team {
      * 注册小队
      * @return
      */
-    private void registerScoreboardTeam() {
+    private void registerScoreboardTeam(COITeamType type) {
         org.bukkit.scoreboard.Team team = Entry.getInstance().getScoreboard().getTeam(getType().getCode());
         if (team == null) {
             team = Entry.getInstance().getScoreboard().registerNewTeam(getType().getCode());
             team.setAllowFriendlyFire(false);
-            team.setColor(getType().getChatColor());
+            team.color(type.getNamedTextColor());
         }
     }
 
@@ -143,15 +146,24 @@ public class COITeam implements Team {
     @Override
     public boolean join(Player player) {
 
-        if(getPlayers().size() >= Entry.getInstance().getConfig().getInt("game.max-group-players")){
-            // 加入失败，队伍满了
-            // Join fail,the team is full.
-            return false;
-        }
-
         List<COITeam> teams = Entry.getGame().getTeams();
 
         Iterator<COITeam> iterator = teams.iterator();
+
+        int count = 0;
+        for(String playerName : getPlayers()){
+            Player teamPlayer = Bukkit.getPlayer(playerName);
+
+            if(teamPlayer != null && teamPlayer.isOnline()){
+                count ++;
+            }
+        }
+
+        int maxPlayerInOneTeam = Entry.getInstance().getConfig().getInt("game.max-group-players");
+
+        if(count >= maxPlayerInOneTeam){
+            return false;
+        }
 
         // 加入队伍之前，先退出其他队伍
         // You need quit your team before you join the new one.
@@ -272,22 +284,25 @@ public class COITeam implements Team {
             team.addScore(COIScoreType.BEAT_TEAM,player);
         }
 
-        // 被玩家或者玩家的随从NPC干掉了
-        // 整队在怪物队伍复活
-        // 如果怪物队伍被拆了，则直接失败
+        if(!Entry.getGame().checkGameComplete()){
+            // 游戏尚未结束
 
-        // 全员转移到怪物队伍
-        setPlayersCache(getPlayers());
-        TeamUtils.getMonsterTeam().getPlayers().addAll(getPlayers());
-        setPlayers(new ArrayList<>());
+            // 整队在怪物队伍复活
+            // 如果怪物队伍被拆了，则直接失败
 
-        // 清理背包并传送到新的出生点
-        for(String playerName : getPlayersCache()){
-            Player defeatPlayer = Bukkit.getPlayer(playerName);
-            if(defeatPlayer != null){
-                defeatPlayer.getInventory().clear();
-                if(defeatPlayer.isOnline()){
-                    defeatPlayer.teleport(TeamUtils.getMonsterTeam().getSpawner());
+            // 全员转移到怪物队伍
+            setPlayersCache(getPlayers());
+            TeamUtils.getMonsterTeam().getPlayers().addAll(getPlayers());
+            setPlayers(new ArrayList<>());
+
+            // 清理背包并传送到新的出生点
+            for(String playerName : getPlayersCache()){
+                Player defeatPlayer = Bukkit.getPlayer(playerName);
+                if(defeatPlayer != null){
+                    defeatPlayer.getInventory().clear();
+                    if(defeatPlayer.isOnline()){
+                        defeatPlayer.teleport(TeamUtils.getMonsterTeam().getSpawner());
+                    }
                 }
             }
         }
@@ -365,25 +380,16 @@ public class COITeam implements Team {
     public int getPublicEmerald(){
         int count = 0;
 
+        List<Location> chests = getResourcesChests();
+
+        HashSet<Location> set = new HashSet<>(chests);
+
         String material = Entry.getInstance().getConfig().getString("game.building.material");
 
-        // 先计算箱子里存了多少个
-        for(COIBuilding building : getFinishedBuildings()){
-
-            if(building.getType().equals(COIBuildingType.BASE)){
-                // 仅限于大本营的箱子才算做公共绿宝石资源
-                if(!building.getChestsLocation().isEmpty()){
-                    // 总存储箱子
-                    for(Location loc : building.getChestsLocation()){
-
-                        int num = ItemUtils.getItemAmountFromContainer(loc, Material.getMaterial(material));
-                        count = count + num;
-                    }
-                }
-
-                return count;
-            }
-
+        // 总存储箱子
+        for(Location loc : set){
+            int num = ItemUtils.getItemAmountFromContainer(loc, Material.getMaterial(material));
+            count = count + num;
         }
 
         return count;

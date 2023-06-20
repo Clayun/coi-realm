@@ -47,6 +47,8 @@ public class ChooseTeamGUI extends Gui {
                         boolean join = team.join(getPlayer());
                         if(join){
                             LoggerUtils.sendMessage("&7加入 "+team.getType().getColor() + team.getType().getName()+" &7成功",getPlayer());
+                        }else{
+                            LoggerUtils.sendMessage("&c当前小队已满人，无法选择该小队",getPlayer());
                         }
                         redraw();
                     }));

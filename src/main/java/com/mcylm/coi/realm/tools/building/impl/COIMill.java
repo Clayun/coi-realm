@@ -3,6 +3,7 @@ package com.mcylm.coi.realm.tools.building.impl;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.config.BuildingConfig;
+import com.mcylm.coi.realm.tools.npc.COIFarmerCreator;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.tools.npc.impl.COIFarmer;
 import com.mcylm.coi.realm.utils.GUIUtils;
@@ -41,7 +42,7 @@ public class COIMill extends COIBuilding {
         return new BuildingConfig()
                 .setStructures(getBuildingLevelStructure())
                 .setMaxLevel(3)
-                .setMaxBuild(20)
+                .setMaxBuild(15)
                 .setConsume(64);
     }
 
@@ -53,7 +54,7 @@ public class COIMill extends COIBuilding {
         for (COINpc creator : getNpcCreators()) {
 
             if (isComplete()) {
-                COIMinerCreator npcCreator = (COIMinerCreator) creator;
+                COIFarmerCreator npcCreator = (COIFarmerCreator) creator;
                 // 设置食物收集箱子
                 npcCreator.setChestsLocation(getChestsLocation());
                 COIFarmer farmer = new COIFarmer(npcCreator);
@@ -72,7 +73,7 @@ public class COIMill extends COIBuilding {
     public void upgradeBuildSuccess() {
         super.upgradeBuildSuccess();
         for (COINpc creator : getNpcCreators()) {
-            COIMinerCreator npcCreator = (COIMinerCreator) creator;
+            COIFarmerCreator npcCreator = (COIFarmerCreator) creator;
             // 设置食物收集箱子
             npcCreator.setChestsLocation(getChestsLocation());
             getTeam().getFoodChests().addAll(getChestsLocation());
@@ -91,7 +92,7 @@ public class COIMill extends COIBuilding {
      *
      * @return
      */
-    private COIMinerCreator initFarmerCreator() {
+    private COIFarmerCreator initFarmerCreator() {
 
         // 背包内的物品
         Inventory inventory = GUIUtils.createNpcInventory(3);
@@ -107,7 +108,7 @@ public class COIMill extends COIBuilding {
         pickItemMaterials.add("BREAD");
         pickItemMaterials.add("WHEAT");
 
-        COIMinerCreator npcCreator = new COIMinerCreator(getChestsLocation());
+        COIFarmerCreator npcCreator = new COIFarmerCreator(getChestsLocation());
         npcCreator.setInventory(inventory);
         npcCreator.setNpcType(EntityType.PILLAGER);
         npcCreator.setDisguiseType(DisguiseType.PLAYER);

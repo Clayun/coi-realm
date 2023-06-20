@@ -8,14 +8,19 @@ import com.mcylm.coi.realm.model.COIScoreDetail;
 import com.mcylm.coi.realm.runnable.api.GameTaskApi;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.LoggerUtils;
+import com.mcylm.coi.realm.utils.ServerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class BasicGameTask implements GameTaskApi {
@@ -79,6 +84,7 @@ public class BasicGameTask implements GameTaskApi {
                         // 开始下一个游戏中进程
                         gaming();
 
+
                         // 关闭当前task
                         this.cancel();
 
@@ -126,6 +132,8 @@ public class BasicGameTask implements GameTaskApi {
     public void gaming() {
         // 游戏状态标为游戏中
         Entry.getGame().setStatus(COIGameStatus.GAMING);
+        // 记录游戏开始时间
+        Entry.getGame().setStartTime(LocalDateTime.now());
         // 生成矿脉
         VeinGenerateTask.runTask();
         // 游戏中进程
@@ -133,19 +141,29 @@ public class BasicGameTask implements GameTaskApi {
         // 2.游戏结束后启动 GameStoppingTask
         new BukkitRunnable() {
 
-            int count = 0;
-
             BossBar bossBar = BossBar.bossBar(
                     Component.text(LoggerUtils.replaceColor("&c战斗开始了，快速获取战备物资，击败他们")),
                     1,
                     BossBar.Color.RED,
                     BossBar.Overlay.NOTCHED_10);
 
+            Long count = 0l;
+
+            // 是否游戏结束
+            boolean finished = false;
+
             @Override
             public void run() {
-                count ++;
 
-                if(count >= gamingTimer){
+                LocalDateTime now = LocalDateTime.now();
+
+                Duration duration = Duration.between(Entry.getGame().getStartTime(),now);
+
+                // 已经过去的秒数
+                count = duration.getSeconds();
+
+                if(count >= gamingTimer
+                    || finished){
 
                     // 隐藏 boss bar
                     for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
@@ -160,20 +178,25 @@ public class BasicGameTask implements GameTaskApi {
 
                 }else{
                     // 倒计时的秒数
-                    Integer countdown = gamingTimer - count;
+                    Long countdown = gamingTimer - count;
                     // boss bar 的进度条
                     float progress = countdown.floatValue() / gamingTimer.floatValue();
 
                     if(count >= 3){
-                        bossBar.name(Component.text(LoggerUtils.replaceColor("&c战斗还有 &f" + countdown + " &c秒就要结束了！")));
+                        bossBar.name(Component.text(LoggerUtils.replaceColor("&c战斗还有 &f" + convertSecondsToHHmmss(countdown) + " &c结束！")));
                         bossBar.progress(progress);
 
                         // 游戏在进行中，倒计时需要在 boss bar 中展示
                         for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
                             p.showBossBar(bossBar);
+
+                            if(!p.getWorld().getName().equals(Entry.WORLD)){
+                                LoggerUtils.sendMessage("&c正在进入游戏", p);
+                                TeamUtils.tpSpawner(p);
+                            }
                         }
                     }else{
-                        bossBar.name(Component.text(LoggerUtils.replaceColor("&c战斗开始了，请快速获取战备物资，拆光他们！")));
+                        bossBar.name(Component.text(LoggerUtils.replaceColor("&c战斗开始了，&6请先快速获取战备物资！")));
                         bossBar.progress(progress);
 
                         // 游戏在进行中，倒计时需要在 boss bar 中展示
@@ -185,7 +208,7 @@ public class BasicGameTask implements GameTaskApi {
                     // 检查游戏是否结束
                     if(Entry.getGame().checkGameComplete()){
                         // 下一秒进入结算回合
-                        count = gamingTimer;
+                        finished = true;
                     }
                 }
 
@@ -266,20 +289,25 @@ public class BasicGameTask implements GameTaskApi {
 
                     }else{
 
+                        // 提前5秒传送玩家
+                        int fakeCountDown = countdown - 5;
 
-                        // 倒计时最后10秒
-                        Title title = Title.title(
-                                Component.text(LoggerUtils.replaceColor("&f"+countdown+" &c即将结束...")),
-                                Component.text(LoggerUtils.replaceColor("&f奖励已结算，可以在&6左下角&f查看")),
-                                times);
-                        p.showTitle(title);
+                        if(fakeCountDown > 0){
+                            // 倒计时最后10秒
+                            Title title = Title.title(
+                                    Component.text(LoggerUtils.replaceColor("&f"+fakeCountDown+" &c即将结束...")),
+                                    Component.text(LoggerUtils.replaceColor("&f奖励已结算，可以在&6左下角&f查看")),
+                                    times);
+                            p.showTitle(title);
+                        }
+
                     }
 
 
                 }
 
-                if(count >= stoppingTimer){
-
+                // 倒计时5秒的时候就开始传送
+                if(stoppingTimer - count == 5){
                     for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
 
                         Title.Times times = Title.Times.times(Ticks.duration(0L), Ticks.duration(70L), Ticks.duration(0L));
@@ -289,14 +317,57 @@ public class BasicGameTask implements GameTaskApi {
                                 Component.text(LoggerUtils.replaceColor("&f即将传送回主服务器")),
                                 times);
                         p.showTitle(title);
-                    }
 
-                    // TODO 重置当前服务器
+                        if(Entry.getInstance().getConfig().getBoolean("bungeecord")){
+
+                            // 大厅服务器名称
+                            String lobby = Entry.getInstance().getConfig().getString("bungeecord-lobby");
+
+                            Entry.runSync(new BukkitRunnable() {
+                                @Override
+                                public void run() {
+                                    // 关闭当前服务器
+                                    ServerUtils.teleport(p,lobby);
+                                }
+                            });
+                        }
+
+
+                    }
+                }
+
+                if(count >= stoppingTimer){
+
+                    Entry.runSync(new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            // 关闭当前服务器
+                            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(),"restart");
+                        }
+                    });
                     this.cancel();
                 }
 
             }
         }.runTaskTimerAsynchronously(Entry.getInstance(), 20, 20);
+
+
+    }
+
+    private String convertSecondsToHHmmss(Long totalSeconds) {
+
+        if(totalSeconds  > 3600){
+            // 大于一小时
+            Duration duration = Duration.ofSeconds(totalSeconds);
+            long hours = duration.toHours();
+            long minutes = duration.minusHours(hours).toMinutes();
+            long remainingSeconds = duration.minusHours(hours).minusMinutes(minutes).getSeconds();
+            return String.format("%02d小时%02d分钟%02d秒", hours, minutes, remainingSeconds);
+        }else{
+            long minutes = totalSeconds / 60; // 计算分钟数
+            long seconds = totalSeconds % 60; // 计算剩余的秒数
+            return String.format("%02d分钟%02d秒", minutes, seconds); // 将分钟数和秒数格式化为字符串
+        }
 
 
     }

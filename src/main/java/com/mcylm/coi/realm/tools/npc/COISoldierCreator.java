@@ -1,24 +1,16 @@
 package com.mcylm.coi.realm.tools.npc;
 
 import com.mcylm.coi.realm.model.COINpc;
+import com.mcylm.coi.realm.tools.attack.team.AttackTeam;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import java.util.List;
-
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class COISoldierCreator extends COINpc {
 
-    // NPC所在阵型编号
-    private Integer npcNumber;
 
-    // 阵型
-    private List<List<Integer>> formats;
-
-    public COISoldierCreator(int npcNumber, List<List<Integer>> formats) {
-
-        this.npcNumber = npcNumber;
-        this.formats = formats;
-    }
+    private AttackTeam attackTeam;
 
     @Override
     public double getAlertRadius() {

@@ -9,6 +9,7 @@ import com.mcylm.coi.realm.tools.building.FloatableBuild;
 import com.mcylm.coi.realm.tools.data.metadata.BuildData;
 import com.mcylm.coi.realm.utils.particle.ParticleRect;
 import com.mcylm.coi.realm.utils.region.Region;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.*;
@@ -26,8 +27,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.IntStream;
 
-@Getter
-@Setter
+@Data
 public class AreaSelector implements Selector {
 
     private Player player;

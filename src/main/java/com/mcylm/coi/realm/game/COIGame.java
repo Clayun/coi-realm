@@ -11,7 +11,6 @@ import com.mcylm.coi.realm.model.COIScoreDetail;
 import com.mcylm.coi.realm.player.COIPlayer;
 import com.mcylm.coi.realm.runnable.AttackGoalTask;
 import com.mcylm.coi.realm.runnable.BasicGameTask;
-import com.mcylm.coi.realm.tools.npc.impl.COIEntity;
 import com.mcylm.coi.realm.tools.team.impl.COIScoreboard;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.ItemUtils;
@@ -26,7 +25,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.Scoreboard;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -50,6 +48,9 @@ public class COIGame {
     private List<COITeam> teams;
     // 玩家缓存
     private Map<Player, COIPlayer> coiPlayers = new HashMap<>();
+
+    // 游戏开始时间
+    private LocalDateTime startTime;
 
     public COIGame() {
         this.teams = new ArrayList<>();
@@ -95,6 +96,22 @@ public class COIGame {
     public void start(){
         // 启动游戏进程
         new BasicGameTask().waiting();
+    }
+
+    /**
+     * 获取COI玩家数据
+     * @param p
+     * @return
+     */
+    public COIPlayer getCOIPlayer(Player p){
+        COIPlayer coiPlayer = coiPlayers.get(p);
+
+        if(coiPlayer == null){
+            coiPlayer = new COIPlayer(p);
+            coiPlayers.put(p,coiPlayer);
+        }
+
+        return coiPlayer;
     }
 
     /**
@@ -285,6 +302,14 @@ public class COIGame {
         meta.setUnbreakable(true);
         ironPickaxe.setItemMeta(meta);
         p.getInventory().addItem(ironPickaxe);
+
+        ItemStack commandItem = new ItemStack(Material.NETHER_STAR);
+        ItemUtils.rename(itemStack,"&b攻击指挥");
+        lore = new ArrayList<>();
+        lore.add(LoggerUtils.replaceColor("&f切换你战士小队的攻击状态"));
+        ItemUtils.setLore(commandItem,lore);
+
+        p.getInventory().addItem(commandItem);
 
         // 面包
         ItemStack bread = new ItemStack(Material.BREAD);

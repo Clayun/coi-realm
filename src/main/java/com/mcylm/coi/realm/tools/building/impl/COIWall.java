@@ -31,7 +31,7 @@ public class COIWall extends LineBuild {
         wall.setType(getType());
         wall.setTeam(getTeam());
         wall.setConfig(getConfig());
-
+        wall.setBuildPlayerName(getBuildPlayerName());
         return wall;
     }
 
@@ -51,5 +51,10 @@ public class COIWall extends LineBuild {
     private void initStructure(){
         getBuildingLevelStructure().put(1,"wall1.structure");
 
+    }
+
+    @Override
+    public int getMaxHealth() {
+        return 300 + getLevel() * 200;
     }
 }

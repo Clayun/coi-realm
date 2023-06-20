@@ -5,13 +5,11 @@ import com.mcylm.coi.realm.runnable.TurretTask;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.config.BuildingConfig;
 import com.mcylm.coi.realm.utils.GUIUtils;
-import com.mcylm.coi.realm.utils.ItemUtils;
 import lombok.Data;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -60,11 +58,11 @@ public class COITurret extends COIBuilding {
         // 最小伤害
         this.minDamage = 3d;
         // 最大伤害
-        this.maxDamage = 6d;
+        this.maxDamage = 5d;
         // 击退距离
-        this.repulsionDistance = 2d;
+        this.repulsionDistance = 0d;
         // 每次攻击的间隔时间
-        this.coolDown = 2;
+        this.coolDown = 3;
         // 攻击半径，如果发射方块和目标之间有其他方块挡着，是不会触发攻击的
         this.radius = 30;
         // 弹药库，如果里面有弹药，才能正常攻击，否则无法攻击
@@ -86,7 +84,7 @@ public class COITurret extends COIBuilding {
     @Override
     public BuildingConfig getDefaultConfig() {
         return new BuildingConfig()
-                .setMaxLevel(2)
+                .setMaxLevel(3)
                 .setMaxBuild(10)
                 .setConsume(512)
                 .setStructures(getBuildingLevelStructure());
@@ -104,8 +102,15 @@ public class COITurret extends COIBuilding {
 
     @Override
     public void upgradeBuildSuccess() {
-
         // 升级成功
+        super.upgradeBuildSuccess();
+        // 先关闭
+        Bukkit.getScheduler().cancelTask(this.getTurretCoolDown().getTaskId());
+        // 数据升级
+        upgrade();
+        // 重启防御塔
+        this.turretCoolDown = new TurretTask(this);
+        this.turretCoolDown.action();
     }
 
     @Override
@@ -121,11 +126,12 @@ public class COITurret extends COIBuilding {
     private void initStructure() {
         getBuildingLevelStructure().put(1, "turret1.structure");
         getBuildingLevelStructure().put(2, "turret2.structure");
+        getBuildingLevelStructure().put(3, "turret2.structure");
     }
 
     @Override
     public int getMaxHealth() {
-        return 100 + getLevel() * 50;
+        return 100 + getLevel() * 100;
     }
 
     /**
@@ -188,5 +194,21 @@ public class COITurret extends COIBuilding {
             }
         });
 
+    }
+
+    /**
+     * 升级
+     */
+    private void upgrade(){
+        // 最小伤害
+        this.minDamage = this.minDamage + 1;
+        // 最大伤害
+        this.maxDamage = this.maxDamage + 2;
+        // 击退距离
+        this.repulsionDistance = this.repulsionDistance + 1;
+        // 每次攻击的间隔时间
+        this.coolDown = this.coolDown - 1;
+        // 攻击消耗增大
+        this.ammunitionConsumption = this.ammunitionConsumption + 2;
     }
 }

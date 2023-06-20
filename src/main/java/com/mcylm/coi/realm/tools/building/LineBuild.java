@@ -37,6 +37,8 @@ public abstract class LineBuild extends COIBuilding {
             return;
         }
 
+        setBuildPlayerName(player.getName());
+
         // 扣除玩家背包里的资源
         boolean b = deductionResources(player);
 
@@ -44,6 +46,9 @@ public abstract class LineBuild extends COIBuilding {
             LoggerUtils.sendMessage("背包里的资源不够，请去收集资源", player);
             return;
         }
+
+        // 记录玩家
+        this.buildPlayerName = player.getName();
 
         // 建筑开始就记录位置
         Location location = points.get(points.size() / 2).clone();
@@ -80,7 +85,6 @@ public abstract class LineBuild extends COIBuilding {
         processLine(points);
 
         Iterator<Location> iterator = points.iterator();
-        LoggerUtils.debug(String.valueOf(points));
         // 开始建造
 
         Set<COIPaster> pasters = new HashSet<>();
@@ -94,7 +98,8 @@ public abstract class LineBuild extends COIBuilding {
 
                 Location point = iterator.next();
 
-                LoggerUtils.debug("build");
+//                LoggerUtils.debug("build");
+
                 // 构造一个建造器
                 COIPaster coiPaster = new COIPaster(false, getType().getUnit(), getType().getInterval()
                         , location.getWorld().getName(), point,null
@@ -130,7 +135,7 @@ public abstract class LineBuild extends COIBuilding {
 
                     if (isComplete()) {
 
-                        LoggerUtils.debug("complete");
+                        LoggerUtils.debug("LineBuild 建造完成");
                         Bukkit.getScheduler().runTask(Entry.getInstance(), () -> {
                             buildSuccess(location, player);
                         });
@@ -205,7 +210,6 @@ public abstract class LineBuild extends COIBuilding {
         processLine(points);
 
         Iterator<Location> iterator = points.iterator();
-        LoggerUtils.debug(String.valueOf(points));
         // 开始建造
 
         Set<COIPaster> pasters = new HashSet<>();
@@ -219,7 +223,8 @@ public abstract class LineBuild extends COIBuilding {
 
                 Location point = iterator.next();
 
-                LoggerUtils.debug("build");
+//                LoggerUtils.debug("build");
+
                 // 构造一个建造器
                 COIPaster coiPaster = new COIPaster(false, getType().getUnit(), getType().getInterval()
                         , location.getWorld().getName(), point,null
@@ -265,7 +270,7 @@ public abstract class LineBuild extends COIBuilding {
 
                     if (isComplete()) {
 
-                        LoggerUtils.debug("complete");
+                        LoggerUtils.debug("LineBuild 升级完成");
                         Bukkit.getScheduler().runTask(Entry.getInstance(), () -> {
                             buildSuccess(location, player);
                         });

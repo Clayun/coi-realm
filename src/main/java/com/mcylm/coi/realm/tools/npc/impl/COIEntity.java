@@ -224,12 +224,12 @@ public class COIEntity implements AI {
         }
 
         if (currentPath != null && currentPath.getCurrentDestination() != null) {
-            if (currentPath.getCurrentDestination().distance(location) < 3) {
+            if (currentPath.getCurrentDestination().distance(location) < 1.8) {
                 return;
             }
         }
 
-        if (findPathCooldown++ > 2) {
+        if (findPathCooldown++ > 3) {
             findPathCooldown = 0;
         } else {
             return;
@@ -406,7 +406,7 @@ public class COIEntity implements AI {
                                     }
                                     entity.getEquipment().setItemInMainHand(item);
                                     setHunger(getHunger() + 1);
-                                    entity.getWorld().playSound(entity.getLocation(), Sound.ENTITY_GENERIC_EAT, 100, 2);
+                                    entity.getWorld().playSound(entity.getLocation(), Sound.ENTITY_GENERIC_EAT, 2, 2);
                                     entity.getEquipment().setItemInMainHand(cache);
                                     return;
                                 } else {
@@ -471,13 +471,20 @@ public class COIEntity implements AI {
                 if (block.getInventory().isEmpty()) {
                     continue;
                 }
-                double locationDistance = location.distance(getNpc().getEntity().getLocation());
 
-                // 冒泡排序
-                if (locationDistance <= distance) {
-                    nearestLocation = location;
-                    distance = locationDistance;
+                if(getNpc().getEntity().getLocation().getWorld() == location.getWorld()){
+                    double locationDistance = location.distance(getNpc().getEntity().getLocation());
+
+                    // 冒泡排序
+                    if (locationDistance <= distance) {
+                        nearestLocation = location;
+                        distance = locationDistance;
+                    }
+
+                }else{
+                    return;
                 }
+
 
             }
         }
@@ -675,38 +682,7 @@ public class COIEntity implements AI {
 
             //武器或工具
             //剑
-            if (itemStack.getType() == Material.DIAMOND_SWORD
-                    || itemStack.getType() == Material.STONE_SWORD
-                    || itemStack.getType() == Material.WOODEN_SWORD
-                    || itemStack.getType() == Material.GOLDEN_SWORD
-                    || itemStack.getType() == Material.IRON_SWORD
-                    || itemStack.getType() == Material.NETHERITE_SWORD
-                    //斧头
-                    || itemStack.getType() == Material.DIAMOND_AXE
-                    || itemStack.getType() == Material.GOLDEN_AXE
-                    || itemStack.getType() == Material.IRON_AXE
-                    || itemStack.getType() == Material.NETHERITE_AXE
-                    || itemStack.getType() == Material.STONE_AXE
-                    || itemStack.getType() == Material.WOODEN_AXE
-                    //镐子
-                    || itemStack.getType() == Material.DIAMOND_PICKAXE
-                    || itemStack.getType() == Material.GOLDEN_PICKAXE
-                    || itemStack.getType() == Material.IRON_PICKAXE
-                    || itemStack.getType() == Material.NETHERITE_PICKAXE
-                    || itemStack.getType() == Material.STONE_PICKAXE
-                    || itemStack.getType() == Material.WOODEN_PICKAXE
-                    //锄头
-                    || itemStack.getType() == Material.DIAMOND_HOE
-                    || itemStack.getType() == Material.GOLDEN_HOE
-                    || itemStack.getType() == Material.IRON_HOE
-                    || itemStack.getType() == Material.NETHERITE_HOE
-                    || itemStack.getType() == Material.STONE_HOE
-                    || itemStack.getType() == Material.WOODEN_HOE
-                    // 弩
-                    || itemStack.getType() == Material.CROSSBOW
-                    // Bow
-                    || itemStack.getType() == Material.BOW
-            ) {
+            if (WearUtils.canHoldInHand(itemStack)) {
                 if (entity.getEquipment().getItemInMainHand().getType().equals(Material.AIR)) {
                     entity.getEquipment().setItemInMainHand(itemStack);
                     backpack.remove(itemStack);
@@ -995,11 +971,22 @@ public class COIEntity implements AI {
 
 
         for (ItemStack next : inventory) {
-            if (next != null) location.getWorld().dropItem(location, next);
+            if (next != null) {
+                if(WearUtils.canWearOnHead(next)
+                    || WearUtils.canWearOnBody(next)
+                    || WearUtils.canWearOnLegs(next)
+                    || WearUtils.canWearOnFeet(next)
+                    || WearUtils.canHoldInHand(next)
+                ){
+                    // 武器装备类的，不允许掉落
+                }else {
+                    location.getWorld().dropItem(location, next);
+                }
+
+            }
         }
 
         // 清空缓存
-        // getCoiNpc().setFoodBag(new ArrayList<>());
         getCoiNpc().getInventory().clear();
 
     }
@@ -1109,8 +1096,14 @@ public class COIEntity implements AI {
                 }
 
                 i++;
-                // 挥动手
-                ((LivingEntity) getNpc().getEntity()).swingMainHand();
+
+                if(isAlive()){
+                    // 挥动手
+                    ((LivingEntity) getNpc().getEntity()).swingMainHand();
+                }else{
+                    this.cancel();
+                }
+
 
                 if(i == ticks / period){
                     this.cancel();

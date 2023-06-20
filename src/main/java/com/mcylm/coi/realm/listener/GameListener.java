@@ -1,71 +1,77 @@
 package com.mcylm.coi.realm.listener;
 
+import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import com.mcylm.coi.realm.Entry;
-import com.mcylm.coi.realm.clipboard.PlayerClipboard;
 import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COIGameStatus;
-import com.mcylm.coi.realm.enums.COIServerMode;
+import com.mcylm.coi.realm.enums.COIPropType;
 import com.mcylm.coi.realm.events.BuildingDamagedEvent;
 import com.mcylm.coi.realm.events.BuildingDestroyedEvent;
 import com.mcylm.coi.realm.events.BuildingTouchEvent;
+import com.mcylm.coi.realm.item.COITownPortal;
+import com.mcylm.coi.realm.player.COIPlayer;
 import com.mcylm.coi.realm.tools.attack.target.impl.BuildingTarget;
+import com.mcylm.coi.realm.tools.attack.team.AttackTeam;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
+import com.mcylm.coi.realm.tools.building.impl.COIAirRaid;
 import com.mcylm.coi.realm.tools.building.impl.COIRepair;
 import com.mcylm.coi.realm.tools.building.impl.COITurret;
 import com.mcylm.coi.realm.tools.data.metadata.BuildData;
+import com.mcylm.coi.realm.tools.npc.impl.COIEntity;
+import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.ItemUtils;
-import com.mcylm.coi.realm.utils.LocationUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
-import me.lucko.helper.Events;
 import net.citizensnpcs.api.CitizensAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.Collection;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class GameListener implements Listener {
 
     @EventHandler
     public void onBuildingDamaged(BuildingDamagedEvent event){
 
-        String attacker = "神秘生物";
+        String attacker = "战士";
 
         COITeam npcTeam = TeamUtils.getNPCTeam(event.getEntity());
 
-        if(npcTeam == null){
-            npcTeam = TeamUtils.getTeamByPlayer((Player)event.getEntity());
+        if(npcTeam != null){
+            attacker = npcTeam.getType().getColor()+npcTeam.getType().getName()+" "+attacker;
+        }else {
+            Player otherTeamPlayer = (Player) event.getEntity();
+            npcTeam = TeamUtils.getTeamByPlayer(otherTeamPlayer);
+            attacker = npcTeam.getType().getColor()+npcTeam.getType().getName()+" "+otherTeamPlayer.getName();
         }
 
-        if(npcTeam != null){
-            attacker = npcTeam.getType().getColor()+npcTeam.getType().getName();
-        }
+
 
         COITeam team = event.getBuilding().getTeam();
         for (String playerName : team.getPlayers()) {
@@ -74,7 +80,7 @@ public class GameListener implements Listener {
 
             if(p != null && p.isOnline()){
 
-                String message = "&c注意，您的 &6"+event.getBuilding().getType().getName()+" &c正在被 "+attacker+" 攻击！";
+                String message = "&c注意，您的 &6"+event.getBuilding().getType().getName()+" &c正在被 "+attacker+" 攻击！位置在："+event.getAttackedBlock().getX()+","+event.getAttackedBlock().getY()+","+event.getAttackedBlock().getZ();
 
                 // 基地被攻击
                 if(event.getBuilding().getType().equals(COIBuildingType.BASE)){
@@ -90,7 +96,6 @@ public class GameListener implements Listener {
                 }else{
                     // 普通建筑被攻击
                     p.sendActionBar(Component.text(LoggerUtils.replaceColor(message)));
-//                    LoggerUtils.sendMessage(LoggerUtils.replaceColor(message),p);
                 }
 
 
@@ -170,6 +175,14 @@ public class GameListener implements Listener {
     }
 
     @EventHandler
+    public void onCraftItem(CraftItemEvent event) {
+        ItemStack result = event.getRecipe().getResult();
+        if (result.getType() == Material.SNOW_BLOCK) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
     public void onBlockBreak(BlockBreakEvent event){
 
         Player player = event.getPlayer();
@@ -177,8 +190,37 @@ public class GameListener implements Listener {
         Block block = event.getBlock();
         COIBuilding building = BuildData.getBuildingByBlock(block);
         if (building != null && building.getTeam() != TeamUtils.getTeamByPlayer(player)) {
-            building.damage(player,10,block);
 
+            COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(player);
+
+            // 最快可以0.3秒拆一次，否则无效
+            if(coiPlayer.getLastDamageBuilding() == null
+                || Duration.between(coiPlayer.getLastDamageBuilding(), LocalDateTime.now()).getSeconds() >= 0.3){
+                building.damage(player,10,block);
+                coiPlayer.setLastDamageBuilding(LocalDateTime.now());
+
+                if (coiPlayer.getAttackTeam().getStatus() == AttackTeam.Status.LOCK) {
+                    for (COIEntity entity : coiPlayer.getAttackTeam().getMembers()) {
+                        if (entity instanceof COISoldier soldier && soldier.isAlive()) {
+                            BuildingTarget target = new BuildingTarget(building, building.getNearestBlock(soldier.getLocation()).getLocation());
+                            target.setTargetLevel(7);
+                            soldier.setTarget(target);
+                        }
+                    }
+                }
+            }
+
+
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onBlockPlace(BlockPlaceEvent event){
+
+        Player player = event.getPlayer();
+
+        if(!player.getGameMode().equals(GameMode.CREATIVE)){
             event.setCancelled(true);
         }
     }
@@ -189,13 +231,153 @@ public class GameListener implements Listener {
     }
 
     @EventHandler
-    public void onRespawn(PlayerRespawnEvent event){
+    public void onChat(AsyncPlayerChatEvent event){
 
-        Player p = event.getPlayer();
-        COITeam team = TeamUtils.getTeamByPlayer(p);
-        if(team !=null){
-            event.setRespawnLocation(team.getSpawner());
-            p.teleport(team.getSpawner());
+        // 游戏中
+        if(Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
+            Player player = event.getPlayer();
+            String message = event.getMessage();
+            TeamUtils.sendTeamMessage(player,message);
+
+
+
+            event.setCancelled(true);
+        }
+
+
+    }
+
+    @EventHandler
+    public void onMove(PlayerMoveEvent event){
+
+        // 等待中，禁止移动
+        if(Entry.getGame().getStatus().equals(COIGameStatus.WAITING)){
+            event.setCancelled(true);
+            return;
+        }
+
+        if(Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
+            COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(event.getPlayer());
+            if(coiPlayer.isDeath()){
+                // 死亡的情况下，禁止移动
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerArmorChange(PlayerArmorChangeEvent event) {
+        Player player = event.getPlayer();
+        ItemStack itemStack = event.getNewItem();
+        if (itemStack == null) {
+            // 这里可以添加一些其他的判断逻辑
+            return;
+        }
+
+        COITeam team = TeamUtils.getTeamByPlayer(player);
+
+        if(team != null){
+            if (itemStack.getType().equals(Material.LEATHER_HELMET)
+                || itemStack.getType().equals(Material.LEATHER_CHESTPLATE)
+                || itemStack.getType().equals(Material.LEATHER_LEGGINGS)
+                || itemStack.getType().equals(Material.LEATHER_BOOTS)
+            ) {
+                // 皮革的，就换成小队颜色
+                if (team.getType().getLeatherColor() != null) {
+                    ItemUtils.changeColorForLeather(itemStack, team.getType().getLeatherColor());
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onUseItem(PlayerInteractEvent event) {
+
+        Action action = event.getAction();
+
+        //判断是右手，同时避免触发两次
+        if ((Action.RIGHT_CLICK_AIR == action || Action.RIGHT_CLICK_BLOCK == action) && event.getHand().equals(EquipmentSlot.HAND)
+                //空手触发
+                && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.FLOWER_BANNER_PATTERN
+                && ItemUtils.getName(event.getPlayer().getInventory().getItemInMainHand()).equals(LoggerUtils.replaceColor(COIPropType.TOWN_PORTAL.getName()))
+        ) {
+
+            // 开始使用卷轴
+            // 删除卷轴
+            event.getPlayer().getInventory().setItemInMainHand(null);
+
+            // 开始施法
+            COITownPortal townPortal = new COITownPortal();
+            townPortal.back(event.getPlayer());
+        }
+
+    }
+
+    private void waitDeath(Player p){
+
+        if(!p.isOnline()){
+            return;
+        }
+
+        COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(p);
+
+        if(coiPlayer.isDeath()){
+            // 获取死亡倒计时
+            int resurrectionCountdown = coiPlayer.getResurrectionCountdown();
+
+            // 传送到地狱小黑屋
+            Location clone = p.getLocation().clone();
+            clone.setY(20);
+            p.setNoDamageTicks(20 * (resurrectionCountdown + 1));
+            p.teleport(clone);
+            p.setAllowFlight(true);
+
+            new BukkitRunnable(){
+
+                int count = 0;
+                @Override
+                public void run() {
+                    count++;
+                    if(count == resurrectionCountdown){
+
+                        // 传送回出生点
+                        COITeam team = TeamUtils.getTeamByPlayer(p);
+                        new BukkitRunnable(){
+                            @Override
+                            public void run() {
+                                p.teleport(team.getSpawner());
+                            }
+                        }.runTask(Entry.getInstance());
+                        // 取消无敌
+                        p.setNoDamageTicks(0);
+                        coiPlayer.setDeath(false);
+                        p.setAllowFlight(false);
+                        cancel();
+                    }else{
+                        int countDown = resurrectionCountdown - count;
+
+                        // TITLE
+                        Title.Times times = Title.Times.times(Ticks.duration(0L), Ticks.duration(70L), Ticks.duration(0L));
+
+                        Title title = Title.title(
+                                Component.text(LoggerUtils.replaceColor("&f"+countDown+" &c马上复活！")),
+                                Component.text(LoggerUtils.replaceColor("&f失败乃兵家常事，少侠不必气馁！")),
+                                times);
+
+                        if(p.isOnline()){
+                            p.showTitle(title);
+                        }else{
+                            // 离线了就关闭进程
+                            cancel();
+                        }
+
+                    }
+
+
+
+                }
+            }.runTaskTimerAsynchronously(Entry.getInstance(),0,20);
+
         }
     }
 
@@ -203,17 +385,72 @@ public class GameListener implements Listener {
     public void onJoin(PlayerJoinEvent event){
 
         Player p = event.getPlayer();
-        COITeam team = TeamUtils.getTeamByPlayer(p);
 
-        // 游戏中进来的话，就要初始化信息了
-        if(team == null && Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
-            // 自动加入队伍
-            TeamUtils.autoJoinTeam(p);
-            // 传送到小队复活点
-            TeamUtils.tpSpawner(p);
-            // 初始化玩家背包
-            Entry.getGame().initPlayerGaming(p);
+
+        if(Entry.getGame().getStatus().equals(COIGameStatus.WAITING)){
+            // 游戏等待中，就在大厅等待
+            TeamUtils.tpLobby(p);
+        }else if(Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
+            // 游戏中
+            COITeam team = TeamUtils.getTeamByPlayer(p);
+
+            if(team == null){
+                // 自动加入队伍
+                TeamUtils.autoJoinTeam(p);
+                // 传送到小队复活点
+                TeamUtils.tpSpawner(p);
+                // 初始化玩家背包
+                Entry.getGame().initPlayerGaming(p);
+            }else{
+                // 玩家已经加入了小队，要判断是否复活了
+                // 死亡记录
+                COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(event.getPlayer());
+
+                if(coiPlayer.isDeath()){
+                    // 等待死亡
+                    waitDeath(event.getPlayer());
+                }else{
+                    // 传送到小队复活点
+                    TeamUtils.tpSpawner(p);
+                }
+            }
+        }else{
+            TeamUtils.tpLobby(p);
         }
+    }
+
+    @EventHandler
+    public void onRespawn(PlayerRespawnEvent event){
+
+        Player p = event.getPlayer();
+
+        if(Entry.getGame().getStatus().equals(COIGameStatus.WAITING)){
+            // 游戏等待中，就在大厅等待
+            TeamUtils.tpLobby(p);
+        }else if(Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
+            COITeam team = TeamUtils.getTeamByPlayer(p);
+
+            if(team !=null){
+
+                COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(event.getPlayer());
+
+                if(coiPlayer.isDeath()){
+                    waitDeath(event.getPlayer());
+                }else{
+                    TeamUtils.tpSpawner(p);
+                }
+            }else{
+                // 自动加入队伍
+                TeamUtils.autoJoinTeam(p);
+                // 传送到小队复活点
+                TeamUtils.tpSpawner(p);
+                // 初始化玩家背包
+                Entry.getGame().initPlayerGaming(p);
+            }
+        }else{
+            TeamUtils.tpLobby(p);
+        }
+
     }
 
     @EventHandler
@@ -226,6 +463,10 @@ public class GameListener implements Listener {
 
         if (item.getType() == Material.COMPASS
                 && ItemUtils.getName(item).equals(LoggerUtils.replaceColor("&c选择队伍"))) {
+            event.setCancelled(true);
+        }
+
+        if (item.getType() == Material.NETHER_STAR) {
             event.setCancelled(true);
         }
 
@@ -243,6 +484,7 @@ public class GameListener implements Listener {
 
         if(building.getType().equals(COIBuildingType.TURRET_NORMAL)
                 || building.getType().equals(COIBuildingType.TURRET_REPAIR)
+                || building.getType().equals(COIBuildingType.TURRET_AIR_RAID)
         ){
             // 如果是塔类型，就打开该塔的弹药库GUI
             // 仅限本小队才允许
@@ -250,6 +492,8 @@ public class GameListener implements Listener {
                 if(building instanceof COITurret turret){
                     event.getPlayer().openInventory(turret.getInventory());
                 }else if(building instanceof COIRepair turret){
+                    event.getPlayer().openInventory(turret.getInventory());
+                }else if(building instanceof COIAirRaid turret){
                     event.getPlayer().openInventory(turret.getInventory());
                 }
             }
@@ -260,25 +504,36 @@ public class GameListener implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
 
-        // 禁用部分物品掉落
-        for(ItemStack item : event.getDrops()){
-            if (item.getType() == Material.BOOK
-                    && ItemUtils.getName(item).equals(LoggerUtils.replaceColor("&b建筑蓝图"))) {
-                event.getDrops().remove(item);
-                event.getItemsToKeep().add(item);
-            }
+        String material = Entry.getInstance().getConfig().getString("game.building.material");
 
-            if (item.getType() == Material.COMPASS
-                    && ItemUtils.getName(item).equals(LoggerUtils.replaceColor("&c选择队伍"))) {
-                event.getDrops().remove(item);
-                event.getItemsToKeep().add(item);
-            }
+        // 仅掉落绿宝石，其他的都保留
 
-            if (item.getType() == Material.IRON_PICKAXE
-                    || item.getType() == Material.DIAMOND_PICKAXE) {
-                event.getDrops().remove(item);
+        List<ItemStack> needSave = new ArrayList<>();
+
+        Iterator<ItemStack> iterator = event.getDrops().iterator();
+
+        while(iterator.hasNext()){
+            ItemStack item = iterator.next();
+
+            // 绿宝石和鞘翅组合掉落
+            if (item.getType() != Material.getMaterial(material)
+                && item.getType() != Material.ELYTRA
+                && item.getType() != Material.FIREWORK_ROCKET
+            ) {
+                needSave.add(item);
                 event.getItemsToKeep().add(item);
             }
+        }
+
+        // 清空
+        event.getDrops().removeAll(needSave);
+
+        // 游戏中才记录
+        if(Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
+            // 死亡记录
+            COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(event.getPlayer());
+            coiPlayer.setDeathCount(coiPlayer.getDeathCount() + 1);
+            coiPlayer.setDeath(true);
         }
     }
 

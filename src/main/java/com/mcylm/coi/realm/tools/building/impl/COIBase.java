@@ -27,10 +27,10 @@ public class COIBase extends COIBuilding {
 
         return new BuildingConfig()
                 .setStructures(getBuildingLevelStructure())
-                .setMaxLevel(10)
+                .setMaxLevel(5)
                 .setMaxBuild(1)
                 .setShowInMenu(false)
-                .setConsume(256);
+                .setConsume(1024);
     }
 
     @Override
@@ -66,6 +66,6 @@ public class COIBase extends COIBuilding {
 
     @Override
     public int getMaxHealth() {
-        return 1000 + getLevel() * 1000;
+        return 500 + getLevel() * 500;
     }
 }

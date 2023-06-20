@@ -7,10 +7,7 @@ import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.FireworkEffect;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
@@ -123,22 +120,33 @@ public class TurretTask {
                     Player p = (Player)e;
 
                     // 先将实体当作玩家判断是否是本小队的
-                    if(TeamUtils.getTeamByPlayer(p) != torreta.getTeam()){
+                    // 同时将观察者剔除
+                    if(TeamUtils.getTeamByPlayer(p) != torreta.getTeam()
+                        && p.getGameMode() != GameMode.SPECTATOR){
                         // 非小队内成员，同时非所属人
                         // 就设置为攻击目标
                         attackPermission = true;
                     }
 
-                    if(attackPermission){
+                    if(!attackPermission){
                         // 如果实体作为玩家非本校对，就把他再当作NPC去判断
                         if(TeamUtils.checkNPCInTeam(e,torreta.getTeam())){
                             // 是本小队的NPC，就取消锁定攻击
                             attackPermission = false;
-                            LoggerUtils.debug(e.getName()+"是本小队的NPC，取消锁定攻击");
+                        }
+                    }
+                }else {
+
+                    if(e instanceof LivingEntity){
+                        // 如果实体作为玩家非本校对，就把他再当作NPC去判断
+                        if(!TeamUtils.checkNPCInTeam(e,torreta.getTeam())){
+                            // 是本小队的NPC，就取消锁定攻击
+                            attackPermission = true;
                         }
                     }
 
                 }
+
 
                 if (attackPermission) {
                     // 如果是攻击目标，就开打
