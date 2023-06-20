@@ -41,13 +41,15 @@ public class FloatableSelector implements Selector{
 
     public FloatableSelector(Player p, COIBuilding building, Location location) {
         this.player = p;
+
         this.selectedLocation = location;
-
         // 检测 selectedLocation 周围是空气的位置并选中
-
         if(!checkAirLocation()){
             LoggerUtils.sendMessage("&c当前建筑不能建造在这里",p);
             return;
+        }else{
+            location = getAirLocation(location);
+            this.selectedLocation = location;
         }
 
         this.stop = false;
@@ -83,37 +85,42 @@ public class FloatableSelector implements Selector{
     }
 
     private boolean checkAirLocation(){
-        // 判断前后左右
-        // 即x+1/-1 z+1/-1这四个位置，如果都不是空气，之间false
-        Location clone = this.selectedLocation.clone();
-        clone.setX(clone.getX() + 1);
-        if(!clone.getBlock().isSolid()){
-            this.selectedLocation = clone;
-            return true;
-        }
 
-        Location clone2 = this.selectedLocation.clone();
-        clone2.setX(clone2.getX() - 1);
-        if(!clone2.getBlock().isSolid()){
-            this.selectedLocation = clone2;
-            return true;
-        }
-
-        Location clone3 = this.selectedLocation.clone();
-        clone3.setZ(clone3.getZ() + 1);
-        if(!clone3.getBlock().isSolid()){
-            this.selectedLocation = clone3;
-            return true;
-        }
-
-        Location clone4 = this.selectedLocation.clone();
-        clone4.setZ(clone4.getZ() - 1);
-        if(!clone4.getBlock().isSolid()){
-            this.selectedLocation = clone4;
+        if(getAirLocation(this.selectedLocation) != null){
             return true;
         }
 
         return false;
+    }
+
+    private Location getAirLocation(Location location){
+        // 判断前后左右
+        // 即x+1/-1 z+1/-1这四个位置，如果都不是空气，之间false
+        Location clone = location.clone();
+        clone.setX(clone.getX() + 1);
+        if(!clone.getBlock().isSolid()){
+            return clone;
+        }
+
+        Location clone2 = location.clone();
+        clone2.setX(clone2.getX() - 1);
+        if(!clone2.getBlock().isSolid()){
+            return clone2;
+        }
+
+        Location clone3 = location.clone();
+        clone3.setZ(clone3.getZ() + 1);
+        if(!clone3.getBlock().isSolid()){
+            return clone3;
+        }
+
+        Location clone4 = location.clone();
+        clone4.setZ(clone4.getZ() - 1);
+        if(!clone4.getBlock().isSolid()){
+            return clone4;
+        }
+
+        return null;
     }
 
 
@@ -166,28 +173,26 @@ public class FloatableSelector implements Selector{
         canPlace = true;
 
         for (Block block : region.getBlocks()) {
-            if (BuildData.getBuildingByBlock(block) != null) {
-
-                canPlace = false;
-
-            }
-
-            Location clone = block.getLocation().clone();
-            if(clone.getBlock().isSolid()){
-                // 建筑只能在完全空白的地方建造
+            COIBuilding buildingByBlock = BuildData.getBuildingByBlock(block);
+            if (buildingByBlock != null
+                    && !buildingByBlock.getType().equals(COIBuildingType.BRIDGE)) {
                 canPlace = false;
             }
 
             // 这个时候要判断是否脚底下是虚空，必须是虚空才能造
-            Location clone2 = block.getLocation().clone();
+            double height = block.getLocation().getY();
 
-            for(int i = 0 ;i < clone2.getY();i++){
-                clone2.setY(i);
-                if(clone2.getBlock().isSolid()){
+            for(int i = Entry.WALL_DETECT_HEIGHT ;i < height;i++){
+                Block clone3 = block.getWorld().getBlockAt(block.getX(), i, block.getZ());
+                if(!clone3.getType().equals(Material.AIR)){
                     canPlace = false;
                     break;
                 }
             }
+        }
+
+        if(!checkAirLocation()){
+            canPlace = false;
         }
 
         String state = canPlace ? "§a可放置" : "§c不可放置";
@@ -251,26 +256,27 @@ public class FloatableSelector implements Selector{
         canPlace = true;
 
         for (Block block : region.getBlocks()) {
-            if (BuildData.getBuildingByBlock(block) != null) {
-                canPlace = false;
-            }
 
-            Location clone = block.getLocation().clone();
-            if(clone.getBlock().isSolid()){
-                // 建筑只能在完全空白的地方建造
+            COIBuilding buildingByBlock = BuildData.getBuildingByBlock(block);
+            if (buildingByBlock != null
+                && !buildingByBlock.getType().equals(COIBuildingType.BRIDGE)) {
                 canPlace = false;
             }
 
             // 这个时候要判断是否脚底下是虚空，必须是虚空才能造
-            Location clone2 = block.getLocation().clone();
+            double height = block.getLocation().getY();
 
-            for(int i = 0 ;i < clone2.getY();i++){
-                clone2.setY(i);
-                if(clone2.getBlock().isSolid()){
+            for(int i = Entry.WALL_DETECT_HEIGHT ;i < height;i++){
+                Block clone3 = block.getWorld().getBlockAt(block.getX(), i, block.getZ());
+                if(!clone3.getType().equals(Material.AIR)){
                     canPlace = false;
                     break;
                 }
             }
+        }
+
+        if(!checkAirLocation()){
+            canPlace = false;
         }
 
         if (canPlace) {
