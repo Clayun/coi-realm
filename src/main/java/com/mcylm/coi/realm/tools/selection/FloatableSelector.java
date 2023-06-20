@@ -168,21 +168,22 @@ public class FloatableSelector implements Selector{
         for (Block block : region.getBlocks()) {
             if (BuildData.getBuildingByBlock(block) != null) {
 
-                COIBuilding buildingByBlock = BuildData.getBuildingByBlock(block);
-
-                // 不是桥的情况下，禁止建造
-                if(!buildingByBlock.getType().equals(COIBuildingType.BRIDGE)){
-                    canPlace = false;
-                }
+                canPlace = false;
 
             }
 
-            // 这个时候要判断是否脚底下是虚空，必须是虚空才能造
             Location clone = block.getLocation().clone();
+            if(clone.getBlock().isSolid()){
+                // 建筑只能在完全空白的地方建造
+                canPlace = false;
+            }
 
-            for(int i = 0 ;i < clone.getY();i++){
-                clone.setY(i);
-                if(clone.getBlock().isSolid()){
+            // 这个时候要判断是否脚底下是虚空，必须是虚空才能造
+            Location clone2 = block.getLocation().clone();
+
+            for(int i = 0 ;i < clone2.getY();i++){
+                clone2.setY(i);
+                if(clone2.getBlock().isSolid()){
                     canPlace = false;
                     break;
                 }
@@ -251,22 +252,21 @@ public class FloatableSelector implements Selector{
 
         for (Block block : region.getBlocks()) {
             if (BuildData.getBuildingByBlock(block) != null) {
+                canPlace = false;
+            }
 
-                COIBuilding buildingByBlock = BuildData.getBuildingByBlock(block);
-
-                // 不是桥的情况下，禁止建造
-                if(!buildingByBlock.getType().equals(COIBuildingType.BRIDGE)){
-                    canPlace = false;
-                }
-
+            Location clone = block.getLocation().clone();
+            if(clone.getBlock().isSolid()){
+                // 建筑只能在完全空白的地方建造
+                canPlace = false;
             }
 
             // 这个时候要判断是否脚底下是虚空，必须是虚空才能造
-            Location clone = block.getLocation().clone();
+            Location clone2 = block.getLocation().clone();
 
-            for(int i = 0 ;i < clone.getY();i++){
-                clone.setY(i);
-                if(clone.getBlock().isSolid()){
+            for(int i = 0 ;i < clone2.getY();i++){
+                clone2.setY(i);
+                if(clone2.getBlock().isSolid()){
                     canPlace = false;
                     break;
                 }
