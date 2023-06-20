@@ -150,6 +150,21 @@ public class COITeam implements Team {
 
         Iterator<COITeam> iterator = teams.iterator();
 
+        int count = 0;
+        for(String playerName : getPlayers()){
+            Player teamPlayer = Bukkit.getPlayer(playerName);
+
+            if(teamPlayer != null && teamPlayer.isOnline()){
+                count ++;
+            }
+        }
+
+        int maxPlayerInOneTeam = Entry.getInstance().getConfig().getInt("game.max-group-players");
+
+        if(count >= maxPlayerInOneTeam){
+            return false;
+        }
+
         // 加入队伍之前，先退出其他队伍
         // You need quit your team before you join the new one.
         while(iterator.hasNext()){

@@ -62,6 +62,11 @@ public class COIDoor extends COIBuilding {
 
                 boolean openDoor = false;
                 for (Player p : Entry.getInstance().getServer().getOnlinePlayers()) {
+
+                    if(!p.getWorld().getName().equals(Entry.WORLD)){
+                        TeamUtils.tpSpawner(p);
+                    }
+
                     if (TeamUtils.inTeam(p.getName(),getTeam()) && p.getLocation().distance(location) <= 6) {
                         openDoor = true;
                     }

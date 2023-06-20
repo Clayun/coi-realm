@@ -149,6 +149,9 @@ public class BasicGameTask implements GameTaskApi {
 
             Long count = 0l;
 
+            // 是否游戏结束
+            boolean finished = false;
+
             @Override
             public void run() {
 
@@ -159,7 +162,8 @@ public class BasicGameTask implements GameTaskApi {
                 // 已经过去的秒数
                 count = duration.getSeconds();
 
-                if(count >= gamingTimer){
+                if(count >= gamingTimer
+                    || finished){
 
                     // 隐藏 boss bar
                     for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
@@ -204,7 +208,7 @@ public class BasicGameTask implements GameTaskApi {
                     // 检查游戏是否结束
                     if(Entry.getGame().checkGameComplete()){
                         // 下一秒进入结算回合
-                        count = Long.valueOf(gamingTimer);
+                        finished = true;
                     }
                 }
 
