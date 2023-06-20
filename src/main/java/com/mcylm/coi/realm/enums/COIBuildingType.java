@@ -83,6 +83,16 @@ public class COIBuildingType {
             5L
     );
 
+    public static final COIBuildingType BRIDGE = new COIBuildingType (
+            "BRIDGE",
+            "桥",
+            new ItemStack(Material.STONE_BRICK_WALL),
+            """
+            可以建造一座桥在两个空岛之间""",
+            5,
+            5L
+    );
+
     // TURRET_NORMAL
     public static final COIBuildingType TURRET_NORMAL = new COIBuildingType (
             "TURRET",
@@ -112,7 +122,7 @@ public class COIBuildingType {
             "防空塔",
             SkullUtils.createPlayerHead(COIHeadType.KILL.getTextures()),
             """
-            防御炮塔会自动检测30格范围内的空中飞行单位,并自动攻击.
+            防御炮塔会自动检测50格范围内的空中飞行单位,并自动攻击.
             可建造数量等于基地等级""",
             5,
             5L

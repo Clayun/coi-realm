@@ -2,6 +2,7 @@ package com.mcylm.coi.realm.listener;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.clipboard.PlayerClipboard;
+import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COIServerMode;
 import com.mcylm.coi.realm.events.BuildingTouchEvent;
@@ -122,20 +123,27 @@ public class PlayerInteractListener implements Listener {
             Location location = clickedBlock.getLocation();
 
             COIBuilding building = BuildData.getBuildingByBlock(clickedBlock);
-            if (building != null) {
+            if (building != null && !building.getType().equals(COIBuildingType.BRIDGE)) {
 
                 if (building.getTeam() == TeamUtils.getTeamByPlayer(event.getPlayer())) {
                     new BuildEditGUI(event.getPlayer(), building).open();
                 }
             } else {
 
-                Player player = event.getPlayer();
+                if(building != null && building.getType().equals(COIBuildingType.BRIDGE)
+                    && event.getPlayer().isSneaking()){
+                    new BuildEditGUI(event.getPlayer(), building).open();
+                }else{
+                    Player player = event.getPlayer();
 
-                if (Selector.selectors.containsKey(player)) {
-                    Selector.selectors.get(player).selectLocation(location);
-                } else {
-                    new BuilderGUI(player, location);
+                    if (Selector.selectors.containsKey(player)) {
+                        Selector.selectors.get(player).selectLocation(location);
+                    } else {
+                        new BuilderGUI(player, location);
+                    }
                 }
+
+
             }
         }
 

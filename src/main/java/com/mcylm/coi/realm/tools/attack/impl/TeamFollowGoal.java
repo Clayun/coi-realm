@@ -65,17 +65,7 @@ public class TeamFollowGoal extends SimpleGoal {
         if (needFollow) {
             npc.setTarget(null);
             if (npc.getLocation() != null && npc.getLocation().distance(npc.getCommander().getLocation()) >= 3) {
-                // 跟随时，移动速度加快
-                LivingEntity entity = npc.getCommander();
-                entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.5);
-
                 npc.findPath(followingEntity.getLocation());
-            }else{
-                // 跟随到了，就减速
-                LivingEntity entity = npc.getCommander();
-                // 设置移动速度为原本的速度
-                entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.3);
-
             }
         }
 

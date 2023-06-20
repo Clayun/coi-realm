@@ -47,7 +47,7 @@ public class COIAirRaid extends COIBuilding {
         // 每次攻击的间隔时间
         this.coolDown = 3;
         // 攻击半径，如果发射方块和目标之间有其他方块挡着，是不会触发攻击的
-        this.radius = 30;
+        this.radius = 50;
         // 弹药库，如果里面有弹药，才能正常攻击，否则无法攻击
         // 每次攻击消耗 1 颗绿宝石
         // “大炮一响，黄金万两”

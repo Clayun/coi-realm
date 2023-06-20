@@ -141,17 +141,23 @@ public class BasicGameTask implements GameTaskApi {
         // 2.游戏结束后启动 GameStoppingTask
         new BukkitRunnable() {
 
-            int count = 0;
-
             BossBar bossBar = BossBar.bossBar(
                     Component.text(LoggerUtils.replaceColor("&c战斗开始了，快速获取战备物资，击败他们")),
                     1,
                     BossBar.Color.RED,
                     BossBar.Overlay.NOTCHED_10);
 
+            Long count = 0l;
+
             @Override
             public void run() {
-                count ++;
+
+                LocalDateTime now = LocalDateTime.now();
+
+                Duration duration = Duration.between(Entry.getGame().getStartTime(),now);
+
+                // 已经过去的秒数
+                count = duration.getSeconds();
 
                 if(count >= gamingTimer){
 
@@ -168,7 +174,7 @@ public class BasicGameTask implements GameTaskApi {
 
                 }else{
                     // 倒计时的秒数
-                    Integer countdown = gamingTimer - count;
+                    Long countdown = gamingTimer - count;
                     // boss bar 的进度条
                     float progress = countdown.floatValue() / gamingTimer.floatValue();
 
@@ -198,7 +204,7 @@ public class BasicGameTask implements GameTaskApi {
                     // 检查游戏是否结束
                     if(Entry.getGame().checkGameComplete()){
                         // 下一秒进入结算回合
-                        count = gamingTimer;
+                        count = Long.valueOf(gamingTimer);
                     }
                 }
 
@@ -344,7 +350,7 @@ public class BasicGameTask implements GameTaskApi {
 
     }
 
-    private String convertSecondsToHHmmss(int totalSeconds) {
+    private String convertSecondsToHHmmss(Long totalSeconds) {
 
         if(totalSeconds  > 3600){
             // 大于一小时
@@ -354,8 +360,8 @@ public class BasicGameTask implements GameTaskApi {
             long remainingSeconds = duration.minusHours(hours).minusMinutes(minutes).getSeconds();
             return String.format("%02d小时%02d分钟%02d秒", hours, minutes, remainingSeconds);
         }else{
-            int minutes = totalSeconds / 60; // 计算分钟数
-            int seconds = totalSeconds % 60; // 计算剩余的秒数
+            long minutes = totalSeconds / 60; // 计算分钟数
+            long seconds = totalSeconds % 60; // 计算剩余的秒数
             return String.format("%02d分钟%02d秒", minutes, seconds); // 将分钟数和秒数格式化为字符串
         }
 

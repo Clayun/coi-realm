@@ -515,7 +515,11 @@ public class GameListener implements Listener {
         while(iterator.hasNext()){
             ItemStack item = iterator.next();
 
-            if (item.getType() != Material.getMaterial(material)) {
+            // 绿宝石和鞘翅组合掉落
+            if (item.getType() != Material.getMaterial(material)
+                && item.getType() != Material.ELYTRA
+                && item.getType() != Material.FIREWORK_ROCKET
+            ) {
                 needSave.add(item);
                 event.getItemsToKeep().add(item);
             }

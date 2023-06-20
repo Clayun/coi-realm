@@ -6,6 +6,7 @@ import com.mcylm.coi.realm.model.COIStructure;
 import com.mcylm.coi.realm.tools.building.LineBuild;
 import com.mcylm.coi.realm.utils.LocationUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -23,8 +24,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-@Setter
-@Getter
+@Data
 public class LineSelector implements Selector {
 
     private Player player;

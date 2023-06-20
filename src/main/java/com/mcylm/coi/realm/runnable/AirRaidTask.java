@@ -125,7 +125,7 @@ public class AirRaidTask {
                     Player p = (Player)e;
 
                     // 飞行中的玩家锁定
-                    if(p.isGliding()){
+                    if(p.isGliding() || p.isFlying()){
                         // 先将实体当作玩家判断是否是本小队的
                         // 同时将观察者剔除
                         if(TeamUtils.getTeamByPlayer(p) != torreta.getTeam()

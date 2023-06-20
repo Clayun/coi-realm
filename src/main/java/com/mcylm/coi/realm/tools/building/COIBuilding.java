@@ -305,9 +305,11 @@ public abstract class COIBuilding implements Serializable {
         spawnFirework(location);
         // 玩家新增建造奖励
         if(getType().equals(COIBuildingType.WALL_NORMAL)
-            || getType().equals(COIBuildingType.DOOR_NORMAL)){
-            // 城墙或者门奖励有限
-            getTeam().addScore(COIScoreType.BUILD_WALL,player);
+            || getType().equals(COIBuildingType.DOOR_NORMAL)
+            || getType().equals(COIBuildingType.BRIDGE)
+        ){
+            // 基础设施奖励，桥，门，墙等
+            getTeam().addScore(COIScoreType.BUILD_INFRASTRUCTURE,player);
         }else{
             getTeam().addScore(COIScoreType.BUILD,player);
         }

@@ -5,8 +5,10 @@ import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COIUnlockType;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
+import com.mcylm.coi.realm.tools.building.FloatableBuild;
 import com.mcylm.coi.realm.tools.building.LineBuild;
 import com.mcylm.coi.realm.tools.selection.AreaSelector;
+import com.mcylm.coi.realm.tools.selection.FloatableSelector;
 import com.mcylm.coi.realm.tools.selection.LineSelector;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.GUIUtils;
@@ -98,7 +100,9 @@ public class BuilderGUI{
                                             if (building.getStructureByLevel() != null) {
                                                 if (building instanceof LineBuild lineBuild) {
                                                     new LineSelector(p, lineBuild, location);
-                                                } else {
+                                                }else if (building instanceof FloatableBuild floatableBuild){
+                                                    new FloatableSelector(p, floatableBuild, location);
+                                                }else {
                                                     new AreaSelector(p, building, location);
                                                 }
                                             } else {

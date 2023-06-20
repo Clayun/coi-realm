@@ -28,18 +28,22 @@ public class SnowballCoolDownListener implements Listener {
     public void onSnowballLaunch(ProjectileLaunchEvent event) {
         if (event.getEntity().getShooter() instanceof Player) {
             Player player = (Player) event.getEntity().getShooter();
-            if (coolDowns.containsKey(player)) {
-                long lastThrowTime = coolDowns.get(player);
-                long currentTime = System.currentTimeMillis();
-                if (currentTime - lastThrowTime < coolDownTime) {
-                    event.setCancelled(true); // 取消扔雪球事件
 
-                    LoggerUtils.sendActionbar(player,"&c你需要等待 &b" + (coolDownTime - (currentTime - lastThrowTime)) / 1000 + " &c秒后才能再次发射！");
+            // 仅限雪球
+            if(event.getEntity().getType().equals(EntityType.SNOWBALL)){
+                if (coolDowns.containsKey(player)) {
+                    long lastThrowTime = coolDowns.get(player);
+                    long currentTime = System.currentTimeMillis();
+                    if (currentTime - lastThrowTime < coolDownTime) {
+                        event.setCancelled(true); // 取消扔雪球事件
+
+                        LoggerUtils.sendActionbar(player,"&c你需要等待 &b" + (coolDownTime - (currentTime - lastThrowTime)) / 1000 + " &c秒后才能再次发射！");
+                    } else {
+                        coolDowns.put(player, currentTime);
+                    }
                 } else {
-                    coolDowns.put(player, currentTime);
+                    coolDowns.put(player, System.currentTimeMillis());
                 }
-            } else {
-                coolDowns.put(player, System.currentTimeMillis());
             }
         }
     }

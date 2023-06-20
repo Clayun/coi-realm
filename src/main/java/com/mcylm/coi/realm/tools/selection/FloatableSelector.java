@@ -2,16 +2,16 @@ package com.mcylm.coi.realm.tools.selection;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import com.mcylm.coi.realm.Entry;
+import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.model.COIBlock;
 import com.mcylm.coi.realm.model.COIStructure;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.FloatableBuild;
 import com.mcylm.coi.realm.tools.data.metadata.BuildData;
+import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.particle.ParticleRect;
 import com.mcylm.coi.realm.utils.region.Region;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -28,7 +28,7 @@ import java.util.Set;
 import java.util.stream.IntStream;
 
 @Data
-public class AreaSelector implements Selector {
+public class FloatableSelector implements Selector{
 
     private Player player;
     private boolean canPlace = false;
@@ -39,10 +39,19 @@ public class AreaSelector implements Selector {
     private COIStructure structure;
     private Set<FallingBlock> fakeBlocks = new HashSet<>();
 
-    public AreaSelector(Player p, COIBuilding building, Location location) {
+    public FloatableSelector(Player p, COIBuilding building, Location location) {
         this.player = p;
         this.selectedLocation = location;
+
+        // 检测 selectedLocation 周围是空气的位置并选中
+
+        if(!checkAirLocation()){
+            LoggerUtils.sendMessage("&c当前建筑不能建造在这里",p);
+            return;
+        }
+
         this.stop = false;
+
         this.building = building;
         selectors.put(p, this);
 
@@ -71,6 +80,40 @@ public class AreaSelector implements Selector {
                 }
             }
         }.runTaskTimerAsynchronously(Entry.getInstance(), 5, 5); // 间隔修改为1/4秒
+    }
+
+    private boolean checkAirLocation(){
+        // 判断前后左右
+        // 即x+1/-1 z+1/-1这四个位置，如果都不是空气，之间false
+        Location clone = this.selectedLocation.clone();
+        clone.setX(clone.getX() + 1);
+        if(!clone.getBlock().isSolid()){
+            this.selectedLocation = clone;
+            return true;
+        }
+
+        Location clone2 = this.selectedLocation.clone();
+        clone2.setX(clone2.getX() - 1);
+        if(!clone2.getBlock().isSolid()){
+            this.selectedLocation = clone2;
+            return true;
+        }
+
+        Location clone3 = this.selectedLocation.clone();
+        clone3.setZ(clone3.getZ() + 1);
+        if(!clone3.getBlock().isSolid()){
+            this.selectedLocation = clone3;
+            return true;
+        }
+
+        Location clone4 = this.selectedLocation.clone();
+        clone4.setZ(clone4.getZ() - 1);
+        if(!clone4.getBlock().isSolid()){
+            this.selectedLocation = clone4;
+            return true;
+        }
+
+        return false;
     }
 
 
@@ -124,27 +167,25 @@ public class AreaSelector implements Selector {
 
         for (Block block : region.getBlocks()) {
             if (BuildData.getBuildingByBlock(block) != null) {
-                canPlace = false;
+
+                COIBuilding buildingByBlock = BuildData.getBuildingByBlock(block);
+
+                // 不是桥的情况下，禁止建造
+                if(!buildingByBlock.getType().equals(COIBuildingType.BRIDGE)){
+                    canPlace = false;
+                }
+
             }
 
+            // 这个时候要判断是否脚底下是虚空，必须是虚空才能造
             Location clone = block.getLocation().clone();
-            clone.setY(clone.getY() + 1);
-            if(clone.getBlock().isSolid()){
-                // 建筑只能在完全空白的地方建造
-                canPlace = false;
-            }
-        }
-        Region regionFloor = new Region(start.clone(), end.clone().set(end.getX(), start.getY() - 1, end.getZ()));
-        Set<Block> blocks = regionFloor.getBlocks();
-        int emptyCount = 0;
-        for (Block block : blocks) {
-            if (!block.isSolid()) {
-                emptyCount++;
-            }
-        }
-        if (!(building instanceof FloatableBuild)) {
-            if ((float) emptyCount / blocks.size() >= 0.4) {
-                canPlace = false;
+
+            for(int i = 0 ;i < clone.getY();i++){
+                clone.setY(i);
+                if(clone.getBlock().isSolid()){
+                    canPlace = false;
+                    break;
+                }
             }
         }
 
@@ -210,24 +251,28 @@ public class AreaSelector implements Selector {
 
         for (Block block : region.getBlocks()) {
             if (BuildData.getBuildingByBlock(block) != null) {
-                canPlace = false;
+
+                COIBuilding buildingByBlock = BuildData.getBuildingByBlock(block);
+
+                // 不是桥的情况下，禁止建造
+                if(!buildingByBlock.getType().equals(COIBuildingType.BRIDGE)){
+                    canPlace = false;
+                }
+
+            }
+
+            // 这个时候要判断是否脚底下是虚空，必须是虚空才能造
+            Location clone = block.getLocation().clone();
+
+            for(int i = 0 ;i < clone.getY();i++){
+                clone.setY(i);
+                if(clone.getBlock().isSolid()){
+                    canPlace = false;
+                    break;
+                }
             }
         }
 
-
-        Region regionFloor = new Region(start.clone(), end.clone().set(end.getX(), start.getY() - 1, end.getZ()));
-        Set<Block> blocks = regionFloor.getBlocks();
-        int emptyCount = 0;
-        for (Block block : blocks) {
-            if (!block.isSolid()) {
-                emptyCount++;
-            }
-        }
-        if (!(building instanceof FloatableBuild)) {
-            if ((float) emptyCount / blocks.size() >= 0.4) {
-                canPlace = false;
-            }
-        }
         if (canPlace) {
             stop(false);
             selectedLocation.setYaw(yaw);
@@ -340,5 +385,4 @@ public class AreaSelector implements Selector {
             fakeBlocks.clear();
         });
     }
-
 }

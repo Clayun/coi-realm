@@ -7,10 +7,13 @@ import com.mcylm.coi.realm.gui.ChooseTeamGUI;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.npc.monster.COIPillagerCreator;
 import com.mcylm.coi.realm.utils.*;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -53,6 +56,24 @@ public class DebugCommand implements CommandExecutor {
                 throw new RuntimeException(e);
             }
 
+        }
+
+        if(args[0].equalsIgnoreCase("speed")){
+
+            if(args.length < 3){
+                LoggerUtils.sendMessage("参数错误。",commandSender);
+                return false;
+            }
+            String targetPlayerName = args[1];
+
+            Player target = Bukkit.getPlayer(targetPlayerName);
+
+            if(target != null){
+                // 更改移动速度
+                LivingEntity entity = target;
+                entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(Double.valueOf(args[2]));
+
+            }
         }
 
         if(args[0].equalsIgnoreCase("test")){

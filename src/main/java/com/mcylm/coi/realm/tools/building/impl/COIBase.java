@@ -66,6 +66,6 @@ public class COIBase extends COIBuilding {
 
     @Override
     public int getMaxHealth() {
-        return 1000 + getLevel() * 1000;
+        return 500 + getLevel() * 500;
     }
 }

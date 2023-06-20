@@ -294,37 +294,37 @@ public enum COIPropType {
             1
     ),
 
-//    FIREWORK_ROCKET(
-//            "FIREWORK_ROCKET",
-//            "助推器",
-//            new ItemStack(Material.FIREWORK_ROCKET),
-//            1,
-//            "装备鞘翅后，滑翔的过程中" +
-//                    "使用助推器可以加速飞行" +
-//                    "但是小心别把自己摔死了！" +
-//                    "这玩意可不防摔！！" +
-//                    "每次消耗8个资源" +
-//                    "请务必配合*鞘翅*使用。",
-//            500,
-//            COIBuildingType.FORGE,
-//            1,
-//            5
-//    ),
-//
-//    ELYTRA(
-//            "ELYTRA",
-//            "鞘翅",
-//            new ItemStack(Material.ELYTRA),
-//            1,
-//            "这是可以帮你在天上滑行的好东西。" +
-//                    "但是小心别把自己摔死了！" +
-//                    "这玩意可不防摔！！" +
-//                    "可以配合*喷气动力鞋*使用。",
-//            500,
-//            COIBuildingType.FORGE,
-//            1,
-//            5
-//    ),
+    FIREWORK_ROCKET(
+            "FIREWORK_ROCKET",
+            "助推器",
+            new ItemStack(Material.FIREWORK_ROCKET),
+            1,
+            "装备鞘翅后，滑翔的过程中" +
+                    "使用助推器可以加速飞行" +
+                    "但是小心别把自己摔死了！" +
+                    "这玩意可不防摔！！" +
+                    "每次消耗8个资源" +
+                    "请务必配合*鞘翅*使用。",
+            2000,
+            COIBuildingType.FORGE,
+            1,
+            5
+    ),
+
+    ELYTRA(
+            "ELYTRA",
+            "鞘翅",
+            new ItemStack(Material.ELYTRA),
+            1,
+            "这是可以帮你在天上滑行的好东西。" +
+                    "但是小心别把自己摔死了！" +
+                    "这玩意可不防摔！！" +
+                    "可以配合*喷气动力鞋*使用。",
+            2000,
+            COIBuildingType.FORGE,
+            1,
+            5
+    ),
 
 
     ;

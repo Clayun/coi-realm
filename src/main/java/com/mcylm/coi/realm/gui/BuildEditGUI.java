@@ -41,8 +41,11 @@ public class BuildEditGUI extends Gui {
 
                 if((building.getBuildPlayerName() != null
                         && building.getBuildPlayerName().equals(getPlayer().getName()))
-                    || building.getType() == COIBuildingType.WALL_NORMAL){
-                    // 建筑是当前玩家建造的或者是城墙，允许拆除
+                    || building.getType() == COIBuildingType.WALL_NORMAL
+                    || building.getType() == COIBuildingType.DOOR_NORMAL
+                    || building.getType() == COIBuildingType.BRIDGE
+                ){
+                    // 建筑是当前玩家建造的或者是城墙，门，桥，允许拆除
 
                     populator.accept(ItemStackBuilder.of(Material.BARRIER)
                             .name("&c拆除")
