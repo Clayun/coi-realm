@@ -77,6 +77,18 @@ public class COIUnlockType {
             1
     );
 
+    public static final COIUnlockType LOCK_BRIDGE = new COIUnlockType(
+            "LOCK_BRIDGE",
+            "&c尚未解锁 &b桥",
+            SkullUtils.createPlayerHead(COIHeadType.LOCK_CHEST.getTextures()),
+            """
+            升级基地到3级解锁""",
+            COIBuildingType.BRIDGE,
+            COIBuildingType.BASE,
+            1,
+            3
+    );
+
     public static final COIUnlockType LOCK_REPAIR = new COIUnlockType(
             "LOCK_REPAIR",
             "&c尚未解锁 &b修复塔",

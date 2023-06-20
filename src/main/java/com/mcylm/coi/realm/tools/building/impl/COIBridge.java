@@ -30,7 +30,7 @@ public class COIBridge extends FloatableBuild {
     @Override
     public BuildingConfig getDefaultConfig() {
         return new BuildingConfig()
-                .setConsume(32)
+                .setConsume(64)
                 .setMaxLevel(2)
                 .setMaxBuild(9999)
                 .setStructures(getBuildingLevelStructure());

@@ -99,8 +99,7 @@ public class COIBuildingType {
             "基础防御炮塔",
             SkullUtils.createPlayerHead(COIHeadType.KILL.getTextures()),
             """
-            防御炮塔会自动检测30格范围内的敌方单位,并自动攻击.
-            可建造数量等于基地等级""",
+            防御炮塔会消耗子弹自动检测30格范围内的敌方单位,并自动攻击.""",
             5,
             5L
     );
@@ -111,7 +110,7 @@ public class COIBuildingType {
             "维修塔",
             SkullUtils.createPlayerHead(COIHeadType.REPAIR.getTextures()),
             """
-            自动给30格范围内友方单位回血""",
+            会消耗子弹自动给30格范围内友方单位回血""",
             5,
             5L
     );
@@ -122,8 +121,7 @@ public class COIBuildingType {
             "防空塔",
             SkullUtils.createPlayerHead(COIHeadType.KILL.getTextures()),
             """
-            防御炮塔会自动检测50格范围内的空中飞行单位,并自动攻击.
-            可建造数量等于基地等级""",
+            防御炮塔会消耗子弹自动检测50格范围内的空中飞行单位,并自动攻击.""",
             5,
             5L
     );
@@ -134,9 +132,7 @@ public class COIBuildingType {
             "铁匠铺",
             new ItemStack(Material.ANVIL),
             """
-            自动给友方的战士打造装备,
-            建筑升级，装备也会跟着升级.
-            按下Shift+右键可以购买道具""",
+            自动给友方的战士打造装备，右键可以购买道具""",
             5,
             5L
     );
