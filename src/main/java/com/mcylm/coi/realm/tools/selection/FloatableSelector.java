@@ -174,8 +174,7 @@ public class FloatableSelector implements Selector{
 
         for (Block block : region.getBlocks()) {
             COIBuilding buildingByBlock = BuildData.getBuildingByBlock(block);
-            if (buildingByBlock != null
-                    && !buildingByBlock.getType().equals(COIBuildingType.BRIDGE)) {
+            if (!(buildingByBlock instanceof FloatableBuild)) {
                 canPlace = false;
             }
 
