@@ -63,7 +63,7 @@ public class COIFarmer extends COIEntity {
                 if (item != null) {
                     if (item.getAmount() >= 1 && item.getType().equals(Material.WHEAT)) {
                         getFarmerInventory().remove(item);
-                        getFarmerInventory().addItem(new ItemStack(Material.BREAD, item.getAmount() * 4));
+                        getFarmerInventory().addItem(new ItemStack(Material.BREAD, item.getAmount() * (1 + getCoiNpc().getLevel())));
                     }
                 }
             }
@@ -120,8 +120,8 @@ public class COIFarmer extends COIEntity {
             return;
         }
 
-        // 最多有6块耕地
-        if(farmlands.size() >= 6){
+        // 最多有8块耕地
+        if(farmlands.size() >= 8){
 
             Iterator<Block> iterator = getFarmlands().iterator();
 
