@@ -84,8 +84,6 @@ public class SkinGUI {
                                     LoggerUtils.sendMessage("&a已装备皮肤："+coiSkin.getName(), p);
                                 }
 
-                                paginatedGui.close();
-
                             }));
                 }else{
                     // 不满足解锁条件

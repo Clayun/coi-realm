@@ -825,6 +825,16 @@ public abstract class COIBuilding implements Serializable {
 
         setAlive(false);
         team.getFoodChests().removeAll(getChestsLocation());
+
+        // 掉落建造成本的一部分
+        int returnResource = getDestroyReturn();
+        int group = returnResource / 64;
+        int amount = returnResource % 64;
+        Material material = getResourceType();
+        for (int i = 0; i < group; i++) {
+            getLocation().getWorld().dropItemNaturally(getLocation(), new ItemStack(material, 64));
+        }
+        getLocation().getWorld().dropItemNaturally(getLocation(), new ItemStack(material, amount));
     }
 
     public Location getHologramPoint() {

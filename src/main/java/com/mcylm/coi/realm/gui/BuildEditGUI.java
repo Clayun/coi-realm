@@ -63,15 +63,6 @@ public class BuildEditGUI extends Gui {
                                     return;
                                 }
                                 building.destroy(true);
-                                int returnResource = building.getDestroyReturn();
-                                int group = returnResource / 64;
-                                int amount = returnResource % 64;
-                                Material material = building.getResourceType();
-                                for (int i = 0; i < group; i++) {
-                                    getPlayer().getWorld().dropItemNaturally(getPlayer().getLocation(), new ItemStack(material, 64));
-                                }
-
-                                getPlayer().getWorld().dropItemNaturally(getPlayer().getLocation(), new ItemStack(material, amount));
                                 close();
                             })
 
