@@ -2,7 +2,6 @@ package com.mcylm.coi.realm.runnable;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIGameStatus;
-import com.mcylm.coi.realm.game.COIGame;
 import com.mcylm.coi.realm.model.COIPlayerScore;
 import com.mcylm.coi.realm.model.COIScoreDetail;
 import com.mcylm.coi.realm.runnable.api.GameTaskApi;
@@ -15,7 +14,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
+import org.bukkit.GameRule;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -139,6 +139,8 @@ public class BasicGameTask implements GameTaskApi {
         // 游戏中进程
         // 1.开启倒计时
         // 2.游戏结束后启动 GameStoppingTask
+        World world = Bukkit.getWorld(Entry.WORLD);
+        world.setGameRule(GameRule.DO_MOB_SPAWNING, false); // 禁止生物自然生成
         new BukkitRunnable() {
 
             BossBar bossBar = BossBar.bossBar(
