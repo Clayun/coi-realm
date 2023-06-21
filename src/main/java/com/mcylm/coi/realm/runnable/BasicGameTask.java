@@ -140,7 +140,7 @@ public class BasicGameTask implements GameTaskApi {
         // 1.开启倒计时
         // 2.游戏结束后启动 GameStoppingTask
         World world = Bukkit.getWorld(Entry.WORLD);
-        world.setGameRule(GameRule.DO_MOB_SPAWNING, false); // 禁止生物自然生成
+        Entry.runSync(() -> world.setGameRule(GameRule.DO_MOB_SPAWNING, false)); // 禁止生物自然生成
         new BukkitRunnable() {
 
             BossBar bossBar = BossBar.bossBar(
