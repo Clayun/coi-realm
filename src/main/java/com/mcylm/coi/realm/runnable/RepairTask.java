@@ -2,11 +2,9 @@ package com.mcylm.coi.realm.runnable;
 
 
 import com.mcylm.coi.realm.Entry;
-import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.tools.attack.target.impl.BuildingTarget;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.impl.COIRepair;
-import com.mcylm.coi.realm.tools.building.impl.COITurret;
 import com.mcylm.coi.realm.tools.data.metadata.BuildData;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.LocationUtils;
@@ -14,15 +12,17 @@ import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 
@@ -114,29 +114,36 @@ public class RepairTask {
 
         }else{
             // 没有NPC或者玩家，就找建筑回血
-            BuildingTarget friendlyBuilding = getFriendlyBuilding(l, this.turret);
+            RepairTask task = this;
+            new BukkitRunnable() {
+                @Override
+                public void run() {
 
-            if(friendlyBuilding != null){
+                    BuildingTarget friendlyBuilding = getFriendlyBuilding(l, task.turret);
 
-                // 扣除玩家背包里的资源
-                boolean b = deductionResources(this.turret.getAmmunitionConsumption());
+                    Entry.runSync((() -> {
+                        if (friendlyBuilding != null) {
 
-                if (!b) {
-                    LoggerUtils.sendActionbar(Bukkit.getPlayer(this.turret.getBuildPlayerName()),"防御塔没弹药了，无法给友方单位回血！请尽快补充弹药");
-                    return;
+                            // 扣除玩家背包里的资源
+                            boolean b = deductionResources(task.turret.getAmmunitionConsumption());
+
+                            if (!b) {
+                                LoggerUtils.sendActionbar(Bukkit.getPlayer(task.turret.getBuildPlayerName()), "防御塔没弹药了，无法给友方单位回血！请尽快补充弹药");
+                                return;
+                            }
+
+                            // 建筑存在，就给建筑回血
+                            double minDamage = task.turret.getMinDamage() * 100.0D;
+                            double maxDamage = task.turret.getMaxDamage() * 100.0D;
+                            double realDamage = getNumeroAleatorio((int) minDamage, (int) maxDamage) / 100.0D;
+
+                            friendlyBuilding.getBuilding().repair((int) realDamage);
+
+                            COIRepair.animationBlock(friendlyBuilding.getTargetLocation(), l, task.turret);
+                        }
+                    }));
                 }
-
-                // 建筑存在，就给建筑回血
-                double minDamage = this.turret.getMinDamage() * 100.0D;
-                double maxDamage = this.turret.getMaxDamage() * 100.0D;
-                double realDamage = getNumeroAleatorio((int)minDamage, (int)maxDamage) / 100.0D;
-
-                friendlyBuilding.getBuilding().repair((int)realDamage);
-
-                COIRepair.animationBlock(friendlyBuilding.getTargetLocation(), l,this.turret);
-
-
-            }
+            }.runTaskAsynchronously(Entry.getInstance());
         }
     }
 
