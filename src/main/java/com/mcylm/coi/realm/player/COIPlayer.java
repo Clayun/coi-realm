@@ -1,5 +1,6 @@
 package com.mcylm.coi.realm.player;
 
+import com.mcylm.coi.realm.model.COISkin;
 import com.mcylm.coi.realm.player.settings.PlayerSettings;
 import com.mcylm.coi.realm.tools.attack.target.Target;
 import com.mcylm.coi.realm.tools.attack.team.AttackTeam;
@@ -9,9 +10,7 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class COIPlayer {
 
@@ -44,6 +43,11 @@ public class COIPlayer {
     @Getter
     private PlayerSettings settings = new PlayerSettings();
 
+    // 玩家已选择并使用的建筑皮肤
+    @Setter
+    @Getter
+    private HashMap<String,COISkin> selectedSkins;
+
 
     public Player getBukkitPlayer() {
         return player;
@@ -53,6 +57,7 @@ public class COIPlayer {
         this.player = player;
         this.attackTeam = new AttackTeam().setCommander(player).setMembers(new ArrayList<>());
         this.lastDamageBuilding = null;
+        this.selectedSkins = new HashMap<>();
 
         // TODO 玩家设置部分待开发
     }

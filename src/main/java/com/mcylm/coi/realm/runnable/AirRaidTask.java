@@ -13,10 +13,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -88,8 +85,17 @@ public class AirRaidTask {
                 double realDamage = getNumeroAleatorio((int)minDamage, (int)maxDamage) / 100.0D;
 
                 animation(entity);
-                ((LivingEntity)entity).damage(realDamage);
-                ((LivingEntity)entity).setNoDamageTicks(0);
+
+                if(entity instanceof LivingEntity){
+                    ((LivingEntity)entity).damage(realDamage);
+                    ((LivingEntity)entity).setNoDamageTicks(0);
+                }else{
+                    // 直接删除，并创造一个爆炸
+                    entity.getLocation().createExplosion(3,false, false);
+                    entity.remove();
+
+                }
+
             }
 
 
@@ -133,6 +139,17 @@ public class AirRaidTask {
                             // 非小队内成员，同时非所属人
                             // 就设置为攻击目标
                             attackPermission = true;
+                        }
+                    }
+                }else if(e.getType().equals(EntityType.SNOWBALL)){
+                    // 雪球的话，非己方玩家的直接抹杀
+                    if(e instanceof Projectile projectile){
+                        if(projectile.getShooter() instanceof Player shooter){
+                            if(TeamUtils.getTeamByPlayer(shooter) != torreta.getTeam()){
+                                // 非小队内成员，同时非所属人
+                                // 就设置为攻击目标
+                                attackPermission = true;
+                            }
                         }
                     }
                 }

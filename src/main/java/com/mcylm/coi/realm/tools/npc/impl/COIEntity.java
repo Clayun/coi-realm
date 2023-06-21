@@ -329,11 +329,12 @@ public class COIEntity implements AI {
                                 } else {
                                     if (tick++ == 20) {
                                         tick = 0;
-                                        if (hologramVisitors.get(p).decrementAndGet() == 0) {
-                                            holograms.remove(p);
-                                            hologramVisitors.remove(p);
+                                        if(hologramVisitors.get(p) != null){
+                                            if (hologramVisitors.get(p).decrementAndGet() == 0) {
+                                                holograms.remove(p);
+                                                hologramVisitors.remove(p);
+                                            }
                                         }
-
                                     }
 
                                     if (isAlive()) {

@@ -97,6 +97,10 @@ public abstract class COIBuilding implements Serializable {
     // key为等级，value是建筑结构文件名称
     protected Map<Integer, String> buildingLevelStructure = new HashMap<>();
 
+    // 皮肤等级对照建筑结构表
+    // 默认为 null
+    protected Map<Integer, String> currentSkinStructure = null;
+
     // 建筑生成的NPC创建器，不生成NPC就设置NULL
     protected List<COINpc> npcCreators = new ArrayList<>();
 
@@ -428,6 +432,13 @@ public abstract class COIBuilding implements Serializable {
      * @return
      */
     public String getStructureByLevel() {
+
+        // 如果设置了皮肤，就用皮肤
+        if(getCurrentSkinStructure() != null){
+            return getCurrentSkinStructure().get(getLevel());
+        }
+
+        // 否则用默认模板
         return getBuildingLevelStructure().get(getLevel());
     }
 

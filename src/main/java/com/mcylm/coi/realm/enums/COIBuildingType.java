@@ -1,16 +1,19 @@
 package com.mcylm.coi.realm.enums;
 
+import com.mcylm.coi.realm.enums.types.COIBuildingTypes;
+import com.mcylm.coi.realm.enums.types.COIUnlockTypes;
 import com.mcylm.coi.realm.utils.SkullUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Set;
+
 /**
  * 建筑类型
  */
 @Getter
-@AllArgsConstructor
 public class COIBuildingType {
     // BASE
     public static final COIBuildingType BASE = new COIBuildingType (
@@ -28,7 +31,7 @@ public class COIBuildingType {
     public static final COIBuildingType MILL = new COIBuildingType (
             "MILL",
             "磨坊",
-            SkullUtils.createPlayerHead(COIHeadType.FARMER.getTextures()),
+            new ItemStack(Material.HAY_BLOCK),
             """
             磨坊是食物收集类建筑.全自动生产面包到箱子中.
             请注意:每个NPC都需要食物补充能量,磨坊的是非常重要的建筑""",
@@ -40,7 +43,7 @@ public class COIBuildingType {
     public static final COIBuildingType STOPE = new COIBuildingType (
             "STOPE",
             "矿场",
-            SkullUtils.createPlayerHead(COIHeadType.MINER.getTextures()),
+            new ItemStack(Material.CHEST_MINECART),
             """
             矿场是资源收集类建筑.全自动生产绿宝石到箱子中
             收集的资源可用于建造新的建筑,或者给战士制作装备.""",
@@ -52,7 +55,7 @@ public class COIBuildingType {
     public static final COIBuildingType MILITARY_CAMP = new COIBuildingType (
             "MILITARY_CAMP",
             "军营",
-            SkullUtils.createPlayerHead(COIHeadType.SOLDIER.getTextures()),
+            new ItemStack(Material.IRON_SWORD),
             """
             兵营是战斗类建筑,建造完成后会生成一个战士,
             战士会默认自动巡逻,当发现敌方战士或者是敌方建筑时,
@@ -97,7 +100,7 @@ public class COIBuildingType {
     public static final COIBuildingType TURRET_NORMAL = new COIBuildingType (
             "TURRET",
             "基础防御炮塔",
-            SkullUtils.createPlayerHead(COIHeadType.KILL.getTextures()),
+            new ItemStack(Material.MUSIC_DISC_CHIRP),
             """
             防御炮塔会消耗子弹自动检测30格范围内的敌方单位,并自动攻击.""",
             5,
@@ -108,7 +111,7 @@ public class COIBuildingType {
     public static final COIBuildingType TURRET_REPAIR = new COIBuildingType (
             "REPAIR",
             "维修塔",
-            SkullUtils.createPlayerHead(COIHeadType.REPAIR.getTextures()),
+            new ItemStack(Material.MUSIC_DISC_CAT),
             """
             会消耗子弹自动给30格范围内友方单位回血""",
             5,
@@ -119,7 +122,7 @@ public class COIBuildingType {
     public static final COIBuildingType TURRET_AIR_RAID = new COIBuildingType (
             "AIR_RAID",
             "防空塔",
-            SkullUtils.createPlayerHead(COIHeadType.KILL.getTextures()),
+            new ItemStack(Material.MUSIC_DISC_13),
             """
             防御炮塔会消耗子弹自动检测50格范围内的空中飞行单位,并自动攻击.""",
             5,
@@ -149,6 +152,16 @@ public class COIBuildingType {
             5L
     );
 
+    public COIBuildingType(String code, String name, ItemStack itemType, String introduce, int unit, long interval) {
+        this.code = code;
+        this.name = name;
+        this.itemType = itemType;
+        this.introduce = introduce;
+        this.unit = unit;
+        this.interval = interval;
+        COIBuildingTypes.values().add(this);
+    }
+
     // CODE
     private String code;
     // 建筑名称 building name
@@ -162,6 +175,25 @@ public class COIBuildingType {
     private int unit;
     // 几tick建造一次
     private long interval;
+
+
+    /**
+     * 获取建筑类型
+     * @param code
+     * @return
+     */
+    public static COIBuildingType getBuildingTypeByCode(String code){
+        Set<COIBuildingType> values = COIBuildingTypes.values();
+
+        for(COIBuildingType coiBuildingType : values){
+            if(coiBuildingType.getCode().equals(code)){
+                return coiBuildingType;
+            }
+        }
+
+        return null;
+
+    }
 
 
 }

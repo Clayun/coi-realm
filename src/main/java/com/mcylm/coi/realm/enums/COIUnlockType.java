@@ -6,6 +6,7 @@ import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.SkullUtils;
 import lombok.Getter;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public class COIUnlockType {
     public static final COIUnlockType LOCK_MILL = new COIUnlockType(
             "LOCK_MILL",
             "&c尚未解锁 &b磨坊",
-            SkullUtils.createPlayerHead(COIHeadType.LOCK_CHEST.getTextures()),
+            new ItemStack(Material.CHEST),
             """
             建造1个矿场后解锁""",
             COIBuildingType.MILL,
@@ -32,7 +33,7 @@ public class COIUnlockType {
     public static final COIUnlockType LOCK_CAMP = new COIUnlockType(
             "LOCK_CAMP",
             "&c尚未解锁 &b军营",
-            SkullUtils.createPlayerHead(COIHeadType.LOCK_CHEST.getTextures()),
+            new ItemStack(Material.CHEST),
             """
             升级基地到2级解锁""",
             COIBuildingType.MILITARY_CAMP,
@@ -44,7 +45,7 @@ public class COIUnlockType {
     public static final COIUnlockType LOCK_WALL = new COIUnlockType(
             "LOCK_WALL",
             "&c尚未解锁 &b城墙",
-            SkullUtils.createPlayerHead(COIHeadType.LOCK_CHEST.getTextures()),
+            new ItemStack(Material.CHEST),
             """
             升级基地到2级解锁""",
             COIBuildingType.WALL_NORMAL,
@@ -56,7 +57,7 @@ public class COIUnlockType {
     public static final COIUnlockType LOCK_DOOR = new COIUnlockType(
             "LOCK_DOOR",
             "&c尚未解锁 &b城门",
-            SkullUtils.createPlayerHead(COIHeadType.LOCK_CHEST.getTextures()),
+            new ItemStack(Material.CHEST),
             """
             升级基地到2级解锁""",
             COIBuildingType.DOOR_NORMAL,
@@ -68,7 +69,7 @@ public class COIUnlockType {
     public static final COIUnlockType LOCK_TURRET = new COIUnlockType(
             "LOCK_TURRET",
             "&c尚未解锁 &b基础防御塔",
-            SkullUtils.createPlayerHead(COIHeadType.LOCK_CHEST.getTextures()),
+            new ItemStack(Material.CHEST),
             """
             基地到1级解锁""",
             COIBuildingType.TURRET_NORMAL,
@@ -80,7 +81,7 @@ public class COIUnlockType {
     public static final COIUnlockType LOCK_BRIDGE = new COIUnlockType(
             "LOCK_BRIDGE",
             "&c尚未解锁 &b桥",
-            SkullUtils.createPlayerHead(COIHeadType.LOCK_CHEST.getTextures()),
+            new ItemStack(Material.CHEST),
             """
             升级基地到3级解锁""",
             COIBuildingType.BRIDGE,
@@ -92,7 +93,7 @@ public class COIUnlockType {
     public static final COIUnlockType LOCK_REPAIR = new COIUnlockType(
             "LOCK_REPAIR",
             "&c尚未解锁 &b修复塔",
-            SkullUtils.createPlayerHead(COIHeadType.LOCK_CHEST.getTextures()),
+            new ItemStack(Material.CHEST),
             """
             任意1个矿场升级到3级,并且拥有5个矿场后解锁""",
             COIBuildingType.TURRET_REPAIR,
@@ -104,7 +105,7 @@ public class COIUnlockType {
     public static final COIUnlockType LOCK_FORGE = new COIUnlockType(
             "LOCK_FORGE",
             "&c尚未解锁 &b铁匠铺",
-            SkullUtils.createPlayerHead(COIHeadType.LOCK_CHEST.getTextures()),
+            new ItemStack(Material.CHEST),
             """
             升级基地到3级解锁""",
             COIBuildingType.FORGE,

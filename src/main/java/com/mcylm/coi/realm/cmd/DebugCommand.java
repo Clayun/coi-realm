@@ -76,6 +76,22 @@ public class DebugCommand implements CommandExecutor {
             }
         }
 
+        if(args[0].equalsIgnoreCase("fly")){
+
+            if(args.length < 3){
+                LoggerUtils.sendMessage("参数错误。",commandSender);
+                return false;
+            }
+            String targetPlayerName = args[1];
+
+            Player target = Bukkit.getPlayer(targetPlayerName);
+
+            if(target != null){
+                // 更改飞行速度
+                target.setFlySpeed(Float.valueOf(args[2]));
+            }
+        }
+
         if(args[0].equalsIgnoreCase("test")){
 
             ItemStack item = COIPropType.TOWN_PORTAL.getItemType().clone();

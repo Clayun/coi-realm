@@ -4,6 +4,9 @@ import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COIUnlockType;
+import com.mcylm.coi.realm.gui.GuiBuilder.COIPageGuiBuilder;
+import com.mcylm.coi.realm.model.COISkin;
+import com.mcylm.coi.realm.player.COIPlayer;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.FloatableBuild;
 import com.mcylm.coi.realm.tools.building.LineBuild;
@@ -56,13 +59,17 @@ public class BuilderGUI{
             return;
         }
 
-        PaginatedGuiBuilder builder = PaginatedGuiBuilder.create();
+        COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(p);
 
-        builder.title("&b&l选择你要的建筑");
-        builder.previousPageSlot(49);
-        builder.nextPageSlot(51);
-        builder.nextPageItem((pageInfo) -> ItemStackBuilder.of(Material.ARROW).name("&a下一页").build());
-        builder.previousPageItem((pageInfo) -> ItemStackBuilder.of(Material.ARROW).name("&a上一页").build());
+        COIPageGuiBuilder builder = COIPageGuiBuilder.create();
+
+        builder.title("&9&l选择你要的建筑");
+        builder.previousPageSlot(48);
+        builder.customSlot(49);
+        builder.nextPageSlot(50);
+        builder.nextPageItem((pageInfo) -> ItemStackBuilder.of(Material.COMPARATOR).name("&a下一页").build());
+        builder.previousPageItem((pageInfo) -> ItemStackBuilder.of(Material.REPEATER).name("&a上一页").build());
+        builder.customItem((pageInfo) -> ItemStackBuilder.of(Material.ENDER_CHEST).name("&d建筑皮肤").build());
 
         builder.build(p, paginatedGui -> {
             List<Item> items = new ArrayList<>();
@@ -96,7 +103,13 @@ public class BuilderGUI{
                                         if(team.getBuildingByType(building.getType()).size() < getMaxBuild(building,team)){
                                             // 建造数量没有满的时候，可以建造
                                             building.setTeam(team);
-                                            // building.build(location,getPlayer());
+
+                                            // 检测玩家是否实装了建筑皮肤
+                                            COISkin coiSkin = coiPlayer.getSelectedSkins().get(building.getType().getCode());
+                                            if(coiSkin != null){
+                                                building.setCurrentSkinStructure(coiSkin.getBuildingLevelStructure());
+                                            }
+
                                             if (building.getStructureByLevel() != null) {
                                                 if (building instanceof LineBuild lineBuild) {
                                                     new LineSelector(p, lineBuild, location);

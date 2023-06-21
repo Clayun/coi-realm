@@ -2,7 +2,6 @@ package com.mcylm.coi.realm.gui;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIGameStatus;
-import com.mcylm.coi.realm.enums.COIHeadType;
 import com.mcylm.coi.realm.enums.COIPropType;
 import com.mcylm.coi.realm.enums.COIUnlockType;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
@@ -47,7 +46,7 @@ public class ForgeGUI {
 
         PaginatedGuiBuilder builder = PaginatedGuiBuilder.create();
 
-        builder.title("&b&l选择你要打造的装备");
+        builder.title("&9&l选择你要打造的装备");
         builder.previousPageSlot(49);
         builder.nextPageSlot(51);
         builder.nextPageItem((pageInfo) -> ItemStackBuilder.of(Material.ARROW).name("&a下一页").build());
@@ -99,7 +98,7 @@ public class ForgeGUI {
                 }else{
                     // 不满足解锁条件
 
-                    ItemStack itemType = SkullUtils.createPlayerHead(COIHeadType.LOCK_CHEST.getTextures());
+                    ItemStack itemType = new ItemStack(Material.CHEST);
 
                     items.add(ItemStackBuilder.of(itemType.clone())
                             .name(prop.getName()+" &c尚未解锁")

@@ -457,6 +457,17 @@ public class Entry extends ExtendedJavaPlugin {
         }
     }
 
+    public void saveSkinData(SkinData data) {
+        if (data == null) {
+            data = new SkinData();
+        }
+        try (FileWriter writer = new FileWriter(skinDataFile)) {
+            GSON.toJson(data, writer);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void saveSkinData() {
         if (skinData == null) {
             skinData = new SkinData();

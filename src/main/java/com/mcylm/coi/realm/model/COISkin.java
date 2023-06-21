@@ -16,10 +16,12 @@ public class COISkin {
     private String code;
     // 皮肤名称
     private String name;
+    // GUI模型
+    private String material;
     // 玩家所需权限
     private String permission;
     // 皮肤所对应的建筑
-    private COIBuildingType buildingType;
+    private String buildingTypeCode;
     // 建筑等级模板文件
     private Map<Integer, String> buildingLevelStructure;
     // NPC的皮肤
