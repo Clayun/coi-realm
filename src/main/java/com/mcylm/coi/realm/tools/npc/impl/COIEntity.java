@@ -8,7 +8,6 @@ import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.runnable.NpcAITask;
 import com.mcylm.coi.realm.tools.data.metadata.EntityData;
 import com.mcylm.coi.realm.tools.npc.AI;
-import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
 import com.mcylm.coi.realm.tools.trait.DisguiseTrait;
 import com.mcylm.coi.realm.utils.*;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
@@ -19,7 +18,6 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.ai.PathStrategy;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.trait.VillagerProfession;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -30,7 +28,6 @@ import org.bukkit.entity.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import javax.annotation.Nullable;
@@ -91,8 +88,9 @@ public class COIEntity implements AI {
     private Map<Player, Hologram> holograms = new HashMap<>();
     private Map<Player, AtomicInteger> hologramVisitors = new HashMap<>();
 
-    private @Nullable PathStrategy currentPath;
-    private int findPathCooldown = 0;
+    @Nullable
+    protected PathStrategy currentPath;
+    protected int findPathCooldown = 0;
 
     // 构造NPC
     public COIEntity(COINpc npcCreator) {

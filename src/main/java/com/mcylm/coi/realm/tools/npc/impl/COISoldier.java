@@ -20,6 +20,7 @@ import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Getter;
 import lombok.Setter;
 import me.lucko.helper.Events;
+import net.citizensnpcs.api.ai.Navigator;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -353,5 +354,36 @@ public class COISoldier extends COIEntity implements Commandable {
 //        // 设置移动速度为 1.5倍速度
 //        entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(currentSpeed * 1.5);
 
+    }
+
+    @Override
+    public void findPath(Location location) {
+        if (!isAlive()) {
+            return;
+        }
+
+        if (!npc.isSpawned()) {
+            return;
+        }
+
+        if (currentPath != null && currentPath.getCurrentDestination() != null) {
+            if (currentPath.getCurrentDestination().distance(location) < 0.1) {
+                return;
+            }
+        }
+
+        if (findPathCooldown++ > 2) {
+            findPathCooldown = 0;
+        } else {
+            return;
+        }
+
+        npc.faceLocation(location);
+        Navigator navigator = npc.getNavigator();
+        navigator.getLocalParameters()
+                .stuckAction(null)
+                .useNewPathfinder(useNewPathfinder());
+
+        navigator.setTarget(location);
     }
 }
