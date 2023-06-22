@@ -22,7 +22,7 @@ public class SkinTypeGUI extends Gui {
             .mask("111111111");
 
     public SkinTypeGUI(Player player) {
-        super(player, 5, "&c&l请选择皮肤分类");
+        super(player, 3, "&c&l请选择皮肤分类");
     }
 
     @Override

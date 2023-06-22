@@ -5,6 +5,7 @@ import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COIHeadType;
 import com.mcylm.coi.realm.enums.COIPropType;
+import com.mcylm.coi.realm.gui.GuiBuilder.COIPageGuiBuilder;
 import com.mcylm.coi.realm.model.COISkin;
 import com.mcylm.coi.realm.player.COIPlayer;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
@@ -30,13 +31,15 @@ public class SkinGUI {
 
         COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(p);
 
-        PaginatedGuiBuilder builder = PaginatedGuiBuilder.create();
+        COIPageGuiBuilder builder = COIPageGuiBuilder.create();
 
         builder.title("&9&l选择你要装备的皮肤");
-        builder.previousPageSlot(49);
-        builder.nextPageSlot(51);
-        builder.nextPageItem((pageInfo) -> ItemStackBuilder.of(Material.ARROW).name("&a下一页").build());
-        builder.previousPageItem((pageInfo) -> ItemStackBuilder.of(Material.ARROW).name("&a上一页").build());
+        builder.previousPageSlot(48);
+        builder.customSlot(49);
+        builder.nextPageSlot(50);
+        builder.nextPageItem((pageInfo) -> ItemStackBuilder.of(Material.COMPARATOR).name("&a下一页").build());
+        builder.previousPageItem((pageInfo) -> ItemStackBuilder.of(Material.REPEATER).name("&a上一页").build());
+        builder.customItem((pageInfo) -> ItemStackBuilder.of(Material.ENDER_CHEST).name("&b返回").build());
 
         builder.build(p, paginatedGui -> {
             List<Item> items = new ArrayList<>();
@@ -109,16 +112,50 @@ public class SkinGUI {
 
         COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(p);
 
-        PaginatedGuiBuilder builder = PaginatedGuiBuilder.create();
+        COIPageGuiBuilder builder = COIPageGuiBuilder.create();
 
-        builder.title("&9&l选择你要装备的皮肤");
-        builder.previousPageSlot(49);
-        builder.nextPageSlot(51);
-        builder.nextPageItem((pageInfo) -> ItemStackBuilder.of(Material.ARROW).name("&a下一页").build());
-        builder.previousPageItem((pageInfo) -> ItemStackBuilder.of(Material.ARROW).name("&a上一页").build());
+        builder.title("&9&l选择你要装备的"+type.getName()+"皮肤");
+        builder.previousPageSlot(48);
+        builder.customSlot(49);
+        builder.nextPageSlot(50);
+        builder.nextPageItem((pageInfo) -> ItemStackBuilder.of(Material.COMPARATOR).name("&a下一页").build());
+        builder.previousPageItem((pageInfo) -> ItemStackBuilder.of(Material.REPEATER).name("&a上一页").build());
+        builder.customItem((pageInfo) -> ItemStackBuilder.of(Material.ENDER_CHEST).name("&b返回").build());
 
         builder.build(p, paginatedGui -> {
             List<Item> items = new ArrayList<>();
+
+            COISkin selectedSkinByType = coiPlayer.getSelectedSkins().get(type.getCode());
+
+            boolean defaultSkin = false;
+            String defaultSkinSelected = "&c未装备";
+            String defaultButton = "&f> &a&l点击进行装备";
+            if(selectedSkinByType == null){
+                defaultSkin = true;
+                defaultSkinSelected = "&a已装备";
+                defaultButton = "";
+            }
+
+            // 默认皮肤
+            boolean finalDefaultSkin = defaultSkin;
+            items.add(ItemStackBuilder.of(type.getItemType().clone())
+                    .name(type.getName()+"默认皮肤")
+                    .amount(1)
+                    .lore("")
+                    .lore("&f> &a所属建筑: &6" + type.getName())
+                    .lore("&f> &a状态: " + defaultSkinSelected)
+                    .lore("")
+                    .lore(defaultButton)
+                    .build(() -> {
+                        // 点击时触发下面的方法
+                        if(finalDefaultSkin){
+                            // 装备的情况下，取消装备
+                        }else{
+                            coiPlayer.getSelectedSkins().remove(type.getCode());
+                            LoggerUtils.sendMessage("&a已装备皮肤："+type.getName()+"默认皮肤", p);
+                        }
+
+                    }));
 
             for (COISkin coiSkin : Entry.getSkinData().getSkins()) {
 
@@ -133,14 +170,14 @@ public class SkinGUI {
 
                         boolean selectedBoolean = false;
                         String selected = "&c未装备";
-                        String button = "&a装备";
+                        String button = "&a&l装备";
 
                         COISkin selectedSkin = coiPlayer.getSelectedSkins().get(coiSkin.getBuildingTypeCode());
                         if(selectedSkin != null
                                 && selectedSkin.getCode().equals(coiSkin.getCode())){
                             selectedBoolean = true;
                             selected = "&a已装备";
-                            button = "&c取消装备";
+                            button = "&c&l取消装备";
                         }
 
                         boolean finalSelectedBoolean = selectedBoolean;
@@ -148,8 +185,8 @@ public class SkinGUI {
                                 .name(coiSkin.getName())
                                 .amount(1)
                                 .lore("")
-                                .lore("&f> &a所属建筑: &a" + buildingTypeByCode.getName())
-                                .lore("&f> &a是否已装备: " + selected)
+                                .lore("&f> &a所属建筑: &6" + buildingTypeByCode.getName())
+                                .lore("&f> &a状态: " + selected)
                                 .lore("&f> &c同一个建筑只能装备一个皮肤")
                                 .lore("")
                                 .lore("&f> &a&l点击进行"+button)
