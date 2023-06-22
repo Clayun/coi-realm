@@ -17,6 +17,7 @@ import com.mcylm.coi.realm.tools.building.impl.COIAirRaid;
 import com.mcylm.coi.realm.tools.building.impl.COIRepair;
 import com.mcylm.coi.realm.tools.building.impl.COITurret;
 import com.mcylm.coi.realm.tools.data.metadata.BuildData;
+import com.mcylm.coi.realm.tools.data.metadata.EntityData;
 import com.mcylm.coi.realm.tools.npc.impl.COIEntity;
 import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
@@ -39,6 +40,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
@@ -225,12 +227,11 @@ public class GameListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerInteract(PlayerInteractEvent event) {
-        Player player = event.getPlayer();
-        ItemStack item = player.getInventory().getItemInMainHand();
-        if (item.getType().isBlock() && !player.getGameMode().equals(GameMode.CREATIVE)) {
-            event.setCancelled(true);
-            player.getInventory().setItemInMainHand(null);
+    public void onNatureEntityDeath(EntityDeathEvent event) {
+        if(null == EntityData.getNpcByEntity(event.getEntity())
+            && !(event.getEntity() instanceof Player)){
+            event.setDroppedExp(0);
+            event.getDrops().clear();
         }
     }
 

@@ -100,7 +100,7 @@ public class COINpc implements Serializable {
     private Location spawnLocation;
 
     // 重生所需时间
-    private Integer respawnDelay = 30;
+    private Integer respawnDelay = 45;
 
     // NPC
     private AI npc;
