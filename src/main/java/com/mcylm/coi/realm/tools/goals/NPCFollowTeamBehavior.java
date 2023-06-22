@@ -37,6 +37,9 @@ public class NPCFollowTeamBehavior extends BehaviorGoalAdapter {
     // 最大的半径范围
     private int maxRadius = 30;
 
+    // 跟随半径
+    private int followRadius = 5;
+
     private int tick = 0;
 
     public NPCFollowTeamBehavior(COIEntity entity) {
@@ -236,8 +239,8 @@ public class NPCFollowTeamBehavior extends BehaviorGoalAdapter {
 
         double distance = entity.getLocation().distance(teamData.getCurrentTeam().getCommander().getLocation());
 
-        if (distance > maxRadius) {
-            if (distance > maxRadius * 1.4) {
+        if (distance > followRadius) {
+            if (distance > followRadius * 1.4) {
                 return false;
             }
             return true;
