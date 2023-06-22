@@ -1,6 +1,7 @@
 package com.mcylm.coi.realm.tools.attack;
 
 import com.mcylm.coi.realm.tools.attack.target.Target;
+import com.mcylm.coi.realm.tools.npc.impl.COIEntity;
 import org.bukkit.Location;
 
 public interface DamageableAI {
@@ -11,7 +12,7 @@ public interface DamageableAI {
             setTargetDirectly(null);
             return true;
         }
-        if (getTarget() == null) {
+        if (getTarget() == null || getTarget().isDead()) {
             setTargetDirectly(target);
             return true;
         }
@@ -20,8 +21,11 @@ public interface DamageableAI {
             return true;
         }
         return false;
-    };
+    }
 
+    default COIEntity asEntity() {
+        return (COIEntity) this;
+    }
     void lookForEnemy(int radius);
 
     Target getTarget();

@@ -5,13 +5,13 @@ import com.mcylm.coi.realm.tools.attack.Commandable;
 import com.mcylm.coi.realm.tools.attack.team.AttackTeam;
 import com.mcylm.coi.realm.tools.npc.impl.COIEntity;
 import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+
 
 public class TeamFollowGoal extends SimpleGoal {
 

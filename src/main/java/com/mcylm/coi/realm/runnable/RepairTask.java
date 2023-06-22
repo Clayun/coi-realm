@@ -228,7 +228,7 @@ public class RepairTask {
             if (building != null && building.getTeam() == repair.getTeam()
                 && building.getHealth().get() < building.getMaxHealth()) {
                 // 血量不满的
-                return new BuildingTarget(building, building.getNearestBlock(turret).getLocation());
+                return new BuildingTarget(building, building.getNearestBlock(turret).getLocation(), 6);
             }
         }
 

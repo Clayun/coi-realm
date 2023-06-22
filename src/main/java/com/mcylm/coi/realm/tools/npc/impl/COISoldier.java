@@ -4,7 +4,6 @@ import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.runnable.AttackGoalTask;
 import com.mcylm.coi.realm.tools.attack.AttackGoal;
 import com.mcylm.coi.realm.tools.attack.Commandable;
-import com.mcylm.coi.realm.tools.attack.impl.PatrolGoal;
 import com.mcylm.coi.realm.tools.attack.target.Target;
 import com.mcylm.coi.realm.tools.attack.target.TargetType;
 import com.mcylm.coi.realm.tools.attack.target.impl.BuildingTarget;
@@ -12,6 +11,9 @@ import com.mcylm.coi.realm.tools.attack.target.impl.EntityTarget;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.data.metadata.BuildData;
 import com.mcylm.coi.realm.tools.data.metadata.EntityData;
+import com.mcylm.coi.realm.tools.goals.NPCFollowTeamBehavior;
+import com.mcylm.coi.realm.tools.goals.NPCLookForTargetGoal;
+import com.mcylm.coi.realm.tools.goals.NPCSimpleMeleeAttackGoal;
 import com.mcylm.coi.realm.tools.npc.COISoldierCreator;
 import com.mcylm.coi.realm.utils.DamageUtils;
 import com.mcylm.coi.realm.utils.LocationUtils;
@@ -20,7 +22,10 @@ import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Getter;
 import lombok.Setter;
 import me.lucko.helper.Events;
+import net.citizensnpcs.api.ai.Goal;
+import net.citizensnpcs.api.ai.GoalSelector;
 import net.citizensnpcs.api.ai.Navigator;
+import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -48,7 +53,8 @@ public class COISoldier extends COIEntity implements Commandable {
     @Setter
     private LivingEntity commander;
 
-    private AttackGoal goal = new PatrolGoal(this);
+    private AttackGoal goal = null;
+
 
     public static void registerListener() {
 
@@ -140,6 +146,50 @@ public class COISoldier extends COIEntity implements Commandable {
 
         getNpc().setUseMinecraftAI(true);
         getNpc().setAlwaysUseNameHologram(false);
+
+
+        NPCSimpleMeleeAttackGoal attackGoal = new NPCSimpleMeleeAttackGoal(this);
+        NPCLookForTargetGoal targetGoal = new NPCLookForTargetGoal(this);
+        NPCFollowTeamBehavior teamBehavior = new NPCFollowTeamBehavior(this);
+
+        getNpc().getDefaultGoalController().addGoal(new Goal() {
+            int tick = 0;
+            @Override
+            public void reset() {
+                tick = 0;
+            }
+
+            @Override
+            public void run(GoalSelector selector) {
+
+                if (target != null && target.isDead()) {
+                    setTarget(null);
+                    // entity.setTarget(null);
+                }
+                if (tick++ > 20) reset();
+                if (isAlive() && tick % 2 == 0) {
+                    // selector.select(teamBehavior);
+                    if (!executeBehavior(teamBehavior)) {
+                        executeBehavior(attackGoal);
+                    }
+                    executeBehavior(targetGoal);
+                }
+            }
+
+            private boolean executeBehavior(BehaviorGoalAdapter behavior) {
+                if (behavior.shouldExecute()) {
+                    behavior.run();
+                    return true;
+                }
+                return false;
+            }
+
+
+            @Override
+            public boolean shouldExecute(GoalSelector goalSelector) {
+                return true;
+            }
+        }, 100);
     }
 
     /**
@@ -194,12 +244,14 @@ public class COISoldier extends COIEntity implements Commandable {
         super.move();
 
         //警戒周围
-        meleeAttackTarget();
-
+        // meleeAttackTarget();
+        /*
         if (target != null && target.isDead()) {
             target = null;
             ((Mob) getNpc().getEntity()).setTarget(null);
         }
+
+         */
     }
 
     @Override
@@ -209,7 +261,6 @@ public class COISoldier extends COIEntity implements Commandable {
             return;
         }
         target = null;
-        ((COISoldierCreator) getCoiNpc()).setAttackTeam(null);
     }
 
     @Override
@@ -273,6 +324,8 @@ public class COISoldier extends COIEntity implements Commandable {
                     if (getCoiNpc().isAggressive()) {
                         if (target == null) {
                             setTarget(new EntityTarget((LivingEntity) entity));
+
+                            LoggerUtils.debug("found");
                             // attack(entity);
                             break;
                         }
@@ -286,13 +339,14 @@ public class COISoldier extends COIEntity implements Commandable {
                     for (Block b : LocationUtils.selectionRadiusByDistance(getLocation().getBlock(), finalRadius, finalRadius)) {
                         COIBuilding building = BuildData.getBuildingByBlock(b);
                         if (building != null && building.getTeam() != getCoiNpc().getTeam()) {
-                            return new BuildingTarget(building, building.getNearestBlock(getLocation()).getLocation());
+                            return new BuildingTarget(building, building.getNearestBlock(getLocation()).getLocation(), 6);
                         }
                     }
                     return null;
                 });
                 targetFuture.thenAccept(result -> {
                     target = result;
+                    LoggerUtils.debug("found");
                 });
             }
 
@@ -305,6 +359,13 @@ public class COISoldier extends COIEntity implements Commandable {
     @Override
     public void setTargetDirectly(Target target) {
 
+        if (target != null && target.getType() == TargetType.ENTITY) {
+            Mob mob = (Mob) getNpc().getEntity();
+            EntityTarget entityTarget = (EntityTarget) target;
+            if (isAlive() && mob.getTarget() != entityTarget.getEntity()) {
+                mob.setTarget(entityTarget.getEntity());
+            }
+        }
         this.target = target;
     }
 
@@ -338,6 +399,8 @@ public class COISoldier extends COIEntity implements Commandable {
         return goal;
     }
 
+
+
     @Override
     public void spawn(Location location) {
         super.spawn(location);
@@ -347,7 +410,13 @@ public class COISoldier extends COIEntity implements Commandable {
         Mob npcEntity = ((Mob) getNpc().getEntity());
         npcEntity.getEquipment().setItemInMainHand(new ItemStack(new Random().nextBoolean() ? Material.CROSSBOW : Material.IRON_SWORD));
 
-//        // 追击/跟随时，移动速度加快
+
+       // Bukkit.getMobGoals().addGoal(npcEntity, 1, new NPCFollowTeamGoal(this));
+       // Bukkit.getMobGoals().addGoal(npcEntity, 0, new NPCSimpleMeleeAttackGoal(this));
+       // Bukkit.getMobGoals().addGoal(npcEntity, 0, new NPCLookForTargetGoal(this));
+
+
+         // 追击/跟随时，移动速度加快
 //        LivingEntity entity = (LivingEntity)npc.getEntity();
 //        // 获取当前移动速度
 //        double currentSpeed = entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getValue();

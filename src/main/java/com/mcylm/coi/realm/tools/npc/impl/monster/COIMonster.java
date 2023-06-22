@@ -338,7 +338,7 @@ public abstract class COIMonster extends COIEntity implements Commandable {
                     for (Block b : LocationUtils.selectionRadiusByDistance(getLocation().getBlock(), finalRadius, finalRadius)) {
                         COIBuilding building = BuildData.getBuildingByBlock(b);
                         if (building != null && building.getTeam() != getCoiNpc().getTeam() && building.getType() != COIBuildingType.WALL_NORMAL) {
-                            return new BuildingTarget(building, building.getNearestBlock(getLocation()).getLocation());
+                            return new BuildingTarget(building, building.getNearestBlock(getLocation()).getLocation(), 6);
                         }
                     }
                     return null;

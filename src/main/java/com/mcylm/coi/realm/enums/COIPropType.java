@@ -268,6 +268,7 @@ public enum COIPropType {
             4
     ),
 
+    /*
     ENCHANTED_GOLDEN_APPLE(
             "ENCHANTED_GOLDEN_APPLE",
             "附魔金苹果",
@@ -279,6 +280,8 @@ public enum COIPropType {
             1,
             5
     ),
+
+     */
 
     SNOWBALL(
             "SNOWBALL",

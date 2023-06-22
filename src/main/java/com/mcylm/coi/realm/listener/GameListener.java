@@ -202,8 +202,7 @@ public class GameListener implements Listener {
                 if (coiPlayer.getAttackTeam().getStatus() == AttackTeam.Status.LOCK) {
                     for (COIEntity entity : coiPlayer.getAttackTeam().getMembers()) {
                         if (entity instanceof COISoldier soldier && soldier.isAlive()) {
-                            BuildingTarget target = new BuildingTarget(building, building.getNearestBlock(soldier.getLocation()).getLocation());
-                            target.setTargetLevel(7);
+                            BuildingTarget target = new BuildingTarget(building, building.getNearestBlock(soldier.getLocation()).getLocation(), 7);
                             soldier.setTarget(target);
                         }
                     }

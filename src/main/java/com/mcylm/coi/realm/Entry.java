@@ -19,8 +19,6 @@ import com.mcylm.coi.realm.listener.SnowballCoolDownListener;
 import com.mcylm.coi.realm.managers.COIBuildingManager;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.player.COIPlayer;
-import com.mcylm.coi.realm.tools.attack.impl.PatrolGoal;
-import com.mcylm.coi.realm.tools.attack.impl.TeamFollowGoal;
 import com.mcylm.coi.realm.tools.attack.target.Target;
 import com.mcylm.coi.realm.tools.attack.target.impl.EntityTarget;
 import com.mcylm.coi.realm.tools.attack.team.AttackTeam;
@@ -28,6 +26,7 @@ import com.mcylm.coi.realm.tools.building.impl.*;
 import com.mcylm.coi.realm.tools.building.impl.monster.COIMonsterBase;
 import com.mcylm.coi.realm.tools.data.MapData;
 import com.mcylm.coi.realm.tools.data.SkinData;
+import com.mcylm.coi.realm.tools.data.metadata.AttackTeamData;
 import com.mcylm.coi.realm.tools.data.metadata.EntityData;
 import com.mcylm.coi.realm.tools.npc.COISoldierCreator;
 import com.mcylm.coi.realm.tools.npc.impl.COIEntity;
@@ -42,6 +41,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.kyori.adventure.text.Component;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -54,7 +54,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
@@ -356,18 +355,16 @@ public class Entry extends ExtendedJavaPlugin {
 
                                 if (npcByEntity instanceof COISoldierCreator creator) {
                                     COISoldier soldier = ((COISoldier) creator.getNpc());
-                                    ;
-                                    if (creator.getAttackTeam() == null || creator.getAttackTeam().getCommander().isDead()) {
+
+                                    AttackTeamData teamData = AttackTeamData.getDataByEntity(e.getRightClicked());
+
+                                    if (teamData == null || teamData.getCurrentTeam().getCommander().isDead()) {
                                         coiPlayer.getAttackTeam().getMembers().add((COIEntity) creator.getNpc());
-                                        creator.setAttackTeam(coiPlayer.getAttackTeam());
-                                        soldier.setGoal(new TeamFollowGoal(soldier, coiPlayer.getAttackTeam()));
-                                        soldier.getGoal().start();
+                                        e.getRightClicked().setMetadata("teamData", new AttackTeamData(coiPlayer.getAttackTeam()));
                                         LoggerUtils.sendMessage("&a成功入队", e.getPlayer());
-                                    } else if (creator.getAttackTeam() == coiPlayer.getAttackTeam()) {
+                                    } else if (teamData.getCurrentTeam()== coiPlayer.getAttackTeam()) {
                                         coiPlayer.getAttackTeam().getMembers().remove(soldier);
-                                        creator.setAttackTeam(null);
-                                        soldier.setGoal(new PatrolGoal(soldier));
-                                        soldier.getGoal().start();
+                                        e.getRightClicked().removeMetadata("teamData", Entry.getInstance());
                                         LoggerUtils.sendMessage("&c成功脱队", e.getPlayer());
                                     }
                                 }
@@ -521,5 +518,9 @@ public class Entry extends ExtendedJavaPlugin {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static NamespacedKey getNamespacedKey(String value) {
+        return new NamespacedKey(instance, value);
     }
 }
