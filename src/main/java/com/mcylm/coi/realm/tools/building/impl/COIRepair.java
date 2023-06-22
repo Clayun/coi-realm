@@ -55,9 +55,9 @@ public class COIRepair extends COIBuilding {
         // 粒子的大小
         this.particleSize = 1;
         // 最小伤害（回血数量）
-        this.minDamage = 1d;
+        this.minDamage = 2d;
         // 最大伤害
-        this.maxDamage = 2d;
+        this.maxDamage = 3d;
         // 击退距离
         this.repulsionDistance = 0d;
         // 每次攻击的间隔时间
@@ -224,9 +224,9 @@ public class COIRepair extends COIBuilding {
 
     private void upgrade(){
         // 最小伤害
-        this.minDamage = this.minDamage + 1;
+        this.minDamage = this.minDamage + getLevel();
         // 最大伤害
-        this.maxDamage = this.maxDamage + 1;
+        this.maxDamage = this.maxDamage + getLevel();
         // 每次攻击的间隔时间
         this.coolDown = this.coolDown - 1;
         // 弹药消耗增大

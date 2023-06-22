@@ -124,7 +124,7 @@ public class COIBuildingType {
             "防空塔",
             new ItemStack(Material.MUSIC_DISC_13),
             """
-            防御炮塔会消耗子弹自动检测50格范围内的空中飞行单位,并自动攻击.""",
+            防御炮塔会消耗子弹自动检测50格范围内的空中的飞行物或雪球,并自动攻击.""",
             5,
             5L
     );

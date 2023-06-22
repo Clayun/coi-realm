@@ -92,6 +92,9 @@ public class Entry extends ExtendedJavaPlugin {
     // 城墙根部坐标检测起始高度
     public static Integer WALL_DETECT_HEIGHT = 18;
 
+    // 桥的虚空判断高度起始点位
+    public static Integer BRIDGE_DETECT_HEIGHT = 18;
+
     // 建筑升级中跳过的方块
     public static List<String> UPGRADE_SKIP_BLOCKS;
     // 主游戏进程管理
@@ -139,6 +142,7 @@ public class Entry extends ExtendedJavaPlugin {
         MAX_GROUP_PLAYERS = getConfig().getInt("game.max-group-players");
         NPC_FOODS = getConfig().getStringList("foods");
         WALL_DETECT_HEIGHT = getConfig().getInt("game.wall-detect-height");
+        BRIDGE_DETECT_HEIGHT = getConfig().getInt("game.bridge-detect-height");
         UPGRADE_SKIP_BLOCKS = getConfig().getStringList("upgrade-skip-blocks");
         WORLD = Entry.getInstance().getConfig().getString("game.spawn-world");
         COIServerMode serverMode = COIServerMode.parseCode(SERVER_MODE);

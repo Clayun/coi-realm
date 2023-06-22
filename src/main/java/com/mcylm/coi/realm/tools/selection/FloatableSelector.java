@@ -181,7 +181,7 @@ public class FloatableSelector implements Selector{
             // 这个时候要判断是否脚底下是虚空，必须是虚空才能造
             double height = block.getLocation().getY();
 
-            for(int i = Entry.WALL_DETECT_HEIGHT ;i < height;i++){
+            for(int i = Entry.BRIDGE_DETECT_HEIGHT ;i < height;i++){
                 Block clone3 = block.getWorld().getBlockAt(block.getX(), i, block.getZ());
                 if(!clone3.getType().equals(Material.AIR)){
                     canPlace = false;
@@ -265,7 +265,7 @@ public class FloatableSelector implements Selector{
             // 这个时候要判断是否脚底下是虚空，必须是虚空才能造
             double height = block.getLocation().getY();
 
-            for(int i = Entry.WALL_DETECT_HEIGHT ;i < height;i++){
+            for(int i = Entry.BRIDGE_DETECT_HEIGHT ;i < height;i++){
                 Block clone3 = block.getWorld().getBlockAt(block.getX(), i, block.getZ());
                 if(!clone3.getType().equals(Material.AIR)){
                     canPlace = false;

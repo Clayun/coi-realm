@@ -84,8 +84,16 @@ public class PlayerInteractListener implements Listener {
                     && ItemUtils.getName(event.getPlayer().getInventory().getItemInMainHand()).equals(LoggerUtils.replaceColor("&c选择队伍"))
             ) {
 
-                // 选队伍
-                new ChooseTeamGUI(event.getPlayer()).open();
+                if(Entry.getGame().getStatus().equals(COIGameStatus.WAITING)){
+                    // 选队伍
+                    new ChooseTeamGUI(event.getPlayer()).open();
+                }else if(Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
+                    // 清空背包
+                    event.getPlayer().getInventory().clear();
+                    // 初始化游戏进行中的背包
+                    Entry.getGame().initPlayerGaming(event.getPlayer());
+                }
+
             }
         }
 

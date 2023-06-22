@@ -73,6 +73,8 @@ game:
   # 墙体的判定高度
   # wall-detect-height: 26
   wall-detect-height: 84
+  # 桥的虚空判定高度
+  bridge-detect-height: 73
 
 # NPC可食用的 Material Name
 foods:
