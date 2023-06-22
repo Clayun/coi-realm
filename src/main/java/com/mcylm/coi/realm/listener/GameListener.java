@@ -226,6 +226,16 @@ public class GameListener implements Listener {
     }
 
     @EventHandler
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        ItemStack item = player.getInventory().getItemInMainHand();
+        if (item.getType().isBlock()) {
+            event.setCancelled(true);
+            player.getInventory().setItemInMainHand(null);
+        }
+    }
+
+    @EventHandler
     public void onWeatherChange(WeatherChangeEvent event){
         event.setCancelled(true);
     }
