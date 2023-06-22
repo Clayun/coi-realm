@@ -153,6 +153,7 @@ public class COISoldier extends COIEntity implements Commandable {
         NPCLookForTargetGoal targetGoal = new NPCLookForTargetGoal(this);
         NPCFollowTeamBehavior teamBehavior = new NPCFollowTeamBehavior(this);
 
+        // TODO 还原一个与Paper Goal API一样的Goal
         getNpc().getDefaultGoalController().addGoal(new Goal() {
             int tick = 0;
 
@@ -167,6 +168,9 @@ public class COISoldier extends COIEntity implements Commandable {
                 if (target != null && target.isDead()) {
                     setTarget(null);
                     // entity.setTarget(null);
+                }
+                if (target != null && isAlive() && target.getTargetLocation().distance(getLocation()) > getCoiNpc().getAlertRadius() * 1.5) {
+                    setTarget(null);
                 }
                 //if (tick++ > 20) reset();
                 //if (isAlive() && tick % 1 == 0) {

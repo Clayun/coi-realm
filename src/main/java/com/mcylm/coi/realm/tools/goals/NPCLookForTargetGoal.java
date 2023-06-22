@@ -10,7 +10,7 @@ public class NPCLookForTargetGoal extends BehaviorGoalAdapter {
 
     private DamageableAI ai;
 
-
+    private int tick = 0;
     public NPCLookForTargetGoal(DamageableAI ai) {
         this.ai = ai;
         this.entity = (Mob) ai.asEntity().getNpc().getEntity();
@@ -56,9 +56,13 @@ public class NPCLookForTargetGoal extends BehaviorGoalAdapter {
 
     @Override
     public BehaviorStatus run() {
-
-        ai.lookForEnemy(-1);
+        if (tick++ > 4) {
+            tick = 0;
+            ai.lookForEnemy(-1);
+        }
         return BehaviorStatus.RUNNING;
+
+
     }
 
     @Override
