@@ -327,7 +327,7 @@ public class COISoldier extends COIEntity implements Commandable {
                         if (target == null) {
                             setTarget(new EntityTarget((LivingEntity) entity));
 
-                            LoggerUtils.debug("found");
+//                            LoggerUtils.debug("found");
                             // attack(entity);
                             break;
                         }
@@ -348,7 +348,7 @@ public class COISoldier extends COIEntity implements Commandable {
                 });
                 targetFuture.thenAccept(result -> {
                     target = result;
-                    LoggerUtils.debug("found");
+//                    LoggerUtils.debug("found");
                 });
             }
 

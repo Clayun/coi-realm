@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import com.mcylm.coi.realm.gui.SkinGUI;
+import com.mcylm.coi.realm.gui.SkinTypeGUI;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
 import me.lucko.helper.menu.Item;
@@ -72,7 +73,8 @@ public class COIPaginatedGui extends Gui {
         }));
 
         this.setItem(this.customSlot,ItemStackBuilder.of((ItemStack)this.customItem.apply(PageInfo.create(this.page, pages.size()))).build(() -> {
-           new SkinGUI(getPlayer());
+            SkinTypeGUI skinTypeGUI = new SkinTypeGUI(getPlayer());
+            skinTypeGUI.open();
         }));
 
         if (!this.isFirstDraw()) {

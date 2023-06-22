@@ -95,17 +95,17 @@ public enum COIPropType {
             2
     ),
 
-    DIAMOND_SWORD(
-            "DIAMOND_SWORD",
-            "钻石剑",
-            new ItemStack(Material.DIAMOND_SWORD),
-            1,
-            "钻石制成的剑，削铁如泥！",
-            200,
-            COIBuildingType.FORGE,
-            1,
-            3
-    ),
+//    DIAMOND_SWORD(
+//            "DIAMOND_SWORD",
+//            "钻石剑",
+//            new ItemStack(Material.DIAMOND_SWORD),
+//            1,
+//            "钻石制成的剑，削铁如泥！",
+//            200,
+//            COIBuildingType.FORGE,
+//            1,
+//            3
+//    ),
 
 
     // 皮革套装系列
@@ -207,53 +207,53 @@ public enum COIPropType {
     ),
 
     // 钻石套装系列
-    DIAMOND_HELMET(
-            "DIAMOND_HELMET",
-            "钻石头盔",
-            new ItemStack(Material.DIAMOND_HELMET),
-            1,
-            "钻石套装，童叟无欺！",
-            100,
-            COIBuildingType.FORGE,
-            1,
-            4
-    ),
-
-    DIAMOND_CHESTPLATE(
-            "DIAMOND_CHESTPLATE",
-            "钻石胸甲",
-            new ItemStack(Material.DIAMOND_CHESTPLATE),
-            1,
-            "钻石套装，童叟无欺！",
-            100,
-            COIBuildingType.FORGE,
-            1,
-            4
-    ),
-
-    DIAMOND_LEGGINGS(
-            "DIAMOND_LEGGINGS",
-            "钻石护腿",
-            new ItemStack(Material.DIAMOND_LEGGINGS),
-            1,
-            "钻石套装，童叟无欺！",
-            100,
-            COIBuildingType.FORGE,
-            1,
-            4
-    ),
-
-    DIAMOND_BOOTS(
-            "DIAMOND_BOOTS",
-            "钻石长靴",
-            new ItemStack(Material.DIAMOND_BOOTS),
-            1,
-            "钻石套装，童叟无欺！",
-            100,
-            COIBuildingType.FORGE,
-            1,
-            4
-    ),
+//    DIAMOND_HELMET(
+//            "DIAMOND_HELMET",
+//            "钻石头盔",
+//            new ItemStack(Material.DIAMOND_HELMET),
+//            1,
+//            "钻石套装，童叟无欺！",
+//            100,
+//            COIBuildingType.FORGE,
+//            1,
+//            4
+//    ),
+//
+//    DIAMOND_CHESTPLATE(
+//            "DIAMOND_CHESTPLATE",
+//            "钻石胸甲",
+//            new ItemStack(Material.DIAMOND_CHESTPLATE),
+//            1,
+//            "钻石套装，童叟无欺！",
+//            100,
+//            COIBuildingType.FORGE,
+//            1,
+//            4
+//    ),
+//
+//    DIAMOND_LEGGINGS(
+//            "DIAMOND_LEGGINGS",
+//            "钻石护腿",
+//            new ItemStack(Material.DIAMOND_LEGGINGS),
+//            1,
+//            "钻石套装，童叟无欺！",
+//            100,
+//            COIBuildingType.FORGE,
+//            1,
+//            4
+//    ),
+//
+//    DIAMOND_BOOTS(
+//            "DIAMOND_BOOTS",
+//            "钻石长靴",
+//            new ItemStack(Material.DIAMOND_BOOTS),
+//            1,
+//            "钻石套装，童叟无欺！",
+//            100,
+//            COIBuildingType.FORGE,
+//            1,
+//            4
+//    ),
 
     // 道具
     GOLDEN_APPLE(
