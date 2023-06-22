@@ -4,7 +4,6 @@ import com.mcylm.coi.realm.tools.attack.team.AttackTeam;
 import com.mcylm.coi.realm.tools.data.metadata.AttackTeamData;
 import com.mcylm.coi.realm.tools.npc.impl.COIEntity;
 import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
-import com.mcylm.coi.realm.utils.LoggerUtils;
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import org.bukkit.Material;
@@ -37,6 +36,8 @@ public class NPCFollowTeamBehavior extends BehaviorGoalAdapter {
 
     // 最大的半径范围
     private int maxRadius = 30;
+
+    private int tick = 0;
 
     public NPCFollowTeamBehavior(COIEntity entity) {
         this.coiEntity = entity;
@@ -143,14 +144,19 @@ public class NPCFollowTeamBehavior extends BehaviorGoalAdapter {
     @Override
     public BehaviorStatus run() {
 
+        if (tick++ > 5) {
+            tick = 0;
+        } else {
+            return BehaviorStatus.RUNNING;
+        }
+
         int index = team.getMembers().indexOf(coiEntity);
-        LoggerUtils.debug("index: " + index);
+
         if (index == -1) {
-            LoggerUtils.debug("failure");
             return BehaviorStatus.FAILURE;
         }
         if (index == 0) {
-            LoggerUtils.debug("following commander");
+
             followingEntity = team.getCommander();
         } else {
             for (int i = index; i >= 0 ; i--) {
@@ -194,7 +200,6 @@ public class NPCFollowTeamBehavior extends BehaviorGoalAdapter {
 
         if (!followingEntity.isDead()) {
             if (entity.getLocation().distance(followingEntity.getLocation()) > 1.5) {
-                LoggerUtils.debug("try move");
                 coiEntity.findPath(followingEntity.getLocation());
             }
         }

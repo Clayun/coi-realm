@@ -30,6 +30,7 @@ import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -154,6 +155,7 @@ public class COISoldier extends COIEntity implements Commandable {
 
         getNpc().getDefaultGoalController().addGoal(new Goal() {
             int tick = 0;
+
             @Override
             public void reset() {
                 tick = 0;
@@ -166,14 +168,14 @@ public class COISoldier extends COIEntity implements Commandable {
                     setTarget(null);
                     // entity.setTarget(null);
                 }
-                if (tick++ > 20) reset();
-                if (isAlive() && tick % 2 == 0) {
-                    // selector.select(teamBehavior);
-                    if (!executeBehavior(teamBehavior)) {
-                        executeBehavior(attackGoal);
-                    }
-                    executeBehavior(targetGoal);
+                //if (tick++ > 20) reset();
+                //if (isAlive() && tick % 1 == 0) {
+                // selector.select(teamBehavior);
+                if (!executeBehavior(teamBehavior)) {
+                    executeBehavior(attackGoal);
                 }
+                executeBehavior(targetGoal);
+                //}
             }
 
             private boolean executeBehavior(BehaviorGoalAdapter behavior) {
@@ -400,7 +402,6 @@ public class COISoldier extends COIEntity implements Commandable {
     }
 
 
-
     @Override
     public void spawn(Location location) {
         super.spawn(location);
@@ -411,17 +412,17 @@ public class COISoldier extends COIEntity implements Commandable {
         npcEntity.getEquipment().setItemInMainHand(new ItemStack(new Random().nextBoolean() ? Material.CROSSBOW : Material.IRON_SWORD));
 
 
-       // Bukkit.getMobGoals().addGoal(npcEntity, 1, new NPCFollowTeamGoal(this));
-       // Bukkit.getMobGoals().addGoal(npcEntity, 0, new NPCSimpleMeleeAttackGoal(this));
-       // Bukkit.getMobGoals().addGoal(npcEntity, 0, new NPCLookForTargetGoal(this));
+        // Bukkit.getMobGoals().addGoal(npcEntity, 1, new NPCFollowTeamGoal(this));
+        // Bukkit.getMobGoals().addGoal(npcEntity, 0, new NPCSimpleMeleeAttackGoal(this));
+        // Bukkit.getMobGoals().addGoal(npcEntity, 0, new NPCLookForTargetGoal(this));
 
 
-         // 追击/跟随时，移动速度加快
-//        LivingEntity entity = (LivingEntity)npc.getEntity();
-//        // 获取当前移动速度
-//        double currentSpeed = entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getValue();
-//        // 设置移动速度为 1.5倍速度
-//        entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(currentSpeed * 1.5);
+        // 追击/跟随时，移动速度加快
+        LivingEntity entity = (LivingEntity) npc.getEntity();
+        // 获取当前移动速度
+        double currentSpeed = entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getValue();
+        // 设置移动速度为 1.5倍速度
+        entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(currentSpeed * 1.3);
 
     }
 
