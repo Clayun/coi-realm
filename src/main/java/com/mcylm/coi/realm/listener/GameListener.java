@@ -229,7 +229,7 @@ public class GameListener implements Listener {
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         ItemStack item = player.getInventory().getItemInMainHand();
-        if (item.getType().isBlock()) {
+        if (item.getType().isBlock() && !player.getGameMode().equals(GameMode.CREATIVE)) {
             event.setCancelled(true);
             player.getInventory().setItemInMainHand(null);
         }
