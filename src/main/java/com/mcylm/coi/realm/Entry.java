@@ -342,7 +342,13 @@ public class Entry extends ExtendedJavaPlugin {
                         new ForgeGUI(e.getPlayer(),npcByEntity.getBuilding());
                     }else{
                         if (!e.getPlayer().isSneaking()) {
-                            e.getPlayer().openInventory(inv);
+
+                            // 战士不给打开背包
+                            // 目前给战士穿装备是直接放进背包里面的，有几率被玩家拿走
+                            if(!(npcByEntity instanceof COISoldierCreator)){
+                                e.getPlayer().openInventory(inv);
+                            }
+
                         } else {
                             COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(e.getPlayer());
 

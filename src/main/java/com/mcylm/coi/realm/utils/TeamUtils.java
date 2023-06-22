@@ -261,7 +261,7 @@ public class TeamUtils {
 
         COITeam teamByPlayer = getTeamByPlayer(p);
         if(teamByPlayer == null){
-            p.kick(Component.text("没队伍自动踢出服务器"));
+            Entry.runSync(() -> p.kick(Component.text("没队伍自动踢出服务器")));
             return;
         }
 
@@ -367,7 +367,7 @@ public class TeamUtils {
 
                 if(minPlayersTeam == null){
                     // 全都满了，直接给当前玩家踢了吧
-                    p.kick(Component.text("当前服务器已满，请更换服务器后重试"), PlayerKickEvent.Cause.KICK_COMMAND);
+                    Entry.runSync(() -> p.kick(Component.text("当前服务器已满，请更换服务器后重试"), PlayerKickEvent.Cause.KICK_COMMAND));
                     return;
                 }
 
@@ -396,7 +396,7 @@ public class TeamUtils {
 
             if(minPlayersTeam == null){
                 // 全都满了，直接给当前玩家踢了吧
-                p.kick(Component.text("当前服务器已满，请更换服务器后重试"), PlayerKickEvent.Cause.KICK_COMMAND);
+                Entry.runSync(() -> p.kick(Component.text("当前服务器已满，请更换服务器后重试"), PlayerKickEvent.Cause.KICK_COMMAND));
                 return;
             }
 
