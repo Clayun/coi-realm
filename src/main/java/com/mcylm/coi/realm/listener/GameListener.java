@@ -218,7 +218,7 @@ public class GameListener implements Listener {
 
             if(coiPlayer.getLastDamageBuilding() == null
                     || Duration.between(coiPlayer.getLastDamageBuilding(), LocalDateTime.now()).getSeconds() >= 0.3){
-                building.repair(5);
+                building.repair(3);
                 coiPlayer.setLastDamageBuilding(LocalDateTime.now());
             }
         }
