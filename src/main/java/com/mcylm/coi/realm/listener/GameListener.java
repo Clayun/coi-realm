@@ -191,9 +191,9 @@ public class GameListener implements Listener {
 
         Block block = event.getBlock();
         COIBuilding building = BuildData.getBuildingByBlock(block);
-        if (building != null && building.getTeam() != TeamUtils.getTeamByPlayer(player)) {
 
-            COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(player);
+        COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(player);
+        if (building != null && building.getTeam() != TeamUtils.getTeamByPlayer(player)) {
 
             // 最快可以0.3秒拆一次，否则无效
             if(coiPlayer.getLastDamageBuilding() == null
@@ -213,6 +213,14 @@ public class GameListener implements Listener {
 
 
             event.setCancelled(true);
+        }else if(building != null && building.getTeam() == TeamUtils.getTeamByPlayer(player)){
+            // 自家的建筑，可以维修
+
+            if(coiPlayer.getLastDamageBuilding() == null
+                    || Duration.between(coiPlayer.getLastDamageBuilding(), LocalDateTime.now()).getSeconds() >= 0.3){
+                building.repair(5);
+                coiPlayer.setLastDamageBuilding(LocalDateTime.now());
+            }
         }
     }
 
