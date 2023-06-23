@@ -519,7 +519,10 @@ public class GameListener implements Listener {
 
         }else if(building instanceof COIDoor door){
             // 开关门
-            door.toggleDoor();
+            if(TeamUtils.getTeamByPlayer(event.getPlayer()) == building.getTeam()){
+                door.toggleDoor();
+            }
+
         }
 
 
