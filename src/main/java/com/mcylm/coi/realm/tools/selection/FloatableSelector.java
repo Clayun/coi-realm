@@ -174,10 +174,10 @@ public class FloatableSelector implements Selector{
 
         for (Block block : region.getBlocks()) {
             COIBuilding buildingByBlock = BuildData.getBuildingByBlock(block);
-            if (!(buildingByBlock instanceof FloatableBuild)) {
+            if (buildingByBlock != null
+                    && !buildingByBlock.getType().equals(COIBuildingType.BRIDGE)) {
                 canPlace = false;
             }
-
             // 这个时候要判断是否脚底下是虚空，必须是虚空才能造
             double height = block.getLocation().getY();
 
