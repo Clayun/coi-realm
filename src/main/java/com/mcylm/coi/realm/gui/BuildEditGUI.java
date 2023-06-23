@@ -1,8 +1,10 @@
 package com.mcylm.coi.realm.gui;
 
 import com.mcylm.coi.realm.enums.COIBuildingType;
+import com.mcylm.coi.realm.enums.COIScoreType;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.utils.LoggerUtils;
+import com.mcylm.coi.realm.utils.TeamUtils;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
 import me.lucko.helper.menu.scheme.MenuPopulator;
@@ -63,6 +65,7 @@ public class BuildEditGUI extends Gui {
                                     return;
                                 }
                                 building.destroy(true);
+                                TeamUtils.getTeamByPlayer(getPlayer()).addScore(COIScoreType.DESTROY_SELF_BUILDING,getPlayer());
                                 close();
                             })
 

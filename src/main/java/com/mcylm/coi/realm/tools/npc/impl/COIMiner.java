@@ -149,7 +149,7 @@ public class COIMiner extends COIEntity {
                                         String material = Entry.getInstance().getConfig().getString("game.building.material");
 
                                         int level = getCoiNpc().getBuilding().getLevel();
-                                        int num = level * 10;
+                                        int num = level * 20;
 
                                         ItemStack itemStack = new ItemStack(Material.getMaterial(material));
                                         itemStack.setAmount(num);
