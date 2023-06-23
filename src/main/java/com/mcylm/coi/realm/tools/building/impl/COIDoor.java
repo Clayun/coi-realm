@@ -52,31 +52,40 @@ public class COIDoor extends COIBuilding {
             }
         }
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (!isAlive()) {
-                    this.cancel();
-                    return;
-                }
+//        new BukkitRunnable() {
+//            @Override
+//            public void run() {
+//                if (!isAlive()) {
+//                    this.cancel();
+//                    return;
+//                }
+//
+//                boolean openDoor = false;
+//                for (Player p : Entry.getInstance().getServer().getOnlinePlayers()) {
+//
+//                    if(!p.getWorld().getName().equals(Entry.WORLD)){
+//                        TeamUtils.tpSpawner(p);
+//                    }else if(TeamUtils.inTeam(p.getName(),getTeam()) && p.getLocation().distance(location) <= 6) {
+//                        openDoor = true;
+//                    }
+//                }
+//                if (openDoor && !isOpen()) {
+//                    Bukkit.getScheduler().runTask(Entry.getInstance(), () -> open());
+//                } else if (!openDoor && isOpen()) {
+//                    Bukkit.getScheduler().runTask(Entry.getInstance(), () -> close());
+//                }
+//            }
+//        }.runTaskTimerAsynchronously(Entry.getInstance(), 1, 20);
 
-                boolean openDoor = false;
-                for (Player p : Entry.getInstance().getServer().getOnlinePlayers()) {
+    }
 
-                    if(!p.getWorld().getName().equals(Entry.WORLD)){
-                        TeamUtils.tpSpawner(p);
-                    }else if(TeamUtils.inTeam(p.getName(),getTeam()) && p.getLocation().distance(location) <= 6) {
-                        openDoor = true;
-                    }
-                }
-                if (openDoor && !isOpen()) {
-                    Bukkit.getScheduler().runTask(Entry.getInstance(), () -> open());
-                } else if (!openDoor && isOpen()) {
-                    Bukkit.getScheduler().runTask(Entry.getInstance(), () -> close());
-                }
-            }
-        }.runTaskTimerAsynchronously(Entry.getInstance(), 1, 20);
-
+    /**
+     * 自动开关门
+     */
+    public void toggleDoor(){
+        if(this.open){
+            close();
+        }else open();
     }
 
     @Override

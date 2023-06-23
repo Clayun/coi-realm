@@ -14,6 +14,7 @@ import com.mcylm.coi.realm.tools.attack.target.impl.BuildingTarget;
 import com.mcylm.coi.realm.tools.attack.team.AttackTeam;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.impl.COIAirRaid;
+import com.mcylm.coi.realm.tools.building.impl.COIDoor;
 import com.mcylm.coi.realm.tools.building.impl.COIRepair;
 import com.mcylm.coi.realm.tools.building.impl.COITurret;
 import com.mcylm.coi.realm.tools.data.metadata.BuildData;
@@ -516,7 +517,12 @@ public class GameListener implements Listener {
                 }
             }
 
+        }else if(building instanceof COIDoor door){
+            // 开关门
+            door.toggleDoor();
         }
+
+
     }
 
     @EventHandler
