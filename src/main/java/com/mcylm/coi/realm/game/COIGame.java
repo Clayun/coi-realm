@@ -136,14 +136,31 @@ public class COIGame {
         }
 
         COITeam victory = null;
+        COITeam victory2 = null;
         int baseHealth = 0;
+        int baseHealth2 = 0;
         // 如果多个队伍都存货，找一个剩余血量最高的
 
         for(COITeam team : stillAliveTeams){
             if(team.getBase().getHealth().get() > baseHealth){
                 victory = team;
                 baseHealth = team.getBase().getHealth().get();
+            }else if(team.getBase().getHealth().get() == baseHealth){
+                victory2 = team;
+                baseHealth2 = team.getBase().getHealth().get();
             }
+        }
+
+        if(victory2 == null){
+            return victory;
+        }
+
+        if(victory == victory2){
+            return victory;
+        }
+
+        if(baseHealth == baseHealth2){
+            return null;
         }
 
         return victory;
