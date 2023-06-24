@@ -565,6 +565,34 @@ public class GameListener implements Listener {
     }
 
     @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+
+        String material = Entry.getInstance().getConfig().getString("game.building.material");
+
+        // 仅掉落绿宝石，其他的都保留
+
+        List<ItemStack> needSave = new ArrayList<>();
+
+        Iterator<ItemStack> iterator = event.getPlayer().getInventory().iterator();
+
+        while(iterator.hasNext()){
+            ItemStack item = iterator.next();
+
+            // 绿宝石和鞘翅组合掉落
+            if (item.getType() != Material.getMaterial(material)
+                    && item.getType() != Material.ELYTRA
+                    && item.getType() != Material.FIREWORK_ROCKET
+            ) {
+                // 这些是保存的
+            }else{
+                event.getPlayer().getLocation().getWorld()
+                        .dropItem(event.getPlayer().getLocation(),item.clone());
+                event.getPlayer().getInventory().remove(item);
+            }
+        }
+    }
+
+    @EventHandler
     public void onEntityRespawn(EntitySpawnEvent event){
 
         if(!CitizensAPI.getNPCRegistry().isNPC(event.getEntity())){
