@@ -237,13 +237,18 @@ public class COIGame {
         Map<COIScoreType,List<COIScore>> map = new HashMap<>();
 
         for(COIScore score : teamByPlayer.getScoreRecords()){
-            if(map.get(score.getType()) != null){
-                map.get(score.getType()).add(score);
-            }else{
-                List<COIScore> details = new ArrayList<>();
-                details.add(score);
-                map.put(score.getType(),details);
+
+            // 所属玩家的才算
+            if(score.getPlayer() == player){
+                if(map.get(score.getType()) != null){
+                    map.get(score.getType()).add(score);
+                }else{
+                    List<COIScore> details = new ArrayList<>();
+                    details.add(score);
+                    map.put(score.getType(),details);
+                }
             }
+
         }
 
         List<COIScoreDetail> details = new ArrayList<>();
@@ -274,15 +279,17 @@ public class COIGame {
         // 先清空玩家背包
         p.getInventory().clear();
 
-        ItemStack itemStack = new ItemStack(Material.COMPASS);
-        ItemUtils.rename(itemStack,"&c选择队伍");
-        List<String> lore = new ArrayList<>();
-        lore.add("请右键打开菜单选择队伍");
-        ItemUtils.setLore(itemStack,lore);
-
-        p.getInventory().addItem(itemStack);
+//        ItemStack itemStack = new ItemStack(Material.COMPASS);
+//        ItemUtils.rename(itemStack,"&c选择队伍");
+//        List<String> lore = new ArrayList<>();
+//        lore.add("请右键打开菜单选择队伍");
+//        ItemUtils.setLore(itemStack,lore);
+//
+//        p.getInventory().addItem(itemStack);
 
         // TODO 可以在这里给于选择建筑皮肤菜单
+
+
 
     }
 
@@ -366,7 +373,8 @@ public class COIGame {
         meta.setTitle("本局战绩");
         meta.setAuthor(p.getName());
 
-        String records = "";
+        String records = "本局所在队伍："+TeamUtils.getTeamByPlayer(p).getType().getName()+"\n" +
+                "积分明细如下：\n";
 
         for(COIScoreDetail detail : playerDetail){
             records = records + detail.toString() + "\n";
