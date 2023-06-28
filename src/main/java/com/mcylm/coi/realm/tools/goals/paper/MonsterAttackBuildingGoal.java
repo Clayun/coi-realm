@@ -38,12 +38,12 @@ public class MonsterAttackBuildingGoal implements Goal<Monster> {
     public void tick() {
 
         if (attackCooldown-- < 0) {
+            attackCooldown = 20;
             for (Block b : LocationUtils.selectionRadiusByDistance(entity.getLocation().getBlock(), 3, 3)) {
                 COIBuilding building = BuildData.getBuildingByBlock(b);
                 if (building != null && building.getTeam() != TeamUtils.getMonsterTeam()) {
                     entity.swingMainHand();
                     building.damage(entity, damage, b);
-                    attackCooldown = 25;
                     b.getWorld().playEffect(b.getLocation(), Effect.STEP_SOUND, 1);
                     break;
                 }
