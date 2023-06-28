@@ -207,53 +207,53 @@ public enum COIPropType {
     ),
 
     // 钻石套装系列
-//    DIAMOND_HELMET(
-//            "DIAMOND_HELMET",
-//            "钻石头盔",
-//            new ItemStack(Material.DIAMOND_HELMET),
-//            1,
-//            "钻石套装，童叟无欺！",
-//            100,
-//            COIBuildingType.FORGE,
-//            1,
-//            4
-//    ),
-//
-//    DIAMOND_CHESTPLATE(
-//            "DIAMOND_CHESTPLATE",
-//            "钻石胸甲",
-//            new ItemStack(Material.DIAMOND_CHESTPLATE),
-//            1,
-//            "钻石套装，童叟无欺！",
-//            100,
-//            COIBuildingType.FORGE,
-//            1,
-//            4
-//    ),
-//
-//    DIAMOND_LEGGINGS(
-//            "DIAMOND_LEGGINGS",
-//            "钻石护腿",
-//            new ItemStack(Material.DIAMOND_LEGGINGS),
-//            1,
-//            "钻石套装，童叟无欺！",
-//            100,
-//            COIBuildingType.FORGE,
-//            1,
-//            4
-//    ),
-//
-//    DIAMOND_BOOTS(
-//            "DIAMOND_BOOTS",
-//            "钻石长靴",
-//            new ItemStack(Material.DIAMOND_BOOTS),
-//            1,
-//            "钻石套装，童叟无欺！",
-//            100,
-//            COIBuildingType.FORGE,
-//            1,
-//            4
-//    ),
+    DIAMOND_HELMET(
+            "DIAMOND_HELMET",
+            "钻石头盔",
+            new ItemStack(Material.DIAMOND_HELMET),
+            1,
+            "钻石套装，童叟无欺！",
+            100,
+            COIBuildingType.FORGE,
+            1,
+            4
+    ),
+
+    DIAMOND_CHESTPLATE(
+            "DIAMOND_CHESTPLATE",
+            "钻石胸甲",
+            new ItemStack(Material.DIAMOND_CHESTPLATE),
+            1,
+            "钻石套装，童叟无欺！",
+            100,
+            COIBuildingType.FORGE,
+            1,
+            4
+    ),
+
+    DIAMOND_LEGGINGS(
+            "DIAMOND_LEGGINGS",
+            "钻石护腿",
+            new ItemStack(Material.DIAMOND_LEGGINGS),
+            1,
+            "钻石套装，童叟无欺！",
+            100,
+            COIBuildingType.FORGE,
+            1,
+            4
+    ),
+
+    DIAMOND_BOOTS(
+            "DIAMOND_BOOTS",
+            "钻石长靴",
+            new ItemStack(Material.DIAMOND_BOOTS),
+            1,
+            "钻石套装，童叟无欺！",
+            100,
+            COIBuildingType.FORGE,
+            1,
+            4
+    ),
 
     // 道具
     GOLDEN_APPLE(
@@ -268,7 +268,7 @@ public enum COIPropType {
             4
     ),
 
-    /*
+
     ENCHANTED_GOLDEN_APPLE(
             "ENCHANTED_GOLDEN_APPLE",
             "附魔金苹果",
@@ -280,8 +280,6 @@ public enum COIPropType {
             1,
             5
     ),
-
-     */
 
     SNOWBALL(
             "SNOWBALL",
@@ -308,7 +306,7 @@ public enum COIPropType {
                     "这玩意可不防摔！！" +
                     "每次消耗8个资源" +
                     "请务必配合*鞘翅*使用。",
-            2000,
+            200,
             COIBuildingType.FORGE,
             1,
             5
@@ -323,7 +321,7 @@ public enum COIPropType {
                     "但是小心别把自己摔死了！" +
                     "这玩意可不防摔！！" +
                     "可以配合*喷气动力鞋*使用。",
-            2000,
+            200,
             COIBuildingType.FORGE,
             1,
             5

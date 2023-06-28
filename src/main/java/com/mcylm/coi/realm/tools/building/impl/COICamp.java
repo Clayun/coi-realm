@@ -46,7 +46,7 @@ public class COICamp extends COIBuilding {
     public BuildingConfig getDefaultConfig() {
 
         return new BuildingConfig()
-                .setMaxLevel(3)
+                .setMaxLevel(99)
                 .setMaxBuild(5)
                 .setConsume(512)
                 .setStructures(getBuildingLevelStructure());
