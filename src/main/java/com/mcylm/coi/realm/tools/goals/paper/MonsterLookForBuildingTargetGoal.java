@@ -83,23 +83,14 @@ public class MonsterLookForBuildingTargetGoal implements Goal<Monster> {
 
         MonsterData data = MonsterData.getDataByEntity(monster);
 
-        LoggerUtils.debug("yeah try to find");
-        if (targetFuture == null || targetFuture.isDone()) {
+       for (Block b : LocationUtils.selectionRadiusByDistance(monster.getLocation().getBlock(), 32, 10)) {
+           COIBuilding building = BuildData.getBuildingByBlock(b);
+           if (building != null && building.getTeam() != TeamUtils.getMonsterTeam()) {
+               data.setTarget(new BuildingTarget(building, building.getNearestBlock(monster.getLocation()).getLocation(), 6));
+               LoggerUtils.debug("found");
+           }
+       }
 
-            targetFuture = CompletableFuture.supplyAsync(() -> {
-                for (Block b : LocationUtils.selectionRadiusByDistance(monster.getLocation().getBlock(), 32, 10)) {
-                    COIBuilding building = BuildData.getBuildingByBlock(b);
-                    if (building != null && building.getTeam() != TeamUtils.getMonsterTeam()) {
-                        return new BuildingTarget(building, building.getNearestBlock(monster.getLocation()).getLocation(), 6);
-                    }
-                }
-                return null;
-            });
-            targetFuture.thenAccept(result -> {
-                data.setTarget(result);
-                LoggerUtils.debug("found");
-            });
-        }
 
 
     }
