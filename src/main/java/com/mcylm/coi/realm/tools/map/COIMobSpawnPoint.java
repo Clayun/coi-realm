@@ -1,15 +1,12 @@
 package com.mcylm.coi.realm.tools.map;
 
 import com.google.gson.annotations.Expose;
-import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.tools.handler.SpawnHandler;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Random;
@@ -18,6 +15,9 @@ import java.util.Random;
 @Getter
 @NoArgsConstructor
 public class COIMobSpawnPoint {
+
+    public static Random random = new Random();
+
     private int x;
     private int y;
     private int z;
@@ -39,24 +39,14 @@ public class COIMobSpawnPoint {
         return new Location(Bukkit.getWorld(world), x, y, z);
     }
 
-    public BukkitRunnable startSpawn() {
+    public void spawn(int second) {
 
         Location location = getLocation();
-        Entry.runSync(() -> location.getChunk().setForceLoaded(true));
-        @NotNull BukkitRunnable runnable = new BukkitRunnable() {
-            int second = 0;
-            final Random random = new Random();
-            @Override
-            public void run() {
-                second++;
 
-                for (SpawnHandler handler : handlers) {
-                    handler.spawn(second, location.getWorld().getHighestBlockAt(location.getBlockX() + random.nextInt(-maxRadius, maxRadius), location.getBlockZ() + random.nextInt(-maxRadius, maxRadius)).getLocation());
-                }
-            }
-        };
-        runnable.runTaskTimer(Entry.getInstance(), 20, 20);
-        return runnable;
+        for (SpawnHandler handler : handlers) {
+            handler.spawn(second, location.getWorld().getHighestBlockAt(location.getBlockX() + random.nextInt(-maxRadius, maxRadius), location.getBlockZ() + random.nextInt(-maxRadius, maxRadius)).getLocation());
+        }
+
     }
 
 }

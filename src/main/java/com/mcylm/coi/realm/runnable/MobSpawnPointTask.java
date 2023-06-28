@@ -15,14 +15,11 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class MobSpawnPointTask {
 
-    @Getter
-    private static Set<BukkitRunnable> tasks = new HashSet<>();
+    private static BukkitRunnable task;
 
     @Getter
     private static List<SpawnHandler> defaultSpawnHandlers;
@@ -68,12 +65,25 @@ public class MobSpawnPointTask {
 
     public static void runTask() {
         initHandlers();
-        tasks.forEach(BukkitRunnable::cancel);
-        tasks.clear();
+        if (task != null) {
+            task.cancel();
+        }
+
         for (COIMobSpawnPoint point : Entry.getMapData().getMobSpawnPoints()) {
             point.setHandlers(new ArrayList<>(defaultSpawnHandlers));
-            tasks.add(point.startSpawn());
         }
+        task = new BukkitRunnable() {
+            int second = 0;
+            @Override
+            public void run() {
+                for (COIMobSpawnPoint point : Entry.getMapData().getMobSpawnPoints()) {
+                    point.spawn(second);
+                }
+                second++;
+            }
+        };
+        task.runTaskTimer(Entry.getInstance(), 0, 20);
+
     }
 
 }
