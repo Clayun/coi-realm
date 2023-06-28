@@ -9,6 +9,8 @@ import com.mcylm.coi.realm.tools.map.COIMobSpawnPoint;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Monster;
+import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Zombie;
 
 public class Monsters {
@@ -23,16 +25,26 @@ public class Monsters {
 
     public static void spawnZombie(Location location, int round) {
         Zombie zombie = location.getWorld().spawn(location, Zombie.class);
-        zombie.setShouldBurnInDay(false);
-        zombie.setRemoveWhenFarAway(false);
+        configureMonsterGoalsAndBehaviors(zombie);
+    }
 
-        TeamUtils.getMonsterTeam().addEntityToScoreboard(zombie);
+    public static void configureMonsterGoalsAndBehaviors(Monster monster) {
+        if (monster instanceof Zombie zombie) {
+            zombie.setShouldBurnInDay(false);
+        }
+
+        if (monster instanceof Skeleton skeleton) {
+            skeleton.setShouldBurnInDay(false);
+        }
+
+        monster.setRemoveWhenFarAway(false);
+
+        TeamUtils.getMonsterTeam().addEntityToScoreboard(monster);
         MobGoals goals = Bukkit.getMobGoals();
-        zombie.setMetadata("monsterData", new MonsterData());
-        goals.addGoal(zombie,0, new MonsterAttackBuildingGoal(zombie, 8));
+        monster.setMetadata("monsterData", new MonsterData());
+        goals.addGoal(monster,0, new MonsterAttackBuildingGoal(monster, 8));
 
-        new MonsterLookForBuildingTargetGoal(zombie);
-
+        new MonsterLookForBuildingTargetGoal(monster);
 
     }
 
