@@ -53,6 +53,9 @@ public class MobSpawnPointTask {
 
     private static void spawnZombie(Location location) {
         Zombie zombie = location.getWorld().spawn(location, Zombie.class);
+        zombie.setShouldBurnInDay(false);
+        zombie.setRemoveWhenFarAway(false);
+
         TeamUtils.getMonsterTeam().addEntityToScoreboard(zombie);
         MobGoals goals = Bukkit.getMobGoals();
         zombie.setMetadata("monsterData", new MonsterData());
