@@ -16,6 +16,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Zombie;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 
 public class Monsters {
@@ -35,7 +37,7 @@ public class Monsters {
     public static void spawnZombie(Location location, int round) {
 
         // 怪物数量
-        int monsterNum = round;
+        int monsterNum = (round / 10) + 1;
         if(monsterNum >= maxMonsterPerLocation){
             monsterNum = maxMonsterPerLocation;
         }
@@ -66,20 +68,25 @@ public class Monsters {
 
         // 通知玩家怪物强度
         for(Player player : Bukkit.getOnlinePlayers()){
+
+            String healthMessage = "怪物血量：" + new BigDecimal(health).setScale(2, RoundingMode.HALF_UP);
+            String damageMessage = "怪物攻击：" + new BigDecimal(damage).setScale(2, RoundingMode.HALF_UP);
+            String speedMessage = "怪物速度：" + new BigDecimal(speed).setScale(2, RoundingMode.HALF_UP);
+
             if(roundNotice.get(player) == null){
                 LoggerUtils.sendMessage("-------- 第 "+round+" 回合预警 --------",player);
-                LoggerUtils.sendMessage("怪物血量："+health,player);
-                LoggerUtils.sendMessage("怪物攻击："+damage,player);
-                LoggerUtils.sendMessage("怪物速度："+speed,player);
+                LoggerUtils.sendMessage(healthMessage,player);
+                LoggerUtils.sendMessage(damageMessage,player);
+                LoggerUtils.sendMessage(speedMessage,player);
                 LoggerUtils.sendMessage("-------- 第 "+round+" 回合预警 --------",player);
                 roundNotice.put(player,round);
             }else{
                 Integer currentRound = roundNotice.get(player);
                 if(currentRound != round){
                     LoggerUtils.sendMessage("-------- 第 "+round+" 回合预警 --------",player);
-                    LoggerUtils.sendMessage("怪物血量："+health,player);
-                    LoggerUtils.sendMessage("怪物攻击："+damage,player);
-                    LoggerUtils.sendMessage("怪物速度："+speed,player);
+                    LoggerUtils.sendMessage(healthMessage,player);
+                    LoggerUtils.sendMessage(damageMessage,player);
+                    LoggerUtils.sendMessage(speedMessage,player);
                     LoggerUtils.sendMessage("-------- 第 "+round+" 回合预警 --------",player);
                     roundNotice.put(player,round);
                 }
