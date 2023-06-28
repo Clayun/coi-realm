@@ -43,9 +43,12 @@ public class MonsterLookForBuildingTargetGoal implements Goal<Monster> {
                     return;
                 }
 
+                LoggerUtils.debug("alive");
+
                 MonsterData data = MonsterData.getDataByEntity(monster);
 
                 if (monster.getTarget() == null || monster.getTarget().isDead()) {
+                    LoggerUtils.debug("no target");
                     if (data.getTarget() != null && !data.getTarget().isDead()) {
                         Entry.runSync(() -> monster.getPathfinder().findPath(data.getTarget().getTargetLocation()));
                         LoggerUtils.debug("try find path");
@@ -93,7 +96,7 @@ public class MonsterLookForBuildingTargetGoal implements Goal<Monster> {
             });
             targetFuture.thenAccept(result -> {
                 data.setTarget(result);
-//                    LoggerUtils.debug("found");
+                    LoggerUtils.debug("found");
             });
         }
 
