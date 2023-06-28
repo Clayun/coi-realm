@@ -284,7 +284,7 @@ public class COITeam implements Team {
             team.addScore(COIScoreType.BEAT_TEAM,player);
         }
 
-        if(!Entry.getGame().checkGameComplete()){
+        if(!Entry.getGame().checkPVPGameComplete()){
             // 游戏尚未结束
 
             // 整队在怪物队伍复活

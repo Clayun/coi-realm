@@ -1,7 +1,6 @@
 package com.mcylm.coi.realm.cmd;
 
 import com.mcylm.coi.realm.Entry;
-import com.mcylm.coi.realm.runnable.MobSpawnPointTask;
 import com.mcylm.coi.realm.tools.map.COIMobSpawnPoint;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import org.bukkit.Location;
@@ -48,9 +47,6 @@ public class SpawnPointCommand implements CommandExecutor {
                             Entry.getInstance().saveMapData();
                         }
                     }.runTaskAsynchronously(Entry.getInstance());
-                } else if (args.length >= 1 && args[0].equalsIgnoreCase("test")) {
-                    MobSpawnPointTask.runTask();
-
                 }
             }
         }

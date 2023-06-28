@@ -37,8 +37,8 @@ public class TeamUtils {
 
         int configTeams = Entry.getInstance().getConfig().getInt("game.max-teams");
 
-        if(configTeams < 2 || configTeams > 6){
-            LoggerUtils.log("&4请注意！团队数量必须在2~6个之间！！！当前团队数量有误");
+        if(configTeams < 1 || configTeams > 6){
+            LoggerUtils.log("&4请注意！团队数量必须在1~6个之间！！！当前团队数量有误");
         }
 
         // 团队数量

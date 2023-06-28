@@ -51,7 +51,7 @@ public class COIUnlockType {
             COIBuildingType.WALL_NORMAL,
             COIBuildingType.BASE,
             1,
-            2
+            1
     );
 
     public static final COIUnlockType LOCK_DOOR = new COIUnlockType(
@@ -63,7 +63,7 @@ public class COIUnlockType {
             COIBuildingType.DOOR_NORMAL,
             COIBuildingType.BASE,
             1,
-            2
+            1
     );
 
     public static final COIUnlockType LOCK_TURRET = new COIUnlockType(
@@ -107,11 +107,11 @@ public class COIUnlockType {
             "&c尚未解锁 &b铁匠铺",
             new ItemStack(Material.CHEST),
             """
-            升级基地到3级解锁""",
+            升级基地到1级解锁""",
             COIBuildingType.FORGE,
             COIBuildingType.BASE,
             1,
-            3
+            1
     );
 
 

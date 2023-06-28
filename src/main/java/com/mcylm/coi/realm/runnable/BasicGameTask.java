@@ -2,9 +2,11 @@ package com.mcylm.coi.realm.runnable;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIGameStatus;
+import com.mcylm.coi.realm.game.COIGame;
 import com.mcylm.coi.realm.model.COIPlayerScore;
 import com.mcylm.coi.realm.model.COIScoreDetail;
 import com.mcylm.coi.realm.runnable.api.GameTaskApi;
+import com.mcylm.coi.realm.tools.monster.Monsters;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.ServerUtils;
@@ -16,6 +18,7 @@ import net.kyori.adventure.util.Ticks;
 import org.bukkit.Bukkit;
 import org.bukkit.GameRule;
 import org.bukkit.World;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -138,8 +141,6 @@ public class BasicGameTask implements GameTaskApi {
         Entry.getGame().setStartTime(LocalDateTime.now());
         // 生成矿脉
         VeinGenerateTask.runTask();
-        // 生成点
-        MobSpawnPointTask.runTask();
         // 游戏中进程
         // 1.开启倒计时
         // 2.游戏结束后启动 GameStoppingTask
@@ -161,65 +162,165 @@ public class BasicGameTask implements GameTaskApi {
             @Override
             public void run() {
 
-                LocalDateTime now = LocalDateTime.now();
+                if(Entry.getGame().getTeams().size() > 2){
+                    // PVP战局
+                    LocalDateTime now = LocalDateTime.now();
 
-                Duration duration = Duration.between(Entry.getGame().getStartTime(),now);
+                    Duration duration = Duration.between(Entry.getGame().getStartTime(),now);
 
-                // 已经过去的秒数
-                count = duration.getSeconds();
+                    // 已经过去的秒数
+                    count = duration.getSeconds();
 
-                if(count >= gamingTimer
-                    || finished){
+                    if(count >= gamingTimer
+                            || finished){
 
-                    // 隐藏 boss bar
-                    for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
-                        p.hideBossBar(bossBar);
-                    }
-
-                    // 启动结算进程
-                    stopping();
-
-                    // 结束当前进程
-                    this.cancel();
-
-                }else{
-                    // 倒计时的秒数
-                    Long countdown = gamingTimer - count;
-                    // boss bar 的进度条
-                    float progress = countdown.floatValue() / gamingTimer.floatValue();
-
-                    if(count >= 3){
-                        bossBar.name(Component.text(LoggerUtils.replaceColor("&c战斗还有 &f" + convertSecondsToHHmmss(countdown) + " &c结束！")));
-                        bossBar.progress(progress);
-
-                        // 游戏在进行中，倒计时需要在 boss bar 中展示
+                        // 隐藏 boss bar
                         for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
-                            p.showBossBar(bossBar);
+                            p.hideBossBar(bossBar);
+                        }
 
-                            if(!p.getWorld().getName().equals(Entry.WORLD)){
-                                LoggerUtils.sendMessage("&c正在进入游戏", p);
-                                TeamUtils.tpSpawner(p);
+                        // 启动结算进程
+                        stopping();
+
+                        // 结束当前进程
+                        this.cancel();
+
+                    }else{
+                        // 倒计时的秒数
+                        Long countdown = gamingTimer - count;
+                        // boss bar 的进度条
+                        float progress = countdown.floatValue() / gamingTimer.floatValue();
+
+                        if(count >= 3){
+                            bossBar.name(Component.text(LoggerUtils.replaceColor("&c战斗还有 &f" + convertSecondsToHHmmss(countdown) + " &c结束！")));
+                            bossBar.progress(progress);
+
+                            // 游戏在进行中，倒计时需要在 boss bar 中展示
+                            for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
+                                p.showBossBar(bossBar);
+
+                                if(!p.getWorld().getName().equals(Entry.WORLD)){
+                                    LoggerUtils.sendMessage("&c正在进入游戏", p);
+                                    TeamUtils.tpSpawner(p);
+                                }
+                            }
+                        }else{
+                            bossBar.name(Component.text(LoggerUtils.replaceColor("&c战斗开始了，&6请先快速获取战备物资！")));
+                            bossBar.progress(progress);
+
+                            // 游戏在进行中，倒计时需要在 boss bar 中展示
+                            for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
+                                p.showBossBar(bossBar);
                             }
                         }
-                    }else{
-                        bossBar.name(Component.text(LoggerUtils.replaceColor("&c战斗开始了，&6请先快速获取战备物资！")));
+
+                        // 检查游戏是否结束
+                        if(Entry.getGame().checkPVPGameComplete()){
+                            // 下一秒进入结算回合
+                            finished = true;
+                        }
+                    }
+
+                }else{
+                    // 单队战局
+                    if(finished){
+                        // 隐藏 boss bar
+                        for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
+                            p.hideBossBar(bossBar);
+                        }
+
+                        // 启动结算进程
+                        stopping();
+
+                        // 结束当前进程
+                        this.cancel();
+                    }
+
+                    count++;
+
+                    Long firstRountCountDown = 60 * 2L;
+
+                    // 初始3分钟不生成怪物
+                    if(count < firstRountCountDown){
+
+                        Long countdown = firstRountCountDown - count;
+                        // boss bar 的进度条
+                        float progress = countdown.floatValue() / firstRountCountDown.floatValue();
+
+                        bossBar.name(Component.text(LoggerUtils.replaceColor("&c第 &f1 &c波怪物即将在 &f"+countdown+" &c秒后到达战场")));
                         bossBar.progress(progress);
 
                         // 游戏在进行中，倒计时需要在 boss bar 中展示
                         for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
                             p.showBossBar(bossBar);
                         }
+                    }else if(count == firstRountCountDown){
+                        // boss bar 的进度条
+                        float progress = 1;
+
+                        bossBar.name(Component.text(LoggerUtils.replaceColor("&c第 &f1 &c波怪物到达战场！保护家园！")));
+                        bossBar.progress(progress);
+
+                        // 游戏在进行中，倒计时需要在 boss bar 中展示
+                        for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
+                            p.showBossBar(bossBar);
+                        }
+
+                        Entry.runSync(() -> Monsters.spawnAll(1));
+                    }else{
+
+                        // 后续的回合
+
+                        // 每回合的时间
+                        long eachRoundSecond = 60;
+
+                        // 从第3分钟开始，每60秒生成一波野怪
+
+                        // 减去第一波的时间之后的游戏总秒数
+                        long roundCount = count - firstRountCountDown;
+
+                        // 第几回合
+                        Long round = (roundCount / eachRoundSecond)+1;
+
+                        if(roundCount % eachRoundSecond == 0){
+                            // 如果求余是0
+                            // 则本回合生成怪物
+
+                            float progress = 1;
+
+                            bossBar.name(Component.text(LoggerUtils.replaceColor("&c第&f "+round+" &c波怪物即将在 &f"+eachRoundSecond+" &c秒后到达战场")));
+                            bossBar.progress(progress);
+
+                            // 游戏在进行中，倒计时需要在 boss bar 中展示
+                            for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
+                                p.showBossBar(bossBar);
+                            }
+
+                            // 生成怪物
+                            Entry.runSync(() -> Monsters.spawnAll(round.intValue()));
+                        }else{
+                            Long countdown = eachRoundSecond - (roundCount % eachRoundSecond);
+
+                            // boss bar 的进度条
+                            float progress = countdown.floatValue() / firstRountCountDown.floatValue();
+
+                            bossBar.name(Component.text(LoggerUtils.replaceColor("&c第&f "+round+" &c波怪物即将在 &f"+countdown+" &c秒后到达战场")));
+                            bossBar.progress(progress);
+
+                            // 游戏在进行中，倒计时需要在 boss bar 中展示
+                            for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
+                                p.showBossBar(bossBar);
+                            }
+                        }
                     }
 
-                    // 检查游戏是否结束
-                    if(Entry.getGame().checkGameComplete()){
-                        // 下一秒进入结算回合
-                        finished = true;
-                    }
+
                 }
 
+
+
             }
-        }.runTaskTimerAsynchronously(Entry.getInstance(), 20, 20);
+        }.runTaskTimerAsynchronously(Entry.getInstance(), 0, 20);
 
 
     }

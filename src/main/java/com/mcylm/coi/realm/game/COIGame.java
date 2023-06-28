@@ -392,10 +392,11 @@ public class COIGame {
     }
 
     /**
+     * PVP战局
      * 检查游戏是否结束
      * @return
      */
-    public boolean checkGameComplete(){
+    public boolean checkPVPGameComplete(){
 
         int aliveTeam = 0;
         for(COITeam team : getTeams()){
@@ -407,6 +408,28 @@ public class COIGame {
         }
 
         if(aliveTeam <= 1){
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * PVE战局游戏结束
+     * @return
+     */
+    public boolean checkPVEGameComplete(){
+
+        int aliveTeam = 0;
+        for(COITeam team : getTeams()){
+            if(!team.getType().equals(COITeamType.MONSTER)){
+                if(!team.isDefeat()){
+                    aliveTeam ++;
+                }
+            }
+        }
+
+        if(aliveTeam == 0){
             return true;
         }
 
