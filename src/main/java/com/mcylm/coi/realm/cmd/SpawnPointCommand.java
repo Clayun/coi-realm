@@ -35,7 +35,7 @@ public class SpawnPointCommand implements CommandExecutor {
                     }.runTaskAsynchronously(Entry.getInstance());
                 } else if (args.length >= 1 && args[0].equals("create")) {
 
-                    int maxRadius = Integer.parseInt(args[0]);
+                    int maxRadius = Integer.parseInt(args[1]);
                     // String targetTeam = args[1];
                     Location location = player.getLocation();
                     COIMobSpawnPoint point = new COIMobSpawnPoint(location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getWorld().getName(), maxRadius);

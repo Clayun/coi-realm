@@ -69,12 +69,13 @@ public class GameListener implements Listener {
         if(npcTeam != null){
             attacker = npcTeam.getType().getColor()+npcTeam.getType().getName()+" "+attacker;
         }else {
-            Player otherTeamPlayer = (Player) event.getEntity();
-            npcTeam = TeamUtils.getTeamByPlayer(otherTeamPlayer);
-            attacker = npcTeam.getType().getColor()+npcTeam.getType().getName()+" "+otherTeamPlayer.getName();
+            if(event.getEntity() instanceof Player otherTeamPlayer){
+                npcTeam = TeamUtils.getTeamByPlayer(otherTeamPlayer);
+                attacker = npcTeam.getType().getColor()+npcTeam.getType().getName()+" "+otherTeamPlayer.getName();
+            }else{
+                attacker = "怪物";
+            }
         }
-
-
 
         COITeam team = event.getBuilding().getTeam();
         for (String playerName : team.getPlayers()) {
@@ -592,17 +593,17 @@ public class GameListener implements Listener {
         }
     }
 
-    @EventHandler
-    public void onEntityRespawn(EntitySpawnEvent event){
-
-        if(!CitizensAPI.getNPCRegistry().isNPC(event.getEntity())){
-
-            if(event.getEntity() instanceof LivingEntity){
-                // 先取消生成
-                event.setCancelled(true);
-            }
-        }
-    }
+//    @EventHandler
+//    public void onEntityRespawn(EntitySpawnEvent event){
+//
+//        if(!CitizensAPI.getNPCRegistry().isNPC(event.getEntity())){
+//
+//            if(event.getEntity() instanceof LivingEntity){
+//                // 先取消生成
+//                event.setCancelled(true);
+//            }
+//        }
+//    }
 
     /**
      * 百分之多少的几率返回true
