@@ -238,7 +238,7 @@ public class BasicGameTask implements GameTaskApi {
 
                     count++;
 
-                    Long firstRountCountDown = 60 * 2L;
+                    Long firstRountCountDown = 60 * 5L;
 
                     // 初始3分钟不生成怪物
                     if(count < firstRountCountDown){
@@ -272,7 +272,7 @@ public class BasicGameTask implements GameTaskApi {
                         // 后续的回合
 
                         // 每回合的时间
-                        long eachRoundSecond = 60;
+                        long eachRoundSecond = 120;
 
                         // 从第3分钟开始，每60秒生成一波野怪
 
@@ -312,6 +312,12 @@ public class BasicGameTask implements GameTaskApi {
                                 p.showBossBar(bossBar);
                             }
                         }
+                    }
+
+                    // 检测是否游戏结束
+                    if(Entry.getGame().checkPVEGameComplete()){
+                        // 下一秒进入结算回合
+                        finished = true;
                     }
 
 

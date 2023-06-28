@@ -16,15 +16,20 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Zombie;
 
+import java.util.HashMap;
+
 public class Monsters {
 
     // 每个点每次最多生成的怪物数量
     private static int maxMonsterPerLocation = 8;
 
+    private static HashMap<Player,Integer> roundNotice = new HashMap<>();
+
     public static void spawnAll(int round) {
         for (COIMobSpawnPoint point : Entry.getMapData().getMobSpawnPoints()) {
             spawnZombie(point.getLocation(), round);
         }
+
     }
 
     public static void spawnZombie(Location location, int round) {
@@ -59,12 +64,28 @@ public class Monsters {
         monster.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(health);
         monster.setHealth(health);
 
+        // 通知玩家怪物强度
         for(Player player : Bukkit.getOnlinePlayers()){
-            LoggerUtils.sendMessage("-------- 第 "+round+" 回合预警 --------",player);
-            LoggerUtils.sendMessage("怪物血量："+health,player);
-            LoggerUtils.sendMessage("怪物攻击："+damage,player);
-            LoggerUtils.sendMessage("怪物速度："+speed,player);
-            LoggerUtils.sendMessage("-------- 第 "+round+" 回合预警 --------",player);
+            if(roundNotice.get(player) == null){
+                LoggerUtils.sendMessage("-------- 第 "+round+" 回合预警 --------",player);
+                LoggerUtils.sendMessage("怪物血量："+health,player);
+                LoggerUtils.sendMessage("怪物攻击："+damage,player);
+                LoggerUtils.sendMessage("怪物速度："+speed,player);
+                LoggerUtils.sendMessage("-------- 第 "+round+" 回合预警 --------",player);
+                roundNotice.put(player,round);
+            }else{
+                Integer currentRound = roundNotice.get(player);
+                if(currentRound != round){
+                    LoggerUtils.sendMessage("-------- 第 "+round+" 回合预警 --------",player);
+                    LoggerUtils.sendMessage("怪物血量："+health,player);
+                    LoggerUtils.sendMessage("怪物攻击："+damage,player);
+                    LoggerUtils.sendMessage("怪物速度："+speed,player);
+                    LoggerUtils.sendMessage("-------- 第 "+round+" 回合预警 --------",player);
+                    roundNotice.put(player,round);
+                }
+
+            }
+
         }
 
 
