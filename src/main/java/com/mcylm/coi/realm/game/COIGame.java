@@ -340,6 +340,19 @@ public class COIGame {
         bread.setAmount(32);
         p.getInventory().addItem(bread);
 
+        // 木剑
+        ItemStack sword = new ItemStack(Material.WOODEN_SWORD);
+        ItemUtils.rename(sword,"&d桃木剑");
+        ItemMeta swordMeta = sword.getItemMeta();
+        // 一把无限耐久度的木剑
+        swordMeta.setUnbreakable(true);
+        sword.setItemMeta(swordMeta);
+        lore = new ArrayList<>();
+        lore.add(LoggerUtils.replaceColor("&c妖魔鬼怪快离开！"));
+        lore.add(LoggerUtils.replaceColor("&c无限耐久"));
+        ItemUtils.setLore(sword,lore);
+        p.getInventory().addItem(sword);
+
         // 初始化玩家背包默认给的资源
         ItemStack emerald = new ItemStack(Material.EMERALD);
 

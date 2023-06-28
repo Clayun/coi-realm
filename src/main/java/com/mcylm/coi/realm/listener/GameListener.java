@@ -240,8 +240,13 @@ public class GameListener implements Listener {
     public void onNatureEntityDeath(EntityDeathEvent event) {
         if(null == EntityData.getNpcByEntity(event.getEntity())
             && !(event.getEntity() instanceof Player)){
-            event.setDroppedExp(0);
+            // 取消原版掉落
             event.getDrops().clear();
+            // 重新设置掉落10绿宝石
+            ItemStack itemStack = new ItemStack(Material.EMERALD);
+            itemStack.setAmount(10);
+            event.getEntity().getLocation().getWorld()
+                    .dropItem(event.getEntity().getLocation(),itemStack);
         }
     }
 
