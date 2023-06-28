@@ -43,13 +43,16 @@ public class MonsterLookForBuildingTargetGoal implements Goal<Monster> {
                     return;
                 }
 
+                LoggerUtils.debug("alive");
+
 
                 MonsterData data = MonsterData.getDataByEntity(monster);
 
                 if (monster.getTarget() == null || monster.getTarget().isDead()) {
-
+                    LoggerUtils.debug("no target");
                     if (data.getTarget() != null && !data.getTarget().isDead()) {
-                        Entry.runSync(() -> monster.getPathfinder().findPath(data.getTarget().getTargetLocation()));
+                        LoggerUtils.debug("move");
+                        Entry.runSync(() -> monster.getPathfinder().moveTo(data.getTarget().getTargetLocation()));
                     }
                 }
 
@@ -68,12 +71,10 @@ public class MonsterLookForBuildingTargetGoal implements Goal<Monster> {
         if (monster.getTarget() != null && !monster.getTarget().isDead()) {
             return false;
         }
-        LoggerUtils.debug("yeah no target");
         MonsterData data = MonsterData.getDataByEntity(monster);
         if (data != null && data.getTarget() != null && !data.getTarget().isDead()) {
             return false;
         }
-        LoggerUtils.debug("yeah no building target");
 
         return true;
     }
@@ -88,6 +89,7 @@ public class MonsterLookForBuildingTargetGoal implements Goal<Monster> {
            if (building != null && building.getTeam() != TeamUtils.getMonsterTeam()) {
                data.setTarget(new BuildingTarget(building, building.getNearestBlock(monster.getLocation()).getLocation(), 6));
                LoggerUtils.debug("found");
+               break;
            }
        }
 
