@@ -67,7 +67,7 @@ public class MonsterLookForBuildingTargetGoal implements Goal<Monster> {
 
         if (monster.getTarget() == null || monster.getTarget().isDead()) {
             if (data.getTarget() != null && !data.getTarget().isDead()) {
-                Entry.runSync(() -> monster.getPathfinder().findPath(data.getTarget().getTargetLocation()));
+                Entry.runSync(() -> monster.getPathfinder().moveTo(data.getTarget().getTargetLocation()));
             }
         }
 
