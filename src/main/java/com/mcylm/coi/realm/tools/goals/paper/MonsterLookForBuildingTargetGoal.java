@@ -37,8 +37,19 @@ public class MonsterLookForBuildingTargetGoal implements Goal<Monster> {
                     this.cancel();
                     return;
                 }
+
+                MonsterData data = MonsterData.getDataByEntity(monster);
+
+                if (monster.getTarget() == null || monster.getTarget().isDead()) {
+                    if (data.getTarget() != null && !data.getTarget().isDead()) {
+                        Entry.runSync(() -> monster.getPathfinder().moveTo(data.getTarget().getTargetLocation()));
+
+                    }
+                }
+
                 if (goal.shouldActivate()) {
                     goal.tick();
+
                 }
             }
         }.runTaskTimerAsynchronously(Entry.getInstance(), 1,8);
@@ -63,13 +74,6 @@ public class MonsterLookForBuildingTargetGoal implements Goal<Monster> {
     public void tick() {
 
         MonsterData data = MonsterData.getDataByEntity(monster);
-
-
-        if (monster.getTarget() == null || monster.getTarget().isDead()) {
-            if (data.getTarget() != null && !data.getTarget().isDead()) {
-                Entry.runSync(() -> monster.getPathfinder().moveTo(data.getTarget().getTargetLocation()));
-            }
-        }
 
         for (Block b : LocationUtils.selectionRadiusByDistance(monster.getLocation().getBlock(), 32, 32)) {
             COIBuilding building = BuildData.getBuildingByBlock(b);

@@ -231,6 +231,8 @@ public class Entry extends ExtendedJavaPlugin {
         for (Team team : scoreboard.getTeams()) {
             team.unregister();
         }
+
+
     }
 
     /**
