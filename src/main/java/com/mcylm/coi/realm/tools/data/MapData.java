@@ -21,5 +21,6 @@ public class MapData {
     // 矿脉的位置
     private List<COIVein> veins = new ArrayList<>();
 
-    private List<COIMobSpawnPoint> mobSpawnPoints = new ArrayList<>(;)
+    // 野怪的位置
+    private List<COIMobSpawnPoint> mobSpawnPoints = new ArrayList<>();
 }

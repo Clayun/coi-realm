@@ -120,6 +120,11 @@ public class COICamp extends COIBuilding {
             pickItemMaterials.add(clothesType.name());
         }
 
+        // 战士会主动攻击的怪物实体类型
+        HashSet<EntityType> enemyEntities = new HashSet<>();
+        enemyEntities.add(EntityType.ZOMBIE);
+
+
         COISoldierCreator npcCreator = new COISoldierCreator();
 
         npcCreator.setRequiredBuildingLevel(level);
@@ -133,6 +138,7 @@ public class COICamp extends COIBuilding {
         npcCreator.setName("战士");
         npcCreator.setLevel(1);
         npcCreator.setPickItemMaterials(pickItemMaterials);
+        npcCreator.setEnemyEntities(enemyEntities);
 
         npcCreator.setFlagWatcherHandler(flagWatcher -> {
             PlayerWatcher playerWatcher = (PlayerWatcher) flagWatcher;
