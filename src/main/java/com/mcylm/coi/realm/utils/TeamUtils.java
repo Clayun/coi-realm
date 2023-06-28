@@ -261,14 +261,15 @@ public class TeamUtils {
 
         COITeam teamByPlayer = getTeamByPlayer(p);
         if(teamByPlayer == null){
-            Entry.runSync(() -> p.kick(Component.text("没队伍自动踢出服务器")));
-            return;
+            autoJoinTeam(p);
+            teamByPlayer = getTeamByPlayer(p);
         }
 
+        COITeam finalTeamByPlayer = teamByPlayer;
         new BukkitRunnable(){
             @Override
             public void run() {
-                Location spawner = teamByPlayer.getSpawner();
+                Location spawner = finalTeamByPlayer.getSpawner();
                 p.teleport(spawner);
             }
         }.runTaskLater(Entry.getInstance(),0);
