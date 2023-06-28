@@ -25,6 +25,7 @@ import com.mcylm.coi.realm.tools.data.MapData;
 import com.mcylm.coi.realm.tools.data.SkinData;
 import com.mcylm.coi.realm.tools.data.metadata.AttackTeamData;
 import com.mcylm.coi.realm.tools.data.metadata.EntityData;
+import com.mcylm.coi.realm.tools.data.metadata.MonsterData;
 import com.mcylm.coi.realm.tools.npc.COISoldierCreator;
 import com.mcylm.coi.realm.tools.npc.impl.COIEntity;
 import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
@@ -44,6 +45,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -390,6 +392,17 @@ public class Entry extends ExtendedJavaPlugin {
                     }
                 });
 
+        // 防止怪物不锁建筑
+        Events.subscribe(EntityTargetEvent.class)
+                .handler((e) -> {
+                    MonsterData data = MonsterData.getDataByEntity(e.getEntity());
+
+                    if (data != null) {
+                        if (data.getTarget() != null && e.getTarget().getLocation().distance(e.getEntity().getLocation()) > 10) {
+                            e.setCancelled(true);
+                        }
+                    }
+                });
 
         LoggerUtils.log("监听器注册完成");
     }

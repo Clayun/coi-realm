@@ -4,15 +4,14 @@ import com.destroystokyo.paper.entity.ai.Goal;
 import com.destroystokyo.paper.entity.ai.GoalKey;
 import com.destroystokyo.paper.entity.ai.GoalType;
 import com.mcylm.coi.realm.Entry;
+import com.mcylm.coi.realm.enums.COIBuildingType;
+import com.mcylm.coi.realm.enums.COITeamType;
 import com.mcylm.coi.realm.tools.attack.target.impl.BuildingTarget;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
-import com.mcylm.coi.realm.tools.data.metadata.BuildData;
 import com.mcylm.coi.realm.tools.data.metadata.MonsterData;
 import com.mcylm.coi.realm.utils.LocationUtils;
-import com.mcylm.coi.realm.utils.LoggerUtils;
-import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.AllArgsConstructor;
-import org.bukkit.block.Block;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Monster;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
@@ -38,27 +37,31 @@ public class MonsterLookForBuildingTargetGoal implements Goal<Monster> {
             @Override
             public void run() {
 
-                if (monster.isDead()) {
+                if (monster.isDead() || Bukkit.isStopping()) {
                     this.cancel();
                     return;
                 }
-
-                LoggerUtils.debug("alive");
 
 
                 MonsterData data = MonsterData.getDataByEntity(monster);
 
                 if (monster.getTarget() == null || monster.getTarget().isDead()) {
-                    LoggerUtils.debug("no target");
                     if (data.getTarget() != null && !data.getTarget().isDead()) {
-                        LoggerUtils.debug("move");
-                        Entry.runSync(() -> monster.getPathfinder().moveTo(data.getTarget().getTargetLocation()));
+                        Entry.runSync(() -> {
+                            if (monster.getPathfinder().getCurrentPath() != null && monster.getPathfinder().getCurrentPath().getFinalPoint().distance(data.getTarget().getTargetLocation()) < 2) {
+                                return;
+                            }
+                            monster.getPathfinder().moveTo(data.getTarget().getTargetLocation());
+                        });
                     }
+                }
+
+                if (data.getTarget() != null && data.getTarget().isDead()) {
+                    data.setTarget(null);
                 }
 
                 if (goal.shouldActivate()) {
                     goal.tick();
-
                 }
             }
         }.runTaskTimerAsynchronously(Entry.getInstance(), 1,10);
@@ -69,7 +72,9 @@ public class MonsterLookForBuildingTargetGoal implements Goal<Monster> {
     public boolean shouldActivate() {
 
         if (monster.getTarget() != null && !monster.getTarget().isDead()) {
-            return false;
+            if (monster.getTarget().getLocation().distance(monster.getLocation()) < 10) {
+                return false;
+            }
         }
         MonsterData data = MonsterData.getDataByEntity(monster);
         if (data != null && data.getTarget() != null && !data.getTarget().isDead()) {
@@ -82,16 +87,14 @@ public class MonsterLookForBuildingTargetGoal implements Goal<Monster> {
     @Override
     public void tick() {
 
+        monster.setTarget(null);
         MonsterData data = MonsterData.getDataByEntity(monster);
 
-       for (Block b : LocationUtils.selectionRadiusByDistance(monster.getLocation().getBlock(), 32, 10)) {
-           COIBuilding building = BuildData.getBuildingByBlock(b);
-           if (building != null && building.getTeam() != TeamUtils.getMonsterTeam()) {
-               data.setTarget(new BuildingTarget(building, building.getNearestBlock(monster.getLocation()).getLocation(), 6));
-               LoggerUtils.debug("found");
-               break;
-           }
-       }
+        for (COIBuilding building : LocationUtils.selectionBuildingsByDistance(monster.getLocation(), 30, EnumSet.of(COITeamType.MONSTER), true)) {
+            if (building.getType() != COIBuildingType.WALL_NORMAL) {
+                data.setTarget(new BuildingTarget(building, building.getNearestBlock(monster.getLocation()).getLocation(), 6));
+            }
+        }
 
 
 

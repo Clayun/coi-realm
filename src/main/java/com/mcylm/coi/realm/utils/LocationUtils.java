@@ -1,7 +1,10 @@
 package com.mcylm.coi.realm.utils;
 
+import com.mcylm.coi.realm.Entry;
+import com.mcylm.coi.realm.enums.COITeamType;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.data.metadata.BuildData;
+import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -72,6 +75,25 @@ public class LocationUtils {
         return blocks;
     }
 
+    public static List<COIBuilding> selectionBuildingsByDistance(Location location, double distance, EnumSet<COITeamType> ignoredTeams, boolean sortByDistance) {
+        List<COIBuilding> buildings = new ArrayList<>();
+        for (COITeam team : Entry.getGame().getTeams()) {
+            if (ignoredTeams != null && ignoredTeams.contains(team.getType())) {
+                continue;
+            }
+            for (COIBuilding building : team.getFinishedBuildings()) {
+                if (building.getLocation().distance(location) <= distance) {
+                    buildings.add(building);
+                }
+            }
+        }
+        if (sortByDistance) {
+            buildings.parallelStream().sorted(Comparator.comparingDouble(b -> b.getLocation().distance(location))).collect(Collectors.toList());
+        }
+        return buildings;
+    }
+
+    @Deprecated
     public static List<COIBuilding> getNearbyBuildings(Location location, int radius) {
         List<COIBuilding> list = new ArrayList<>();
         for (Block block : selectionRadius(location.getBlock(), radius, radius)) {

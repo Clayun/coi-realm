@@ -5,7 +5,6 @@ import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.tools.attack.target.impl.BuildingTarget;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.impl.COIRepair;
-import com.mcylm.coi.realm.tools.data.metadata.BuildData;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.LocationUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
@@ -223,8 +222,8 @@ public class RepairTask {
      * @return
      */
     private static BuildingTarget getFriendlyBuilding(Location turret,COIRepair repair){
-        for (Block b : LocationUtils.selectionRadiusByDistance(turret.getBlock(), (int)repair.getRadius(), (int)repair.getRadius())) {
-            COIBuilding building = BuildData.getBuildingByBlock(b);
+        for (COIBuilding building : LocationUtils.selectionBuildingsByDistance(turret, repair.getRadius(), null, true)) {
+
             if (building != null && building.getTeam() == repair.getTeam()
                 && building.getHealth().get() < building.getMaxHealth()) {
                 // 血量不满的

@@ -1,5 +1,6 @@
 package com.mcylm.coi.realm.tools.npc.impl;
 
+import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.runnable.AttackGoalTask;
 import com.mcylm.coi.realm.tools.attack.AttackGoal;
@@ -37,6 +38,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
@@ -339,21 +341,12 @@ public class COISoldier extends COIEntity implements Commandable {
 
                 }
             }
-            if (target == null && (targetFuture == null || targetFuture.isDone())) {
-                int finalRadius = radius;
-                targetFuture = CompletableFuture.supplyAsync(() -> {
-                    for (Block b : LocationUtils.selectionRadiusByDistance(getLocation().getBlock(), finalRadius, finalRadius)) {
-                        COIBuilding building = BuildData.getBuildingByBlock(b);
-                        if (building != null && building.getTeam() != getCoiNpc().getTeam()) {
-                            return new BuildingTarget(building, building.getNearestBlock(getLocation()).getLocation(), 6);
-                        }
+            if (target == null) {
+                for (COIBuilding building : LocationUtils.selectionBuildingsByDistance(getLocation(), radius, EnumSet.of(getCoiNpc().getTeam().getType()), true)) {
+                    if (building.getType() != COIBuildingType.WALL_NORMAL) {
+                        setTarget(new BuildingTarget(building, building.getNearestBlock(getLocation()).getLocation(), 6));
                     }
-                    return null;
-                });
-                targetFuture.thenAccept(result -> {
-                    target = result;
-//                    LoggerUtils.debug("found");
-                });
+                }
             }
 
 
