@@ -579,17 +579,20 @@ public class GameListener implements Listener {
         while(iterator.hasNext()){
             ItemStack item = iterator.next();
 
-            // 绿宝石和鞘翅组合掉落
-            if (item.getType() != Material.getMaterial(material)
-                    && item.getType() != Material.ELYTRA
-                    && item.getType() != Material.FIREWORK_ROCKET
-            ) {
-                // 这些是保存的
-            }else{
-                event.getPlayer().getLocation().getWorld()
-                        .dropItem(event.getPlayer().getLocation(),item.clone());
-                event.getPlayer().getInventory().remove(item);
+            if(item != null){
+                // 绿宝石和鞘翅组合掉落
+                if (item.getType() != Material.getMaterial(material)
+                        && item.getType() != Material.ELYTRA
+                        && item.getType() != Material.FIREWORK_ROCKET
+                ) {
+                    // 这些是保存的
+                }else{
+                    event.getPlayer().getLocation().getWorld()
+                            .dropItem(event.getPlayer().getLocation(),item.clone());
+                    event.getPlayer().getInventory().remove(item);
+                }
             }
+
         }
     }
 
