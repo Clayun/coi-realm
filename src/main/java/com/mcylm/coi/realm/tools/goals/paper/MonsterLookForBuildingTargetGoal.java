@@ -90,7 +90,7 @@ public class MonsterLookForBuildingTargetGoal implements Goal<Monster> {
         monster.setTarget(null);
         MonsterData data = MonsterData.getDataByEntity(monster);
 
-        for (COIBuilding building : LocationUtils.selectionBuildingsByDistance(monster.getLocation(), 30, EnumSet.of(COITeamType.MONSTER), true)) {
+        for (COIBuilding building : LocationUtils.selectionBuildingsByDistance(monster.getLocation(), 100, EnumSet.of(COITeamType.MONSTER), true)) {
             if (building.getType() != COIBuildingType.WALL_NORMAL) {
                 data.setTarget(new BuildingTarget(building, building.getNearestBlock(monster.getLocation()).getLocation(), 6));
             }
