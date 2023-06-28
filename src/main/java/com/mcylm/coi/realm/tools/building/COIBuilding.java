@@ -646,7 +646,7 @@ public abstract class COIBuilding implements Serializable {
             return;
         }
 
-        if (health >= getMaxHealth()) {
+        if ((getHealth().get() + health) >= getMaxHealth()) {
             getHealth().set(getMaxHealth());
         } else {
             getHealth().getAndAdd(health);

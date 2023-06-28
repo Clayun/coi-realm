@@ -157,7 +157,7 @@ public class PlayerInteractListener implements Listener {
 
         if (event.getClickedBlock() != null) {
             @Nullable COIBuilding building = BuildData.getBuildingByBlock(event.getClickedBlock());
-            if (Action.RIGHT_CLICK_BLOCK == action && building != null) {
+            if (Action.RIGHT_CLICK_BLOCK == action && event.getHand().equals(EquipmentSlot.HAND) && building != null) {
                 // 触发建筑按钮事件
                 BuildingTouchEvent touchEvent = new BuildingTouchEvent(building,event.getPlayer());
                 Bukkit.getServer().getPluginManager().callEvent(touchEvent);

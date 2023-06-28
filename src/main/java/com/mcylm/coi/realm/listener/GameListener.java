@@ -14,6 +14,7 @@ import com.mcylm.coi.realm.tools.attack.target.impl.BuildingTarget;
 import com.mcylm.coi.realm.tools.attack.team.AttackTeam;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.building.impl.COIAirRaid;
+import com.mcylm.coi.realm.tools.building.impl.COIDoor;
 import com.mcylm.coi.realm.tools.building.impl.COIRepair;
 import com.mcylm.coi.realm.tools.building.impl.COITurret;
 import com.mcylm.coi.realm.tools.data.metadata.BuildData;
@@ -191,9 +192,9 @@ public class GameListener implements Listener {
 
         Block block = event.getBlock();
         COIBuilding building = BuildData.getBuildingByBlock(block);
-        if (building != null && building.getTeam() != TeamUtils.getTeamByPlayer(player)) {
 
-            COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(player);
+        COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(player);
+        if (building != null && building.getTeam() != TeamUtils.getTeamByPlayer(player)) {
 
             // 最快可以0.3秒拆一次，否则无效
             if(coiPlayer.getLastDamageBuilding() == null
@@ -213,6 +214,14 @@ public class GameListener implements Listener {
 
 
             event.setCancelled(true);
+        }else if(building != null && building.getTeam() == TeamUtils.getTeamByPlayer(player)){
+            // 自家的建筑，可以维修
+
+            if(coiPlayer.getLastDamageBuilding() == null
+                    || Duration.between(coiPlayer.getLastDamageBuilding(), LocalDateTime.now()).getSeconds() >= 0.3){
+                building.repair(3);
+                coiPlayer.setLastDamageBuilding(LocalDateTime.now());
+            }
         }
     }
 
@@ -508,7 +517,15 @@ public class GameListener implements Listener {
                 }
             }
 
+        }else if(building instanceof COIDoor door){
+            // 开关门
+            if(TeamUtils.getTeamByPlayer(event.getPlayer()) == building.getTeam()){
+                door.toggleDoor();
+            }
+
         }
+
+
     }
 
     @EventHandler
@@ -544,6 +561,34 @@ public class GameListener implements Listener {
             COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(event.getPlayer());
             coiPlayer.setDeathCount(coiPlayer.getDeathCount() + 1);
             coiPlayer.setDeath(true);
+        }
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+
+        String material = Entry.getInstance().getConfig().getString("game.building.material");
+
+        // 仅掉落绿宝石，其他的都保留
+
+        List<ItemStack> needSave = new ArrayList<>();
+
+        Iterator<ItemStack> iterator = event.getPlayer().getInventory().iterator();
+
+        while(iterator.hasNext()){
+            ItemStack item = iterator.next();
+
+            // 绿宝石和鞘翅组合掉落
+            if (item.getType() != Material.getMaterial(material)
+                    && item.getType() != Material.ELYTRA
+                    && item.getType() != Material.FIREWORK_ROCKET
+            ) {
+                // 这些是保存的
+            }else{
+                event.getPlayer().getLocation().getWorld()
+                        .dropItem(event.getPlayer().getLocation(),item.clone());
+                event.getPlayer().getInventory().remove(item);
+            }
         }
     }
 

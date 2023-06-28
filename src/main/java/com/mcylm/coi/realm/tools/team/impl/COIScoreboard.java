@@ -74,7 +74,7 @@ public class COIScoreboard {
                 str.add(LoggerUtils.replaceColor("&a● &a绿宝石 &f"+team.getPublicEmerald()));
                 str.add(LoggerUtils.replaceColor("&e● &a建筑数量 &f"+team.getFinishedBuildings().size()));
                 str.add(LoggerUtils.replaceColor("&d● &a总人口 &f"+team.getTotalPeople()));
-                str.add(LoggerUtils.replaceColor("&b♚ 队伍 &7基地/积分"));
+                str.add(LoggerUtils.replaceColor("&b♚ 队伍 &7基地血量"));
                 str.add(" ");
 
                 List<COITeam> teams = Entry.getGame().getTeams();
@@ -87,7 +87,7 @@ public class COIScoreboard {
 
                     COIBuilding base = coiTeam.getBase();
                     if(base != null){
-                        str.add(LoggerUtils.replaceColor("&a● "+coiTeam.getType().getColor() + coiTeam.getType().getName()+" &f"+base.getHealth()+"&e/"+coiTeam.getScore()));
+                        str.add(LoggerUtils.replaceColor("&a● "+coiTeam.getType().getColor() + coiTeam.getType().getName()+" &f"+base.getHealth()+"&7/"+coiTeam.getBase().getMaxHealth()));
                     }else{
                         str.add(LoggerUtils.replaceColor("&7● "+coiTeam.getType().getColor() + coiTeam.getType().getName()+" &7&m已被摧毁"));
                     }

@@ -100,7 +100,8 @@ public class BasicGameTask implements GameTaskApi {
 
                             Title title = Title.title(
                                     Component.text(LoggerUtils.replaceColor("&f"+countdown+" &c战斗准备中...")),
-                                    Component.text(LoggerUtils.replaceColor("&f使用背包里的 &c指南针 &f来选择队伍吧")),
+//                                    Component.text(LoggerUtils.replaceColor("&f使用背包里的 &c指南针 &f来选择队伍吧")),
+                                    Component.text(LoggerUtils.replaceColor("&7游戏开始后会全自动分配队伍")),
                                     times);
                             p.showTitle(title);
                         }
@@ -114,8 +115,9 @@ public class BasicGameTask implements GameTaskApi {
                         Title.Times times = Title.Times.times(Ticks.duration(0L), Ticks.duration(70L), Ticks.duration(0L));
 
                         Title title = Title.title(
-                                Component.text(LoggerUtils.replaceColor("&f"+size+"&7 / "+minPlayers+" &c即将开始！")),
-                                Component.text(LoggerUtils.replaceColor("&f使用背包里的 &c指南针 &f来选择队伍吧")),
+                                Component.text(LoggerUtils.replaceColor("&f"+size+"&7 / "+minPlayers+" &7即将开始！")),
+//                                Component.text(LoggerUtils.replaceColor("&f使用背包里的 &c指南针 &f来选择队伍吧")),
+                                Component.text(LoggerUtils.replaceColor("&7游戏开始后会全自动分配队伍")),
                                 times);
                         p.showTitle(title);
                     }
