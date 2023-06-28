@@ -40,9 +40,7 @@ import net.kyori.adventure.text.Component;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
@@ -404,6 +402,23 @@ public class Entry extends ExtendedJavaPlugin {
                     }
                 });
 
+        // 怪物还手
+        Events.subscribe(EntityDamageByEntityEvent.class)
+                .handler((e) -> {
+                    MonsterData data = MonsterData.getDataByEntity(e.getEntity());
+
+                    if (data != null) {
+                        if (e.getDamager() instanceof Projectile projectile && projectile.getShooter() instanceof LivingEntity shooter) {
+                            if (EntityData.getNpcByEntity(shooter) != null) {
+                                ((Mob)e.getEntity()).setTarget(shooter);
+                                return;
+                            }
+                        }
+                        if (EntityData.getNpcByEntity(e.getDamager()) != null) {
+                            ((Mob)e.getEntity()).setTarget((LivingEntity) e.getDamager());
+                        }
+                    }
+                });
         LoggerUtils.log("监听器注册完成");
     }
 

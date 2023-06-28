@@ -4,7 +4,7 @@ import com.destroystokyo.paper.entity.ai.MobGoals;
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.tools.data.metadata.MonsterData;
 import com.mcylm.coi.realm.tools.goals.paper.MonsterAttackBuildingGoal;
-import com.mcylm.coi.realm.tools.goals.paper.MonsterLookForBuildingTargetGoal;
+import com.mcylm.coi.realm.tools.goals.paper.MonsterLookForTargetGoal;
 import com.mcylm.coi.realm.tools.handler.SpawnHandler;
 import com.mcylm.coi.realm.tools.map.COIMobSpawnPoint;
 import com.mcylm.coi.realm.utils.TeamUtils;
@@ -58,7 +58,7 @@ public class MobSpawnPointTask {
         zombie.setMetadata("monsterData", new MonsterData());
         goals.addGoal(zombie,0, new MonsterAttackBuildingGoal(zombie, 8));
 
-        new MonsterLookForBuildingTargetGoal(zombie);
+        new MonsterLookForTargetGoal(zombie);
 
 
     }
