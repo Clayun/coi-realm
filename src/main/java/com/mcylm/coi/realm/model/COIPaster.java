@@ -1,7 +1,7 @@
 package com.mcylm.coi.realm.model;
 
-import com.mcylm.coi.realm.tools.building.handlers.BlockPlaceCondition;
-import com.mcylm.coi.realm.tools.building.handlers.BlockPlaceHandler;
+import com.mcylm.coi.realm.tools.handler.BlockPlaceCondition;
+import com.mcylm.coi.realm.tools.handler.BlockPlaceHandler;
 import lombok.*;
 import org.bukkit.Location;
 import org.bukkit.Material;

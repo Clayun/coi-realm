@@ -2,10 +2,7 @@ package com.mcylm.coi.realm;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.mcylm.coi.realm.cmd.AllCommand;
-import com.mcylm.coi.realm.cmd.COIStructureCommand;
-import com.mcylm.coi.realm.cmd.DebugCommand;
-import com.mcylm.coi.realm.cmd.VeinCommand;
+import com.mcylm.coi.realm.cmd.*;
 import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COIServerMode;
@@ -177,6 +174,7 @@ public class Entry extends ExtendedJavaPlugin {
             getCommand("structure").setExecutor(new COIStructureCommand());
             getCommand("cdebug").setExecutor(new DebugCommand());
             getCommand("cvein").setExecutor(new VeinCommand());
+            getCommand("cspawnpoint").setExecutor(new SpawnPointCommand());
             LoggerUtils.log("命令注册完成");
         }
 

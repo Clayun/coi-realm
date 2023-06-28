@@ -1,4 +1,4 @@
-package com.mcylm.coi.realm.tools.building.handlers;
+package com.mcylm.coi.realm.tools.handler;
 
 import com.mcylm.coi.realm.model.COIBlock;
 import org.bukkit.Material;

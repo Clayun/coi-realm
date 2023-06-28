@@ -136,6 +136,8 @@ public class BasicGameTask implements GameTaskApi {
         Entry.getGame().setStartTime(LocalDateTime.now());
         // 生成矿脉
         VeinGenerateTask.runTask();
+        // 生成点
+        MobSpawnPointTask.runTask();
         // 游戏中进程
         // 1.开启倒计时
         // 2.游戏结束后启动 GameStoppingTask

@@ -1,4 +1,4 @@
-package com.mcylm.coi.realm.tools.goals;
+package com.mcylm.coi.realm.tools.goals.citizens;
 
 import com.mcylm.coi.realm.tools.attack.DamageableAI;
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;

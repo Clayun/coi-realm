@@ -1,4 +1,4 @@
-package com.mcylm.coi.realm.tools.goals;
+package com.mcylm.coi.realm.tools.goals.citizens;
 
 import com.mcylm.coi.realm.tools.attack.team.AttackTeam;
 import com.mcylm.coi.realm.tools.data.metadata.AttackTeamData;

@@ -17,3 +17,7 @@ commands:
   all:
   cvein:
     permission: coi.realm.vein
+  cspawnpoint:
+    permission: coi.realm.spawnpoint
+    aliases:
+      - csp
