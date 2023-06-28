@@ -69,7 +69,7 @@ public class MonsterLookForBuildingTargetGoal implements Goal<Monster> {
 
     @Override
     public @NotNull EnumSet<GoalType> getTypes() {
-        return EnumSet.of(GoalType.LOOK);
+        return EnumSet.of(GoalType.UNKNOWN_BEHAVIOR);
     }
 
 }

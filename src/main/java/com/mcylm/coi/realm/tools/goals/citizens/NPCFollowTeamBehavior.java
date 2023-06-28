@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
+@Deprecated
 public class NPCFollowTeamBehavior extends BehaviorGoalAdapter {
 
     private Mob entity;

@@ -42,8 +42,10 @@ public class MonsterAttackBuildingGoal implements Goal<Monster> {
             tick = 0;
             MonsterData data = MonsterData.getDataByEntity(entity);
 
-            if (data.getTarget() != null && !data.getTarget().isDead()) {
-                entity.getPathfinder().findPath(data.getTarget().getTargetLocation());
+            if (entity.getTarget() == null || entity.getTarget().isDead()) {
+                if (data.getTarget() != null && !data.getTarget().isDead()) {
+                    entity.getPathfinder().findPath(data.getTarget().getTargetLocation());
+                }
             }
         }
         if (attackCooldown-- < 0) {
