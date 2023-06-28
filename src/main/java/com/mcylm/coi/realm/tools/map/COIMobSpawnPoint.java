@@ -42,7 +42,7 @@ public class COIMobSpawnPoint {
     public BukkitRunnable startSpawn() {
 
         Location location = getLocation();
-        location.getChunk().setForceLoaded(true);
+        Entry.runSync(() -> location.getChunk().setForceLoaded(true));
         @NotNull BukkitRunnable runnable = new BukkitRunnable() {
             int second = 0;
             final Random random = new Random();
