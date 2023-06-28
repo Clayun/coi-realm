@@ -58,23 +58,8 @@ public class MobSpawnPointTask {
         zombie.setMetadata("monsterData", new MonsterData());
         goals.addGoal(zombie,0, new MonsterAttackBuildingGoal(zombie, 8));
 
-        MonsterLookForBuildingTargetGoal targetGoal = new MonsterLookForBuildingTargetGoal(zombie);
+        new MonsterLookForBuildingTargetGoal(zombie);
 
-        // 为了不干扰原版 使用BukkitRunnable
-
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-
-                if (zombie.isDead()) {
-                    this.cancel();
-                    return;
-                }
-                if (targetGoal.shouldActivate()) {
-                    targetGoal.tick();
-                }
-            }
-        }.runTaskTimer(Entry.getInstance(), 1,1);
 
     }
 

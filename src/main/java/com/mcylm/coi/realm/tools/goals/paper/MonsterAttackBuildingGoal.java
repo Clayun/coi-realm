@@ -6,7 +6,6 @@ import com.destroystokyo.paper.entity.ai.GoalType;
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.data.metadata.BuildData;
-import com.mcylm.coi.realm.tools.data.metadata.MonsterData;
 import com.mcylm.coi.realm.utils.LocationUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import org.bukkit.Effect;
@@ -38,16 +37,6 @@ public class MonsterAttackBuildingGoal implements Goal<Monster> {
     @Override
     public void tick() {
 
-        if (tick++ > 15) {
-            tick = 0;
-            MonsterData data = MonsterData.getDataByEntity(entity);
-
-            if (entity.getTarget() == null || entity.getTarget().isDead()) {
-                if (data.getTarget() != null && !data.getTarget().isDead()) {
-                    entity.getPathfinder().findPath(data.getTarget().getTargetLocation());
-                }
-            }
-        }
         if (attackCooldown-- < 0) {
             for (Block b : LocationUtils.selectionRadiusByDistance(entity.getLocation().getBlock(), 3, 3)) {
                 COIBuilding building = BuildData.getBuildingByBlock(b);
