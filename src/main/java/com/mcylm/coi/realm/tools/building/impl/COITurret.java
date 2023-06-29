@@ -213,7 +213,7 @@ public class COITurret extends COIBuilding {
         // 最大伤害
         this.maxDamage = this.maxDamage + 2;
         // 击退距离
-        if(this.repulsionDistance < 3){
+        if(this.repulsionDistance < 1){
             this.repulsionDistance = this.repulsionDistance + 1;
         }
 

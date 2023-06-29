@@ -261,13 +261,15 @@ public class TeamUtils {
 
         COITeam teamByPlayer = getTeamByPlayer(p);
         if(teamByPlayer == null){
-            Entry.runSync(() -> p.kick(Component.text("当前服务器已满，请更换服务器后重试"), PlayerKickEvent.Cause.KICK_COMMAND));
+            teamByPlayer = autoJoinTeam(p);
+            return;
         }
 
+        COITeam finalTeamByPlayer = teamByPlayer;
         new BukkitRunnable(){
             @Override
             public void run() {
-                Location spawner = teamByPlayer.getSpawner();
+                Location spawner = finalTeamByPlayer.getSpawner();
                 p.teleport(spawner);
             }
         }.runTaskLater(Entry.getInstance(),0);
@@ -384,7 +386,7 @@ public class TeamUtils {
 
     }
 
-    public static void autoJoinTeam(Player p){
+    public static COITeam autoJoinTeam(Player p){
 
         COITeam team = TeamUtils.getTeamByPlayer(p);
 
@@ -396,7 +398,7 @@ public class TeamUtils {
             if(minPlayersTeam == null){
                 // 全都满了，直接给当前玩家踢了吧
                 Entry.runSync(() -> p.kick(Component.text("当前服务器已满，请更换服务器后重试"), PlayerKickEvent.Cause.KICK_COMMAND));
-                return;
+                return null;
             }
 
             // 替玩家加入小队
@@ -408,7 +410,11 @@ public class TeamUtils {
                     Title.DEFAULT_TIMES);
             p.showTitle(title);
 
+            return minPlayersTeam;
+
         }
+
+        return team;
 
     }
 

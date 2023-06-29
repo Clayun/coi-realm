@@ -2,10 +2,13 @@ package com.mcylm.coi.realm.tools.monster;
 
 import com.destroystokyo.paper.entity.ai.MobGoals;
 import com.mcylm.coi.realm.Entry;
+import com.mcylm.coi.realm.enums.COITeamType;
+import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.data.metadata.MonsterData;
 import com.mcylm.coi.realm.tools.goals.paper.MonsterAttackBuildingGoal;
 import com.mcylm.coi.realm.tools.goals.paper.MonsterLookForBuildingTargetGoal;
 import com.mcylm.coi.realm.tools.map.COIMobSpawnPoint;
+import com.mcylm.coi.realm.utils.LocationUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import org.bukkit.Bukkit;
@@ -18,12 +21,14 @@ import org.bukkit.entity.Zombie;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 
 public class Monsters {
 
     // 每个点每次最多生成的怪物数量
-    private static int maxMonsterPerLocation = 8;
+    private static int maxMonsterPerLocation = 16;
 
     private static HashMap<Player,Integer> roundNotice = new HashMap<>();
 
@@ -43,6 +48,13 @@ public class Monsters {
         }
 
         for(int i = 0; i < monsterNum;i++){
+            List<COIBuilding> coiBuildings = LocationUtils.selectionBuildingsByDistance(location, 2, EnumSet.of(COITeamType.MONSTER), true);
+
+            for(COIBuilding coiBuilding : coiBuildings){
+                location.createExplosion(3,false,false);
+                coiBuilding.destroy(true);
+            }
+
             Zombie zombie = location.getWorld().spawn(location, Zombie.class);
             configureMonsterGoalsAndBehaviors(zombie,round);
         }
