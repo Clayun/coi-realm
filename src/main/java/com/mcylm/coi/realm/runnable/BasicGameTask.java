@@ -236,6 +236,13 @@ public class BasicGameTask implements GameTaskApi {
                         this.cancel();
                     }
 
+                    for(Player p : Bukkit.getOnlinePlayers()){
+                        if(!p.getWorld().getName().equals(Entry.WORLD)){
+                            LoggerUtils.sendMessage("&c正在进入游戏", p);
+                            TeamUtils.tpSpawner(p);
+                        }
+                    }
+
                     count++;
 
                     Long firstRountCountDown = 60 * 5L;
