@@ -107,6 +107,7 @@ public class BuilderGUI{
                                             // 检测玩家是否实装了建筑皮肤
                                             COISkin coiSkin = coiPlayer.getSelectedSkins().get(building.getType().getCode());
                                             if(coiSkin != null){
+
                                                 building.setCurrentSkinStructure(coiSkin.getBuildingLevelStructure());
                                             }
 

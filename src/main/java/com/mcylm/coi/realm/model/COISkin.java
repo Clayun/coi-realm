@@ -27,4 +27,19 @@ public class COISkin {
     // NPC的皮肤
     private String npcSkin;
 
+    public Map<Integer, String> getBuildingLevelStructure(){
+
+        String maxDesignSkinFile = "";
+
+        for(int i = 1; i <= 100; i++){
+            if(this.buildingLevelStructure.get(i) != null){
+                maxDesignSkinFile = this.buildingLevelStructure.get(i);
+            }else{
+                this.buildingLevelStructure.put(i,maxDesignSkinFile);
+            }
+        }
+
+        return this.buildingLevelStructure;
+    }
+
 }

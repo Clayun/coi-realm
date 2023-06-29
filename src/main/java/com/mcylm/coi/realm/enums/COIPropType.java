@@ -95,17 +95,17 @@ public enum COIPropType {
             2
     ),
 
-//    DIAMOND_SWORD(
-//            "DIAMOND_SWORD",
-//            "钻石剑",
-//            new ItemStack(Material.DIAMOND_SWORD),
-//            1,
-//            "钻石制成的剑，削铁如泥！",
-//            200,
-//            COIBuildingType.FORGE,
-//            1,
-//            3
-//    ),
+    DIAMOND_SWORD(
+            "DIAMOND_SWORD",
+            "钻石剑",
+            new ItemStack(Material.DIAMOND_SWORD),
+            1,
+            "钻石制成的剑，削铁如泥！",
+            200,
+            COIBuildingType.FORGE,
+            1,
+            3
+    ),
 
 
     // 皮革套装系列
