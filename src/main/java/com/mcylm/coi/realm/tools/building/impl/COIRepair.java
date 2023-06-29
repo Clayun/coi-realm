@@ -55,9 +55,9 @@ public class COIRepair extends COIBuilding {
         // 粒子的大小
         this.particleSize = 1;
         // 最小伤害（回血数量）
-        this.minDamage = 2d;
+        this.minDamage = 5d;
         // 最大伤害
-        this.maxDamage = 3d;
+        this.maxDamage = 8d;
         // 击退距离
         this.repulsionDistance = 0d;
         // 每次攻击的间隔时间
@@ -83,8 +83,8 @@ public class COIRepair extends COIBuilding {
     @Override
     public BuildingConfig getDefaultConfig() {
         return new BuildingConfig()
-                .setMaxLevel(3)
-                .setMaxBuild(10)
+                .setMaxLevel(10)
+                .setMaxBuild(30)
                 .setConsume(512)
                 .setStructures(getBuildingLevelStructure());
     }
@@ -125,6 +125,13 @@ public class COIRepair extends COIBuilding {
         getBuildingLevelStructure().put(1, "turret1.structure");
         getBuildingLevelStructure().put(2, "turret2.structure");
         getBuildingLevelStructure().put(3, "turret2.structure");
+        getBuildingLevelStructure().put(4, "turret2.structure");
+        getBuildingLevelStructure().put(5, "turret2.structure");
+        getBuildingLevelStructure().put(6, "turret2.structure");
+        getBuildingLevelStructure().put(7, "turret2.structure");
+        getBuildingLevelStructure().put(8, "turret2.structure");
+        getBuildingLevelStructure().put(9, "turret2.structure");
+        getBuildingLevelStructure().put(10, "turret2.structure");
     }
 
     @Override
@@ -228,8 +235,14 @@ public class COIRepair extends COIBuilding {
         // 最大伤害
         this.maxDamage = this.maxDamage + getLevel();
         // 每次攻击的间隔时间
-        this.coolDown = this.coolDown - 1;
+        // 每次攻击的间隔时间
+        if(this.coolDown > 1){
+            this.coolDown = this.coolDown - 1;
+        }
         // 弹药消耗增大
-        this.ammunitionConsumption = this.ammunitionConsumption + 1;
+        if(this.ammunitionConsumption < 5){
+            this.ammunitionConsumption = this.ammunitionConsumption + 1;
+        }
+
     }
 }

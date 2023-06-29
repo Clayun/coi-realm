@@ -272,7 +272,7 @@ public class BasicGameTask implements GameTaskApi {
                         // 后续的回合
 
                         // 每回合的时间
-                        long eachRoundSecond = 60 * 5;
+                        long eachRoundSecond = 60 * 3;
 
                         // 从第3分钟开始，每60秒生成一波野怪
 

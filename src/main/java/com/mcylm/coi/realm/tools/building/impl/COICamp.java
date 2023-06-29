@@ -47,8 +47,8 @@ public class COICamp extends COIBuilding {
 
         return new BuildingConfig()
                 .setMaxLevel(99)
-                .setMaxBuild(5)
-                .setConsume(512)
+                .setMaxBuild(30)
+                .setConsume(256)
                 .setStructures(getBuildingLevelStructure());
     }
 
@@ -154,9 +154,10 @@ public class COICamp extends COIBuilding {
      * 初始化设置矿场的建筑等级对照表
      */
     private void initStructure(){
-        getBuildingLevelStructure().put(1,"junying1.structure");
-        getBuildingLevelStructure().put(2,"junying1.structure");
-        getBuildingLevelStructure().put(3,"junying1.structure");
+
+        for(int i = 0;i<=100;i++){
+            getBuildingLevelStructure().put(i, "junying1.structure");
+        }
     }
 
     @Override

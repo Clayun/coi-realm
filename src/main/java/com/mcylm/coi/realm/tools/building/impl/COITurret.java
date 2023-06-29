@@ -84,8 +84,8 @@ public class COITurret extends COIBuilding {
     @Override
     public BuildingConfig getDefaultConfig() {
         return new BuildingConfig()
-                .setMaxLevel(3)
-                .setMaxBuild(10)
+                .setMaxLevel(10)
+                .setMaxBuild(30)
                 .setConsume(512)
                 .setStructures(getBuildingLevelStructure());
     }
@@ -124,9 +124,17 @@ public class COITurret extends COIBuilding {
      * 初始化设置矿场的建筑等级对照表
      */
     private void initStructure() {
+
         getBuildingLevelStructure().put(1, "turret1.structure");
         getBuildingLevelStructure().put(2, "turret2.structure");
         getBuildingLevelStructure().put(3, "turret2.structure");
+        getBuildingLevelStructure().put(4, "turret2.structure");
+        getBuildingLevelStructure().put(5, "turret2.structure");
+        getBuildingLevelStructure().put(6, "turret2.structure");
+        getBuildingLevelStructure().put(7, "turret2.structure");
+        getBuildingLevelStructure().put(8, "turret2.structure");
+        getBuildingLevelStructure().put(9, "turret2.structure");
+        getBuildingLevelStructure().put(10, "turret2.structure");
     }
 
     @Override
@@ -205,10 +213,18 @@ public class COITurret extends COIBuilding {
         // 最大伤害
         this.maxDamage = this.maxDamage + 2;
         // 击退距离
-        this.repulsionDistance = this.repulsionDistance + 1;
+        if(this.repulsionDistance < 3){
+            this.repulsionDistance = this.repulsionDistance + 1;
+        }
+
         // 每次攻击的间隔时间
-        this.coolDown = this.coolDown - 1;
-        // 攻击消耗增大
-        this.ammunitionConsumption = this.ammunitionConsumption + 2;
+        if(this.coolDown > 1){
+            this.coolDown = this.coolDown - 1;
+        }
+
+        // 弹药消耗增大
+        if(this.ammunitionConsumption < 5){
+            this.ammunitionConsumption = this.ammunitionConsumption + 1;
+        }
     }
 }

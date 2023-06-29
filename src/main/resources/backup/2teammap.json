@@ -1,0 +1,175 @@
+{
+  "veins": [
+    {
+      "structureName": "kuangmai1.structure",
+      "x": -46,
+      "y": 88,
+      "z": -148,
+      "yaw": 178.66173,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 4,
+      "y": 88,
+      "z": -125,
+      "yaw": -171.28793,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 28,
+      "y": 88,
+      "z": -110,
+      "yaw": -163.63757,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 42,
+      "y": 88,
+      "z": -101,
+      "yaw": -157.03705,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": -24,
+      "y": 88,
+      "z": -133,
+      "yaw": -158.23743,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": -46,
+      "y": 88,
+      "z": 167,
+      "yaw": 178.66173,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 4,
+      "y": 88,
+      "z": 144,
+      "yaw": -171.28793,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 28,
+      "y": 88,
+      "z": 129,
+      "yaw": -163.63757,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": 42,
+      "y": 88,
+      "z": 120,
+      "yaw": -157.03705,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    },
+    {
+      "structureName": "kuangmai1.structure",
+      "x": -24,
+      "y": 88,
+      "z": 152,
+      "yaw": -158.23743,
+      "world": "RTSv2",
+      "spawnChance": 1.0,
+      "resetTime": 60
+    }
+  ],
+  "mobSpawnPoints": [
+    {
+      "x": -27,
+      "y": 88,
+      "z": -187,
+      "world": "RTSv2",
+      "maxRadius": 5,
+      "handlers": [
+        null
+      ]
+    },
+    {
+      "x": -67,
+      "y": 88,
+      "z": 113,
+      "world": "RTSv2",
+      "maxRadius": 5,
+      "handlers": [
+        null
+      ]
+    },
+    {
+      "x": -47,
+      "y": 88,
+      "z": -196,
+      "world": "RTSv2",
+      "maxRadius": 5
+    },
+    {
+      "x": -1,
+      "y": 88,
+      "z": -174,
+      "world": "RTSv2",
+      "maxRadius": 5
+    },
+    {
+      "x": 27,
+      "y": 88,
+      "z": -154,
+      "world": "RTSv2",
+      "maxRadius": 5
+    },
+    {
+      "x": -4,
+      "y": 88,
+      "z": -170,
+      "world": "RTSv2",
+      "maxRadius": 5
+    },
+    {
+      "x": -19,
+      "y": 88,
+      "z": -91,
+      "world": "RTSv2",
+      "maxRadius": 5
+    },
+    {
+      "x": -48,
+      "y": 88,
+      "z": -103,
+      "world": "RTSv2",
+      "maxRadius": 5
+    },
+    {
+      "x": -71,
+      "y": 88,
+      "z": -118,
+      "world": "RTSv2",
+      "maxRadius": 5
+    }
+  ]
+}

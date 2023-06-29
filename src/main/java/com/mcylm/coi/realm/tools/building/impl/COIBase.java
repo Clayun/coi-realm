@@ -27,10 +27,10 @@ public class COIBase extends COIBuilding {
 
         return new BuildingConfig()
                 .setStructures(getBuildingLevelStructure())
-                .setMaxLevel(20)
+                .setMaxLevel(100)
                 .setMaxBuild(1)
                 .setShowInMenu(false)
-                .setConsume(1024);
+                .setConsume(128);
     }
 
     @Override
@@ -52,26 +52,10 @@ public class COIBase extends COIBuilding {
     }
 
     private void initStructure() {
-        getBuildingLevelStructure().put(1, "base1.structure");
-        getBuildingLevelStructure().put(2, "base2.structure");
-        getBuildingLevelStructure().put(3, "base2.structure");
-        getBuildingLevelStructure().put(4, "base2.structure");
-        getBuildingLevelStructure().put(5, "base2.structure");
-        getBuildingLevelStructure().put(6, "base2.structure");
-        getBuildingLevelStructure().put(7, "base2.structure");
-        getBuildingLevelStructure().put(8, "base2.structure");
-        getBuildingLevelStructure().put(9, "base2.structure");
-        getBuildingLevelStructure().put(10, "base2.structure");
-        getBuildingLevelStructure().put(11, "base2.structure");
-        getBuildingLevelStructure().put(12, "base2.structure");
-        getBuildingLevelStructure().put(13, "base2.structure");
-        getBuildingLevelStructure().put(14, "base2.structure");
-        getBuildingLevelStructure().put(15, "base2.structure");
-        getBuildingLevelStructure().put(16, "base2.structure");
-        getBuildingLevelStructure().put(17, "base2.structure");
-        getBuildingLevelStructure().put(18, "base2.structure");
-        getBuildingLevelStructure().put(19, "base2.structure");
-        getBuildingLevelStructure().put(20, "base2.structure");
+
+        for(int i = 0;i<=100;i++){
+            getBuildingLevelStructure().put(i, "base1.structure");
+        }
     }
 
     @Override

@@ -48,7 +48,7 @@ public class COIStope extends COIBuilding {
         return new BuildingConfig()
                 .setMaxLevel(3)
                 .setConsume(64)
-                .setMaxBuild(10)
+                .setMaxBuild(30)
                 .setStructures(getBuildingLevelStructure());
     }
 
@@ -213,6 +213,7 @@ public class COIStope extends COIBuilding {
      * 初始化设置矿场的建筑等级对照表
      */
     private void initStructure() {
+
         getBuildingLevelStructure().put(1, "kuangchang1.structure");
         getBuildingLevelStructure().put(2, "kuangchang1.structure");
         getBuildingLevelStructure().put(3, "kuangchang1.structure");

@@ -50,14 +50,14 @@ public class Monsters {
 
     public static void configureMonsterGoalsAndBehaviors(Monster monster,int round) {
 
-        // 增加的倍率,每次在上一次的基础上增加 1%
-        Double percent = 1 + (round * 0.01);
+        // 增加的倍率,每次在上一次的基础上增加 2%
+        Double percent = 1 + (round * 0.02);
         // 根据回合数自动升级血量，伤害，移动速度
         // 移动速度
         double speed = monster.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue() * percent;
 
-        if(speed >= 0.25){
-            speed = 0.25d;
+        if(speed >= 0.35){
+            speed = 0.35d;
         }
 
         monster.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(speed);
