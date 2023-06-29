@@ -42,7 +42,7 @@ public class Monsters {
     public static void spawnZombie(Location location, int round) {
 
         // 怪物数量
-        int monsterNum = (round / 10) + 1;
+        int monsterNum = (round / 7) + 1;
         if(monsterNum >= maxMonsterPerLocation){
             monsterNum = maxMonsterPerLocation;
         }
