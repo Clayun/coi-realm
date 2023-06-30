@@ -272,6 +272,26 @@ public class COIGame {
     }
 
     /**
+     * 获取玩家的积分
+     * @param player
+     * @return
+     */
+    public Double getPlayerScore(Player player){
+
+        Double result = 0d;
+
+        COITeam teamByPlayer = TeamUtils.getTeamByPlayer(player.getName());
+        for(COIScore score : teamByPlayer.getScoreRecords()){
+            // 所属玩家的才算
+            if(score.getPlayer() == player) {
+                result = result + score.getType().getScore();
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * 初始化玩家等待中的背包
      */
     public void initPlayerWaiting(Player p){

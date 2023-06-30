@@ -33,9 +33,11 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
@@ -118,10 +120,11 @@ public class COISoldier extends COIEntity implements Commandable {
             if (npc != null) {
                 // 在攻击伤害范围内，随机产生伤害
                 double damage = DamageUtils.getRandomDamage(npc);
+                damage = damage * 2;
                 // 直接赋值伤害
                 e.setDamage(damage);
                 ((LivingEntity) entity).damage(damage);
-                LoggerUtils.debug("远程伤害：" + damage);
+//                LoggerUtils.debug("远程暴击伤害：" + damage);
             }
 
             // 将攻击者设置为目标
@@ -250,16 +253,6 @@ public class COISoldier extends COIEntity implements Commandable {
     @Override
     public void move() {
         super.move();
-
-        //警戒周围
-        // meleeAttackTarget();
-        /*
-        if (target != null && target.isDead()) {
-            target = null;
-            ((Mob) getNpc().getEntity()).setTarget(null);
-        }
-
-         */
     }
 
     @Override
@@ -374,7 +367,7 @@ public class COISoldier extends COIEntity implements Commandable {
         // 先判断是否是生物
         if (target.getType() == TargetType.ENTITY) {
             EntityTarget entityTarget = (EntityTarget) target;
-            entityTarget.getEntity().damage(damage);
+            entityTarget.getEntity().damage(damage,this.npc.getEntity());
             entityTarget.getEntity().setNoDamageTicks(0);
         } else if (target.getType() == TargetType.BUILDING) {
             BuildingTarget buildingTarget = (BuildingTarget) target;
@@ -406,10 +399,24 @@ public class COISoldier extends COIEntity implements Commandable {
         getCoiNpc().getInventory().addItem(new ItemStack(Material.LEATHER_HELMET));
 
         Mob npcEntity = ((Mob) getNpc().getEntity());
-        npcEntity.getEquipment().setItemInMainHand(new ItemStack(new Random().nextBoolean() ? Material.CROSSBOW : Material.IRON_SWORD));
+
+        // 攻速3的弩
+        ItemStack crossbow = new ItemStack(Material.CROSSBOW);
+        // 获取弩的物品元数据
+        ItemMeta meta = crossbow.getItemMeta();
+        // 获取装填速度附魔
+        Enchantment quickChargeEnchantment = Enchantment.QUICK_CHARGE;
+        // 设置装填速度附魔的等级
+        int enchantmentLevel = 3; // 设置附魔的等级，这里的值可以根据需要进行调整
+        meta.addEnchant(quickChargeEnchantment, enchantmentLevel, true);
+        // 将修改后的元数据应用到弩的物品栈
+        crossbow.setItemMeta(meta);
+
+        npcEntity.getEquipment().setItemInMainHand(
+                new Random().nextBoolean() ? crossbow : new ItemStack(Material.IRON_SWORD));
 
 
-        // Bukkit.getMobGoals().addGoal(npcEntity, 1, new NPCFollowTeamGoal(this));
+                        // Bukkit.getMobGoals().addGoal(npcEntity, 1, new NPCFollowTeamGoal(this));
         // Bukkit.getMobGoals().addGoal(npcEntity, 0, new NPCSimpleMeleeAttackGoal(this));
         // Bukkit.getMobGoals().addGoal(npcEntity, 0, new NPCLookForTargetGoal(this));
 
@@ -418,7 +425,7 @@ public class COISoldier extends COIEntity implements Commandable {
         LivingEntity entity = (LivingEntity) npc.getEntity();
         // 获取当前移动速度
         double currentSpeed = entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getValue();
-        // 设置移动速度为 1.5倍速度
+        // 设置移动速度为 1.3倍速度
         entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(currentSpeed * 1.3);
 
     }

@@ -5,6 +5,7 @@ import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COITeamType;
 import com.mcylm.coi.realm.events.GameStatusEvent;
+import com.mcylm.coi.realm.game.COIGame;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.tools.attack.target.impl.EntityTarget;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
@@ -68,8 +69,10 @@ public class COIScoreboard {
 
                 List<String> str = new ArrayList<>();
 
+                Double playerScore = Entry.getGame().getPlayerScore(p);
+
                 str.add(LoggerUtils.replaceColor("&f<&aLV."+baseLevel+"&f> "+team.getType().getColor()+team.getType().getName()));
-                str.add(LoggerUtils.replaceColor("&e团队战分&7(奖励) &f"+team.getScore()));
+                str.add(LoggerUtils.replaceColor("&e本局战分&7(奖励) &f"+playerScore));
                 str.add(LoggerUtils.replaceColor("&b♚ 团队资源 &7资产"));
                 str.add(LoggerUtils.replaceColor("&a● &a绿宝石 &f"+team.getPublicEmerald()));
                 str.add(LoggerUtils.replaceColor("&e● &a建筑数量 &f"+team.getFinishedBuildings().size()));

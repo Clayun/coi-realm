@@ -421,7 +421,7 @@ public class BasicGameTask implements GameTaskApi {
                             // 公布游戏结果
                             Title title = Title.title(
                                     Component.text(LoggerUtils.replaceColor("&f本局勇闯 &b"+GAME_ROUND +" &f回合！")),
-                                    Component.text("&f你们是真正的勇士，祝贺你们！"),
+                                    Component.text("你们是真正的勇士，祝贺你们！"),
                                     times);
                             p.showTitle(title);
 

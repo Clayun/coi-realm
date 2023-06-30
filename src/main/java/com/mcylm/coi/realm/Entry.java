@@ -362,7 +362,7 @@ public class Entry extends ExtendedJavaPlugin {
 
                                     AttackTeamData teamData = AttackTeamData.getDataByEntity(e.getRightClicked());
 
-                                    if (teamData == null || teamData.getCurrentTeam().getCommander().isDead()) {
+                                    if (teamData == null || teamData.getCurrentTeam() != coiPlayer.getAttackTeam()) {
                                         coiPlayer.getAttackTeam().getMembers().add((COIEntity) creator.getNpc());
                                         e.getRightClicked().setMetadata("teamData", new AttackTeamData(coiPlayer.getAttackTeam()));
                                         LoggerUtils.sendMessage("&a成功入队", e.getPlayer());
