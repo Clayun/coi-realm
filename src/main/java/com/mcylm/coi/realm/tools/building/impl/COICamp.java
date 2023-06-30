@@ -16,7 +16,10 @@ import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -66,6 +69,13 @@ public class COICamp extends COIBuilding {
                 // 初始化
                 COISoldier soldier = new COISoldier(npcCreator);
                 soldier.spawn(creator.getSpawnLocation());
+
+                // 初始化战士的攻速
+                if(soldier.getNpc().getEntity() != null
+                        && soldier.getNpc().getEntity() instanceof LivingEntity livingEntity){
+                    initSoldierAttribute(livingEntity);
+                }
+
                 // 仅用于跟随的 Commander
                 soldier.setCommander(player);
             }
@@ -89,11 +99,26 @@ public class COICamp extends COIBuilding {
                 soldier.spawn(creator.getSpawnLocation());
                 // 仅用于跟随的 Commander
 
+                // 初始化战士的攻速
+                if(soldier.getNpc().getEntity() != null
+                        && soldier.getNpc().getEntity() instanceof LivingEntity livingEntity){
+                    initSoldierAttribute(livingEntity);
+                }
+
                 Player player = Bukkit.getPlayer(getBuildPlayerName());
                 soldier.setCommander(player);
             }
 
         }
+    }
+
+    private void initSoldierAttribute(LivingEntity soldier){
+        // 获取弩箭速度属性
+        AttributeInstance arrowSpeedAttribute = soldier.getAttribute(Attribute.GENERIC_ATTACK_SPEED);
+
+        // 设置新的弩箭速度值
+        double newArrowSpeed = 1 * getLevel(); // 设置新的弩箭速度值，这里的值可以根据需要进行调整
+        arrowSpeedAttribute.setBaseValue(newArrowSpeed);
     }
 
     /**
