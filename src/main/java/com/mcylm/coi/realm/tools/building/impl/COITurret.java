@@ -223,7 +223,7 @@ public class COITurret extends COIBuilding {
         }
 
         // 弹药消耗增大
-        if(this.ammunitionConsumption < 5){
+        if(this.ammunitionConsumption < 3){
             this.ammunitionConsumption = this.ammunitionConsumption + 1;
         }
     }

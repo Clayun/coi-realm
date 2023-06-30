@@ -240,7 +240,7 @@ public class COIRepair extends COIBuilding {
             this.coolDown = this.coolDown - 1;
         }
         // 弹药消耗增大
-        if(this.ammunitionConsumption < 5){
+        if(this.ammunitionConsumption < 3){
             this.ammunitionConsumption = this.ammunitionConsumption + 1;
         }
 

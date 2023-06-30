@@ -38,7 +38,7 @@ public class COIDoor extends COIBuilding {
         return new BuildingConfig()
                 .setConsume(32)
                 .setMaxLevel(99)
-                .setMaxBuild(9999)
+                .setMaxBuild(10)
                 .setStructures(getBuildingLevelStructure());
     }
 
@@ -90,7 +90,7 @@ public class COIDoor extends COIBuilding {
 
     @Override
     public int getMaxHealth() {
-        return 400 + getLevel() * 200;
+        return 200 + getLevel() * 200;
     }
 
     public void open() {

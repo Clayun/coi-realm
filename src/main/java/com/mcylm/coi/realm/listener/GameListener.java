@@ -40,6 +40,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
@@ -312,6 +313,14 @@ public class GameListener implements Listener {
                     ItemUtils.changeColorForLeather(itemStack, team.getType().getLeatherColor());
                 }
             }
+        }
+    }
+
+    @EventHandler
+    public void onWaterFlow(BlockFromToEvent event) {
+        Block block = event.getBlock();
+        if (block.getType() == Material.WATER || block.getType() == Material.LAVA) {
+            event.setCancelled(true);
         }
     }
 
