@@ -64,7 +64,7 @@ public class Monsters {
 
         // 增加的倍率,每次在上一次的基础上增加 2%
         Double percent = 1 + (round * 0.02);
-        Double basicHealth = 20d;
+        Double basicHealth = 10d;
         Double basicDamage = 5d;
         // 根据回合数自动升级血量，伤害，移动速度
         // 移动速度
