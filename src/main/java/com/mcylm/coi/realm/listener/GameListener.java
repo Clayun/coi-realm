@@ -373,8 +373,7 @@ public class GameListener implements Listener {
                                 p.teleport(team.getSpawner());
                             }
                         }.runTask(Entry.getInstance());
-                        // 取消无敌
-                        p.setNoDamageTicks(0);
+                        p.setNoDamageTicks(20 * 2);
                         coiPlayer.setDeath(false);
                         p.setAllowFlight(false);
                         cancel();

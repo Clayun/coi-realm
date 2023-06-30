@@ -273,6 +273,7 @@ public abstract class LineBuild extends COIBuilding {
                         LoggerUtils.debug("LineBuild 升级完成");
                         Bukkit.getScheduler().runTask(Entry.getInstance(), () -> {
                             buildSuccess(location, player);
+                            getHealth().set(getMaxHealth());
                         });
                         this.cancel();
                     }
