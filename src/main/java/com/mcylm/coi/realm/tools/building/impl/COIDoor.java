@@ -90,7 +90,7 @@ public class COIDoor extends COIBuilding {
 
     @Override
     public int getMaxHealth() {
-        return 200 + getLevel() * 200;
+        return 300 + getLevel() * 200;
     }
 
     public void open() {

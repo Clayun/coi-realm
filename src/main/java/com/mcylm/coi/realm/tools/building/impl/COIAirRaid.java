@@ -68,7 +68,7 @@ public class COIAirRaid extends COIBuilding {
     public BuildingConfig getDefaultConfig() {
         return new BuildingConfig()
                 .setMaxLevel(10)
-                .setMaxBuild(30)
+                .setMaxBuild(25)
                 .setConsume(512)
                 .setStructures(getBuildingLevelStructure());
     }

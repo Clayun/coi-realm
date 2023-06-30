@@ -41,8 +41,8 @@ public class COIMill extends COIBuilding {
 
         return new BuildingConfig()
                 .setStructures(getBuildingLevelStructure())
-                .setMaxLevel(3)
-                .setMaxBuild(50)
+                .setMaxLevel(10)
+                .setMaxBuild(15)
                 .setConsume(64);
     }
 
@@ -131,6 +131,13 @@ public class COIMill extends COIBuilding {
         getBuildingLevelStructure().put(1, "mofang1.structure");
         getBuildingLevelStructure().put(2, "mofang2.structure");
         getBuildingLevelStructure().put(3, "mofang2.structure");
+        getBuildingLevelStructure().put(4, "mofang2.structure");
+        getBuildingLevelStructure().put(5, "mofang2.structure");
+        getBuildingLevelStructure().put(6, "mofang2.structure");
+        getBuildingLevelStructure().put(7, "mofang2.structure");
+        getBuildingLevelStructure().put(8, "mofang2.structure");
+        getBuildingLevelStructure().put(9, "mofang2.structure");
+        getBuildingLevelStructure().put(10, "mofang2.structure");
     }
 
     @Override

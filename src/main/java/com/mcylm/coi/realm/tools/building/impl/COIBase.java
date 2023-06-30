@@ -27,7 +27,7 @@ public class COIBase extends COIBuilding {
 
         return new BuildingConfig()
                 .setStructures(getBuildingLevelStructure())
-                .setMaxLevel(100)
+                .setMaxLevel(25)
                 .setMaxBuild(1)
                 .setShowInMenu(false)
                 .setConsume(128);

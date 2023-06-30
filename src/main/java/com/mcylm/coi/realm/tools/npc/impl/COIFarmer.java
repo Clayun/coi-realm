@@ -63,7 +63,7 @@ public class COIFarmer extends COIEntity {
                 if (item != null) {
                     if (item.getAmount() >= 1 && item.getType().equals(Material.WHEAT)) {
                         getFarmerInventory().remove(item);
-                        getFarmerInventory().addItem(new ItemStack(Material.BREAD, item.getAmount() * (1 + getCoiNpc().getLevel())));
+                        getFarmerInventory().addItem(new ItemStack(Material.BREAD, item.getAmount() * (1+getCoiNpc().getLevel())));
                     }
                 }
             }

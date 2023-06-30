@@ -46,9 +46,9 @@ public class COIStope extends COIBuilding {
     @Override
     public BuildingConfig getDefaultConfig() {
         return new BuildingConfig()
-                .setMaxLevel(3)
+                .setMaxLevel(10)
                 .setConsume(64)
-                .setMaxBuild(30)
+                .setMaxBuild(10)
                 .setStructures(getBuildingLevelStructure());
     }
 
@@ -217,6 +217,13 @@ public class COIStope extends COIBuilding {
         getBuildingLevelStructure().put(1, "kuangchang1.structure");
         getBuildingLevelStructure().put(2, "kuangchang1.structure");
         getBuildingLevelStructure().put(3, "kuangchang1.structure");
+        getBuildingLevelStructure().put(4, "kuangchang1.structure");
+        getBuildingLevelStructure().put(5, "kuangchang1.structure");
+        getBuildingLevelStructure().put(6, "kuangchang1.structure");
+        getBuildingLevelStructure().put(7, "kuangchang1.structure");
+        getBuildingLevelStructure().put(8, "kuangchang1.structure");
+        getBuildingLevelStructure().put(9, "kuangchang1.structure");
+        getBuildingLevelStructure().put(10, "kuangchang1.structure");
     }
 
     @Override
