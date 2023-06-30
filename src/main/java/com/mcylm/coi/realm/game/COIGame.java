@@ -347,13 +347,16 @@ public class COIGame {
         ironPickaxe.setItemMeta(meta);
         p.getInventory().addItem(ironPickaxe);
 
-        ItemStack commandItem = new ItemStack(Material.NETHER_STAR);
-        ItemUtils.rename(itemStack,"&b攻击指挥");
-        lore = new ArrayList<>();
-        lore.add(LoggerUtils.replaceColor("&f切换你战士小队的攻击状态"));
-        ItemUtils.setLore(commandItem,lore);
+        if(getTeams().size() > 2){
+            ItemStack commandItem = new ItemStack(Material.NETHER_STAR);
+            ItemUtils.rename(itemStack,"&b攻击指挥");
+            lore = new ArrayList<>();
+            lore.add(LoggerUtils.replaceColor("&f切换你战士小队的攻击状态"));
+            ItemUtils.setLore(commandItem,lore);
 
-        p.getInventory().addItem(commandItem);
+            p.getInventory().addItem(commandItem);
+        }
+
 
         // 面包
         ItemStack bread = new ItemStack(Material.BREAD);
