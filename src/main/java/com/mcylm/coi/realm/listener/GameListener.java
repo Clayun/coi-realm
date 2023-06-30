@@ -29,6 +29,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
+import net.minecraft.network.protocol.status.ServerPing;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -47,6 +48,7 @@ import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -271,6 +273,30 @@ public class GameListener implements Listener {
         }
 
 
+    }
+
+    @EventHandler
+    public void onServerListPing(ServerListPingEvent event) {
+
+        // 服务器模式，暂定1是PVP，2是PVE
+        String serverMode = "1";
+
+        // 队伍数量少于/等于2，单队模式PVE
+        if(Entry.getGame().getTeams().size() <= 2){
+            serverMode = "2";
+        }
+
+        // 1是可以进入，2是不可进入
+        String couldJoinGame = "1";
+
+        // 检测服务器是否满人
+        if(Bukkit.getOnlinePlayers().size() >= Bukkit.getMaxPlayers()){
+            couldJoinGame = "2";
+        }
+
+        // 修改MOTD文本
+        String motd = "coi-"+serverMode+"-"+couldJoinGame;
+        event.setMotd(motd);
     }
 
     @EventHandler
