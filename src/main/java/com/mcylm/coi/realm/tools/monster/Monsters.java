@@ -42,7 +42,7 @@ public class Monsters {
     public static void spawnZombie(Location location, int round) {
 
         // 怪物数量
-        int monsterNum = (round / 7) + 1;
+        int monsterNum = (round / 5) + 1;
         if(monsterNum >= maxMonsterPerLocation){
             monsterNum = maxMonsterPerLocation;
         }
@@ -64,6 +64,8 @@ public class Monsters {
 
         // 增加的倍率,每次在上一次的基础上增加 2%
         Double percent = 1 + (round * 0.02);
+        Double basicHealth = 10d;
+        Double basicDamage = 3d;
         // 根据回合数自动升级血量，伤害，移动速度
         // 移动速度
         double speed = monster.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue() * percent;
@@ -75,11 +77,11 @@ public class Monsters {
         monster.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(speed);
 
         // 攻击伤害
-        double damage = monster.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getBaseValue() * percent;
+        double damage = basicDamage * percent;
         monster.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(damage);
 
         // 血量
-        double health = monster.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue() * percent;
+        double health = basicHealth * percent;
         monster.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(health);
         monster.setHealth(health);
 
