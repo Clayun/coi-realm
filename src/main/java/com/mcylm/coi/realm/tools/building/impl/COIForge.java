@@ -48,7 +48,7 @@ public class COIForge extends COIBuilding {
 
         return new BuildingConfig()
                 .setStructures(getBuildingLevelStructure())
-                .setMaxLevel(5)
+                .setMaxLevel(10)
                 .setMaxBuild(1)
                 .setConsume(1024);
     }
@@ -184,6 +184,11 @@ public class COIForge extends COIBuilding {
         getBuildingLevelStructure().put(3, "tiejiangpu1.structure");
         getBuildingLevelStructure().put(4, "tiejiangpu1.structure");
         getBuildingLevelStructure().put(5, "tiejiangpu1.structure");
+        getBuildingLevelStructure().put(6, "tiejiangpu1.structure");
+        getBuildingLevelStructure().put(7, "tiejiangpu1.structure");
+        getBuildingLevelStructure().put(8, "tiejiangpu1.structure");
+        getBuildingLevelStructure().put(9, "tiejiangpu1.structure");
+        getBuildingLevelStructure().put(10, "tiejiangpu1.structure");
     }
 
     @Override

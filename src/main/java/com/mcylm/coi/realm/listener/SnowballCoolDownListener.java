@@ -10,6 +10,7 @@ import com.mcylm.coi.realm.utils.TeamUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,7 +23,7 @@ import java.util.HashMap;
 
 public class SnowballCoolDownListener implements Listener {
     private HashMap<Player, Long> coolDowns = new HashMap<>();
-    private long coolDownTime = 2000; // 2秒CD时间
+    private long coolDownTime = 1000; // 1秒CD时间
 
     @EventHandler
     public void onSnowballLaunch(ProjectileLaunchEvent event) {
@@ -89,6 +90,14 @@ public class SnowballCoolDownListener implements Listener {
                             if(npcTeam != null && npcTeam == team){
                                 // 同队伍禁止
                                 e.setCancelled(true);
+                            }
+
+                            // 普通怪物，直接给伤害
+                            if(npcTeam == null && e.getHitEntity() instanceof Monster){
+                                // 直接给10伤害
+                                ((LivingEntity)e.getHitEntity()).damage(10);
+                                Location location = e.getHitEntity().getLocation();
+                                location.createExplosion(e.getHitEntity(), 1,false, false);
                             }
 
                             if(e.getHitEntity() instanceof Player){

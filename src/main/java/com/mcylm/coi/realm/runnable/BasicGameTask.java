@@ -33,6 +33,9 @@ public class BasicGameTask implements GameTaskApi {
     private static Integer gamingTimer = Entry.getInstance().getConfig().getInt("game.gaming-timer");
     private static Integer stoppingTimer = Entry.getInstance().getConfig().getInt("game.stopping-timer");
 
+    // 当前游戏回合数
+    private static Long GAME_ROUND = 0L;
+
     @Override
     public void waiting() {
         // 游戏状态标志为等待中
@@ -250,6 +253,8 @@ public class BasicGameTask implements GameTaskApi {
                     // 初始3分钟不生成怪物
                     if(count < firstRountCountDown){
 
+                        GAME_ROUND = 1L;
+
                         Long countdown = firstRountCountDown - count;
                         // boss bar 的进度条
                         float progress = countdown.floatValue() / firstRountCountDown.floatValue();
@@ -264,6 +269,8 @@ public class BasicGameTask implements GameTaskApi {
                     }else if(count == firstRountCountDown){
                         // boss bar 的进度条
                         float progress = 1;
+
+                        GAME_ROUND = 1L;
 
                         bossBar.name(Component.text(LoggerUtils.replaceColor("&c第 &f1 &c波怪物到达战场！保护家园！")));
                         bossBar.progress(progress);
@@ -287,7 +294,9 @@ public class BasicGameTask implements GameTaskApi {
                         long roundCount = count - firstRountCountDown;
 
                         // 第几回合
-                        Long round = (roundCount / eachRoundSecond)+1;
+                        Long round = (roundCount / eachRoundSecond) + 2;
+
+                        GAME_ROUND = round;
 
                         if(roundCount % eachRoundSecond == 0){
                             // 如果求余是0
@@ -393,18 +402,31 @@ public class BasicGameTask implements GameTaskApi {
                         
                         String message;
 
-                        if(victoryTeam != null){
-                            message = LoggerUtils.replaceColor(victoryTeam.getType().getColor()+victoryTeam.getType().getName()+" &f胜利！");
+                        if(Entry.getGame().getTeams().size() > 2){
+                            if(victoryTeam != null){
+                                message = LoggerUtils.replaceColor(victoryTeam.getType().getColor()+victoryTeam.getType().getName()+" &f胜利！");
+                            }else{
+                                message = LoggerUtils.replaceColor("&a平局");
+                            }
+
+                            // 公布游戏结果
+                            Title title = Title.title(
+                                    Component.text(message),
+                                    Component.text("奖励已结算，可以在左下角查看"),
+                                    times);
+                            p.showTitle(title);
+
                         }else{
-                            message = LoggerUtils.replaceColor("&a平局");
+                            // 单队游戏
+                            // 公布游戏结果
+                            Title title = Title.title(
+                                    Component.text(LoggerUtils.replaceColor("&f本局勇闯 &b"+GAME_ROUND +" &f回合！")),
+                                    Component.text("&f你们是真正的勇士，祝贺你们！"),
+                                    times);
+                            p.showTitle(title);
+
                         }
 
-                        // 公布游戏结果
-                        Title title = Title.title(
-                                Component.text(message),
-                                Component.text("奖励已结算，可以在左下角查看"),
-                                times);
-                        p.showTitle(title);
 
 
                     }else{
