@@ -37,7 +37,7 @@ public class COIDoor extends COIBuilding {
     public BuildingConfig getDefaultConfig() {
         return new BuildingConfig()
                 .setConsume(32)
-                .setMaxLevel(99)
+                .setMaxLevel(2)
                 .setMaxBuild(10)
                 .setStructures(getBuildingLevelStructure());
     }
