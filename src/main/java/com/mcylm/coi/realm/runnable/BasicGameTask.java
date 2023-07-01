@@ -357,7 +357,6 @@ public class BasicGameTask implements GameTaskApi {
         COITeam victoryTeam = Entry.getGame().getVictoryTeam();
 
         // 待结算奖励明细
-        // TODO 根据这个列表进行奖励结算
         List<COIPlayerScore> rewardSettlement = Entry.getGame().getRewardSettlement();
 
         String rewardCommand = Entry.getInstance().getConfig().getString("reward-command");
