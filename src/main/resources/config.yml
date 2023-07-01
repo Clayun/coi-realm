@@ -17,6 +17,9 @@ bungeecord: false
 # 大厅服务器名称
 bungeecord-lobby: 'imc_lobby'
 
+# 奖励结算命令（配合其他插件）
+reward-command: 'hermes modify %player% %amount% 岛屿冲突奖励结算'
+
 # 游戏相关的配置参数
 game:
   # NPC相关的配置

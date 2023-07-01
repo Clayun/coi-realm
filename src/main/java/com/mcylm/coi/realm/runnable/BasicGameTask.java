@@ -15,6 +15,7 @@ import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameRule;
 import org.bukkit.World;
@@ -359,6 +360,19 @@ public class BasicGameTask implements GameTaskApi {
         // TODO 根据这个列表进行奖励结算
         List<COIPlayerScore> rewardSettlement = Entry.getGame().getRewardSettlement();
 
+        String rewardCommand = Entry.getInstance().getConfig().getString("reward-command");
+
+        if(StringUtils.isNotBlank(rewardCommand)){
+            for(COIPlayerScore playerScore : rewardSettlement){
+
+                String command = rewardCommand
+                        .replace("%player%",playerScore.getPlayer())
+                        .replace("%amount%",playerScore.getScore()+"")
+                        ;
+                // 结算奖励
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(),command);
+            }
+        }
 
         // 公布玩家结算明细
         for(Player p : Entry.getInstance().getServer().getOnlinePlayers()) {
