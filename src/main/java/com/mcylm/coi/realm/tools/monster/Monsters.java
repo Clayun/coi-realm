@@ -77,7 +77,7 @@ public class Monsters {
         monster.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(speed);
 
         // 攻击伤害
-        double damage = basicDamage * percent;
+        Double damage = basicDamage * percent;
         monster.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(damage);
 
         // 血量
@@ -128,7 +128,7 @@ public class Monsters {
         TeamUtils.getMonsterTeam().addEntityToScoreboard(monster);
         MobGoals goals = Bukkit.getMobGoals();
         monster.setMetadata("monsterData", new MonsterData());
-        goals.addGoal(monster,0, new MonsterAttackBuildingGoal(monster, 8));
+        goals.addGoal(monster,0, new MonsterAttackBuildingGoal(monster, damage.intValue()));
 
         new MonsterLookForBuildingTargetGoal(monster);
 
