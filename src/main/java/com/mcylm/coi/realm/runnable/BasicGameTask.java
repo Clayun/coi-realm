@@ -369,7 +369,8 @@ public class BasicGameTask implements GameTaskApi {
                         .replace("%amount%",playerScore.getScore()+"")
                         ;
                 // 结算奖励
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(),command);
+                Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(),command);
+                LoggerUtils.log(playerScore.getPlayer()+"奖励结算："+playerScore.getScore());
             }
         }
 

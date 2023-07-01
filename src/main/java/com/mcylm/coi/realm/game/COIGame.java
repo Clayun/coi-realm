@@ -184,7 +184,9 @@ public class COIGame {
             List<String> players = team.getPlayers();
 
             if(team.isDefeat()){
-                players = team.getPlayersCache();
+                if(players.size() == 0){
+                    players = team.getPlayersCache();
+                }
             }
 
             for(String player : players){
