@@ -94,8 +94,12 @@ public class Entry extends ExtendedJavaPlugin {
 
     // 建筑升级中跳过的方块
     public static List<String> UPGRADE_SKIP_BLOCKS;
+
     // 主游戏进程管理
     private static COIGame game;
+
+    // 经济依赖是否加载
+    private static boolean hermesEnable = false;
 
     // 地图数据
     @Getter
@@ -198,6 +202,15 @@ public class Entry extends ExtendedJavaPlugin {
             // 如果没有加载Disguise插件，则重新加载服务器
             Bukkit.getServer().reload();
             return;
+        }
+
+        try {
+            // 软加载 Hermes
+            Class.forName("com.mcylm.hermes.Entry");
+            hermesEnable = true;
+            LoggerUtils.log("检测到 Hermes 加载");
+        } catch (ClassNotFoundException e) {
+            LoggerUtils.log("未检测到 Hermes");
         }
 
         registerEventListeners();
@@ -460,6 +473,10 @@ public class Entry extends ExtendedJavaPlugin {
 
     public static COIGame getGame() {
         return game;
+    }
+
+    public static boolean isHermesEnable() {
+        return hermesEnable;
     }
 
     public void readMapData() {

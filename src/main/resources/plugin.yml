@@ -9,6 +9,7 @@ depend: [helper,Citizens]
 softdepend:
   - Multiverse-Core
   - LibsDisguises
+  - Hermes
 commands:
   structure:
     description: save building structure
