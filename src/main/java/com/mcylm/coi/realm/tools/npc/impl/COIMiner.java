@@ -152,6 +152,7 @@ public class COIMiner extends COIEntity {
                                         ItemStack itemStack = new ItemStack(Material.getMaterial(material));
                                         if (num <= itemStack.getMaxStackSize()) {
                                             itemStack.setAmount(num);
+                                            loc.getWorld().dropItem(loc, itemStack);
                                         } else {
                                             int group = num / itemStack.getMaxStackSize();
                                             int extra = num % itemStack.getMaxStackSize();
