@@ -5,6 +5,7 @@ import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COIScoreType;
 import com.mcylm.coi.realm.enums.COITeamType;
 import com.mcylm.coi.realm.events.GameStatusEvent;
+import com.mcylm.coi.realm.item.impl.COICustomItems;
 import com.mcylm.coi.realm.model.COIPlayerScore;
 import com.mcylm.coi.realm.model.COIScore;
 import com.mcylm.coi.realm.model.COIScoreDetail;
@@ -329,17 +330,8 @@ public class COIGame {
         // 先清空玩家背包
         p.getInventory().clear();
 
-        ItemStack itemStack = new ItemStack(Material.BOOK);
-        ItemUtils.rename(itemStack,"&b建筑蓝图");
-        List<String> lore = new ArrayList<>();
-        lore.add(LoggerUtils.replaceColor("&f游戏必不可少的建筑蓝图"));
-        lore.add(LoggerUtils.replaceColor("&c右键&f使用他建造各类建筑"));
-        lore.add(LoggerUtils.replaceColor("&f建造需要消耗大量的绿宝石"));
-        lore.add(LoggerUtils.replaceColor("&b赶紧带上你的兄弟们挖矿吧"));
-        ItemUtils.setLore(itemStack,lore);
-
         // 初始化建筑蓝图
-        p.getInventory().addItem(itemStack);
+        p.getInventory().addItem(COICustomItems.BUILDING_BLUEPRINT.getItemStack());
 
         // 铁镐头
         ItemStack ironPickaxe = new ItemStack(Material.IRON_PICKAXE);
@@ -349,15 +341,8 @@ public class COIGame {
         ironPickaxe.setItemMeta(meta);
         p.getInventory().addItem(ironPickaxe);
 
-        if(getTeams().size() > 2){
-            ItemStack commandItem = new ItemStack(Material.NETHER_STAR);
-            ItemUtils.rename(itemStack,"&b攻击指挥");
-            lore = new ArrayList<>();
-            lore.add(LoggerUtils.replaceColor("&f切换你战士小队的攻击状态"));
-            ItemUtils.setLore(commandItem,lore);
+        p.getInventory().addItem(COICustomItems.COMMAND_STAR.getItemStack());
 
-            p.getInventory().addItem(commandItem);
-        }
 
 
         // 面包
@@ -372,7 +357,7 @@ public class COIGame {
         // 一把无限耐久度的木剑
         swordMeta.setUnbreakable(true);
         sword.setItemMeta(swordMeta);
-        lore = new ArrayList<>();
+        List<String> lore = new ArrayList<>();
         lore.add(LoggerUtils.replaceColor("&c妖魔鬼怪快离开！"));
         lore.add(LoggerUtils.replaceColor("&c无限耐久"));
         ItemUtils.setLore(sword,lore);

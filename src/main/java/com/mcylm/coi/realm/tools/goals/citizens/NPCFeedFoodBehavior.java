@@ -3,7 +3,6 @@ package com.mcylm.coi.realm.tools.goals.citizens;
 import com.mcylm.coi.realm.tools.attack.team.AttackTeam;
 import com.mcylm.coi.realm.tools.data.metadata.AttackTeamData;
 import com.mcylm.coi.realm.tools.npc.impl.COIEntity;
-import com.mcylm.coi.realm.tools.npc.impl.COISoldier;
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import org.bukkit.Material;
@@ -15,8 +14,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
-@Deprecated
-public class NPCFollowTeamBehavior extends BehaviorGoalAdapter {
+
+public class NPCFeedFoodBehavior extends BehaviorGoalAdapter {
 
     private Mob entity;
 
@@ -40,7 +39,7 @@ public class NPCFollowTeamBehavior extends BehaviorGoalAdapter {
 
     private int tick = 0;
 
-    public NPCFollowTeamBehavior(COIEntity entity) {
+    public NPCFeedFoodBehavior(COIEntity entity) {
         this.coiEntity = entity;
         this.entity = (Mob) entity.getNpc().getEntity();
 
@@ -151,29 +150,6 @@ public class NPCFollowTeamBehavior extends BehaviorGoalAdapter {
             return BehaviorStatus.RUNNING;
         }
 
-        int index = team.getMembers().indexOf(coiEntity);
-
-        if (index == -1) {
-            return BehaviorStatus.FAILURE;
-        }
-        if (index == 0) {
-
-            followingEntity = team.getCommander();
-        } else {
-            for (int i = index; i >= 0 ; i--) {
-                COIEntity member = team.getMembers().get(i);
-
-                if (member.isAlive() && member != coiEntity) {
-                    AttackTeamData memberData = AttackTeamData.getDataByEntity(member.getNpc().getEntity());
-                    if (memberData.getStatus() == AttackTeamData.Status.FOLLOWING) {
-                        followingEntity = (LivingEntity) team.getMembers().get(i).getNpc().getEntity();
-
-                    }
-                    break;
-                }
-            }
-        }
-
         if (coiEntity.isAlive() && coiEntity.getHunger() < keepHunger) {
             if (team.getCommander() instanceof Player player) {
 
@@ -228,24 +204,10 @@ public class NPCFollowTeamBehavior extends BehaviorGoalAdapter {
             return false;
         }
 
-        if (teamData.getStatus() == AttackTeamData.Status.OTHER) {
-            return false;
-        }
-        if (coiEntity.isTooHungryToWork()) {
-            return false;
-        }
-
         double distance = entity.getLocation().distance(teamData.getCurrentTeam().getCommander().getLocation());
 
         if (distance > maxRadius) {
-            if (distance > maxRadius * 1.4) {
-                return false;
-            }
-            return true;
-        }
-
-        if (coiEntity instanceof COISoldier soldier) {
-            return soldier.getTarget() == null || soldier.getTarget().isDead();
+            return false;
         }
 
         return true;

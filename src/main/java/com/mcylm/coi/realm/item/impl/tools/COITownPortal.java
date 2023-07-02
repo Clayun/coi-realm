@@ -1,4 +1,4 @@
-package com.mcylm.coi.realm.item.impl;
+package com.mcylm.coi.realm.item.impl.tools;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;

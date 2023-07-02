@@ -1,9 +1,25 @@
 package com.mcylm.coi.realm.item.impl;
 
+import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIBuildingType;
+import com.mcylm.coi.realm.enums.COIGameStatus;
+import com.mcylm.coi.realm.gui.BuildEditGUI;
+import com.mcylm.coi.realm.gui.BuilderGUI;
 import com.mcylm.coi.realm.item.COICustomItem;
+import com.mcylm.coi.realm.item.impl.tools.COIRocket;
+import com.mcylm.coi.realm.item.impl.tools.COITownPortal;
+import com.mcylm.coi.realm.player.COIPlayer;
+import com.mcylm.coi.realm.tools.building.COIBuilding;
+import com.mcylm.coi.realm.tools.data.metadata.BuildData;
+import com.mcylm.coi.realm.tools.selection.Selector;
 import com.mcylm.coi.realm.utils.GUIUtils;
+import com.mcylm.coi.realm.utils.LocationUtils;
+import com.mcylm.coi.realm.utils.LoggerUtils;
+import com.mcylm.coi.realm.utils.TeamUtils;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.EquipmentSlot;
@@ -13,6 +29,89 @@ import java.util.List;
 
 public class COICustomItems {
 
+    public static final COICustomItem BUILDING_BLUEPRINT = new COICustomItem.Builder("building_blueprint", LoggerUtils.replaceColor("&b建筑蓝图"), Material.BOOK)
+            .lore(LoggerUtils.replaceColor("&f游戏必不可少的建筑蓝图"),
+                    LoggerUtils.replaceColor("&c右键&f使用他建造各类建筑"),
+                    LoggerUtils.replaceColor("&f建造需要消耗大量的绿宝石"),
+                    LoggerUtils.replaceColor("&b赶紧带上你的兄弟们挖矿吧"))
+            .itemDropEvent(event -> event.setCancelled(true))
+            .itemUseEvent(event -> {
+                if (Action.RIGHT_CLICK_BLOCK == event.getAction() && event.getHand().equals(EquipmentSlot.HAND)
+                        //空手触发
+                        && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.BOOK
+                ) {
+
+                    if(Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
+
+
+                        if(!event.getPlayer().getWorld().getName().equals(Entry.WORLD)){
+                            event.setCancelled(true);
+                            LoggerUtils.sendMessage("&c当前世界非游戏世界", event.getPlayer());
+                            TeamUtils.tpSpawner(event.getPlayer());
+                            return;
+                        }
+
+                    }
+
+                    Block clickedBlock = event.getClickedBlock();
+                    Location location = clickedBlock.getLocation();
+
+                    COIBuilding building = BuildData.getBuildingByBlock(clickedBlock);
+                    if (building != null && !building.getType().equals(COIBuildingType.BRIDGE)) {
+
+                        if (building.getTeam() == TeamUtils.getTeamByPlayer(event.getPlayer())) {
+                            new BuildEditGUI(event.getPlayer(), building).open();
+                        }
+                    } else {
+
+                        if(building != null && building.getType().equals(COIBuildingType.BRIDGE)
+                                && event.getPlayer().isSneaking()){
+                            new BuildEditGUI(event.getPlayer(), building).open();
+                        }else{
+                            Player player = event.getPlayer();
+
+                            if (Selector.selectors.containsKey(player)) {
+                                Selector.selectors.get(player).selectLocation(location);
+                            } else {
+                                new BuilderGUI(player, location);
+                            }
+                        }
+                    }
+                }
+            })
+            .shopSettings(new COICustomItem.ShopSettings().showInShop(false))
+            .build();
+
+    public static final COICustomItem COMMAND_STAR = new COICustomItem.Builder("command_star", LoggerUtils.replaceColor("&b指挥目的地"), Material.NETHER_STAR)
+            .lore(LoggerUtils.replaceColor("&f让你的战士向你所指向的位置攻击"))
+            .itemDropEvent(event -> event.setCancelled(true))
+            .itemUseEvent(event -> {
+                if (Action.RIGHT_CLICK_BLOCK == event.getAction() && event.getHand().equals(EquipmentSlot.HAND)
+                        //空手触发
+                        && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.NETHER_STAR
+                ) {
+                    COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(event.getPlayer());
+
+                    if(!Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
+                        event.setCancelled(true);
+                        LoggerUtils.sendMessage("&c当前世界非游戏世界", event.getPlayer());
+                        TeamUtils.tpSpawner(event.getPlayer());
+                        return;
+                    }
+                    Block target = event.getPlayer().getTargetBlockExact(32);
+                    if (target == null) {
+                        LoggerUtils.sendMessage("&e你所指向的位置太远了", event.getPlayer());
+                        return;
+                    }
+                    coiPlayer.getAttackTeam().setTarget(target.getLocation());
+
+                    for (Location location : LocationUtils.line(target.getLocation(), target.getLocation().add(0,10,0), 0.5)) {
+                        location.getWorld().spawnParticle(Particle.DRIP_LAVA, location, 2);
+                    }
+                }
+            })
+            .shopSettings(new COICustomItem.ShopSettings().showInShop(false))
+            .build();
     public static final List<COICustomItem> DEFAULT_ITEMS = List.of(
             new COICustomItem.Builder("town_portal", "回城卷轴", Material.FLOWER_BANNER_PATTERN)
                     .lore(GUIUtils.autoLineFeed("右键使用开始施法回城,施法过程中" +
@@ -23,7 +122,6 @@ public class COICustomItems {
 
                         //判断是右手，同时避免触发两次
                         if ((Action.RIGHT_CLICK_AIR == action || Action.RIGHT_CLICK_BLOCK == action) && event.getHand().equals(EquipmentSlot.HAND)
-                                //空手触发
                                 && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.FLOWER_BANNER_PATTERN
                         ) {
 
@@ -278,8 +376,10 @@ public class COICustomItems {
                             .buildingLevel(5))
                     .build(),
 
-            COIRocket.getItem()
-
+            BUILDING_BLUEPRINT,
+            COMMAND_STAR
 
     );
+
+
 }

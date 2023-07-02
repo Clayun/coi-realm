@@ -2,15 +2,10 @@ package com.mcylm.coi.realm.listener;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.clipboard.PlayerClipboard;
-import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COIServerMode;
 import com.mcylm.coi.realm.events.BuildingTouchEvent;
-import com.mcylm.coi.realm.gui.BuildEditGUI;
-import com.mcylm.coi.realm.gui.BuilderGUI;
 import com.mcylm.coi.realm.gui.ChooseTeamGUI;
-import com.mcylm.coi.realm.player.COIPlayer;
-import com.mcylm.coi.realm.tools.attack.team.AttackTeam;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.data.metadata.BuildData;
 import com.mcylm.coi.realm.tools.npc.COIMinerCreator;
@@ -19,7 +14,6 @@ import com.mcylm.coi.realm.tools.selection.Selector;
 import com.mcylm.coi.realm.utils.GUIUtils;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
-import com.mcylm.coi.realm.utils.TeamUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -108,52 +102,6 @@ public class PlayerInteractListener implements Listener {
 
         Action action = event.getAction();
 
-        //判断是右手，同时避免触发两次
-        if (Action.RIGHT_CLICK_BLOCK == action && event.getHand().equals(EquipmentSlot.HAND)
-                //空手触发
-                && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.BOOK
-                && ItemUtils.getName(event.getPlayer().getInventory().getItemInMainHand()).equals(LoggerUtils.replaceColor("&b建筑蓝图"))
-        ) {
-
-            if(Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
-
-
-                if(!event.getPlayer().getWorld().getName().equals(Entry.WORLD)){
-                    event.setCancelled(true);
-                    LoggerUtils.sendMessage("&c当前世界非游戏世界", event.getPlayer());
-                    TeamUtils.tpSpawner(event.getPlayer());
-                    return;
-                }
-
-            }
-
-            Block clickedBlock = event.getClickedBlock();
-            Location location = clickedBlock.getLocation();
-
-            COIBuilding building = BuildData.getBuildingByBlock(clickedBlock);
-            if (building != null && !building.getType().equals(COIBuildingType.BRIDGE)) {
-
-                if (building.getTeam() == TeamUtils.getTeamByPlayer(event.getPlayer())) {
-                    new BuildEditGUI(event.getPlayer(), building).open();
-                }
-            } else {
-
-                if(building != null && building.getType().equals(COIBuildingType.BRIDGE)
-                    && event.getPlayer().isSneaking()){
-                    new BuildEditGUI(event.getPlayer(), building).open();
-                }else{
-                    Player player = event.getPlayer();
-
-                    if (Selector.selectors.containsKey(player)) {
-                        Selector.selectors.get(player).selectLocation(location);
-                    } else {
-                        new BuilderGUI(player, location);
-                    }
-                }
-
-
-            }
-        }
 
         if (event.getClickedBlock() != null) {
             @Nullable COIBuilding building = BuildData.getBuildingByBlock(event.getClickedBlock());
@@ -166,28 +114,7 @@ public class PlayerInteractListener implements Listener {
             }
         }
 
-        if (Action.RIGHT_CLICK_BLOCK == action && event.getHand().equals(EquipmentSlot.HAND)
-                //空手触发
-                && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.NETHER_STAR
-        ) {
-            COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(event.getPlayer());
 
-            if(!Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
-                event.setCancelled(true);
-                LoggerUtils.sendMessage("&c当前世界非游戏世界", event.getPlayer());
-                TeamUtils.tpSpawner(event.getPlayer());
-                return;
-            }
-
-            AttackTeam.Status status = coiPlayer.getAttackTeam().getStatus();
-            if (status == AttackTeam.Status.FREE) {
-                coiPlayer.getAttackTeam().setStatus(AttackTeam.Status.LOCK);
-                LoggerUtils.sendMessage("&e更换为 &c锁定攻击(会攻击你所攻击的建筑或敌人)", event.getPlayer());
-            } else {
-                coiPlayer.getAttackTeam().setStatus(AttackTeam.Status.FREE);
-                LoggerUtils.sendMessage("&e更换为 &b自由攻击(自己寻找附近的目标)", event.getPlayer());
-            }
-        }
 
     }
 

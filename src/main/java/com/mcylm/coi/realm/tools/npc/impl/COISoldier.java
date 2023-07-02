@@ -12,13 +12,13 @@ import com.mcylm.coi.realm.tools.attack.target.impl.EntityTarget;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.data.metadata.BuildData;
 import com.mcylm.coi.realm.tools.data.metadata.EntityData;
-import com.mcylm.coi.realm.tools.goals.citizens.NPCFollowTeamBehavior;
+import com.mcylm.coi.realm.tools.goals.citizens.NPCFeedFoodBehavior;
 import com.mcylm.coi.realm.tools.goals.citizens.NPCLookForTargetGoal;
+import com.mcylm.coi.realm.tools.goals.citizens.NPCMoveToTargetPointGoal;
 import com.mcylm.coi.realm.tools.goals.citizens.NPCSimpleMeleeAttackGoal;
 import com.mcylm.coi.realm.tools.npc.COISoldierCreator;
 import com.mcylm.coi.realm.utils.DamageUtils;
 import com.mcylm.coi.realm.utils.LocationUtils;
-import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -154,9 +154,10 @@ public class COISoldier extends COIEntity implements Commandable {
         getNpc().setAlwaysUseNameHologram(false);
 
 
+        NPCMoveToTargetPointGoal moveGoal = new NPCMoveToTargetPointGoal(this);
         NPCSimpleMeleeAttackGoal attackGoal = new NPCSimpleMeleeAttackGoal(this);
         NPCLookForTargetGoal targetGoal = new NPCLookForTargetGoal(this);
-        NPCFollowTeamBehavior teamBehavior = new NPCFollowTeamBehavior(this);
+        NPCFeedFoodBehavior teamBehavior = new NPCFeedFoodBehavior(this);
 
         // TODO 还原一个与Paper Goal API一样的Goal
         getNpc().getDefaultGoalController().addGoal(new Goal() {
@@ -180,10 +181,12 @@ public class COISoldier extends COIEntity implements Commandable {
                 //if (tick++ > 20) reset();
                 //if (isAlive() && tick % 1 == 0) {
                 // selector.select(teamBehavior);
-                if (!executeBehavior(teamBehavior)) {
+                if (!executeBehavior(moveGoal)) {
+                    executeBehavior(targetGoal);
                     executeBehavior(attackGoal);
                 }
-                executeBehavior(targetGoal);
+
+                executeBehavior(teamBehavior);
                 //}
             }
 

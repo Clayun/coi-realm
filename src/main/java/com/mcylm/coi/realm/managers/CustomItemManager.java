@@ -8,11 +8,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -54,6 +56,17 @@ public class CustomItemManager implements Listener {
         return item == null ? null : item.getItemStack();
     }
 
+    public @Nullable COICustomItem getCustomItemByItemStack(ItemStack itemStack) {
+        @NotNull PersistentDataContainer pdc = itemStack.getItemMeta().getPersistentDataContainer();
+
+        if (!pdc.has(COICustomItem.COI_CUSTOM_ITEM_NAMESPACEDKEY)) {
+            return null;
+        }
+
+        return this.items.get(pdc.get(COICustomItem.COI_CUSTOM_ITEM_NAMESPACEDKEY, PersistentDataType.STRING));
+
+    }
+
 
 
     @EventHandler
@@ -65,22 +78,11 @@ public class CustomItemManager implements Listener {
             if (event.getItem().getItemMeta() == null) {
                 return;
             }
-            if (!event.getItem().getItemMeta().hasCustomModelData()) {
-                return;
-            }
 
-            @NotNull PersistentDataContainer pdc = event.getItem().getItemMeta().getPersistentDataContainer();
 
-            if (!pdc.has(COICustomItem.COI_CUSTOM_ITEM_NAMESPACEDKEY)) {
-                return;
-            }
+            COICustomItem customItem = getCustomItemByItemStack(event.getItem());
 
-            COICustomItem customItem = this.items.get(pdc.get(COICustomItem.COI_CUSTOM_ITEM_NAMESPACEDKEY, PersistentDataType.STRING));
-            if (customItem == null) {
-                return;
-            }
-
-            Consumer<PlayerInteractEvent> consumer = customItem.getItemUseEvent();
+            Consumer<PlayerInteractEvent> consumer = customItem.itemUseEvent();
             if (consumer != null) {
                 consumer.accept(event);
             }
@@ -95,22 +97,13 @@ public class CustomItemManager implements Listener {
             if (item.getItemMeta() == null) {
                 return;
             }
-            if (!item.getItemMeta().hasCustomModelData()) {
-                return;
-            }
+            COICustomItem customItem = getCustomItemByItemStack(item);
 
-            @NotNull PersistentDataContainer pdc = item.getItemMeta().getPersistentDataContainer();
-
-            if (!pdc.has(COICustomItem.COI_CUSTOM_ITEM_NAMESPACEDKEY)) {
-                return;
-            }
-
-            COICustomItem customItem = this.items.get(pdc.get(COICustomItem.COI_CUSTOM_ITEM_NAMESPACEDKEY, PersistentDataType.STRING));
             if (customItem == null) {
                 return;
             }
 
-            Consumer<EntityDamageByEntityEvent> consumer = customItem.getPlayerHitEntityEvent();
+            Consumer<EntityDamageByEntityEvent> consumer = customItem.playerHitEntityEvent();
 
             if (consumer != null) {
                 consumer.accept(event);
@@ -118,6 +111,23 @@ public class CustomItemManager implements Listener {
 
         }
     }
-    
-    
+
+    @EventHandler
+    public void playerDropItemEvent(PlayerDropItemEvent event) {
+
+        if (event.getItemDrop().getItemStack().getItemMeta() == null) {
+            return;
+        }
+
+        COICustomItem customItem = getCustomItemByItemStack(event.getItemDrop().getItemStack());
+
+        if (customItem == null) {
+            return;
+        }
+
+        Consumer<PlayerDropItemEvent> consumer = customItem.itemDropEvent();
+        if (consumer != null) {
+            consumer.accept(event);
+        }
+    }
 }

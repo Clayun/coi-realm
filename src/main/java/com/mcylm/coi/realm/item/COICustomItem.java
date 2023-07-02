@@ -18,6 +18,7 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -34,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+@Accessors(fluent = true)
 public class COICustomItem {
     public static final NamespacedKey COI_CUSTOM_ITEM_NAMESPACEDKEY = Entry.getNamespacedKey("coi_custom_item");
 
@@ -45,8 +47,13 @@ public class COICustomItem {
     private final boolean hideFlags;
     private final boolean newItem;
     private final Class<? extends Listener> eventListener;
+
+    @Getter
     private final Consumer<PlayerInteractEvent> itemUseEvent;
+    @Getter
     private final Consumer<EntityDamageByEntityEvent> playerHitEntityEvent;
+    @Getter
+    private final Consumer<PlayerDropItemEvent> itemDropEvent;
     private final boolean spacingBeforeLore;
     private final String[] lore;
     private final AttributeInformation[] attributeModifiers;
@@ -59,7 +66,7 @@ public class COICustomItem {
 
 
 
-    protected COICustomItem(int customModelData, @NonNull String namespaceKey, @NonNull String name, @NonNull Material baseMaterial, boolean unbreakable, boolean hideFlags, boolean newItem, @Nullable Class<? extends Listener> eventListener, @Nullable Consumer<PlayerInteractEvent> itemUseEvent, @Nullable Consumer<EntityDamageByEntityEvent> playerHitEntityEvent, boolean spacingBeforeLore, @Nullable String[] lore, @NonNull Map<Attribute, List<AttributeModifier>> attributeModifiers, @NonNull Map<Enchantment, Integer> enchantments, @NonNull List<Enchantment> allowedEnchantments, @NonNull List<Enchantment> forbiddenEnchantments, ShopSettings shopSettings) {
+    protected COICustomItem(int customModelData, @NonNull String namespaceKey, @NonNull String name, @NonNull Material baseMaterial, boolean unbreakable, boolean hideFlags, boolean newItem, @Nullable Class<? extends Listener> eventListener, @Nullable Consumer<PlayerInteractEvent> itemUseEvent, @Nullable Consumer<EntityDamageByEntityEvent> playerHitEntityEvent, Consumer<PlayerDropItemEvent> itemDropEvent, boolean spacingBeforeLore, @Nullable String[] lore, @NonNull Map<Attribute, List<AttributeModifier>> attributeModifiers, @NonNull Map<Enchantment, Integer> enchantments, @NonNull List<Enchantment> allowedEnchantments, @NonNull List<Enchantment> forbiddenEnchantments, ShopSettings shopSettings) {
         this.customModelData = customModelData;
         this.namespaceKey = namespaceKey;
         this.name = name;
@@ -70,6 +77,7 @@ public class COICustomItem {
         this.eventListener = eventListener;
         this.itemUseEvent = itemUseEvent;
         this.playerHitEntityEvent = playerHitEntityEvent;
+        this.itemDropEvent = itemDropEvent;
         this.spacingBeforeLore = spacingBeforeLore;
         this.lore = lore;
         this.shopSettings = shopSettings;
@@ -201,21 +209,6 @@ public class COICustomItem {
         return this.eventListener;
     }
 
-    /**
-     * Gets the event that is fired when the item is used.
-     * @return the event that is fired when the item is used
-     */
-    public @Nullable Consumer<PlayerInteractEvent> getItemUseEvent() {
-        return this.itemUseEvent;
-    }
-
-    /**
-     * Gets the event that is called when a player hits an entity with the tool.
-     * @return the event that is called when a player hits an entity with the tool
-     */
-    public @Nullable Consumer<EntityDamageByEntityEvent> getPlayerHitEntityEvent() {
-        return playerHitEntityEvent;
-    }
 
     /**
      * Gets the item's lore.
@@ -339,6 +332,7 @@ public class COICustomItem {
         }
     }
 
+    @Accessors(fluent = true)
     public static class Builder {
         protected final int customModelData;
         protected final String namespaceKey;
@@ -348,8 +342,12 @@ public class COICustomItem {
         protected boolean unbreakable = false;
         protected boolean hideFlags = false;
         protected boolean newItem = true;
+        @Setter
         protected Consumer<PlayerInteractEvent> itemUseEvent = null;
+        @Setter
         protected Consumer<EntityDamageByEntityEvent> playerHitEntityEvent = null;
+        @Setter
+        protected Consumer<PlayerDropItemEvent> itemDropEvent;
         protected Class<? extends Listener> eventListener = null;
         protected boolean spacingBeforeLore = true;
         protected String[] lore = null;
@@ -403,15 +401,6 @@ public class COICustomItem {
             return this;
         }
 
-        /**
-         * Sets the event listener of the item.
-         * @param itemUseEvent the event listener of the item
-         * @return the builder
-         */
-        public @NonNull Builder itemUseEvent(@Nullable Consumer<PlayerInteractEvent> itemUseEvent) {
-            this.itemUseEvent = itemUseEvent;
-            return this;
-        }
 
         /**
          * Sets the event listener of the item. The classes specified here must have a constructor like this:
@@ -528,16 +517,6 @@ public class COICustomItem {
             return this;
         }
 
-        /**
-         * Sets the event that is called when a player hits an entity with the tool.
-         * @param playerHitEntityEvent the event that is called when a player hits an entity with the tool
-         * @return the builder
-         */
-        public @NonNull Builder playerHitEntityEvent(@Nullable Consumer<EntityDamageByEntityEvent> playerHitEntityEvent) {
-            this.playerHitEntityEvent = playerHitEntityEvent;
-            return this;
-        }
-
         public @NonNull Builder shopSettings(ShopSettings shopSettings) {
             this.shopSettings = shopSettings;
             return this;
@@ -548,7 +527,7 @@ public class COICustomItem {
          * @return the item
          */
         public @NonNull COICustomItem build() {
-            return new COICustomItem(this.customModelData, this.namespaceKey, this.name, this.baseMaterial, this.unbreakable, this.hideFlags, this.newItem, this.eventListener, this.itemUseEvent, this.playerHitEntityEvent, this.spacingBeforeLore, this.lore, this.attributeModifiers, this.enchantments, this.allowedEnchantments, this.forbiddenEnchantments, this.shopSettings);
+            return new COICustomItem(this.customModelData, this.namespaceKey, this.name, this.baseMaterial, this.unbreakable, this.hideFlags, this.newItem, this.eventListener, this.itemUseEvent, this.playerHitEntityEvent, this.itemDropEvent, this.spacingBeforeLore, this.lore, this.attributeModifiers, this.enchantments, this.allowedEnchantments, this.forbiddenEnchantments, this.shopSettings);
         }
     }
 
