@@ -707,6 +707,7 @@ public class COIEntity implements AI {
         if (!nearbyEntities.isEmpty() && (targetItem == null || targetItem.isDead())) {
             for (Entity entity : nearbyEntities) {
                 if (entity != null) {
+                    boolean needClearTarget = true;
                     if (entity.getType() == EntityType.DROPPED_ITEM) {
 
 
@@ -715,10 +716,14 @@ public class COIEntity implements AI {
                         if (picks != null && picks.size() > 0) {
                             if (picks.contains(item.getItemStack().getType().toString()) && InventoryUtils.canInventoryHoldItem(getCoiNpc().getInventory(), item.getItemStack())) {
                                 targetItem = item;
+                                needClearTarget = false;
                                 break;
                             }
                         }
                     }
+                }
+                if (needClearTarget) {
+                    targetItem == null;
                 }
 
             }
