@@ -2,6 +2,7 @@ package com.mcylm.coi.realm.game;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIGameStatus;
+import com.mcylm.coi.realm.enums.COIMultipleGameMode;
 import com.mcylm.coi.realm.enums.COIScoreType;
 import com.mcylm.coi.realm.enums.COITeamType;
 import com.mcylm.coi.realm.events.GameStatusEvent;
@@ -18,6 +19,7 @@ import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import lombok.Data;
 import net.kyori.adventure.text.Component;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -43,6 +45,9 @@ public class COIGame {
     // game status
     private COIGameStatus status;
 
+    // 游戏模式
+    private COIMultipleGameMode gameMode;
+
     // 一场游戏里的全部小队
     // all teams in one Game
     private List<COITeam> teams;
@@ -55,6 +60,14 @@ public class COIGame {
     public COIGame() {
         this.teams = new ArrayList<>();
         this.status = COIGameStatus.WAITING;
+
+        // 获取游戏模式
+        String configGameMode = Entry.getInstance().getConfig().getString("game.multiple-game-mode");
+        if(StringUtils.isBlank(configGameMode)){
+            configGameMode = "PVP";
+        }
+        this.gameMode = COIMultipleGameMode.parseCode(configGameMode);
+
 
         // 初始化计分板
         new COIScoreboard().showBoard();
