@@ -8,12 +8,14 @@ import com.mcylm.coi.realm.enums.COIGameStatus;
 import com.mcylm.coi.realm.enums.COIServerMode;
 import com.mcylm.coi.realm.game.COIGame;
 import com.mcylm.coi.realm.gui.ForgeGUI;
-import com.mcylm.coi.realm.item.COIRocket;
+import com.mcylm.coi.realm.item.COICustomItem;
+import com.mcylm.coi.realm.item.impl.COICustomItems;
 import com.mcylm.coi.realm.listener.GameListener;
 import com.mcylm.coi.realm.listener.MineralsBreakListener;
 import com.mcylm.coi.realm.listener.PlayerInteractListener;
 import com.mcylm.coi.realm.listener.SnowballCoolDownListener;
 import com.mcylm.coi.realm.managers.COIBuildingManager;
+import com.mcylm.coi.realm.managers.CustomItemManager;
 import com.mcylm.coi.realm.model.COINpc;
 import com.mcylm.coi.realm.player.COIPlayer;
 import com.mcylm.coi.realm.tools.attack.target.Target;
@@ -115,6 +117,8 @@ public class Entry extends ExtendedJavaPlugin {
     @Getter
     private COIBuildingManager buildingManager = new COIBuildingManager();
 
+    @Getter
+    private CustomItemManager customItemManager = new CustomItemManager();
     private File mapDataFile = new File(getDataFolder(), "map.json");
     // 建筑皮肤
     private File skinDataFile = new File(getDataFolder(), "skin.json");
@@ -215,6 +219,7 @@ public class Entry extends ExtendedJavaPlugin {
 
         registerEventListeners();
         registerDefaultBuildings();
+        registerDefaultItems();
 
         // 展示游戏公告
         showNotice();
@@ -226,6 +231,12 @@ public class Entry extends ExtendedJavaPlugin {
         // 游戏开始
         game.start();
 
+    }
+
+    private void registerDefaultItems() {
+        for (COICustomItem item : COICustomItems.DEFAULT_ITEMS) {
+            customItemManager.registerCustomItem(item);
+        }
     }
 
     @Override
@@ -291,10 +302,11 @@ public class Entry extends ExtendedJavaPlugin {
         pluginManager.registerEvents(new SnowballCoolDownListener(), this);
         pluginManager.registerEvents(new GameListener(), this);
         pluginManager.registerEvents(new MineralsBreakListener(), this);
+        pluginManager.registerEvents(customItemManager, this);
         // AI事件监听器
         COISoldier.registerListener();
         // 助推器监听器
-        COIRocket.registerListener();
+        // COIRocket.registerListener();
 
         Events.subscribe(PlayerJoinEvent.class)
                 .handler(e -> {

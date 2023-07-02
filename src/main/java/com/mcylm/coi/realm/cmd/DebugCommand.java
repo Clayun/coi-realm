@@ -2,11 +2,11 @@ package com.mcylm.coi.realm.cmd;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIBuildingType;
-import com.mcylm.coi.realm.enums.COIPropType;
 import com.mcylm.coi.realm.gui.ChooseTeamGUI;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
 import com.mcylm.coi.realm.tools.npc.monster.COIPillagerCreator;
-import com.mcylm.coi.realm.utils.*;
+import com.mcylm.coi.realm.utils.LoggerUtils;
+import com.mcylm.coi.realm.utils.TeamUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
@@ -15,7 +15,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -94,10 +93,6 @@ public class DebugCommand implements CommandExecutor {
 
         if(args[0].equalsIgnoreCase("test")){
 
-            ItemStack item = COIPropType.TOWN_PORTAL.getItemType().clone();
-            ItemUtils.rename(item,COIPropType.TOWN_PORTAL.getName());
-            ItemUtils.setLore(item, GUIUtils.autoLineFeed(COIPropType.TOWN_PORTAL.getIntroduce()));
-            player.getInventory().addItem(item);
         }
 
         return true;

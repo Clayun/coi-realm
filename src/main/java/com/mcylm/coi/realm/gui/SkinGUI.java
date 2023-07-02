@@ -2,24 +2,18 @@ package com.mcylm.coi.realm.gui;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIBuildingType;
-import com.mcylm.coi.realm.enums.COIGameStatus;
-import com.mcylm.coi.realm.enums.COIHeadType;
-import com.mcylm.coi.realm.enums.COIPropType;
 import com.mcylm.coi.realm.gui.GuiBuilder.COIPageGuiBuilder;
 import com.mcylm.coi.realm.model.COISkin;
 import com.mcylm.coi.realm.player.COIPlayer;
-import com.mcylm.coi.realm.tools.building.COIBuilding;
-import com.mcylm.coi.realm.tools.team.impl.COITeam;
-import com.mcylm.coi.realm.utils.*;
+import com.mcylm.coi.realm.utils.GUIUtils;
+import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.hermes.balance.PlayerBalanceModifier;
 import com.mcylm.hermes.model.AtlasCustomAccount;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Item;
-import me.lucko.helper.menu.paginated.PaginatedGuiBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.permissions.Permission;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.math.BigDecimal;

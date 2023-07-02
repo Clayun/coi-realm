@@ -4,11 +4,9 @@ import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COIGameStatus;
-import com.mcylm.coi.realm.enums.COIPropType;
 import com.mcylm.coi.realm.events.BuildingDamagedEvent;
 import com.mcylm.coi.realm.events.BuildingDestroyedEvent;
 import com.mcylm.coi.realm.events.BuildingTouchEvent;
-import com.mcylm.coi.realm.item.COITownPortal;
 import com.mcylm.coi.realm.player.COIPlayer;
 import com.mcylm.coi.realm.tools.attack.target.impl.BuildingTarget;
 import com.mcylm.coi.realm.tools.attack.team.AttackTeam;
@@ -25,32 +23,26 @@ import com.mcylm.coi.realm.tools.team.impl.COITeam;
 import com.mcylm.coi.realm.utils.ItemUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
-import net.citizensnpcs.api.CitizensAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
-import net.minecraft.network.protocol.status.ServerPing;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -350,28 +342,7 @@ public class GameListener implements Listener {
         }
     }
 
-    @EventHandler
-    public void onUseItem(PlayerInteractEvent event) {
 
-        Action action = event.getAction();
-
-        //判断是右手，同时避免触发两次
-        if ((Action.RIGHT_CLICK_AIR == action || Action.RIGHT_CLICK_BLOCK == action) && event.getHand().equals(EquipmentSlot.HAND)
-                //空手触发
-                && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.FLOWER_BANNER_PATTERN
-                && ItemUtils.getName(event.getPlayer().getInventory().getItemInMainHand()).equals(LoggerUtils.replaceColor(COIPropType.TOWN_PORTAL.getName()))
-        ) {
-
-            // 开始使用卷轴
-            // 删除卷轴
-            event.getPlayer().getInventory().setItemInMainHand(null);
-
-            // 开始施法
-            COITownPortal townPortal = new COITownPortal();
-            townPortal.back(event.getPlayer());
-        }
-
-    }
 
     private void waitDeath(Player p){
 

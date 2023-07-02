@@ -163,4 +163,27 @@ public class GUIUtils {
         return lines;
     }
 
+    public static List<String> autoLineFeed(List<String> lores) {
+        String introduce = String.join("", lores);
+        if (introduce == null || introduce.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        int maxLineLength = 12;
+        List<String> lines = new ArrayList<>();
+        int length = introduce.length();
+        int count = length / maxLineLength;
+        if (length % maxLineLength != 0) {
+            count++;
+        }
+
+        for (int i = 0; i < count; i++) {
+            int start = i * maxLineLength;
+            int end = Math.min(start + maxLineLength, length);
+            lines.add(LoggerUtils.replaceColor("  &6" +introduce.substring(start, end)));
+        }
+
+        return lines;
+    }
+
 }

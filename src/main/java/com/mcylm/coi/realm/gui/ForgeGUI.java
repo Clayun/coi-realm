@@ -2,24 +2,19 @@ package com.mcylm.coi.realm.gui;
 
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIGameStatus;
-import com.mcylm.coi.realm.enums.COIPropType;
-import com.mcylm.coi.realm.enums.COIUnlockType;
+import com.mcylm.coi.realm.item.COICustomItem;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
-import com.mcylm.coi.realm.tools.building.LineBuild;
-import com.mcylm.coi.realm.tools.selection.AreaSelector;
-import com.mcylm.coi.realm.tools.selection.LineSelector;
 import com.mcylm.coi.realm.tools.team.impl.COITeam;
-import com.mcylm.coi.realm.utils.*;
-import lombok.AllArgsConstructor;
+import com.mcylm.coi.realm.utils.GUIUtils;
+import com.mcylm.coi.realm.utils.InventoryUtils;
+import com.mcylm.coi.realm.utils.LoggerUtils;
+import com.mcylm.coi.realm.utils.TeamUtils;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Item;
 import me.lucko.helper.menu.paginated.PaginatedGuiBuilder;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,37 +50,42 @@ public class ForgeGUI {
         builder.build(p, paginatedGui -> {
             List<Item> items = new ArrayList<>();
 
-            for (COIPropType prop : COIPropType.getProps()) {
+            for (COICustomItem customItem : Entry.getInstance().getCustomItemManager().getCustomItems()) {
 
                 // 物品模型
-                ItemStack item = prop.getItemType();
+                ItemStack item = customItem.getItemStack();
+
+                List<String> lores = List.copyOf(item.getLore());
+
+                if (!customItem.shopSettings().showInShop()) {
+                    continue;
+                }
 
                 // 判断是否达到解锁条件
-                if(COIPropType.checkUnlock(team,prop)){
+                if(COICustomItem.ShopSettings.checkUnlock(team, customItem)){
 
                     items.add(ItemStackBuilder.of(item.clone())
-                            .name(prop.getName())
+                            .name(customItem.getName())
                             .amount(1)
                             .lore("")
-                            .lore("&f> &a单价/数量： &c" + prop.getPrice()+"&7/"+prop.getNum()+"个")
+                            .lore("&f> &a单价/数量： &c" + customItem.shopSettings().price()+"&7/"+ customItem.shopSettings().num() +"个")
                             .lore("&f> &a背包携带： &c" + building.getPlayerHadResource(p))
                             .lore("&f> &a介绍：")
-                            .lore(GUIUtils.autoLineFeed(prop.getIntroduce()))
+                            .lore(lores)
                             .lore("")
                             .lore("&f> &a&l点击进行打造")
                             .build(() -> {
                                 // 点击时触发下面的方法
 
                                 // 扣除资源，并交付道具
-                                boolean b = InventoryUtils.deductionResources(p, prop.getPrice());
+                                boolean b = InventoryUtils.deductionResources(p, customItem.shopSettings().price());
 
                                 if(b){
                                     // 扣除成功
                                     // 交付物品
-                                    ItemStack propItem = item.clone();
-                                    ItemUtils.rename(propItem,prop.getName());
-                                    ItemUtils.setLore(propItem,GUIUtils.autoLineFeed(prop.getIntroduce()));
-                                    propItem.setAmount(prop.getNum());
+                                    ItemStack propItem = customItem.getItemStack();
+
+                                    propItem.setAmount(customItem.shopSettings().num());
                                     p.getInventory().addItem(propItem);
                                     LoggerUtils.sendMessage("物品打造完成！", p);
 
@@ -101,11 +101,11 @@ public class ForgeGUI {
                     ItemStack itemType = new ItemStack(Material.CHEST);
 
                     items.add(ItemStackBuilder.of(itemType.clone())
-                            .name(prop.getName()+" &c尚未解锁")
+                            .name(customItem.getName()+" &c尚未解锁")
                             .amount(1)
                             .lore("")
                             .lore("&f> &a解锁条件：")
-                            .lore(GUIUtils.autoLineFeed("建筑等级达到："+prop.getBuildingLevel()))
+                            .lore(GUIUtils.autoLineFeed("建筑等级达到："+ customItem.shopSettings().buildingLevel()))
                             .lore("")
                             .lore("&f> &a&l快去升级吧")
                             .build(paginatedGui::close));
