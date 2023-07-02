@@ -57,6 +57,9 @@ public class COIGame {
     // 游戏开始时间
     private LocalDateTime startTime;
 
+    // 刷怪模式下的回合数
+    private Long round;
+
     public COIGame() {
         this.teams = new ArrayList<>();
         this.status = COIGameStatus.WAITING;
@@ -67,7 +70,7 @@ public class COIGame {
             configGameMode = "PVP";
         }
         this.gameMode = COIMultipleGameMode.parseCode(configGameMode);
-
+        this.round = 0L;
 
         // 初始化计分板
         new COIScoreboard().showBoard();
