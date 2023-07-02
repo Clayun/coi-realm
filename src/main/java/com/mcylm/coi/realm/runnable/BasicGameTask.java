@@ -324,7 +324,7 @@ public class BasicGameTask implements GameTaskApi {
                             long roundCount = count - firstRountCountDown;
 
                             // 第几回合
-                            Long round = (roundCount / eachRoundSecond) + 2;
+                            Long round = (roundCount / eachRoundSecond) + 3;
 
                             Entry.getGame().setRound(round);
 
@@ -345,7 +345,7 @@ public class BasicGameTask implements GameTaskApi {
                                         || countdown == 5
                                 ){
                                     for(Player p : Entry.getInstance().getServer().getOnlinePlayers()){
-                                        LoggerUtils.sendMessage("&c第&f "+round+" &c波怪物即将在 &f"+eachRoundSecond+" &c秒后到达战场",p);
+                                        LoggerUtils.sendMessage("&c第&f "+round+" &c波怪物即将在 &f"+countdown+" &c秒后到达战场",p);
                                     }
                                 }
                             }
