@@ -705,12 +705,11 @@ public class COIEntity implements AI {
         List<Entity> nearbyEntities = npc.getEntity().getNearbyEntities(10, 2, 10);
 
         if (!nearbyEntities.isEmpty() && (targetItem == null || targetItem.isDead())) {
+            boolean needClearTarget = true;
+                   
             for (Entity entity : nearbyEntities) {
                 if (entity != null) {
-                    boolean needClearTarget = true;
                     if (entity.getType() == EntityType.DROPPED_ITEM) {
-
-
                         Item item = (Item) entity;
                         Set<String> picks = getCoiNpc().getPickItemMaterials();
                         if (picks != null && picks.size() > 0) {
@@ -722,10 +721,9 @@ public class COIEntity implements AI {
                         }
                     }
                 }
-                if (needClearTarget) {
-                    targetItem == null;
-                }
-
+            }
+            if (needClearTarget) {
+                targetItem == null;
             }
         }
 
