@@ -429,6 +429,7 @@ public class Entry extends ExtendedJavaPlugin {
                         }
                         if (EntityData.getNpcByEntity(e.getDamager()) != null) {
                             ((Mob)e.getEntity()).setTarget((LivingEntity) e.getDamager());
+                            LoggerUtils.debug("改变目标");
                         }
                     }
                 });

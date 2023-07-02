@@ -11,11 +11,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 
@@ -367,8 +365,10 @@ public class COIMiner extends COIEntity {
     @Override
     public void move() {
         super.move();
-        //找可拆除的去拆
-        findAndBreakBlock();
+        if (targetItem == null){
+            //找可拆除的去拆
+            findAndBreakBlock();
+        }
     }
 
 }

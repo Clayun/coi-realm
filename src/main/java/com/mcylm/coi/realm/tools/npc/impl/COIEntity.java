@@ -1,7 +1,5 @@
 package com.mcylm.coi.realm.tools.npc.impl;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.model.COINpc;
@@ -32,7 +30,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -78,11 +75,7 @@ public class COIEntity implements AI {
     // 最后一次的位置
     private Location lastLocation = null;
     // 想捡的物品
-    private Item targetItem;
-    // 暂时屏蔽的物品
-    private final Cache<Item, Item> ignoredItems = CacheBuilder.newBuilder()
-            .expireAfterWrite(20, TimeUnit.SECONDS)
-            .build();
+    protected Item targetItem;
 
     // 悬浮字相关
     private Map<Player, Hologram> holograms = new HashMap<>();
@@ -719,12 +712,10 @@ public class COIEntity implements AI {
 
                         Item item = (Item) entity;
                         Set<String> picks = getCoiNpc().getPickItemMaterials();
-                        if (picks != null && picks.size() > 0 && !ignoredItems.asMap().containsKey(item)) {
+                        if (picks != null && picks.size() > 0) {
                             if (picks.contains(item.getItemStack().getType().toString()) && InventoryUtils.canInventoryHoldItem(getCoiNpc().getInventory(), item.getItemStack())) {
                                 targetItem = item;
                                 break;
-                            } else {
-                                ignoredItems.put(item, item);
                             }
                         }
                     }
@@ -749,8 +740,6 @@ public class COIEntity implements AI {
 
                             addItemToInventory(targetItem.getItemStack());
                             targetItem.remove();
-                        } else {
-                            ignoredItems.put(targetItem, targetItem);
                             targetItem = null;
                         }
                     }else {
