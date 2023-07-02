@@ -3,6 +3,7 @@ package com.mcylm.coi.realm.tools.team.impl;
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COIGameStatus;
+import com.mcylm.coi.realm.enums.COIMultipleGameMode;
 import com.mcylm.coi.realm.enums.COITeamType;
 import com.mcylm.coi.realm.events.GameStatusEvent;
 import com.mcylm.coi.realm.game.COIGame;
@@ -69,10 +70,24 @@ public class COIScoreboard {
 
                 List<String> str = new ArrayList<>();
 
-                Double playerScore = Entry.getGame().getPlayerScore(p);
+                String coiGameMode = "&6竞技模式";
 
-                str.add(LoggerUtils.replaceColor("&f<&aLV."+baseLevel+"&f> "+team.getType().getColor()+team.getType().getName()));
-                str.add(LoggerUtils.replaceColor("&e本局战分&7(奖励) &f"+playerScore));
+                Double playerScore = Entry.getGame().getPlayerScore(p);
+                COIMultipleGameMode gameMode = Entry.getGame().getGameMode();
+                if(Entry.getGame().getTeams().size() > 2
+                    && gameMode.equals(COIMultipleGameMode.PVP)){
+                    str.add(LoggerUtils.replaceColor("&f<&a"+baseLevel+"级大本营&f> "+team.getType().getColor()+team.getType().getName()));
+                }else{
+                    if(Entry.getGame().getTeams().size() <= 2){
+                        coiGameMode = "&b无尽模式";
+                    }else{
+                        coiGameMode = "&c竞技模式 Plus";
+                    }
+                    str.add(LoggerUtils.replaceColor("&f<&a第&6"+Entry.getGame().getRound()+"&a回合&f> "+team.getType().getColor()+team.getType().getName()));
+                }
+
+                str.add(LoggerUtils.replaceColor("&e战分奖励 &f"+playerScore));
+                str.add(LoggerUtils.replaceColor("&e游戏模式 "+coiGameMode));
                 str.add(LoggerUtils.replaceColor("&b♚ 团队资源 &7资产"));
                 str.add(LoggerUtils.replaceColor("&a● &a绿宝石 &f"+team.getPublicEmerald()));
                 str.add(LoggerUtils.replaceColor("&e● &a建筑数量 &f"+team.getFinishedBuildings().size()));

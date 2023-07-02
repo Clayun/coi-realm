@@ -4,6 +4,7 @@ import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COIBuildingType;
 import com.mcylm.coi.realm.enums.COIGameStatus;
+import com.mcylm.coi.realm.enums.COIMultipleGameMode;
 import com.mcylm.coi.realm.events.BuildingDamagedEvent;
 import com.mcylm.coi.realm.events.BuildingDestroyedEvent;
 import com.mcylm.coi.realm.events.BuildingTouchEvent;
@@ -26,6 +27,8 @@ import com.mcylm.coi.realm.utils.TeamUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
+import net.minecraft.network.protocol.status.ServerPing;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -270,19 +273,31 @@ public class GameListener implements Listener {
     @EventHandler
     public void onServerListPing(ServerListPingEvent event) {
 
-        // 服务器模式，暂定1是PVP，2是PVE
+        // 服务器模式，暂定1是PVP，2是PVE，3是PVPVE
         String serverMode = "1";
 
         // 队伍数量少于/等于2，单队模式PVE
         if(Entry.getGame().getTeams().size() <= 2){
             serverMode = "2";
+        }else{
+            String configGameMode = Entry.getInstance().getConfig().getString("game.multiple-game-mode");
+            if(StringUtils.isBlank(configGameMode)){
+                configGameMode = "PVP";
+            }
+            COIMultipleGameMode gameMode = COIMultipleGameMode.parseCode(configGameMode);
+
+            // PVPVE模式
+            if(gameMode.equals(COIMultipleGameMode.PVPVE)){
+                serverMode = "3";
+            }
         }
 
         // 1是可以进入，2是不可进入
         String couldJoinGame = "1";
 
-        // 检测服务器是否满人
-        if(Bukkit.getOnlinePlayers().size() >= Bukkit.getMaxPlayers()){
+        // 检测服务器是否满人或正在关闭
+        if(Bukkit.getOnlinePlayers().size() >= Bukkit.getMaxPlayers()
+            || Entry.getGame().getStatus().equals(COIGameStatus.STOPPING)){
             couldJoinGame = "2";
         }
 
