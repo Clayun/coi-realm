@@ -18,6 +18,7 @@ import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Difficulty;
 import org.bukkit.GameRule;
 import org.bukkit.World;
 import org.bukkit.entity.Monster;
@@ -148,6 +149,7 @@ public class BasicGameTask implements GameTaskApi {
         // 2.游戏结束后启动 GameStoppingTask
         World world = Bukkit.getWorld(Entry.WORLD);
         Entry.runSync(() -> world.setGameRule(GameRule.DO_MOB_SPAWNING, false)); // 禁止生物自然生成
+        Entry.runSync(() -> world.setDifficulty(Difficulty.HARD)); // 设置世界为困难模式
         new BukkitRunnable() {
 
             BossBar bossBar = BossBar.bossBar(

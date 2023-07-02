@@ -723,7 +723,7 @@ public class COIEntity implements AI {
                 }
             }
             if (needClearTarget) {
-                targetItem == null;
+                targetItem = null;
             }
         }
 
