@@ -82,6 +82,9 @@ public class CustomItemManager implements Listener {
 
             COICustomItem customItem = getCustomItemByItemStack(event.getItem());
 
+            if (customItem == null) {
+                return;
+            }
             Consumer<PlayerInteractEvent> consumer = customItem.itemUseEvent();
             if (consumer != null) {
                 consumer.accept(event);

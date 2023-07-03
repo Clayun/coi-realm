@@ -36,10 +36,7 @@ public class COICustomItems {
                     LoggerUtils.replaceColor("&b赶紧带上你的兄弟们挖矿吧"))
             .itemDropEvent(event -> event.setCancelled(true))
             .itemUseEvent(event -> {
-                if (Action.RIGHT_CLICK_BLOCK == event.getAction() && event.getHand().equals(EquipmentSlot.HAND)
-                        //空手触发
-                        && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.BOOK
-                ) {
+                if (Action.RIGHT_CLICK_BLOCK == event.getAction() && event.getHand().equals(EquipmentSlot.HAND)) {
 
                     if(Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
 
@@ -86,9 +83,7 @@ public class COICustomItems {
             .lore(LoggerUtils.replaceColor("&f让你的战士向你所指向的位置攻击"))
             .itemDropEvent(event -> event.setCancelled(true))
             .itemUseEvent(event -> {
-                if (Action.RIGHT_CLICK_BLOCK == event.getAction() && event.getHand().equals(EquipmentSlot.HAND)
-                        //空手触发
-                        && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.NETHER_STAR
+                if ((Action.RIGHT_CLICK_AIR == event.getAction() || Action.RIGHT_CLICK_BLOCK == event.getAction()) && event.getHand().equals(EquipmentSlot.HAND)
                 ) {
                     COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(event.getPlayer());
 
@@ -98,12 +93,13 @@ public class COICustomItems {
                         TeamUtils.tpSpawner(event.getPlayer());
                         return;
                     }
-                    Block target = event.getPlayer().getTargetBlockExact(32);
+                    Block target = event.getPlayer().getTargetBlockExact(48);
                     if (target == null) {
                         LoggerUtils.sendMessage("&e你所指向的位置太远了", event.getPlayer());
                         return;
                     }
                     coiPlayer.getAttackTeam().setTarget(target.getLocation());
+                    LoggerUtils.sendMessage("&a已设置目标",event.getPlayer());
 
                     for (Location location : LocationUtils.line(target.getLocation(), target.getLocation().add(0,10,0), 0.5)) {
                         location.getWorld().spawnParticle(Particle.DRIP_LAVA, location, 2);

@@ -6,7 +6,6 @@ import com.mcylm.coi.realm.tools.npc.impl.COIEntity;
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import org.bukkit.Material;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -20,8 +19,6 @@ public class NPCFeedFoodBehavior extends BehaviorGoalAdapter {
     private Mob entity;
 
     private COIEntity coiEntity;
-
-    private LivingEntity followingEntity;
 
     private AttackTeam team;
 
@@ -175,11 +172,6 @@ public class NPCFeedFoodBehavior extends BehaviorGoalAdapter {
             }
         }
 
-        if (!followingEntity.isDead()) {
-            if (entity.getLocation().distance(followingEntity.getLocation()) > 1.5) {
-                coiEntity.findPath(followingEntity.getLocation());
-            }
-        }
         return BehaviorStatus.RUNNING;
     }
 
