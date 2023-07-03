@@ -101,7 +101,7 @@ public class COICustomItems {
                     LoggerUtils.sendMessage("&a已设置目标",event.getPlayer());
 
                     for (Location location : LocationUtils.line(target.getLocation(), target.getLocation().add(0,10,0), 0.5)) {
-                        location.getWorld().spawnParticle(Particle.DRIP_LAVA, location, 2);
+                        event.getPlayer().spawnParticle(Particle.DRIP_LAVA, location, 2);
                     }
                 }
             })
