@@ -83,8 +83,7 @@ public class COICustomItems {
             .lore(LoggerUtils.replaceColor("&f让你的战士向你所指向的位置攻击"))
             .itemDropEvent(event -> event.setCancelled(true))
             .itemUseEvent(event -> {
-                if ((Action.RIGHT_CLICK_AIR == event.getAction() || Action.RIGHT_CLICK_BLOCK == event.getAction()) && event.getHand().equals(EquipmentSlot.HAND)
-                ) {
+                if ((Action.RIGHT_CLICK_AIR == event.getAction() || Action.RIGHT_CLICK_BLOCK == event.getAction()) && event.getHand().equals(EquipmentSlot.HAND)) {
                     COIPlayer coiPlayer = Entry.getGame().getCOIPlayer(event.getPlayer());
 
                     if(!Entry.getGame().getStatus().equals(COIGameStatus.GAMING)){
@@ -117,9 +116,7 @@ public class COICustomItems {
                         Action action = event.getAction();
 
                         //判断是右手，同时避免触发两次
-                        if ((Action.RIGHT_CLICK_AIR == action || Action.RIGHT_CLICK_BLOCK == action) && event.getHand().equals(EquipmentSlot.HAND)
-                                && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.FLOWER_BANNER_PATTERN
-                        ) {
+                        if ((Action.RIGHT_CLICK_AIR == action || Action.RIGHT_CLICK_BLOCK == action) && event.getHand().equals(EquipmentSlot.HAND)) {
 
                             // 开始使用卷轴
                             // 删除卷轴
