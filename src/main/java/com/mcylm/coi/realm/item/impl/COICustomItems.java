@@ -159,7 +159,7 @@ public class COICustomItems {
             new COICustomItem.Builder("arrow", "箭", Material.ARROW)
                     .lore(GUIUtils.autoLineFeed("箭矢"))
                     .shopSettings(new COICustomItem.ShopSettings()
-                            .showInShop(false)
+                            .showInShop(true)
                             .num(64)
                             .price(64)
                             .buildingType(COIBuildingType.FORGE)
