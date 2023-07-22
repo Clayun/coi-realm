@@ -863,7 +863,7 @@ public abstract class COIBuilding implements Serializable {
     public Block getNearestBlock(Location location) {
         List<Block> blocks = new ArrayList<>(this.blocks);
         blocks.sort(Comparator.comparingDouble(b -> location.distance(b.getLocation())));
-        return blocks.size() > 0 ? blocks.get(0) : location;
+        return blocks.size() > 0 ? blocks.get(0) : location.getBlock();
     }
 
     public abstract BuildingConfig getDefaultConfig();
