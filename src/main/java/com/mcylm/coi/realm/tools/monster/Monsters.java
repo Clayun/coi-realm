@@ -1,6 +1,7 @@
 package com.mcylm.coi.realm.tools.monster;
 
 import com.destroystokyo.paper.entity.ai.MobGoals;
+import com.google.common.collect.Maps;
 import com.mcylm.coi.realm.Entry;
 import com.mcylm.coi.realm.enums.COITeamType;
 import com.mcylm.coi.realm.tools.building.COIBuilding;
@@ -8,22 +9,20 @@ import com.mcylm.coi.realm.tools.data.metadata.MonsterData;
 import com.mcylm.coi.realm.tools.goals.paper.MonsterAttackBuildingGoal;
 import com.mcylm.coi.realm.tools.goals.paper.MonsterLookForBuildingTargetGoal;
 import com.mcylm.coi.realm.tools.map.COIMobSpawnPoint;
+import com.mcylm.coi.realm.tools.monster.custom.CustomMonster;
+import com.mcylm.coi.realm.tools.monster.custom.impl.GiantMonster;
+import com.mcylm.coi.realm.tools.monster.custom.impl.VanillaMonster;
 import com.mcylm.coi.realm.utils.LocationUtils;
 import com.mcylm.coi.realm.utils.LoggerUtils;
 import com.mcylm.coi.realm.utils.TeamUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Skeleton;
-import org.bukkit.entity.Zombie;
+import org.bukkit.entity.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Monsters {
 
@@ -31,15 +30,53 @@ public class Monsters {
     private static int maxMonsterPerLocation = 16;
 
     private static HashMap<Player,Integer> roundNotice = new HashMap<>();
+    private static Map<CustomMonster, Integer> entityTypes = new HashMap<>();
+
+    public static final VanillaMonster ZOMBIE = new VanillaMonster(EntityType.ZOMBIE);
+    public static final VanillaMonster SKELETON = new VanillaMonster(EntityType.SKELETON);
+    public static final VanillaMonster CREEPER = new VanillaMonster(EntityType.CREEPER);
+    public static final VanillaMonster SPIDER = new VanillaMonster(EntityType.SPIDER);
+    public static final VanillaMonster WITHER_SKELETON = new VanillaMonster(EntityType.WITHER_SKELETON);
+    public static final VanillaMonster PILLAGER = new VanillaMonster(EntityType.RAVAGER);
+    public static final VanillaMonster VINDICATOR = new VanillaMonster(EntityType.VINDICATOR);
+    public static final VanillaMonster RAVAGER = new VanillaMonster(EntityType.RAVAGER);
+    public static final GiantMonster GIANT = new GiantMonster();
+
 
     public static void spawnAll(int round) {
+        entityTypes.put(ZOMBIE, 50);
         for (COIMobSpawnPoint point : Entry.getMapData().getMobSpawnPoints()) {
-            spawnZombie(point.getLocation(), round);
+            spawnEntity(point.getLocation(), round);
+            if (round > 6) {
+                entityTypes.put(SKELETON, 20);
+            }
+            if (round > 10) {
+                entityTypes.put(CREEPER, 30);
+            }
+            if (round > 20) {
+                entityTypes.put(SPIDER, 40);
+            }
+            if (round > 30) {
+                entityTypes.put(WITHER_SKELETON, 40);
+            }
+            if (round > 40) {
+                entityTypes.put(PILLAGER, 20);
+            }
+            if (round > 50) {
+                entityTypes.put(VINDICATOR, 30);
+            }
+            if (round > 60) {
+                entityTypes.put(RAVAGER, 15);
+            }
+            if (round > 60) {
+                entityTypes.put(GIANT, 10);
+            }
         }
 
     }
 
-    public static void spawnZombie(Location location, int round) {
+
+    public static void spawnEntity(Location location, int round) {
 
         // 怪物数量
         int monsterNum = (round / 5) + 1;
@@ -54,36 +91,39 @@ public class Monsters {
                 location.createExplosion(3,false,false);
                 coiBuilding.destroy(true);
             }
-
-            Zombie zombie = location.getWorld().spawn(location, Zombie.class);
-            configureMonsterGoalsAndBehaviors(zombie,round);
+            CustomMonster type = selectCustomMonster(entityTypes);
+            if (type == null) {
+                continue;
+            }
+            Monster monster = (Monster) location.getWorld().spawnEntity(location, type.getType());
+            configureMonsterGoalsAndBehaviors(monster, type,round);
         }
     }
 
-    public static void configureMonsterGoalsAndBehaviors(Monster monster,int round) {
+    public static void configureMonsterGoalsAndBehaviors(Monster entity,CustomMonster customMonster, int round) {
 
         // 增加的倍率,每次在上一次的基础上增加 2%
         Double percent = 1 + (round * 0.02);
-        Double basicHealth = 5d;
+        Double basicHealth = entity.getMaxHealth()/2;
         Double basicDamage = 5d;
         // 根据回合数自动升级血量，伤害，移动速度
         // 移动速度
-        double speed = monster.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue() * percent;
+        double speed = entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue() * percent;
 
         if(speed >= 0.35){
             speed = 0.35d;
         }
 
-        monster.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(speed);
+        entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(speed);
 
         // 攻击伤害
         Double damage = basicDamage * percent;
-        monster.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(damage);
+        entity.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(damage);
 
         // 血量
         double health = basicHealth * percent;
-        monster.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(health);
-        monster.setHealth(health);
+        entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(health);
+        entity.setHealth(health);
 
         // 通知玩家怪物强度
         for(Player player : Bukkit.getOnlinePlayers()){
@@ -115,23 +155,47 @@ public class Monsters {
         }
 
 
-        if (monster instanceof Zombie zombie) {
+        if (entity instanceof Zombie zombie) {
             zombie.setShouldBurnInDay(false);
         }
 
-        if (monster instanceof Skeleton skeleton) {
+        if (entity instanceof Skeleton skeleton) {
             skeleton.setShouldBurnInDay(false);
         }
 
-        monster.setRemoveWhenFarAway(false);
+        entity.setRemoveWhenFarAway(false);
 
-        TeamUtils.getMonsterTeam().addEntityToScoreboard(monster);
+        TeamUtils.getMonsterTeam().addEntityToScoreboard(entity);
         MobGoals goals = Bukkit.getMobGoals();
-        monster.setMetadata("monsterData", new MonsterData());
-        goals.addGoal(monster,0, new MonsterAttackBuildingGoal(monster, damage.intValue()));
+        entity.setMetadata("monsterData", new MonsterData());
+        goals.addGoal(entity,0, new MonsterAttackBuildingGoal(entity, damage.intValue()));
 
-        new MonsterLookForBuildingTargetGoal(monster);
+        new MonsterLookForBuildingTargetGoal(entity);
+
+        customMonster.spawn(entity);
 
     }
+
+    public static CustomMonster selectCustomMonster(Map<CustomMonster, Integer> weights) {
+        int totalWeight = 0;
+
+        for (int weight : weights.values()) {
+            totalWeight += weight;
+        }
+
+        Random random = new Random();
+        int randomValue = random.nextInt(totalWeight);
+
+        for (Map.Entry<CustomMonster, Integer> entry : weights.entrySet()) {
+            randomValue -= entry.getValue();
+            if (randomValue <= 0) {
+                return entry.getKey();
+            }
+        }
+
+
+        return null;
+    }
+
 
 }
